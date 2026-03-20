@@ -1,0 +1,68 @@
+# Qwen3.5-4B LoRA 微调配置
+# Qwen3.5 使用 Gated DeltaNet + Gated Attention 混合架构
+# 官方不建议使用 QLoRA(4-bit)，应使用 bf16 LoRA
+# 4B bf16 LoRA 约需 10GB 显存，24GB 显卡绰绰有余
+# 硬件: RTX 4080 24GB VRAM, Linux/CUDA
+
+# === 模型 ===
+model:
+  name_or_path: "Qwen/Qwen3.5-4B"
+  torch_dtype: "bfloat16"               # 4080 (Ada Lovelace) 原生支持 bf16
+  attn_implementation: "flash_attention_2"
+  max_seq_length: 512
+
+# === LoRA ===
+lora:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  task_type: "CAUSAL_LM"
+  bias: "none"
+
+# === 数据 ===
+# 源数据（JSON 格式，由人工整理维护）
+data:
+  ner_source: "data/pipe/llm_lora/ner_data_new_schema.json"
+  encoding_source: "data/pipe/llm_lora/encoding_data.json"
+  # 训练数据（由 prepare_training_data.py 从源数据自动生成）
+  train_file: "data/pipe/qwen3_mixed/train.jsonl"
+  val_file: "data/pipe/qwen3_mixed/val.jsonl"
+
+# === 训练参数 (针对 24GB 4080 优化) ===
+# 注意: Qwen3.5 应使用 bf16 LoRA（启动时加 --no_quantize）
+# 4B bf16 LoRA 仅需约 10GB 显存，batch_size=8 完全没问题
+training:
+  output_dir: "outputs/qwen3_finetune"
+  num_train_epochs: 3
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 2         # 有效 batch_size = 8 * 2 = 16
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  logging_steps: 10
+  eval_steps: 500
+  save_steps: 500
+  save_total_limit: 3
+  eval_strategy: "steps"
+  bf16: true
+  gradient_checkpointing: true
+  dataloader_num_workers: 4
+  report_to: "none"
+  seed: 42
+  max_grad_norm: 1.0
+  remove_unused_columns: false
+
+# === 导出 ===
+export:
+  merge_lora: true
+  output_dir: "outputs/qwen3_finetune/merged"

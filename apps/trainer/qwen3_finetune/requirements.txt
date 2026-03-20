@@ -1,0 +1,16 @@
+# Qwen3.5-4B LoRA 微调环境 (严格版本锁定)
+# 安装: pip install -r apps/trainer/qwen3_finetune/requirements.txt
+# 或者: bash apps/trainer/qwen3_finetune/setup_env.sh
+
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+transformers==5.3.0
+trl==0.29.0
+peft==0.18.1
+accelerate==1.13.0
+bitsandbytes==0.48.2
+datasets==4.4.1
+pyyaml==6.0.3
+tqdm==4.67.3
+scipy==1.16.2

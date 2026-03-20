@@ -1,0 +1,82 @@
+# ============================================
+# 多任务BERT模型训练配置
+# ============================================
+
+# 数据配置
+data:
+  data_dir: data/pipe                    # 数据目录，包含 train.jsonl, dev.jsonl, test.jsonl
+  max_length: 256                        # 最大序列长度
+  augment: true                          # 启用数据增强（随机移除空格）
+  augment_prob: 0.3                      # 30%的样本会被增强
+
+# 模型配置
+model:
+  # bert_model: bert-base-chinese  xlm-roberta-base  hfl/chinese-bert-wwm-ext
+  bert_model: xlm-roberta-base           # 支持中英文
+  output_dir: outputs/pipe_multitask     # 模型输出目录
+
+# 训练参数 (针对 25000 条数据优化)
+training:
+  epochs: 10                             # 25k数据 10轮足够，过多容易过拟合
+  batch_size: 64                         # 24GB显存可用64
+  gradient_accumulation_steps: 1         # 不需要梯度累积
+  learning_rate: 2e-5                    # BERT微调经典学习率
+  crf_lr_multiplier: 100                 # CRF学习率倍数 (CRF需要较大学习率)
+  classifier_lr_multiplier: 10           # 分类器学习率倍数
+  warmup_ratio: 0.06                     # 6%预热 (约1500步)
+  weight_decay: 0.01                     # 权重衰减防止过拟合
+  max_grad_norm: 1.0                     # 梯度裁剪
+  
+  # 损失函数优化（缓解类别不平衡）
+  use_dice_loss: true                    # 启用 Dice Loss
+  dice_weight: 0.3                       # Dice Loss 权重，不宜过高
+  use_focal_loss: false                  # Focal Loss 与 Dice 二选一
+  focal_gamma: 2.0                       # Focal Loss gamma 参数
+  label_smoothing: 0.05                  # 适度标签平滑，0.1可能过高
+  
+  # 早停配置
+  early_stopping:
+    patience: 3                          # 3轮不提升则停止
+    min_delta: 0.001                     # 最小改进阈值
+  
+  # 保存策略
+  save_best_only: true                   # 只保存最佳模型
+  save_metric: "ner_f1"                  # 监控实体级F1
+
+# 设备配置
+device: auto                             # 设备: cuda, mps, cpu, auto
+
+# 随机种子
+seed: 42
+
+# NER标签配置（BIO格式）
+ner_labels:
+  - O
+  - B-TYPE
+  - I-TYPE
+  - B-MATERIAL
+  - I-MATERIAL
+  - B-SIZE
+  - I-SIZE
+  - B-THICKNESS
+  - I-THICKNESS
+  - B-PRESSURE
+  - I-PRESSURE
+  - B-STANDARD
+  - I-STANDARD
+  - B-STANDARD_GRADE
+  - I-STANDARD_GRADE
+  - B-CONN
+  - I-CONN
+  - B-MANU
+  - I-MANU
+
+# TYPE分类标签配置
+type_labels:
+  - 管子
+  - 管件
+  - 法兰
+  - 螺栓
+  - 阀门
+  - 垫片
+

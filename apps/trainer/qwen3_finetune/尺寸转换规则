@@ -1,0 +1,366 @@
+import json, re
+from pathlib import Path
+from collections import Counter
+
+root = Path('/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder')
+src = root / 'data/pipe/llm_lora/ner_data.json'
+dst = root / 'data/pipe/llm_lora/ner_data_new_schema.json'
+summary_path = root / 'outputs/manual_review/ner_data_new_schema_summary.json'
+ambiguous_path = root / 'outputs/manual_review/size_ambiguous_cases.json'
+rows = json.loads(src.read_text(encoding='utf-8'))
+MERGE_TO_TYPE_FIELDS = ['MANU', 'CONN', 'ENDS', 'SEAL']
+KNOWN_DN = {'6','8','10','15','20','25','32','40','50','65','80','100','125','150','200','250','300','350','400','450','500','600'}
+
+
+def uniq(seq):
+    out, seen = [], set()
+    for x in seq:
+        key = json.dumps(x, ensure_ascii=False, sort_keys=True) if isinstance(x, (dict, list)) else str(x)
+        if key not in seen:
+            seen.add(key)
+            out.append(x)
+    return out
+
+
+def flatten_strings(val):
+    vals = []
+    if val in (None, '', []):
+        return vals
+    if isinstance(val, list):
+        for x in val:
+            if isinstance(x, dict):
+                y = x.get('value', '')
+                if isinstance(y, str) and y.strip():
+                    vals.append(y.strip())
+            elif isinstance(x, str) and x.strip():
+                vals.append(x.strip())
+    elif isinstance(val, dict):
+        y = val.get('value', '')
+        if isinstance(y, str) and y.strip():
+            vals.append(y.strip())
+    elif isinstance(val, str) and val.strip():
+        vals.append(val.strip())
+    return vals
+
+
+def has_exact_token(text: str, token: str) -> bool:
+    text_tokens = [t for t in re.split(r'[^A-Za-z0-9一-龥\-\./"]+', text) if t]
+    token_tokens = [t for t in re.split(r'[^A-Za-z0-9一-龥\-\./"]+', token) if t]
+    if not token_tokens:
+        return False
+    if len(token_tokens) == 1:
+        return any(t.lower() == token_tokens[0].lower() for t in text_tokens)
+    return token.lower() in text.lower()
+
+
+def normalize_type_value(base_type, out):
+    parts = []
+    if isinstance(base_type, str) and base_type.strip():
+        parts.append(base_type.strip())
+    for f in MERGE_TO_TYPE_FIELDS:
+        for v in flatten_strings(out.get(f)):
+            if not v:
+                continue
+            if any(v.lower() == p.lower() for p in parts):
+                continue
+            if parts and has_exact_token(parts[0], v):
+                continue
+            parts.append(v)
+    return ';'.join(uniq(parts)) if parts else None
+
+
+def normalize_size_fragment(s: str) -> str:
+    return re.sub(
+        r'\s+',
+        ' ',
+        s.strip()
+        .replace('×', 'x')
+        .replace('X', 'x')
+        .replace('Ф', 'φ')
+        .replace('Φ', 'φ')
+        .replace('Ø', 'φ'),
+    ).strip()
+
+
+def normalize_dn_num(num: str) -> str:
+    return f'DN{num.strip()}'
+
+
+def normalize_dn(token: str) -> str:
+    m = re.search(r'DN\s*(\d+(?:\.\d+)?)', token, re.I)
+    if m:
+        return normalize_dn_num(m.group(1))
+    m = re.fullmatch(r'[DdNn]\s*(\d+(?:\.\d+)?)', token)
+    if m:
+        return normalize_dn_num(m.group(1))
+    return token.strip().replace(' ', '')
+
+
+def normalize_inch_num(num: str) -> str:
+    num = num.strip().replace(' ', '')
+    return num if num.endswith('"') else num + '"'
+
+
+def normalize_nps(token: str) -> str:
+    m = re.search(r'NPS\s*([0-9]+(?:\.[0-9]+)?(?:-[0-9]+/[0-9]+|\s+[0-9]+/[0-9]+|/[0-9]+)?)', token, re.I)
+    return normalize_inch_num(m.group(1) if m else token)
+
+
+def normalize_inch(token: str) -> str:
+    t = token.strip().replace(' ', '')
+    return t if t.endswith('"') else t + '"'
+
+
+def normalize_od(token: str) -> str:
+    t = (
+        token.strip()
+        .replace(' ', '')
+        .replace('Ф', 'φ')
+        .replace('Φ', 'φ')
+        .replace('Ø', 'φ')
+    )
+    m = re.search(r'外径\s*(\d+(?:\.\d+)?)\s*mm?', token, re.I)
+    if m:
+        return m.group(1)
+    m = re.search(r'\bOD[:=]?\s*(\d+(?:\.\d+)?)', token, re.I)
+    if m:
+        return m.group(1)
+    m = re.search(r'(\d+(?:\.\d+)?)\s*mm\b', token, re.I)
+    if m:
+        return m.group(1)
+    m = re.search(r'φ\s*(\d+(?:\.\d+)?)', t, re.I)
+    if m:
+        return m.group(1)
+    m = re.search(r'\bOD[:=]?\s*(\d+(?:\.\d+)?)', t, re.I)
+    if m:
+        return m.group(1)
+    return t
+
+
+def is_fraction_like_inch(s: str) -> bool:
+    return bool(re.fullmatch(r'(?:\d+\s+\d+/\d+|\d+-\d+/\d+|\d+/\d+)', s))
+
+
+def is_decimal_or_int(s: str) -> bool:
+    return bool(re.fullmatch(r'\d+(?:\.\d+)?', s))
+
+
+def parse_numeric_compound(s: str):
+    if re.fullmatch(r'\d+(?:\.\d+)?(?:x\d+(?:\.\d+)?)+', s):
+        return [p for p in s.split('x') if p]
+    return None
+
+
+def parse_od_compound(s: str):
+    if re.fullmatch(r'[φ]?\d+(?:\.\d+)?(?:x[φ]?\d+(?:\.\d+)?)+', s, re.I):
+        return [normalize_od(part) for part in s.split('x') if part]
+    return None
+
+
+def parse_od_compound_with_thickness(s: str):
+    if '/' not in s:
+        return None
+    left, right = [part.strip() for part in s.split('/', 1)]
+    left_parts = [part.strip() for part in left.split('x') if part.strip()]
+    right_parts = [part.strip() for part in right.split('x') if part.strip()]
+    if len(left_parts) < 2 or len(left_parts) != len(right_parts):
+        return None
+    if not any(re.match(r'^[φ]', part, re.I) for part in left_parts):
+        return None
+    if not all(re.fullmatch(r'[φ]?\d+(?:\.\d+)?', part, re.I) for part in left_parts):
+        return None
+    if not all(re.fullmatch(r'\d+(?:\.\d+)?(?:mm)?', part, re.I) for part in right_parts):
+        return None
+    return [normalize_od(part) for part in left_parts]
+
+
+def all_known_dn(parts):
+    return all(re.fullmatch(r'\d+', p) and p in KNOWN_DN for p in parts)
+
+
+def extract_size_struct(size_val, input_text, idx):
+    raw_vals = flatten_strings(size_val)
+    if not raw_vals:
+        return None, []
+
+    dn, od, inch = [], [], []
+    ambiguous = []
+    has_explicit_dn_anywhere = any(re.search(r'\bDN\s*\d', normalize_size_fragment(v), re.I) for v in raw_vals) or bool(re.search(r'\bDN\s*\d', input_text, re.I))
+    normalized_input = (
+        input_text.replace('×', 'x')
+        .replace('X', 'x')
+        .replace('*', 'x')
+        .replace('Ф', 'φ')
+        .replace('Φ', 'φ')
+        .replace('Ø', 'φ')
+    )
+
+    for raw in raw_vals:
+        s = normalize_size_fragment(raw)
+        matched = False
+
+        pair_matches = re.findall(r'\bDN\s*(\d+(?:\.\d+)?)\s*[x/，,]\s*(?:DN\s*)?(\d+(?:\.\d+)?)', s, re.I)
+        if pair_matches:
+            for a, b in pair_matches:
+                dn.extend([normalize_dn_num(a), normalize_dn_num(b)])
+            matched = True
+        single_dn = list(re.finditer(r'\bDN\s*\d+(?:\.\d+)?', s, re.I))
+        if single_dn:
+            for m in single_dn:
+                dn.append(normalize_dn(m.group()))
+            matched = True
+        if re.fullmatch(r'[DdNn]\d+(?:\.\d+)?', s):
+            dn.append(normalize_dn(s))
+            matched = True
+
+        explicit_nps = list(re.finditer(r'\bNPS\s*[0-9]+(?:\.[0-9]+)?(?:-[0-9]+/[0-9]+|\s+[0-9]+/[0-9]+|/[0-9]+)?', s, re.I))
+        if explicit_nps:
+            for m in explicit_nps:
+                inch.append(normalize_nps(m.group()))
+            matched = True
+        explicit_quote = list(re.finditer(r'\b(?:\d+\s+\d+/\d+|\d+-\d+/\d+|\d+/\d+|\d+(?:\.\d+)?)"', s))
+        if explicit_quote:
+            for m in explicit_quote:
+                inch.append(normalize_inch(m.group()))
+            matched = True
+        if is_fraction_like_inch(s):
+            inch.append(normalize_inch(s))
+            matched = True
+        if '"' in s and re.fullmatch(r'[0-9./"x\- ]+', s):
+            parts = [p.strip() for p in s.split('x') if p.strip()]
+            ok = True
+            parsed = []
+            for part in parts:
+                if re.fullmatch(r'(?:\d+\s+\d+/\d+|\d+-\d+/\d+|\d+/\d+|\d+(?:\.\d+)?)"?', part):
+                    parsed.append(normalize_inch(part))
+                else:
+                    ok = False
+                    break
+            if ok and parsed:
+                inch.extend(parsed)
+                matched = True
+
+        od_with_thickness = parse_od_compound_with_thickness(s)
+        if od_with_thickness:
+            od.extend(od_with_thickness)
+            matched = True
+
+        od_compound = parse_od_compound(s)
+        if od_compound:
+            od.extend(od_compound)
+            matched = True
+
+        explicit_od = list(re.finditer(r'[φΦØФ]\s*\d+(?:\.\d+)?|外径\s*\d+(?:\.\d+)?\s*mm?|\bOD[:=]?\s*\d+(?:\.\d+)?|\b\d+(?:\.\d+)?\s*mm\b', s, re.I))
+        if explicit_od:
+            for m in explicit_od:
+                od.append(normalize_od(m.group()))
+            matched = True
+
+        compound = parse_numeric_compound(s)
+        if compound:
+            if any('.' in p for p in compound):
+                od.extend(compound)
+            elif all_known_dn(compound) and has_explicit_dn_anywhere:
+                dn.extend([normalize_dn_num(p) for p in compound])
+            else:
+                od.extend(compound)
+            matched = True
+
+        if not matched and is_decimal_or_int(s):
+            same = re.escape(s)
+            if re.search(rf'(外径\s*{same}|[φΦØФ]\s*{same}|\b{same}\s*mm\b)', normalized_input, re.I):
+                od.append(s)
+            elif re.search(rf'{same}\s*[x]\s*\d+(?:\.\d+)', normalized_input):
+                od.append(s)
+            elif re.search(rf'{same}\s*[,，]\s*\d+(?:\.\d+)', normalized_input):
+                od.append(s)
+            elif '.' in s:
+                od.append(s)
+            elif s in KNOWN_DN:
+                dn.append(normalize_dn_num(s))
+            else:
+                ambiguous.append({'raw_value': raw, 'reason': '裸整数尺寸无法稳定判断是 DN、英制还是型号数字'})
+            matched = True
+
+        if not matched:
+            ambiguous.append({'raw_value': raw, 'reason': '无法归类到 DN / OD / INCH，请人工判断'})
+
+    dn = uniq(dn)
+    od = uniq(od)
+    inch = uniq(inch)
+    if dn:
+        od = [x for x in od if x not in {d[2:] for d in dn}]
+    size_obj = None
+    if dn or od or inch:
+        size_obj = {}
+        if dn:
+            size_obj['DN'] = dn
+        if od:
+            size_obj['OD'] = od
+        if inch:
+            size_obj['INCH'] = inch
+    return size_obj, ambiguous
+
+
+def normalize_thickness(field_val):
+    if field_val in (None, '', []):
+        return None
+    if isinstance(field_val, str):
+        return field_val.strip()
+    vals = uniq([v for v in flatten_strings(field_val) if v])
+    if not vals:
+        return None
+    return vals[0] if len(vals) == 1 else 'x'.join(vals)
+
+new_rows=[]
+field_counts=Counter()
+size_subcounts=Counter()
+ambiguous_cases=[]
+for idx,row in enumerate(rows):
+    inp=row.get('input','')
+    out=row.get('output',{}) or {}
+    new_out={}
+    t=normalize_type_value(out.get('TYPE'),out)
+    if t:
+        new_out['TYPE']=t
+    size_obj,amb=extract_size_struct(out.get('SIZE'),inp,idx)
+    if size_obj:
+        new_out['SIZE']=size_obj
+        for k,vals in size_obj.items():
+            if vals:
+                size_subcounts[k]+=1
+    if amb:
+        ambiguous_cases.append({'index':idx,'input':inp,'original_size':flatten_strings(out.get('SIZE')),'converted_size':size_obj,'ambiguous_items':amb})
+    th=normalize_thickness(out.get('THICKNESS'))
+    if th:
+        new_out['THICKNESS']=th
+    for f in ['PRESSURE','MATERIAL','STANDARD','STANDARD_GRADE','STANDARD_APPENDIX','STANDARD_METHOD']:
+        val=out.get(f)
+        if val in (None,'',[]):
+            continue
+        if isinstance(val,list):
+            val=uniq(val)
+            if len(val)==1 and not isinstance(val[0],dict):
+                val=val[0]
+        new_out[f]=val
+    for k in new_out:
+        field_counts[k]+=1
+    new_rows.append({'input':inp,'output':new_out})
+
+dst.write_text(json.dumps(new_rows,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+ambiguous_path.write_text(json.dumps(ambiguous_cases,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+summary_path.write_text(json.dumps({'total_records':len(new_rows),'field_counts':dict(field_counts),'size_subcounts':dict(size_subcounts),'ambiguous_size_case_count':len(ambiguous_cases),'size_schema':{'DN':'list','OD':'list','INCH':'list'}},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+for q in [
+    '偏心大小头 PE S30408 NB/T47008 HG20553 4.00mm×1.50mm40X20 DN40×20',
+    'PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN50,_NB/T47010-S31603;6x2"',
+    '不锈钢无缝钢管安装\x7f1.名称:不锈钢无缝钢管2.材质:S31608_Gr.II3.管径、壁厚57×3.54.用途:GB/T 14976-2012',
+    '不锈钢管 508*12.7 A312 TP316L ASME B36.19M WELDED',
+    '同心异径短节 SMLS BW S30408 GB/T 13401 Φ273.0×219.1/5.00×4.00 DN45×38'
+]:
+    for row in new_rows:
+        if row['input']==q:
+            print('\nSAMPLE',q)
+            print(json.dumps(row['output'],ensure_ascii=False,indent=2))
+            break
+print('\nambiguous_count',len(ambiguous_cases))

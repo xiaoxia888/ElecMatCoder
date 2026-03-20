@@ -1,0 +1,127 @@
+# ============================================================
+# 材料智能处理平台 - 系统配置
+# ============================================================
+
+# ==================== 服务配置 ====================
+server:
+  host: "0.0.0.0"
+  port: 8002
+  reload: true
+  # 是否在服务启动时预加载模型（生产环境建议 true）
+  preload_models: false
+
+# ==================== 分词模型配置 ====================
+tokenizer:
+  # 默认分词模型
+  # 可选值: ner_pipe / deepseek-chat / qwen2.5:7b
+  default_model: "ner_pipe"
+  default_platform: "pipe"
+  
+  # Ollama 服务
+  ollama:
+    base_url: "http://localhost:11434"
+    timeout: 60
+  
+  # DeepSeek API
+  deepseek:
+    base_url: "https://api.deepseek.com"
+    model: "deepseek-chat"
+    timeout: 60
+
+# ==================== NER识别配置 ====================
+ner:
+  # NER 模型类型
+  # 可选值: bert / qwen3 / globalpointer
+  #   bert:          BERT+CRF 字符级 NER 模型
+  #   qwen3:         Qwen3-4B 微调模型（推荐，直接输出结构化 JSON）
+  #   globalpointer: GlobalPointer NER 模型
+  model_type: "qwen3"
+  
+  # 置信度阈值：低于此值的实体将被忽略
+  confidence_threshold: 0.0
+  
+  # O标签偏置：正值使模型更倾向于预测O（对未知token更保守）
+  # 推荐值：0.5-2.0，值越大越保守
+  # 0.0 = 不调整（原始模型行为）
+  # 1.0 = 轻微保守（新模型推荐值）
+  # 2.0 = 中等保守（可能导致实体被截断）
+  o_bias: 1.0
+  
+  # BERT NER 模型配置
+  bert:
+    model_path: "models/pipe_model"
+    device: "auto"
+  
+  # Qwen3-4B 微调模型配置（推荐）
+  qwen3:
+    backend: "ollama"                   # ollama / transformers
+    model_name: "qwen3-4b-q8-0319"            # ollama 后端时使用的模型名
+    ollama_url: "http://localhost:11434" # ollama 服务地址
+    model_path: "models/qwen3_pipe"     # transformers 后端时使用的模型路径
+    device: "auto"                      # transformers 后端设备: auto / cpu / cuda / mps
+  
+  # GlobalPointer NER 模型配置
+  globalpointer:
+    model_path: "outputs/globalpointer_ner/best_model"
+    threshold: 0.0
+    device: "auto"
+
+# ==================== 编码规则配置 ====================
+encoding:
+  # 编码方法
+  # 可选值: llm / legacy
+  #   llm:    使用 Qwen3 微调模型统一编码（推荐）
+  #   legacy: 使用 T5 seq2seq + 规则处理器（旧方案）
+  method: "llm"
+
+  # LLM 编码配置（method=llm 时生效）
+  llm:  
+    model_name: "qwen3-4b-q8-0319"
+    backend: "ollama"             # ollama / transformers
+    ollama_url: "http://localhost:11434"
+    model_path: "models/qwen3_pipe"  # transformers 后端时使用
+
+  # 以下为 legacy 模式配置（method=legacy 时生效）
+  type_encoding: "seq2seq"      # 种类编码方式: semantic / seq2seq
+  material_encoding: "seq2seq"  # 材质编码方式: semantic / seq2seq
+  
+  # Seq2Seq 模型配置
+  seq2seq:
+    model_path: "models/seq2seq"
+    device: "auto"  # auto / cpu / cuda / mps
+    max_length: 32
+
+# ==================== 语义匹配配置 ====================
+semantic_matching:
+  similarity_threshold: 0.92
+  # 模型名称（HuggingFace 模型名或本地路径）
+  model_name: "paraphrase-multilingual-MiniLM-L12-v2"
+  # 本地模型路径（相对于项目根目录，留空则从 HuggingFace 下载）
+  local_model_path: "models/semantic_model_finetuned"
+  top_k: 5
+  cache_embeddings: true
+  # 离线模式（不联网检查更新）
+  offline_mode: true
+
+# ==================== 批量处理配置 ====================
+batch_processing:
+  max_concurrent: 3
+  progress_interval_ms: 100
+
+# ==================== 日志配置 ====================
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# ==================== 氚云集成配置 ====================
+h3yun:
+  # 氚云 OpenAPI 地址
+  url: "https://www.h3yun.com/OpenApi/Invoke"
+  # 引擎编码
+  engine_code: "ety58sf4upb95mibri9qatvi5"
+  # 引擎密钥
+  engine_secret: "u3toDgywMDwgbYgnrHNmjzH0g0fzn9mWAj0PY659taS7sxeVPoor5g=="
+  # 请求超时时间（秒）
+  timeout: 300
+  # 批量导入每批数量
+  batch_size: 500

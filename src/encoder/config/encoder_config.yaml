@@ -1,0 +1,263 @@
+# ============================================================
+# 编码规则配置
+# ============================================================
+
+# 编码字段顺序（固定）
+field_order:
+  - TYPE       # 种类
+  - RADIUS     # 弯曲半径（规则提取：1D, 1.5D, SR, LR...）
+  - ENDS       # 端部形式（规则提取：SO, WN, BE, PE...）
+  - SEAL       # 密封面形式（规则提取：FF, RF...）
+  - MANU       # 工艺
+  - CONN       # 连接方式（SW, BW, THD...）
+  - SIZE       # 尺寸
+  - THICKNESS  # 壁厚
+  - PRESSURE   # 磅级
+  - MATERIAL   # 材质
+  - STANDARD   # 规范
+
+# 需要语义相似度匹配的字段
+semantic_match_fields:
+  - TYPE
+  - MATERIAL
+
+# 仅精确匹配的字段（不存在则跳过，编码为空）
+exact_match_fields:
+  - MANU
+  - CONN
+  - ENDS
+  - SEAL
+
+# 约束层 → 置信度惩罚（不丢弃，仅降分）
+# 对以下字段：LLM 提取后用 RegexExtractor 验证原文是否存在
+# 若原文中找不到 → 保留值但降低置信度，触发人工审查
+field_verification:
+  enabled: true
+  verify_fields:
+    - ENDS
+    - SEAL
+    - MANU
+    - CONN
+  # 验证不通过时的置信度惩罚系数（乘到该字段置信度上）
+  unverified_penalty: 0.5
+
+# 审查规则与置信度计算
+review_rules:
+  enabled: true
+  # 两阶段融合权重：C_field = C_extract^extract_weight * C_encode^encode_weight
+  extract_weight: 0.55
+  encode_weight: 0.45
+  # 最终是否待审 = 硬规则命中 或 总置信度低于阈值
+  review_threshold: 0.80
+  hard_rule_force_review: true
+  # 置信度温度缩放（仅用于评分展示/审查，不影响编码结果）
+  calibration:
+    enabled: true
+    temperature: 1.8
+  mixed_thickness_units:
+    enabled: true
+    similarity_cap: 0.65
+    warning: "壁厚分段单位混用（mm 与 Sch/S 系列），建议人工审查。"
+  multi_material:
+    enabled: true
+    similarity_cap: 0.75
+    warning: "识别到多个材质值，建议人工确认主材质/组合材质编码。"
+  unknown_standard_category:
+    enabled: true
+    similarity_cap: 0.70
+    warning: "部分规范未识别到类型（生产/制造），建议人工审查。"
+  over_segmented_size_or_thickness:
+    enabled: true
+    max_segments: 2
+    size_similarity_cap: 0.68
+    thickness_similarity_cap: 0.68
+    size_warning: "尺寸编码结果分段超过2段，建议人工审查。"
+    thickness_warning: "壁厚编码结果分段超过2段，建议人工审查。"
+  # 整体置信度（confidence）字段权重
+  confidence_weights:
+    TYPE: 0.22
+    SIZE: 0.20
+    THICKNESS: 0.18
+    MATERIAL: 0.16
+    STANDARD: 0.16
+    MANU: 0.04
+    CONN: 0.02
+    ENDS: 0.01
+    SEAL: 0.01
+
+# 原样输出的字段
+passthrough_fields:
+  - THICKNESS
+  - PRESSURE
+
+# 尺寸处理规则
+size_processing:
+  prefer_dn: true           # 优先提取 DN 开头的词
+  reduce_dn_prefix: true    # DN25XDN15 -> 25X15
+  strip_units: true         # φ60.3mm -> 60.3
+  # NPS（英制公称管径）→ DN（公称直径）映射
+  nps_to_dn:
+    "1/8": 6
+    "1/4": 8
+    "3/8": 10
+    "1/2": 15
+    "3/4": 20
+    "1": 25
+    "1-1/4": 32
+    "1-1/2": 40
+    "2": 50
+    "2-1/2": 65
+    "3": 80
+    "3-1/2": 90
+    "4": 100
+    "5": 125
+    "6": 150
+    "8": 200
+    "10": 250
+    "12": 300
+    "14": 350
+    "16": 400
+    "18": 450
+    "20": 500
+    "22": 550
+    "24": 600
+    "26": 650
+    "28": 700
+    "30": 750
+    "32": 800
+    "34": 850
+    "36": 900
+    "38": 950
+    "40": 1000
+    "42": 1050
+    "44": 1100
+    "46": 1150
+    "48": 1200
+    "52": 1300
+    "56": 1400
+    "60": 1500
+    "64": 1600
+    "68": 1700
+    "72": 1800
+    "76": 1900
+    "80": 2000
+
+# 规范处理规则
+standard_processing:
+  remove_chars: [" ", "/", "(", ")", "（", "）", "-", ".", "_"]
+  separator: ""
+
+# 磅级处理规则
+pressure_processing:
+  # 拼写修正（在去除空格后执行）
+  typo_fix:
+    "O": "0"      # 字母O → 数字0 (CL15O → CL150)
+    "CI": "CL"    # CI → CL (CI3000 → CL3000)
+  
+  # Class 体系识别特征
+  class_indicators:
+    prefixes: ["CL", "CLASS", "C"]   # CL150, Class150, C150
+    suffixes: ["LB", "LBS", "#"]     # 150LB, 150Lbs, 150#
+  
+  # PN 体系识别特征
+  pn_indicators:
+    prefixes: ["PN"]                 # PN16, PN40
+    suffixes: ["RF"]                 # 16RF, 25RF
+
+# ============================================================
+# TYPE 组合编码：属性包含关系映射
+# 用于判断 TYPE 是否已包含某属性的含义，避免重复拼接
+# 例如：TYPE='承插焊法兰' 已包含 'SW' 的含义 → 跳过 CONN='SW'
+# ============================================================
+type_included_keywords:
+  # RADIUS 弯曲半径关键词
+  1D: ['1d', '短半径', 'short radius']
+  1.5D: ['1.5d', '长半径', 'long radius']
+  2D: ['2d']
+  3D: ['3d']
+  SR: ['sr', '短半径', 'short radius', '短弯']
+  LR: ['lr', '长半径', 'long radius', '长弯']
+  # CONN 连接方式关键词
+  SW: ['承插', '承插焊', 'sw', '插焊']
+  BW: ['对焊', 'butt', 'bw', 'weld neck']
+  THD: ['thread', 'thd', 'npt', 'fnpt', 'mnpt']
+  NPT: ['npt', 'fnpt', 'mnpt']
+  FNPT: ['fnpt']
+  MNPT: ['mnpt']
+  # ENDS 端部形式关键词
+  SO: ['slip', 'so']
+  WN: ['对焊', 'weld neck', 'wn']
+  # SEAL 密封面关键词
+  FF: ['平面', 'flat face', 'ff']
+  RF: ['凸面', 'raised face', 'rf']
+  RTJ: ['环连接', 'ring', 'rtj']
+  # MANU 工艺关键词
+  SMLS: ['无缝', 'seamless', 'smls']
+  WELD: ['焊接', 'welded', 'weld']
+
+# ============================================================
+# 规则提取标签（通过正则提取，不依赖NER标注）
+# 定义需要匹配的关键词，编码映射在 pipe_code_mapping.yaml 中
+# 提取规则：关键词两侧是空格、分隔符(;,-)或字符串边界，忽略大小写
+# ============================================================
+regex_extraction:
+  # RADIUS 弯曲半径 - 影响弯头类型编码
+  # 支持两种格式：keywords（固定关键词）和 patterns（正则模式）
+  RADIUS:
+    keywords:
+      - SR          # Short Radius 短半径
+      - LR          # Long Radius 长半径
+    patterns:
+      - 'R?\s*=?\s*\d+\.?\d*\s*[DdRr]'   # 匹配 1D, 1.5D, R=1D, 3R 等
+  
+  # ENDS 端部形式 - 只提取复合端部（两端不同时需要编码）
+  ENDS:
+    keywords:
+      - SO          # Slip-On 平焊（法兰用）
+      - FNPT        # 内螺纹形状。
+      - MNPT        # 外螺纹形状
+      - NPTF        # 干密封内螺纹形状。
+      - NPTM        # 外螺纹形状
+      - FTE         # 通用内螺纹形状。
+      - MTE         # 通用外螺纹形状。
+    patterns:
+      # 复合端部形式（两端不同，需要参与编码）
+      # \s* 支持分隔符前后的空格，如 BLE x TSE、BLE / PSE
+      - 'BLE\s*[/xX]\s*TSE\s*\(MNPT\)'    # BLE/TSE(MNPT)、BLE x TSE(MNPT)
+      - 'BLE\s*[/xX]\s*TSE\s*\(NPT\)'     # BLE/TSE(NPT)、BLE x TSE(NPT)
+      - 'BLE\s*[/xX]\s*TSE'               # BLE/TSE、BLExTSE、BLE x TSE
+
+  # SEAL 密封面形式 - 需要匹配的关键词列表
+  SEAL:
+    - FF        # Flat Face 平面
+    # - RF      # Raised Face 凸面（暂不提取）
+    - RTJ       # Ring Type Joint 环连接面
+    - RJ
+    - FLRJ      # Flat Ring Joint 平面环连接面
+  
+  # CONN 连接方式 - 基于 pipe_code_mapping.yaml 中已有的关键词
+  CONN:
+    - SW
+    - THD
+    - NPT         # NPT螺纹
+  # MANU 工艺 - 基于 pipe_code_mapping.yaml 中已有的关键词
+  MANU:
+    keywords:
+      - ERW
+      - DSAW
+      - SAWL
+      - SAWH
+      - LSAW
+      - EFW
+      - WELDING
+      - WELDED
+      - WELD
+      - SMLS
+      - SEAMLESS
+    no_boundary:
+      - 插焊
+      - 承插焊    # 无边界匹配，可从"国标锻钢制承插焊"中提取
+    aliases:
+      承插焊: SW
+      插焊: SW
+      SEAMLESS: SMLS

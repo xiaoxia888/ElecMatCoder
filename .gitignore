@@ -1,0 +1,8 @@
+apps/platform/frontend/dist/
+apps/platform/frontend/node_modules/
+data/
+outputs/
+wheels/
+scripts/
+models/
+checkpoint/

@@ -1,0 +1,80 @@
+# Qwen3 / Qwen3.5 二阶段 DPO 微调配置
+#
+# 使用建议:
+# 1. 先完成一阶段 SFT，并得到 merged 模型
+# 2. 将下方 model.name_or_path / reference_name_or_path 改成你的 SFT merged 模型路径
+# 3. 准备 prompt/chosen/rejected 格式的偏好数据
+# 4. 运行:
+#    python -m apps.trainer.qwen3_finetune.train_dpo --config apps/trainer/qwen3_finetune/config_dpo.yaml
+#
+# 当前默认按以下环境设置:
+# - 24GB 显存的 40 系显卡
+# - 一阶段 SFT merged 模型路径通常为 outputs/qwen3_finetune/merged
+# - DPO 默认建议继续使用 4-bit QLoRA，显存更稳
+
+# === 模型 ===
+model:
+  # 默认指向一阶段 SFT merged 模型
+  # 如果你后续切到 qwen3_finetune_qwen3，可改为:
+  #   outputs/qwen3_finetune_qwen3/merged
+  name_or_path: "outputs/qwen3_finetune/merged"
+  reference_name_or_path: "outputs/qwen3_finetune/merged"
+  torch_dtype: "bfloat16"
+  attn_implementation: "flash_attention_2"
+  max_seq_length: 768
+
+# === LoRA ===
+lora:
+  r: 32
+  lora_alpha: 64
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  task_type: "CAUSAL_LM"
+  bias: "none"
+
+# === 数据 ===
+data:
+  # 先用示例数据验证链路，后续替换成正式 DPO 数据
+  train_file: "data/pipe/dpo_demo/train.jsonl"
+  val_file: "data/pipe/dpo_demo/val.jsonl"
+  use_chat_template: true
+  append_eos_token: true
+  # 留空时默认使用 src.llm_ner.predictor.SYSTEM_PROMPT
+  system_prompt: ""
+
+# === DPO 超参 ===
+dpo:
+  beta: 0.1
+  loss_type: "sigmoid"
+  max_prompt_length: 512
+  max_completion_length: 256
+
+# === 训练参数 ===
+training:
+  output_dir: "outputs/qwen3_dpo"
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 5.0e-6
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  logging_steps: 1
+  eval_steps: 10
+  save_steps: 10
+  save_total_limit: 2
+  eval_strategy: "steps"
+  bf16: true
+  gradient_checkpointing: true
+  dataloader_num_workers: 2
+  report_to: "none"
+  seed: 42
+  max_grad_norm: 1.0

@@ -1,0 +1,72 @@
+# Qwen3-4B LoRA/QLoRA 微调配置
+# Qwen3 使用标准 Transformer 架构 (Qwen3ForCausalLM)，LoRA 和 QLoRA 均完全支持
+# 与 Qwen3.5 的 DeltaNet 混合架构不同，Qwen3 对 4-bit 量化兼容良好
+#
+# 显存估算 (RTX 4080 24GB):
+#   QLoRA (4-bit): ~6-8GB  ← 显存充裕
+#   bf16 LoRA:     ~10GB   ← 与 Qwen3.5 公平对比时使用
+#
+# 用法:
+#   QLoRA:    python -m apps.trainer.qwen3_finetune.train --config apps/trainer/qwen3_finetune/config_qwen3.yaml
+#   bf16 LoRA: python -m apps.trainer.qwen3_finetune.train --config apps/trainer/qwen3_finetune/config_qwen3.yaml --no_quantize
+
+# === 模型 ===
+model:
+  name_or_path: "Qwen/Qwen3-4B"
+  torch_dtype: "bfloat16"
+  attn_implementation: "flash_attention_2"
+  max_seq_length: 768
+
+# === LoRA ===
+lora:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  task_type: "CAUSAL_LM"
+  bias: "none"
+
+# === 数据 ===
+data:
+  ner_source: "data/pipe/llm_lora/ner_data_new_schema.json"
+  encoding_source: "data/pipe/llm_lora/encoding_data.json"
+  train_file: "data/pipe/qwen3_mixed/train.jsonl"
+  val_file: "data/pipe/qwen3_mixed/val.jsonl"
+
+# === 训练参数 ===
+# 默认启用 QLoRA (4-bit 量化)，Qwen3 标准架构完全兼容
+# 公平对比 Qwen3.5 时加 --no_quantize 使用 bf16 LoRA
+training:
+  output_dir: "outputs/qwen3_finetune_qwen3"
+  num_train_epochs: 3
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 2
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  logging_steps: 10
+  eval_steps: 500
+  save_steps: 500
+  save_total_limit: 3
+  eval_strategy: "steps"
+  bf16: true
+  gradient_checkpointing: true
+  dataloader_num_workers: 4
+  report_to: "none"
+  seed: 42
+  max_grad_norm: 1.0
+  remove_unused_columns: false
+
+# === 导出 ===
+export:
+  merge_lora: true
+  output_dir: "outputs/qwen3_finetune_qwen3/merged"
