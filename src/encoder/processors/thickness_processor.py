@@ -55,7 +55,7 @@ class ThicknessProcessor:
         'XS_XS': 'XS/XS',
     }
 
-    def process(self, value: Any) -> str:
+    def process(self, value: Any, original_text: str = "") -> str:
         """
         处理壁厚值，返回标准编码
         
@@ -69,12 +69,12 @@ class ThicknessProcessor:
             return ""
 
         if isinstance(value, dict):
-            return self._process_structured(value)
+            return self._process_structured(value, original_text=original_text)
 
         if isinstance(value, list):
             merged_parts: List[str] = []
             for item in value:
-                normalized = self.process(item)
+                normalized = self.process(item, original_text=original_text)
                 if not normalized:
                     continue
                 for part in normalized.split('X'):
@@ -101,7 +101,7 @@ class ThicknessProcessor:
         # 4. 合并结果
         return self._merge_parts(converted)
 
-    def _process_structured(self, value: Dict[str, Any]) -> str:
+    def _process_structured(self, value: Dict[str, Any], original_text: str = "") -> str:
         parts: List[str] = []
 
         ordered_keys = [k for k in self.STRUCTURED_SUBTYPE_ORDER if k in value]
@@ -119,6 +119,7 @@ class ThicknessProcessor:
                 if normalized and normalized not in parts:
                     parts.append(normalized)
 
+        parts = self._reorder_parts_by_original_text(parts, original_text)
         return 'X'.join(parts)
 
     def _normalize_structured_part(self, subtype: str, item: Any) -> str:
@@ -132,6 +133,18 @@ class ThicknessProcessor:
             return ""
 
         if subtype == "MM":
+            # 兼容 LLM 子类型误标：如 MM: SCH20 / MM: STD。
+            # 这类值应走通用壁厚规则，不能强行转成 20MM。
+            upper = text.upper()
+            if (
+                "SCH" in upper
+                or upper in self.SPECIAL_VALUES
+                or re.search(r'(^|[^A-Z])\d+(?:\.\d+)?S($|[^A-Z])', upper)
+                or upper.startswith("S-")
+                or re.match(r'^S\d', upper)
+            ):
+                return self.process(text)
+
             match = re.search(r'(\d+(?:\.\d+)?)', text)
             if not match:
                 return ""
@@ -149,6 +162,73 @@ class ThicknessProcessor:
             return text.upper()
 
         return self.process(text)
+
+    def _reorder_parts_by_original_text(self, parts: List[str], original_text: str) -> List[str]:
+        """
+        按原始描述中的出现顺序重排壁厚片段。
+        匹配失败的片段保持原顺序并放在后面。
+        """
+        if not original_text or len(parts) <= 1:
+            return parts
+
+        indexed = []
+        for idx, part in enumerate(parts):
+            pos = self._find_part_pos_in_text(part, original_text)
+            indexed.append((idx, part, pos))
+
+        indexed.sort(key=lambda x: (x[2] < 0, x[2] if x[2] >= 0 else 10**9, x[0]))
+        return [item[1] for item in indexed]
+
+    def _find_part_pos_in_text(self, part: str, original_text: str) -> int:
+        if not part or not original_text:
+            return -1
+
+        text = original_text.upper()
+        p = part.strip().upper()
+
+        # 直接命中
+        direct = text.find(p)
+        if direct >= 0:
+            return direct
+
+        # 特殊值
+        if p in self.SPECIAL_VALUES:
+            for cand in (p, f"S{p}", f"S-{p}", f"SCH{p}", f"SCH {p}", f"SCH.{p}"):
+                pos = text.find(cand)
+                if pos >= 0:
+                    return pos
+            return -1
+
+        # S80 / S80S / S6.3
+        m_s = re.match(r'^S(\d+(?:\.\d+)?)(S?)$', p)
+        if m_s:
+            num = m_s.group(1)
+            tail = m_s.group(2)
+            candidates = [
+                f"SCH{num}{tail}",
+                f"SCH {num}{tail}",
+                f"SCH.{num}{tail}",
+                f"S-{num}{tail}",
+                f"S{num}{tail}",
+                f"{num}{tail}",
+            ]
+            for cand in candidates:
+                pos = text.find(cand)
+                if pos >= 0:
+                    return pos
+            return -1
+
+        # 10MM / 6.3MM
+        m_mm = re.match(r'^(\d+(?:\.\d+)?)MM$', p)
+        if m_mm:
+            num = m_mm.group(1)
+            for cand in (f"{num}MM", f"{num} MM", num):
+                pos = text.find(cand)
+                if pos >= 0:
+                    return pos
+            return -1
+
+        return -1
     
     def _preprocess(self, value: str) -> str:
         """

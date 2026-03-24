@@ -56,8 +56,8 @@ class LegacyPipeEncoder(PipeEncoderBase):
             candidates=[], display='', items=[]
         )
 
-    def _encode_thickness_value(self, value: Any) -> str:
-        return self.thickness_processor.process(value)
+    def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
+        return self.thickness_processor.process(value, original_text=original_text)
 
     def _process_single_value(self, field_type: str, value: str) -> dict:
         if not value:

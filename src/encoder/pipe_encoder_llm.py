@@ -189,8 +189,8 @@ class LlmPipeEncoder(PipeEncoderBase):
             candidates=[], display='', items=[]
         )
 
-    def _encode_thickness_value(self, value: Any) -> str:
-        normalized = self.thickness_processor.process(value)
+    def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
+        normalized = self.thickness_processor.process(value, original_text=original_text)
         if not normalized:
             return ""
         return self._encode_with_llm('THICKNESS', normalized) or normalized

@@ -198,7 +198,7 @@ class PipeEncoderBase:
     def _encode_size_multi(self, values: List[str]) -> FieldEncoding:
         raise NotImplementedError
 
-    def _encode_thickness_value(self, value: str) -> str:
+    def _encode_thickness_value(self, value: str, original_text: str = "") -> str:
         raise NotImplementedError
 
     def _process_single_value(self, field_type: str, value: str) -> dict:
@@ -1038,7 +1038,7 @@ class PipeEncoderBase:
 
     # ──────────────────── 多值字段处理（公共逻辑） ────────────────────
 
-    def _process_field_multi(self, field_type: str, values: List[str]) -> FieldEncoding:
+    def _process_field_multi(self, field_type: str, values: List[str], original_text: str = "") -> FieldEncoding:
         """处理多值字段"""
         if not values:
             return FieldEncoding(field_type=field_type)
@@ -1055,7 +1055,7 @@ class PipeEncoderBase:
         if field_type == 'THICKNESS' and any(not isinstance(v, str) for v in values):
             processed_results = []
             for v in values:
-                p = self._encode_thickness_value(v)
+                p = self._encode_thickness_value(v, original_text=original_text)
                 if p:
                     processed_results.append(p)
 
@@ -1082,7 +1082,7 @@ class PipeEncoderBase:
         if field_type == 'THICKNESS' and len(values) > 1:
             processed_results = []
             for v in values:
-                p = self._encode_thickness_value(v)
+                p = self._encode_thickness_value(v, original_text=original_text)
                 if p:
                     processed_results.append(p)
             
@@ -1092,7 +1092,7 @@ class PipeEncoderBase:
                 if r not in seen:
                     seen.add(r)
                     unique_results.append(r)
-            
+
             processed = 'X'.join(unique_results) if unique_results else ''
             
             return FieldEncoding(
@@ -1352,6 +1352,7 @@ class PipeEncoderBase:
         regex_value_code_map: Dict[str, Dict],
         result: PipeEncodingResult,
         type_combined_processed: bool,
+        original_text: str = "",
     ):
         """按字段顺序编码并写入结果对象。"""
         for field_type in self.FIELD_ORDER:
@@ -1416,7 +1417,7 @@ class PipeEncoderBase:
                 modifier_map = entities.get('_STANDARD_MODIFIER_MAP', {})
                 field_result = self._process_standard_multi(values, modifier_map)
             else:
-                field_result = self._process_field_multi(field_type, values)
+                field_result = self._process_field_multi(field_type, values, original_text=original_text)
 
             field_extract_conf = self._get_field_extract_confidence(field_type, extract_confidence)
             field_result.similarity = self._blend_extract_and_encode_conf(
@@ -1652,7 +1653,15 @@ class PipeEncoderBase:
         
         field_verified = self._validate_fields_against_text(entities, original_text)
 
-        self._encode_fields(entities, raw_entities_snapshot, extract_confidence, regex_value_code_map, result, type_combined_processed)
+        self._encode_fields(
+            entities,
+            raw_entities_snapshot,
+            extract_confidence,
+            regex_value_code_map,
+            result,
+            type_combined_processed,
+            original_text=original_text,
+        )
 
         self._apply_field_verification_penalty(result, field_verified)
         self._apply_review_rules(result)
