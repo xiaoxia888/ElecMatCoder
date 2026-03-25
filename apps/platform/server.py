@@ -603,6 +603,12 @@ def pipe_predict(request: PipePredictRequest):
             "entities": entities,
             "extract_confidence": extract_confidence,
             "type_class": result.get("type_class"),
+            "model_output_raw": result.get("model_output_raw", {}),
+            "model_output_hybrid": result.get("model_output_hybrid", result.get("model_output", {})),
+            "decision_log": result.get("decision_log", {}),
+            "need_review": bool(result.get("need_review")),
+            "review_fields": result.get("review_fields", []),
+            "review_reasons": result.get("review_reasons", []),
         }
     except Exception as e:
         logger.error(f"NER预测失败: {e}")
@@ -644,6 +650,12 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
                 "entities": entities,
                 "extract_confidence": extract_confidence,
                 "type_class": result.get("type_class"),
+                "model_output_raw": result.get("model_output_raw", {}),
+                "model_output_hybrid": result.get("model_output_hybrid", result.get("model_output", {})),
+                "decision_log": result.get("decision_log", {}),
+                "need_review": bool(result.get("need_review")),
+                "review_fields": result.get("review_fields", []),
+                "review_reasons": result.get("review_reasons", []),
             }
         except Exception as e:
             return {"success": False, "error": str(e)}

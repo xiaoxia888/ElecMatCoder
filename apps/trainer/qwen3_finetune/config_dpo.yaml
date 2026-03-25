@@ -41,9 +41,12 @@ lora:
 
 # === 数据 ===
 data:
-  # 先用示例数据验证链路，后续替换成正式 DPO 数据
-  train_file: "data/pipe/dpo_demo/train.jsonl"
-  val_file: "data/pipe/dpo_demo/val.jsonl"
+  # 若未指定 train_file / val_file，则自动从 preference_source 按比例切分
+  preference_source: "data/pipe/llm_lora/ner_slot_confusion_dpo.jsonl"
+  train_file: ""
+  val_file: ""
+  train_ratio: 0.9
+  split_seed: 42
   use_chat_template: true
   append_eos_token: true
   # 留空时默认使用 src.llm_ner.predictor.SYSTEM_PROMPT

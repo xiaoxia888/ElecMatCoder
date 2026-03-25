@@ -2,6 +2,8 @@
 文本预处理模块
 """
 
+import re
+
 
 class TextPreprocessor:
     """文本预处理器"""
@@ -42,6 +44,9 @@ class TextPreprocessor:
         '（': '(', '）': ')', '　': ' ',
     }
 
+    # 安全可替换的列表分隔符（不包含 "/"，避免破坏 304/316、GB/T 等语义）
+    SAFE_LIST_SEPARATORS = "，；、|｜"
+
     def __init__(self):
         pass
     
@@ -60,14 +65,22 @@ class TextPreprocessor:
         
         # 1. 去除首尾空格
         text = text.strip()
-        
-        
+
         # 2. 全角转半角
         text = self.full_to_half(text)
-        
+
         # 3. 统一罗马数字（半角转全角，匹配训练数据格式）
         text = self.normalize_roman_numerals(text)
-        
+
+        # 4. 标准化常见乘号（不改变 slash 语义）
+        text = self.normalize_multiplication(text)
+
+        # 5. 保守分隔符标准化（只处理安全分隔符）
+        text = self.normalize_safe_separators(text)
+
+        # 6. 空白压缩
+        text = self.normalize_whitespace(text)
+
         return text
     
     def full_to_half(self, text: str) -> str:
@@ -95,3 +108,25 @@ class TextPreprocessor:
                 result.append(char)
         return ''.join(result)
 
+    @staticmethod
+    def normalize_multiplication(text: str) -> str:
+        """统一乘号写法，便于后续尺寸/壁厚识别。"""
+        return text.replace('×', 'X').replace('*', 'X')
+
+    def normalize_safe_separators(self, text: str) -> str:
+        """
+        保守分隔符标准化。
+        只替换确定是“列表分隔”的符号为 ';'，保留 '/' 原样。
+        """
+        trans = str.maketrans({ch: ';' for ch in self.SAFE_LIST_SEPARATORS})
+        text = text.translate(trans)
+
+        # 合并重复分号，并去掉两侧多余空白
+        text = re.sub(r'\s*;\s*', ';', text)
+        text = re.sub(r';{2,}', ';', text)
+        return text.strip(';')
+
+    @staticmethod
+    def normalize_whitespace(text: str) -> str:
+        """压缩空白字符，保留单个空格。"""
+        return re.sub(r'\s+', ' ', text).strip()

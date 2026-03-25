@@ -26,8 +26,10 @@ Qwen3/Qwen3.5 二阶段 DPO 训练脚本
 """
 
 import argparse
+import inspect
 import json
 import logging
+import random
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -66,6 +68,13 @@ def _resolve_path(path_str: str) -> Path:
     return path if path.is_absolute() else PROJECT_ROOT / path
 
 
+def _normalize_optional_path(value) -> str:
+    if value is None:
+        return ""
+    text = str(value).strip()
+    return text
+
+
 def _resolve_model_name_or_path(value: str) -> str:
     """
     兼容两类输入:
@@ -81,6 +90,24 @@ def _resolve_model_name_or_path(value: str) -> str:
     if candidate.exists():
         return str(candidate)
     return value
+
+
+def _filter_supported_kwargs(callable_obj, kwargs: dict) -> tuple[dict, dict]:
+    """按目标可调用对象签名过滤 kwargs，返回 (supported, unsupported)。"""
+    try:
+        sig = inspect.signature(callable_obj)
+        supported_names = set(sig.parameters.keys())
+    except (TypeError, ValueError):
+        return dict(kwargs), {}
+
+    supported = {}
+    unsupported = {}
+    for key, value in kwargs.items():
+        if key in supported_names:
+            supported[key] = value
+        else:
+            unsupported[key] = value
+    return supported, unsupported
 
 
 def _json_to_text(value, append_eos_token: bool, eos_token: str | None) -> str:
@@ -172,6 +199,77 @@ def load_preference_dataset(
 
     logger.info(f"加载 {len(rows)} 条偏好样本: {file_path}")
     return Dataset.from_list(rows)
+
+
+def _load_raw_preference_rows(file_path: Path) -> list[dict]:
+    rows = []
+    with open(file_path, "r", encoding="utf-8") as f:
+        if file_path.suffix.lower() == ".json":
+            payload = json.load(f)
+            if not isinstance(payload, list):
+                raise ValueError(f"{file_path} 应为数组 JSON")
+            rows.extend(payload)
+        else:
+            for line_num, line in enumerate(f, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rows.append(json.loads(line))
+                except json.JSONDecodeError as exc:
+                    raise ValueError(f"{file_path} 第 {line_num} 行 JSON 解析失败: {exc}") from exc
+    return rows
+
+
+def _write_jsonl_rows(file_path: Path, rows: list[dict]) -> None:
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(file_path, "w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def prepare_preference_split(data_cfg: dict, run_dir: Path) -> tuple[Path, Path]:
+    train_file = _normalize_optional_path(data_cfg.get("train_file"))
+    val_file = _normalize_optional_path(data_cfg.get("val_file"))
+
+    if train_file:
+        train_path = _resolve_path(train_file)
+        val_path = _resolve_path(val_file) if val_file else run_dir / "auto_val.jsonl"
+        return train_path, val_path
+
+    preference_source = _normalize_optional_path(data_cfg.get("preference_source"))
+    if not preference_source:
+        raise ValueError("DPO 配置缺少 train_file，且未提供 preference_source")
+
+    source_path = _resolve_path(preference_source)
+    if not source_path.exists():
+        raise FileNotFoundError(f"DPO 偏好源文件不存在: {source_path}")
+
+    rows = _load_raw_preference_rows(source_path)
+    if len(rows) < 2:
+        raise ValueError(f"DPO 偏好源文件样本过少: {source_path}")
+
+    train_ratio = float(data_cfg.get("train_ratio", 0.9))
+    train_ratio = max(0.5, min(0.99, train_ratio))
+    seed = int(data_cfg.get("split_seed", 42))
+
+    shuffled = list(rows)
+    random.Random(seed).shuffle(shuffled)
+
+    split_idx = int(len(shuffled) * train_ratio)
+    split_idx = max(1, min(len(shuffled) - 1, split_idx))
+    train_rows = shuffled[:split_idx]
+    val_rows = shuffled[split_idx:]
+
+    train_path = run_dir / "auto_train.jsonl"
+    val_path = run_dir / "auto_val.jsonl"
+    _write_jsonl_rows(train_path, train_rows)
+    _write_jsonl_rows(val_path, val_rows)
+
+    logger.info(f"未指定 train/val，已从 {source_path} 自动切分偏好数据")
+    logger.info(f"  train: {train_path} ({len(train_rows)} 条)")
+    logger.info(f"  val:   {val_path} ({len(val_rows)} 条)")
+    return train_path, val_path
 
 
 def build_model_kwargs(model_cfg: dict, use_quantize: bool) -> dict:
@@ -297,8 +395,7 @@ def main():
     for p in ref_model.parameters():
         p.requires_grad = False
 
-    train_path = _resolve_path(data_cfg["train_file"])
-    val_path = _resolve_path(data_cfg["val_file"])
+    train_path, val_path = prepare_preference_split(data_cfg, run_dir)
     if not train_path.exists():
         logger.error(f"DPO 训练数据不存在: {train_path}")
         logger.error("请先准备偏好数据，或使用 data/pipe/dpo_demo/ 下的示例数据")
@@ -329,44 +426,54 @@ def main():
     logger.info(f"样本 chosen 前 180 字符: {sample['chosen'][:180]}")
     logger.info(f"样本 rejected 前 180 字符: {sample['rejected'][:180]}")
 
-    dpo_args = DPOConfig(
-        output_dir=str(run_dir),
-        num_train_epochs=train_cfg["num_train_epochs"],
-        per_device_train_batch_size=train_cfg["per_device_train_batch_size"],
-        per_device_eval_batch_size=train_cfg.get("per_device_eval_batch_size", 2),
-        gradient_accumulation_steps=train_cfg["gradient_accumulation_steps"],
-        learning_rate=train_cfg["learning_rate"],
-        weight_decay=train_cfg.get("weight_decay", 0.01),
-        warmup_ratio=train_cfg.get("warmup_ratio", 0.05),
-        lr_scheduler_type=train_cfg.get("lr_scheduler_type", "cosine"),
-        logging_steps=train_cfg.get("logging_steps", 10),
-        eval_steps=train_cfg.get("eval_steps", 100),
-        save_steps=train_cfg.get("save_steps", 100),
-        save_total_limit=train_cfg.get("save_total_limit", 3),
-        eval_strategy=train_cfg.get("eval_strategy", "steps") if eval_dataset else "no",
-        bf16=train_cfg.get("bf16", True),
-        gradient_checkpointing=train_cfg.get("gradient_checkpointing", True),
-        gradient_checkpointing_kwargs={"use_reentrant": False},
-        dataloader_num_workers=train_cfg.get("dataloader_num_workers", 2),
-        report_to=train_cfg.get("report_to", "none"),
-        seed=train_cfg.get("seed", 42),
-        max_grad_norm=train_cfg.get("max_grad_norm", 1.0),
-        remove_unused_columns=False,
-        beta=dpo_cfg.get("beta", 0.1),
-        loss_type=dpo_cfg.get("loss_type", "sigmoid"),
-        max_length=model_cfg.get("max_seq_length", 768),
-        max_prompt_length=dpo_cfg.get("max_prompt_length", 512),
-        max_completion_length=dpo_cfg.get("max_completion_length", 256),
-    )
+    dpo_arg_candidates = {
+        "output_dir": str(run_dir),
+        "num_train_epochs": train_cfg["num_train_epochs"],
+        "per_device_train_batch_size": train_cfg["per_device_train_batch_size"],
+        "per_device_eval_batch_size": train_cfg.get("per_device_eval_batch_size", 2),
+        "gradient_accumulation_steps": train_cfg["gradient_accumulation_steps"],
+        "learning_rate": train_cfg["learning_rate"],
+        "weight_decay": train_cfg.get("weight_decay", 0.01),
+        "warmup_ratio": train_cfg.get("warmup_ratio", 0.05),
+        "lr_scheduler_type": train_cfg.get("lr_scheduler_type", "cosine"),
+        "logging_steps": train_cfg.get("logging_steps", 10),
+        "eval_steps": train_cfg.get("eval_steps", 100),
+        "save_steps": train_cfg.get("save_steps", 100),
+        "save_total_limit": train_cfg.get("save_total_limit", 3),
+        "eval_strategy": train_cfg.get("eval_strategy", "steps") if eval_dataset else "no",
+        "bf16": train_cfg.get("bf16", True),
+        "gradient_checkpointing": train_cfg.get("gradient_checkpointing", True),
+        "gradient_checkpointing_kwargs": {"use_reentrant": False},
+        "dataloader_num_workers": train_cfg.get("dataloader_num_workers", 2),
+        "report_to": train_cfg.get("report_to", "none"),
+        "seed": train_cfg.get("seed", 42),
+        "max_grad_norm": train_cfg.get("max_grad_norm", 1.0),
+        "remove_unused_columns": False,
+        "beta": dpo_cfg.get("beta", 0.1),
+        "loss_type": dpo_cfg.get("loss_type", "sigmoid"),
+        "max_length": model_cfg.get("max_seq_length", 768),
+        "max_prompt_length": dpo_cfg.get("max_prompt_length", 512),
+        "max_completion_length": dpo_cfg.get("max_completion_length", 256),
+    }
+    supported_dpo_args, unsupported_dpo_args = _filter_supported_kwargs(DPOConfig.__init__, dpo_arg_candidates)
+    if unsupported_dpo_args:
+        logger.info(f"DPOConfig 不支持这些参数，稍后尝试传给 DPOTrainer: {sorted(unsupported_dpo_args.keys())}")
+    dpo_args = DPOConfig(**supported_dpo_args)
 
-    trainer = DPOTrainer(
-        model=model,
-        ref_model=ref_model,
-        args=dpo_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        processing_class=tokenizer,
-    )
+    trainer_candidates = {
+        "model": model,
+        "ref_model": ref_model,
+        "args": dpo_args,
+        "train_dataset": train_dataset,
+        "eval_dataset": eval_dataset,
+        "processing_class": tokenizer,
+        **unsupported_dpo_args,
+    }
+    supported_trainer_args, still_unsupported = _filter_supported_kwargs(DPOTrainer.__init__, trainer_candidates)
+    if still_unsupported:
+        logger.warning(f"当前 DPOTrainer 也不支持这些参数，将忽略: {sorted(still_unsupported.keys())}")
+
+    trainer = DPOTrainer(**supported_trainer_args)
 
     logger.info("=" * 60)
     logger.info("开始 DPO 训练")

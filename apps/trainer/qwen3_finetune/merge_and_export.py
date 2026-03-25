@@ -36,6 +36,21 @@ logger = logging.getLogger(__name__)
 from src.llm_ner.predictor import SYSTEM_PROMPT
 
 
+def _resolve_local_model_path(value: str) -> str:
+    """仅解析当前机器上真实存在的本地路径；不对跨环境绝对路径做隐式映射。"""
+    if not value:
+        return value
+
+    path = Path(value)
+    if path.is_absolute():
+        return str(path)
+
+    candidate = PROJECT_ROOT / value
+    if candidate.exists():
+        return str(candidate)
+    return value
+
+
 def _prepare_tokenizer_source(adapter_path: Path) -> Path:
     """
     兼容旧版 tokenizer_config.json：
@@ -75,22 +90,36 @@ def _prepare_tokenizer_source(adapter_path: Path) -> Path:
     return temp_dir
 
 
-def merge_lora(adapter_path: Path, output_dir: Path):
+def merge_lora(adapter_path: Path, output_dir: Path, base_model_override: str | None = None):
     """合并 LoRA 权重到基座模型"""
-    adapter_config_path = adapter_path / "adapter_config.json"
-    if adapter_config_path.exists():
-        with open(adapter_config_path, "r") as f:
-            adapter_cfg = json.load(f)
-        base_model_name = adapter_cfg.get("base_model_name_or_path", "Qwen/Qwen3-4B")
+    if base_model_override:
+        base_model_name = base_model_override
     else:
-        base_model_name = "Qwen/Qwen3-4B"
+        adapter_config_path = adapter_path / "adapter_config.json"
+        if adapter_config_path.exists():
+            with open(adapter_config_path, "r") as f:
+                adapter_cfg = json.load(f)
+            base_model_name = adapter_cfg.get("base_model_name_or_path", "Qwen/Qwen3-4B")
+        else:
+            base_model_name = "Qwen/Qwen3-4B"
 
-    logger.info(f"基座模型: {base_model_name}")
+    resolved_base_model_name = _resolve_local_model_path(base_model_name)
+
+    logger.info(f"基座模型: {resolved_base_model_name}")
     logger.info(f"LoRA adapter: {adapter_path}")
+
+    base_path = Path(resolved_base_model_name)
+    if base_path.is_absolute() and not base_path.exists():
+        raise FileNotFoundError(
+            "adapter_config.json 中记录的基座模型路径在当前机器不存在："
+            f"{resolved_base_model_name}\n"
+            "这通常是因为训练和合并发生在不同环境（如云端 /workspace 与本地工作区）。\n"
+            "请使用 --base_model_path 显式指定当前机器上的基座模型目录。"
+        )
 
     logger.info("加载基座模型...")
     base_model = AutoModelForCausalLM.from_pretrained(
-        base_model_name,
+        resolved_base_model_name,
         torch_dtype=torch.float16,
         device_map="cpu",
         trust_remote_code=True,
@@ -177,6 +206,8 @@ def main():
     parser.add_argument("--adapter_path", type=str, required=True,
                         help="LoRA adapter 路径")
     parser.add_argument("--output_dir", type=str, default="outputs/qwen3_finetune/merged")
+    parser.add_argument("--base_model_path", type=str, default="",
+                        help="可选：手动指定基座模型路径，优先级高于 adapter_config.json")
     parser.add_argument("--no_modelfile", action="store_true",
                         help="不创建 Ollama Modelfile（默认会创建）")
     parser.add_argument("--quantize", type=str, default="Q4_K_M")
@@ -189,7 +220,11 @@ def main():
     if not output_dir.is_absolute():
         output_dir = PROJECT_ROOT / output_dir
 
-    merged_dir = merge_lora(adapter_path, output_dir)
+    merged_dir = merge_lora(
+        adapter_path,
+        output_dir,
+        base_model_override=args.base_model_path.strip() or None,
+    )
 
     if not args.no_modelfile:
         gguf_name = f"model-{args.quantize.lower().replace('_', '')}.gguf"

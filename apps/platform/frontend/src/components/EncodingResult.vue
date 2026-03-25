@@ -114,6 +114,13 @@
         {{ warn }}
       </div>
     </div>
+
+    <!-- Hybrid 调试信息 -->
+    <div v-if="hasHybridDebug" class="hybrid-debug-section">
+      <div class="hybrid-debug-title">Hybrid 调试信息</div>
+      <div class="hybrid-debug-label">模型原始输出 / Hybrid输出 / 决策日志</div>
+      <pre class="hybrid-debug-json" @wheel.stop>{{ formatJson(hybridDebugPayload) }}</pre>
+    </div>
   </div>
 </template>
 
@@ -182,6 +189,16 @@ const hasCorrection = computed(() => {
   })
 })
 
+const hasHybridDebug = computed(() => {
+  const d = props.result?.hybrid_debug
+  return !!(d && (d.model_output_raw || d.model_output_hybrid || d.decision_log))
+})
+const hybridDebugPayload = computed(() => ({
+  model_output_raw: props.result?.hybrid_debug?.model_output_raw || {},
+  model_output_hybrid: props.result?.hybrid_debug?.model_output_hybrid || {},
+  decision_log: props.result?.hybrid_debug?.decision_log || {}
+}))
+
 function getTypeClass(type) {
   const map = {
     TYPE: 'type-blue',
@@ -226,6 +243,14 @@ function safeParseJson(value) {
     return JSON.parse(text)
   } catch {
     return value
+  }
+}
+
+function formatJson(value) {
+  try {
+    return JSON.stringify(value || {}, null, 2)
+  } catch {
+    return '{}'
   }
 }
 
@@ -605,5 +630,44 @@ function emitEditField(type, index = null) {
   font-size: 11px;
   color: #8b5a00;
   padding: 2px 0;
+}
+
+.hybrid-debug-section {
+  margin-top: 10px;
+  border-top: 1px dashed var(--border-light);
+  padding: 10px 16px 14px;
+  background: #fafbfc;
+}
+
+.hybrid-debug-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.hybrid-debug-label {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.hybrid-debug-json {
+  margin: 0;
+  padding: 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  overflow-x: auto;
+  max-height: 520px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 </style>

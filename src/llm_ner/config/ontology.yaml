@@ -1,0 +1,128 @@
+schema_version: 2
+description: >
+  管道描述抽取知识库（规则层）。
+  规则仅用于“校验与告警”，不直接改写模型结果。
+
+fields:
+  TYPE:
+    note: "TYPE.BODY 不走规则，仅校验 MANU/ENDS/SEAL/CONN。"
+    subtypes:
+      MANU:
+        rules:
+          - id: manu_keywords
+            canonical_from_match: true
+            pattern: "(?<![A-Z0-9])(ERW|DSAW|SAWL|SAWH|LSAW|EFW|WELDING|WELDED|WELD|FORGE|FORGED)(?![A-Z0-9])"
+      ENDS:
+        rules:
+          - id: ends_keywords
+            canonical_from_match: true
+            pattern: "(?<![A-Z0-9])(SO|FNPT|MNPT|NPTF|NPTM|FTE|MTE)(?![A-Z0-9])"
+          - id: ends_ble_tse_mnpt
+            canonical_from_match: true
+            pattern: "BLE\\s*[/xX]\\s*TSE\\s*\\(MNPT\\)"
+          - id: ends_ble_tse_npt
+            canonical_from_match: true
+            pattern: "BLE\\s*[/xX]\\s*TSE\\s*\\(NPT\\)"
+          - id: ends_ble_tse
+            canonical_from_match: true
+            pattern: "BLE\\s*[/xX]\\s*TSE"
+      SEAL:
+        rules:
+          - id: seal_keywords
+            canonical_from_match: true
+            pattern: "(?<![A-Z0-9])(FF|RTJ|RJ|FLRJ)(?![A-Z0-9])"
+      CONN:
+        rules:
+          - id: conn_keywords
+            canonical_from_match: true
+            pattern: "(?<![A-Z0-9])(SW|THD|NPT)(?![A-Z0-9])"
+          - id: conn_alias_sw
+            canonical: "SW"
+            pattern: "(承插焊|插焊)"
+
+  SIZE:
+    subtypes:
+      DN:
+        rules:
+          - id: dn_basic
+            canonical_from_match: true
+            pattern: "DN\\s*-?\\s*\\d+(?:\\.\\d+)?(?=$|[^0-9.])"
+      OD:
+        rules:
+          - id: od_phi
+            pattern: "(?:\\bOD\\s*=\\s*|[Φφ])\\s*\\d+(?:\\.\\d+)?(?:\\s*MM)?(?=$|\\s|[,;，、/xX×*])"
+          - id: od_from_pair_decimal_left
+            canonical_from_match: true
+            pattern: "\\b(\\d+\\.\\d+)\\s*[xX×*]\\s*\\d+(?:\\.\\d+)?(?:\\s*MM)?\\b"
+      INCH:
+        rules:
+          - id: inch_quote
+            canonical_from_match: true
+            pattern: "(?<![\\d/\\-.])\\d+(?:\\.\\d+)?(?:-\\d+/\\d+|\\s+\\d+/\\d+|/\\d+)?\\s*[\"″”]"
+      LENGTH:
+        rules:
+          - id: length_basic
+            canonical_from_match: true
+            pattern: "\\b(?:L|LEN|LENGTH)\\s*=\\s*\\d+(?:\\.\\d+)?(?:\\s*(?:MM|CM|M))?(?=$|[^0-9A-Z.])"
+    ambiguity:
+      dnxn:
+        pattern: "\\bDN\\s*-?\\s*(\\d+(?:\\.\\d+)?)\\s*[X×*]\\s*(\\d+(?:\\.\\d+)?)\\b"
+        small_integer_threshold: 20
+
+  THICKNESS:
+    normalization:
+      series_tokens:
+        - STD
+        - XS
+        - XXS
+    subtypes:
+      SCHEDULE:
+        rules:
+          - id: sch_family
+            pattern: "SCH[.\\s]*(XXS|XS|STD|\\d+(?:\\.\\d+)?S?)"
+          - id: s_dash_family
+            pattern: "S-(XXS|XS|STD|\\d+(?:\\.\\d+)?S?)"
+          - id: s_plain_concat
+            pattern: "(?<![A-Z0-9])S\\d{1,3}(?:\\.\\d+)?S?(?=X|$|[^A-Z0-9])"
+      SERIES:
+        rules:
+          - id: series_token
+            canonical_from_match: true
+            pattern: "\\b(XXS|XS|STD)\\b"
+          - id: series_tail_concat
+            canonical_from_match: true
+            pattern: "(?<=\\d)(XXS|XS|STD)(?!-\\d)(?=$|[^A-Z0-9])"
+      MM:
+        rules:
+          - id: mm_prefixed
+            pattern: "\\b(?:T|THK)\\s*=\\s*\\d+(?:\\.\\d+)?(?:\\s*[xX×*]\\s*\\d+(?:\\.\\d+)?)*(?:\\s*MM)?\\b"
+          - id: mm_from_odxthk
+            canonical_from_match: true
+            pattern: "(?:[Φφ]?\\d+(?:\\.\\d+)?)\\s*[xX×*]\\s*(\\d+(?:\\.\\d+))(?:\\s*MM)?\\b"
+          - id: mm_plain
+            canonical_from_match: true
+            pattern: "(?<![\\d.])\\d+(?:\\.\\d+)?\\s*MM\\b"
+      INCH:
+        rules:
+          - id: inch_quote
+            canonical_from_match: true
+            pattern: "(?<![\\d/\\-.])\\d+(?:\\.\\d+)?(?:-\\d+/\\d+|\\s+\\d+/\\d+|/\\d+)?\\s*[\"″”]"
+      BWG:
+        rules:
+          - id: bwg_plain
+            canonical_from_match: true
+            pattern: "\\b\\d+\\s*BWG\\b"
+
+  MATERIAL:
+    special_requirements:
+      rules:
+        - id: anti_sour_service
+          semantic: "ANTI_SOUR_SERVICE"
+          value: "抗硫"
+          patterns:
+            - "\\bANTT[\\s\\-_/]*SCC\\b"
+            - "\\bNACE(?:\\s*MR)?\\s*0?175\\b"
+            - "\\bNACE\\b"
+            - "\\bMR[\\s\\-_/]*0175\\b"
+            - "\\bANTI[\\s\\-_/]*H2S\\b"
+            - "抗硫"

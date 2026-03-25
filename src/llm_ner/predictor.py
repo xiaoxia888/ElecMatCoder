@@ -12,10 +12,21 @@ import json
 import logging
 import re
 import time
+import copy
 import requests
 import math
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
+
+from .rule_extractors import (
+    canonicalize_size_token,
+    canonicalize_thickness_token,
+    extract_dnxn_ambiguity_rules,
+    extract_material_special_req_rules,
+    extract_size_rules,
+    extract_thickness_rules,
+    extract_type_rules,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +44,12 @@ SYSTEM_PROMPT = (
     "SIZE 使用对象结构 {\"DN\":[],\"OD\":[],\"INCH\":[],\"LENGTH\":[]}；"
     "SIZE.LENGTH 只提取原文中明确出现的长度表达，按原样保留，如 L=300mm、L=100、Length=200mm；"
     "THICKNESS 使用对象结构 {\"MM\":[],\"INCH\":[],\"SCHEDULE\":[],\"SERIES\":[],\"BWG\":[]}；"
+    "THICKNESS 是必须重点检查的字段：凡是原文中明确出现的壁厚表达，不能因为同时存在 SIZE、PRESSURE、MATERIAL、STANDARD、TYPE 就省略；"
+    "常见壁厚表达如 SCH/Sch/SCH. + 数字或数字+S、10S、20S、40S、80S、XS、XXS、STD，应优先提取到 THICKNESS；"
+    "其中 SCH/Sch/SCH. + 数字或数字+S 优先放入 THICKNESS.SCHEDULE；XS、XXS、STD 优先放入 THICKNESS.SERIES；"
+    "这些壁厚 token 即使独立出现、没有紧跟在 SIZE 后面，也仍然属于 THICKNESS；"
+    "如果遇到复合壁厚表达，应整体优先判断为 THICKNESS，不要把其中片段错误放入 TYPE、ENDS、CONN、MANU；拆分时优先保留原文可对应的表面形式。"
+    "要区分 MATERIAL 与 THICKNESS：20、20#、A105、316L 这类材质表达不是 THICKNESS，不要把材质数字误放入 THICKNESS；"
     "MATERIAL 使用对象结构 {\"RELATION\":\"single|alternative\",\"ITEMS\":[{\"EXEC_STANDARD\":\"\",\"MATERIAL_GRADE_CODE\":\"\",\"SPECIAL_REQ\":[]}]}；"
     "MATERIAL 中各字段按当前标注规范抽取，优先保留原文表面形式；"
     "PRESSURE 保持原样提取的单字符串，不做结构化。"
@@ -198,19 +215,61 @@ class Qwen3Predictor:
             }
 
         start_time = time.perf_counter()
-        extracted = self._extract(text)
+        extracted_raw = self._extract(text)
         elapsed = time.perf_counter() - start_time
         logger.debug(f"[Qwen3预测器] 推理耗时: {elapsed:.2f}s")
 
-        if extracted.get("_parse_error"):
-            logger.warning(f"[Qwen3预测器] JSON解析失败: {extracted.get('_raw', '')[:200]}")
+        if extracted_raw.get("_parse_error"):
+            logger.warning(f"[Qwen3预测器] JSON解析失败: {extracted_raw.get('_raw', '')[:200]}")
             return self._fallback_result(text)
 
-        model_conf = extracted.get("_model_confidence")
+        model_conf = extracted_raw.get("_model_confidence")
         if model_conf is None:
             raise RuntimeError("模型未返回 logprobs，无法计算置信度（严格模式）")
+
+        # 双轨输出：保留模型原始输出，再在副本上执行 Hybrid 后处理
+        extracted = copy.deepcopy(extracted_raw)
+
+        # Hybrid 后处理：规则抽取 + canonical 对齐（当前仅 THICKNESS）。
+        self._apply_type_rule_reconciliation(text, extracted)
+        self._apply_size_structural_correction(text, extracted)
+        self._apply_size_rule_reconciliation(text, extracted)
+        self._apply_dnxn_ambiguity_reconciliation(text, extracted)
+        self._apply_thickness_structural_correction(text, extracted)
+        self._apply_thickness_rule_reconciliation(text, extracted)
+        self._apply_material_rule_reconciliation(text, extracted)
+
         default_conf = float(model_conf)
-        field_confidence = {}
+        field_confidence: Dict[str, float] = {}
+        review_fields: List[str] = []
+        review_reasons: List[str] = []
+        rule_alerts = extracted.get("_rule_alerts", [])
+        if isinstance(rule_alerts, list) and rule_alerts:
+            # 规则告警意味着模型输出与高精度规则存在差异，标记待审并下调字段置信度。
+            if any(p.get("field") == "THICKNESS" for p in rule_alerts if isinstance(p, dict)):
+                field_confidence["THICKNESS"] = min(default_conf, 0.78)
+                review_fields.append("THICKNESS")
+                review_reasons.append("THICKNESS 与规则识别结果不一致，建议人工复核。")
+            if any(p.get("field") == "TYPE" for p in rule_alerts if isinstance(p, dict)):
+                field_confidence["TYPE"] = min(default_conf, 0.80)
+                review_fields.append("TYPE")
+                review_reasons.append("TYPE 子字段与规则识别结果不一致，建议人工复核。")
+            if any(p.get("field") == "SIZE" for p in rule_alerts if isinstance(p, dict)):
+                field_confidence["SIZE"] = min(default_conf, 0.80)
+                review_fields.append("SIZE")
+                review_reasons.append("SIZE 与规则识别结果不一致，建议人工复核。")
+            if any(p.get("field") == "MATERIAL" for p in rule_alerts if isinstance(p, dict)):
+                field_confidence["MATERIAL"] = min(default_conf, 0.80)
+                review_fields.append("MATERIAL")
+                review_reasons.append("MATERIAL 特殊要求与规则识别结果不一致，建议人工复核。")
+            if any(p.get("reason") in {"dn_x_decimal", "dn_x_small_integer", "dn_x_large_integer"}
+                   for p in rule_alerts if isinstance(p, dict)):
+                # DNx数字是结构歧义，统一降 SIZE 置信度并提示审核
+                field_confidence["SIZE"] = min(field_confidence.get("SIZE", default_conf), 0.75)
+                if "SIZE" not in review_fields:
+                    review_fields.append("SIZE")
+                review_reasons.append("命中 DNx数字 歧义模式，需人工确认第二段是尺寸还是壁厚。")
+
         tokens = self._build_tokens(
             text, extracted,
             default_confidence=default_conf,
@@ -229,8 +288,543 @@ class Qwen3Predictor:
             "entities": entities,
             "type_class": type_class,
             "model_output": extracted,
+            "model_output_raw": extracted_raw,
+            "model_output_hybrid": extracted,
+            "decision_log": {
+                "rule_fixes": extracted.get("_rule_fixes", []),
+                "rule_alerts": extracted.get("_rule_alerts", []),
+            },
             "model_raw_response": extracted.get("_raw", ""),
+            "need_review": bool(review_fields),
+            "review_fields": review_fields,
+            "review_reasons": review_reasons,
         }
+
+    @staticmethod
+    def _collect_model_type_canonicals(extracted: Dict[str, Any]) -> set:
+        """
+        收集 TYPE 子字段值（仅 MANU/ENDS/SEAL/CONN）。
+        """
+        t = extracted.get("TYPE")
+        if not isinstance(t, dict):
+            return set()
+        allowed = {"MANU", "ENDS", "SEAL", "CONN"}
+        result = set()
+        for subtype, vals in t.items():
+            st = str(subtype).upper()
+            if st not in allowed:
+                continue
+            if vals in (None, "", []):
+                continue
+            if not isinstance(vals, list):
+                vals = [vals]
+            for v in vals:
+                s = str(v).strip().upper()
+                if s:
+                    result.add((st, s))
+        return result
+
+    def _apply_type_rule_reconciliation(self, text: str, extracted: Dict[str, Any]):
+        """
+        TYPE 子字段规则校验：仅 MANU/ENDS/SEAL/CONN，BODY 不参与规则。
+        当前策略：仅告警，不自动补位。
+        """
+        if not isinstance(extracted, dict):
+            return
+        rule_hits = extract_type_rules(text)
+        if not rule_hits:
+            return
+
+        model_vals = self._collect_model_type_canonicals(extracted)
+        alerts: List[Dict[str, str]] = []
+        for h in rule_hits:
+            st = str(h.get("subtype") or "").upper()
+            cv = str(h.get("canonical") or "").upper()
+            if not st or not cv:
+                continue
+            if (st, cv) not in model_vals:
+                alerts.append(
+                    {
+                        "field": "TYPE",
+                        "reason": "rule_missing_in_model",
+                        "subtype": st,
+                        "canonical": cv,
+                        "raw": h.get("raw", ""),
+                        "rule_id": str(h.get("rule_id") or ""),
+                        "source": str(h.get("source") or ""),
+                    }
+                )
+
+        if alerts:
+            extracted["_rule_alerts"] = extracted.get("_rule_alerts", []) + alerts
+            logger.info(f"[Qwen3预测器] TYPE规则告警: {alerts}")
+
+    @staticmethod
+    def _collect_model_size_canonicals(extracted: Dict[str, Any]) -> set:
+        size = extracted.get("SIZE")
+        if not isinstance(size, dict):
+            return set()
+        result = set()
+        for subtype, vals in size.items():
+            if vals in (None, "", []):
+                continue
+            if not isinstance(vals, list):
+                vals = [vals]
+            for v in vals:
+                c = canonicalize_size_token(str(v).strip(), subtype=str(subtype).upper())
+                if c:
+                    result.add((str(subtype).upper(), c))
+        return result
+
+    @staticmethod
+    def _is_size_value_legal(subtype: str, canonical: str) -> bool:
+        st = str(subtype or "").upper()
+        cv = str(canonical or "").upper().replace(" ", "")
+        if not st or not cv:
+            return False
+        if st == "DN":
+            return bool(re.match(r"^DN\d+(?:\.\d+)?$", cv))
+        if st == "OD":
+            return bool(re.match(r"^OD\d+(?:\.\d+)?(?:MM)?$", cv))
+        if st == "INCH":
+            return bool(re.match(r"^\d+(?:\.\d+)?(?:-\d+/\d+|\s+\d+/\d+|/\d+)?(?:\"|”|″)?$", cv))
+        if st == "LENGTH":
+            return bool(re.match(r"^L=\d+(?:\.\d+)?(?:MM|CM|M)?$", cv))
+        return True
+
+    def _apply_size_structural_correction(self, text: str, extracted: Dict[str, Any]):
+        """
+        SIZE 结构纠错：
+        - 统一 canonical；
+        - 过滤明显非法值（仅非法才丢弃）；
+        - 不做低置信推断补位。
+        """
+        if not isinstance(extracted, dict):
+            return
+        size = extracted.get("SIZE")
+        if not isinstance(size, dict):
+            return
+
+        fixes: List[Dict[str, str]] = []
+        allowed_subtypes = {"DN", "OD", "INCH", "LENGTH"}
+        normalized_size: Dict[str, Any] = {}
+
+        for subtype, vals in size.items():
+            st = str(subtype or "").upper()
+            if st not in allowed_subtypes:
+                continue
+            if vals in (None, "", []):
+                continue
+            if not isinstance(vals, list):
+                vals = [vals]
+
+            out_vals: List[str] = []
+            for v in vals:
+                raw = str(v).strip()
+                if not raw:
+                    continue
+                cv = canonicalize_size_token(raw, subtype=st)
+                if not cv or not self._is_size_value_legal(st, cv):
+                    fixes.append(
+                        {
+                            "field": "SIZE",
+                            "action": "drop_illegal_size_value",
+                            "subtype": st,
+                            "from": raw,
+                            "canonical": cv,
+                        }
+                    )
+                    continue
+                if cv not in out_vals:
+                    out_vals.append(cv)
+                    if cv != raw:
+                        fixes.append(
+                            {
+                                "field": "SIZE",
+                                "action": "normalize_size_value",
+                                "subtype": st,
+                                "from": raw,
+                                "to": cv,
+                            }
+                        )
+
+            if out_vals:
+                normalized_size[st] = out_vals
+
+        extracted["SIZE"] = normalized_size
+        if fixes:
+            extracted["_rule_fixes"] = extracted.get("_rule_fixes", []) + fixes
+
+    def _apply_size_rule_reconciliation(self, text: str, extracted: Dict[str, Any]):
+        """
+        SIZE 规则校验：仅告警，不自动补位。
+        """
+        if not isinstance(extracted, dict):
+            return
+        rule_hits = extract_size_rules(text)
+        if not rule_hits:
+            return
+
+        model_canonicals = self._collect_model_size_canonicals(extracted)
+        alerts: List[Dict[str, str]] = []
+        for hit in rule_hits:
+            subtype = str(hit.get("subtype") or "").upper()
+            canonical = str(hit.get("canonical") or "")
+            if not subtype or not canonical:
+                continue
+            if (subtype, canonical) not in model_canonicals:
+                alerts.append(
+                    {
+                        "field": "SIZE",
+                        "reason": "rule_missing_in_model",
+                        "subtype": subtype,
+                        "canonical": canonical,
+                        "raw": hit.get("raw", ""),
+                        "rule_id": str(hit.get("rule_id") or ""),
+                        "source": str(hit.get("source") or ""),
+                    }
+                )
+
+        if alerts:
+            extracted["_rule_alerts"] = extracted.get("_rule_alerts", []) + alerts
+            logger.info(f"[Qwen3预测器] SIZE规则告警: {alerts}")
+
+    def _apply_dnxn_ambiguity_reconciliation(self, text: str, extracted: Dict[str, Any]):
+        """
+        DNx数字歧义校验：
+        - 仅在“模型缺失/与规则建议冲突”时告警，不改写模型输出。
+        """
+        if not isinstance(extracted, dict):
+            return
+        hits = extract_dnxn_ambiguity_rules(text)
+        if not hits:
+            return
+
+        def _collect_subtype_values(field: str, subtype: str) -> set:
+            result = set()
+            obj = extracted.get(field)
+            if not isinstance(obj, dict):
+                return result
+            vals = obj.get(subtype)
+            if vals in (None, "", []):
+                return result
+            if not isinstance(vals, list):
+                vals = [vals]
+            for v in vals:
+                s = str(v).strip()
+                if s:
+                    result.add(s.upper())
+            return result
+
+        size_dn_vals = _collect_subtype_values("SIZE", "DN")
+        thk_mm_vals = _collect_subtype_values("THICKNESS", "MM")
+
+        alerts: List[Dict[str, str]] = []
+        for h in hits:
+            right_value = str(h.get("right_value") or "").strip()
+            suggest_field = str(h.get("suggest_field") or "").strip().upper()
+            suggest_subtype = str(h.get("suggest_subtype") or "").strip().upper()
+            reason = str(h.get("reason") or "").strip()
+            if not suggest_field or not suggest_subtype:
+                continue
+
+            # 一致性判断：规则建议与模型已提取是否一致
+            if suggest_field == "SIZE" and suggest_subtype == "DN":
+                expected = f"DN{right_value}".upper()
+                matched = expected in size_dn_vals
+            elif suggest_field == "THICKNESS" and suggest_subtype == "MM":
+                expected_raw = right_value.upper()
+                expected_mm = f"{right_value}MM".upper()
+                matched = expected_raw in thk_mm_vals or expected_mm in thk_mm_vals
+            else:
+                matched = False
+
+            # 一致则不告警，仅冲突/缺失时告警
+            if matched:
+                continue
+
+            alerts.append(
+                {
+                    "field": "SIZE",
+                    "reason": reason or "dn_x_ambiguous",
+                    "raw": h.get("raw", ""),
+                    "suggest_field": suggest_field,
+                    "suggest_subtype": suggest_subtype,
+                    "right_value": right_value,
+                }
+            )
+        extracted["_rule_alerts"] = extracted.get("_rule_alerts", []) + alerts
+        if alerts:
+            logger.info(f"[Qwen3预测器] DNx数字歧义告警: {alerts}")
+
+    @staticmethod
+    def _collect_model_thickness_canonicals(extracted: Dict[str, Any]) -> set:
+        thk = extracted.get("THICKNESS")
+        if not isinstance(thk, dict):
+            return set()
+
+        pairs: List[tuple] = []
+        for subtype, sub_vals in thk.items():
+            if sub_vals in (None, "", []):
+                continue
+            if not isinstance(sub_vals, list):
+                sub_vals = [sub_vals]
+            for v in sub_vals:
+                s = str(v).strip()
+                if s:
+                    pairs.append((str(subtype).upper(), s))
+
+        result = set()
+        for subtype, value in pairs:
+            c = canonicalize_thickness_token(value, subtype=subtype)
+            if c:
+                result.add((subtype, c))
+        return result
+
+    @staticmethod
+    def _is_thickness_rule_covered(subtype: str, canonical: str, model_canonicals: set) -> bool:
+        key = (subtype, canonical)
+        if key in model_canonicals:
+            return True
+
+        # 复合表达等价：规则是 A X B，模型分成 [A, B] 也视为覆盖。
+        if "X" in canonical:
+            parts = [p for p in canonical.split("X") if p]
+            if parts and all((subtype, p) in model_canonicals for p in parts):
+                return True
+        return False
+
+    def _apply_thickness_structural_correction(self, text: str, extracted: Dict[str, Any]):
+        """
+        THICKNESS 结构纠错层（规则优先）：
+        - 将明显非法 SERIES（如 XS80）纠正为 SCHEDULE（SCH80）；
+        - SERIES 仅保留独立合法 token（XS/XXS/STD）；
+        - 用高确定规则命中补齐 SCHEDULE/SERIES。
+        """
+        if not isinstance(extracted, dict):
+            return
+        thk = extracted.get("THICKNESS")
+        if not isinstance(thk, dict):
+            return
+
+        def _as_list(v):
+            if v in (None, "", []):
+                return []
+            return v if isinstance(v, list) else [v]
+
+        allowed_series = {"XS", "XXS", "STD"}
+        model_schedule = _as_list(thk.get("SCHEDULE"))
+        model_series = _as_list(thk.get("SERIES"))
+
+        # 规则命中（高确定）
+        rule_hits = extract_thickness_rules(text)
+        rule_schedule = []
+        rule_series = []
+        for h in rule_hits:
+            st = str(h.get("subtype") or "").upper()
+            cv = str(h.get("canonical") or "").upper()
+            if not cv:
+                continue
+            if st == "SCHEDULE":
+                rule_schedule.append(cv)
+            elif st == "SERIES":
+                rule_series.append(cv)
+
+        fixes: List[Dict[str, str]] = []
+
+        schedule_out: List[str] = []
+        series_out: List[str] = []
+
+        def _append_unique(dst: List[str], val: str):
+            if val and val not in dst:
+                dst.append(val)
+
+        # 保留/规范模型 SCHEDULE
+        for raw in model_schedule:
+            v = str(raw).strip()
+            if not v:
+                continue
+            c = canonicalize_thickness_token(v, subtype="SCHEDULE")
+            if c.startswith("SCH"):
+                _append_unique(schedule_out, c)
+            elif c in allowed_series:
+                _append_unique(series_out, c)
+
+        # 处理模型 SERIES（含纠错）
+        for raw in model_series:
+            v = str(raw).strip().upper()
+            if not v:
+                continue
+            if v in allowed_series:
+                _append_unique(series_out, v)
+                continue
+
+            # XS80 / XXS80 / STD80 -> SCH80
+            m = re.match(r"^(XXS|XS|STD)[\s\-_/.]*(\d+(?:\.\d+)?S?)$", v)
+            if m:
+                sch = f"SCH{m.group(2)}"
+                _append_unique(schedule_out, sch)
+                fixes.append(
+                    {
+                        "field": "THICKNESS",
+                        "action": "series_to_schedule",
+                        "from": v,
+                        "to": sch,
+                    }
+                )
+                continue
+
+            # 其他可规范化 schedule 的串也转到 SCHEDULE
+            c = canonicalize_thickness_token(v, subtype="SCHEDULE")
+            if c.startswith("SCH"):
+                _append_unique(schedule_out, c)
+                fixes.append(
+                    {
+                        "field": "THICKNESS",
+                        "action": "series_to_schedule",
+                        "from": v,
+                        "to": c,
+                    }
+                )
+                continue
+
+            # 不合法 series 丢弃
+            fixes.append(
+                {
+                    "field": "THICKNESS",
+                    "action": "drop_invalid_series",
+                    "from": v,
+                }
+            )
+
+        # 规则补齐（高确定）
+        for c in rule_schedule:
+            _append_unique(schedule_out, c)
+        for c in rule_series:
+            _append_unique(series_out, c)
+
+        # 若原文有规则化 schedule 命中，则仅保留被规则支持的 series（避免 S-10SXS-80 中误提 XS）
+        if rule_schedule:
+            filtered = [s for s in series_out if s in set(rule_series)]
+            removed = [s for s in series_out if s not in set(rule_series)]
+            for s in removed:
+                fixes.append(
+                    {
+                        "field": "THICKNESS",
+                        "action": "drop_unanchored_series",
+                        "from": s,
+                    }
+                )
+            series_out = filtered
+
+        # 回写
+        if schedule_out:
+            thk["SCHEDULE"] = schedule_out
+        else:
+            thk.pop("SCHEDULE", None)
+
+        if series_out:
+            thk["SERIES"] = series_out
+        else:
+            thk.pop("SERIES", None)
+
+        if fixes:
+            extracted["_rule_fixes"] = extracted.get("_rule_fixes", []) + fixes
+
+    def _apply_thickness_rule_reconciliation(self, text: str, extracted: Dict[str, Any]):
+        """
+        使用高精度规则抽取结果与模型 THICKNESS 做 canonical 对齐。
+        当前策略：只做告警，不直接改写模型输出（避免歧义样本被规则误补位）。
+        """
+        if not isinstance(extracted, dict):
+            return
+
+        rule_hits = extract_thickness_rules(text)
+        if not rule_hits:
+            return
+
+        model_canonicals = self._collect_model_thickness_canonicals(extracted)
+        size_inch_vals = set()
+        size_obj = extracted.get("SIZE")
+        if isinstance(size_obj, dict):
+            vals = size_obj.get("INCH")
+            if vals not in (None, "", []):
+                if not isinstance(vals, list):
+                    vals = [vals]
+                for v in vals:
+                    cv = canonicalize_size_token(str(v).strip(), subtype="INCH")
+                    if cv:
+                        size_inch_vals.add(cv.upper())
+
+        alerts: List[Dict[str, str]] = []
+        for hit in rule_hits:
+            canonical = hit.get("canonical", "")
+            subtype = str(hit.get("subtype") or "").upper()
+            if not canonical:
+                continue
+            # 同一英寸值若已在 SIZE.INCH 命中，不再要求 THICKNESS.INCH，避免交叉误报
+            if subtype == "INCH" and str(canonical).upper() in size_inch_vals:
+                continue
+            if not self._is_thickness_rule_covered(subtype, canonical, model_canonicals):
+                alerts.append(
+                    {
+                        "field": "THICKNESS",
+                        "reason": "rule_missing_in_model",
+                        "subtype": subtype,
+                        "canonical": canonical,
+                        "raw": hit.get("raw", ""),
+                    }
+                )
+
+        if alerts:
+            extracted["_rule_alerts"] = extracted.get("_rule_alerts", []) + alerts
+            logger.info(f"[Qwen3预测器] THICKNESS规则告警: {alerts}")
+
+    def _apply_material_rule_reconciliation(self, text: str, extracted: Dict[str, Any]):
+        """
+        材质规则校验：识别抗硫术语并与模型 MATERIAL.SPECIAL_REQ 对比。
+        当前策略：仅告警，不自动补位。
+        """
+        if not isinstance(extracted, dict):
+            return
+
+        req_hits = extract_material_special_req_rules(text)
+        if not req_hits:
+            return
+
+        model_req_set = set()
+        mat = extracted.get("MATERIAL")
+        if isinstance(mat, dict):
+            items = mat.get("ITEMS")
+            if isinstance(items, list):
+                for it in items:
+                    if not isinstance(it, dict):
+                        continue
+                    sr = it.get("SPECIAL_REQ")
+                    if isinstance(sr, list):
+                        model_req_set.update(str(v).strip() for v in sr if str(v).strip())
+                    elif sr:
+                        model_req_set.add(str(sr).strip())
+
+        alerts: List[Dict[str, str]] = []
+        for hit in req_hits:
+            req = str(hit.get("special_req") or "").strip()
+            if not req:
+                continue
+            if req not in model_req_set:
+                alerts.append(
+                    {
+                        "field": "MATERIAL",
+                        "reason": "rule_missing_in_model",
+                        "semantic": hit.get("semantic", ""),
+                        "special_req": req,
+                        "raw": hit.get("raw", ""),
+                    }
+                )
+
+        if alerts:
+            extracted["_rule_alerts"] = extracted.get("_rule_alerts", []) + alerts
+            logger.info(f"[Qwen3预测器] MATERIAL规则告警: {alerts}")
 
     ENCODABLE_FIELDS = {"TYPE", "SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "STANDARD"}
 

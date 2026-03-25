@@ -758,8 +758,12 @@ class PipeEncoderBase:
 
         # 1) 壁厚异径时单位不一致
         if mixed_unit_cfg.get('enabled', True) and size_field and thk_field:
-            size_text = (size_field.code or size_field.matched_name or size_field.original_value or "").upper()
-            thk_text = (thk_field.code or thk_field.matched_name or thk_field.original_value or "").upper()
+            size_text = self._stringify_field_value(
+                size_field.code or size_field.matched_name or size_field.original_value or ""
+            ).upper()
+            thk_text = self._stringify_field_value(
+                thk_field.code or thk_field.matched_name or thk_field.original_value or ""
+            ).upper()
             if 'X' in size_text:
                 parts = [p for p in re.split(r"[X×*/]+", thk_text.replace(" ", "")) if p]
                 if len(parts) >= 2:

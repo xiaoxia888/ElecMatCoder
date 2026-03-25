@@ -96,15 +96,35 @@ python -m apps.trainer.qwen3_finetune.train --epochs 5 --lr 1e-4 --lora_r 32
 python -m apps.trainer.qwen3_finetune.train --resume_from outputs/qwen3_finetune/run_xxx/checkpoint-400
 ```
 
-### 3.1 二阶段 DPO 训练
+### 3.1 一阶段 SFT 完成后先合并 LoRA
 
-先完成一阶段 SFT，再进行 DPO。最小示例数据已放在 `data/pipe/dpo_demo/`。
+二阶段 DPO 默认是基于**一阶段 SFT merged 模型**继续训练，因此在开始 DPO 前，先完成一次 merge：
+
+```bash
+python -m apps.trainer.qwen3_finetune.merge_and_export \
+    --adapter_path outputs/qwen3_finetune_qwen3/run_xxx/final \
+    --output_dir outputs/qwen3_finetune_qwen3/merged
+```
+
+例如：
+
+```bash
+python -m apps.trainer.qwen3_finetune.merge_and_export \
+    --adapter_path outputs/qwen3_finetune_qwen3/run_20260318_085014/final \
+    --output_dir outputs/qwen3_finetune_qwen3/merged
+```
+
+这一步的产物 `merged/` 是后续 DPO 的基座模型输入。
+
+### 3.2 二阶段 DPO 训练
+
+先完成一阶段 SFT，并完成上面的 merge，再进行 DPO。最小示例数据已放在 `data/pipe/dpo_demo/`。
 
 ```bash
 # 先按你的实际情况修改 config_dpo.yaml 中的模型路径
 # 推荐改成一阶段 SFT merged 模型路径
 python -m apps.trainer.qwen3_finetune.train_dpo \
-    --config apps/trainer/qwen3_finetune/config_dpo.yaml
+  --config apps/trainer/qwen3_finetune/config_dpo.yaml
 
 # 覆盖关键超参
 python -m apps.trainer.qwen3_finetune.train_dpo \
@@ -155,15 +175,42 @@ python -m apps.trainer.qwen3_finetune.inference \
 
 ### 5. 合并 LoRA 权重
 
+这里分两种情况：
+
+- 一阶段 SFT 训练后：把 SFT adapter 合并成 `SFT merged`
+- 二阶段 DPO 训练后：把 DPO adapter 合并成 `DPO merged`
+
+#### 5.1 合并一阶段 SFT adapter
+
 ```bash
 python -m apps.trainer.qwen3_finetune.merge_and_export \
     --adapter_path outputs/qwen3_finetune/final \
     --output_dir outputs/qwen3_finetune/merged
 ```
 
+python -m apps.trainer.qwen3_finetune.merge_and_export --adapter_path outputs/qwen3_finetune_qwen3/run_20260318_085014/final --output_dir outputs/qwen3_finetune_qwen3/run_20260318_085014/merged
+
 该命令会：
 - 合并 LoRA 权重到基座模型，保存到 `outputs/qwen3_finetune/merged/`
 - 自动创建 `outputs/qwen3_finetune/merged/Modelfile`（用于 Ollama 部署）
+
+#### 5.2 合并二阶段 DPO adapter
+
+DPO 训练完成后，目录通常类似：
+
+- `outputs/qwen3_dpo/run_xxx/final`
+
+这时需要再次 merge，得到新的可部署模型：
+
+```bash
+python -m apps.trainer.qwen3_finetune.merge_and_export \
+    --adapter_path outputs/qwen3_finetune0323/final \
+    --output_dir outputs/qwen3_finetune0323/merged \
+    --base_model_path outputs/qwen3_finetune0319/merged
+```
+
+后续量化、GGUF 导出、Ollama 部署，都应使用这个 **DPO merged** 目录，而不是 DPO 的 `final/` adapter 目录。
+如果训练发生在云端容器、合并发生在本地，推荐始终显式传 `--base_model_path`，不要依赖 adapter 中保存的历史绝对路径。
 
 ### 6. GGUF 量化 & Ollama 部署
 
@@ -232,60 +279,3 @@ python -m apps.trainer.qwen3_finetune.predict all \
     --text "无缝钢管,DN80,BE,,A312-TP304,ASME B36.19M-2004(R2015),SCH40S"
 ```
 
-#### 在代码中调用
-
-```python
-from src.llm_ner.predictor import Qwen3Predictor
-
-predictor = Qwen3Predictor(model_name="qwen3-pipe", backend="ollama")
-
-# 第一步：分词（NER）
-result = predictor.predict("90°弯头, DN100-8.0, HG/T3651-2008, TA10")
-for e in result["entities"]:
-    print(f"  {e['type']}: {e['value']}")
-
-# 第二步：编码
-entities = {}
-for e in result["entities"]:
-    field, val = e["type"], e["value"]
-    if field in entities:
-        prev = entities[field]
-        entities[field] = [prev, val] if not isinstance(prev, list) else prev + [val]
-    else:
-        entities[field] = val
-
-codes = predictor.encode(entities)
-for field, code in codes.items():
-    print(f"  {field}: {entities[field]} → {code}")
-```
-
-## 双任务说明
-
-模型通过 system prompt 区分任务：
-
-**任务 1 — NER 分词** (system: "你是一个管道材料信息提取助手...")
-
-```
-输入: "90度弯头, SW, SMLS, CL3000, A182 F304L, ASME B16.11, DN25"
-输出: {"TYPE": "90度弯头", "SIZE": "DN25", "PRESSURE": "CL3000", ...}
-```
-
-**任务 2 — 编码** (system: "你是一个管道材料编码助手...")
-
-```
-输入: {"TYPE": "90度弯头", "PRESSURE": "CL3000", "MATERIAL": "A182 F304L", "STANDARD": "ASME B16.11"}
-输出: {"TYPE": "90ELS", "PRESSURE": "C3000", "MATERIAL": "304L", "STANDARD": "AB1611"}
-```
-
-## 关键配置 (config.yaml)
-
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `data.ner_source` | `data/pipe/llm_lora/ner_data_new_schema.json` | NER 源数据路径 |
-| `data.encoding_source` | `data/pipe/llm_lora/encoding_data.json` | 编码源数据路径 |
-| `lora.r` | 64 | LoRA 秩 |
-| `lora.lora_alpha` | 128 | 通常设为 2×r |
-| `training.learning_rate` | 2e-4 | QLoRA 推荐 1e-4 ~ 3e-4 |
-| `training.num_train_epochs` | 3 | 11K+ 混合数据建议 3~5 epochs |
-| `training.per_device_train_batch_size` | 8 | 24GB 显存 QLoRA 4-bit 可用 8 |
-| `model.max_seq_length` | 512 | 管道描述通常 <300 tokens |
