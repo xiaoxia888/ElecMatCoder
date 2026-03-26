@@ -11,6 +11,9 @@
       <button class="btn btn-primary btn-sm" @click="exportExcel">
         导出 Excel
       </button>
+      <button class="btn btn-secondary btn-sm" @click="exportStage1Dataset">
+        导出一阶段数据集
+      </button>
       <button class="btn btn-success btn-sm" @click="showImportDialog" :disabled="importing">
         {{ importing ? '导入中...' : '导入氚云' }}
       </button>
@@ -413,6 +416,56 @@ function exportExcel() {
   saveAs(blob, `encodings_${getDateStr()}.xlsx`)
   
   showToast('Excel文件导出成功', 'success')
+}
+
+function sanitizeStage1Output(value) {
+  if (Array.isArray(value)) {
+    return value.map(item => sanitizeStage1Output(item))
+  }
+  if (value && typeof value === 'object') {
+    const out = {}
+    Object.entries(value).forEach(([k, v]) => {
+      if (k.startsWith('_')) return
+      out[k] = sanitizeStage1Output(v)
+    })
+    return out
+  }
+  return value
+}
+
+function buildStage1Output(enc) {
+  const hybrid = enc?.hybrid_debug?.model_output_hybrid
+  const raw = enc?.hybrid_debug?.model_output_raw
+  const source = hybrid || raw || {}
+  return sanitizeStage1Output(source)
+}
+
+function exportStage1Dataset() {
+  if (!props.dataList.length) {
+    showToast('没有可导出的数据', 'warning')
+    return
+  }
+
+  const rows = []
+  props.dataList.forEach((item, idx) => {
+    const enc = props.encodings?.[idx]
+    if (!enc) return
+    const output = buildStage1Output(enc)
+    if (!output || Object.keys(output).length === 0) return
+    rows.push({
+      input: item.text || '',
+      output
+    })
+  })
+
+  if (!rows.length) {
+    showToast('暂无一阶段结果可导出，请先执行识别/编码', 'warning')
+    return
+  }
+
+  const json = JSON.stringify(rows, null, 2)
+  downloadFile(json, `stage1_dataset_${getDateStr()}.json`, 'application/json;charset=utf-8')
+  showToast(`一阶段数据集导出成功（${rows.length}条）`, 'success')
 }
 
 function downloadFile(content, filename, type) {
