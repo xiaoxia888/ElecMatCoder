@@ -67,12 +67,12 @@ encoding_data.json ─┘
 ```
 data/pipe/semantic_parser/
 ├── train/
-│   ├── parser_train_main.json
-│   ├── parser_train_contrast.json
-│   ├── parser_train_noise.json
-│   └── parser_train_hard.json
+│   ├── parser_train_main.json  //常规样本（主训练集）70%
+│   ├── parser_train_contrast.json//对比样本  15%
+│   ├── parser_train_noise.json//噪声样本 5%
+│   └── parser_train_hard.json//难例样本 10%
 ├── eval/
-│   ├── parser_eval_frozen.json
+│   ├── parser_eval_frozen.json//
 │   └── parser_eval_hard.json
 └── prepared/
     ├── train.jsonl
@@ -91,15 +91,14 @@ python apps/trainer/qwen3_finetune/prepare_semantic_parser_data.py \
 ### 训练
 
 ```bash
-python -m apps.trainer.qwen3_finetune.train_semantic_parser \
-  --config apps/trainer/qwen3_finetune/config_semantic_parser.yaml
+python -m apps.trainer.qwen3_finetune.train_semantic_parser --config apps/trainer/qwen3_finetune/config_semantic_parser.yaml
 ```
 
 ### 推理
 
 ```bash
 python -m apps.trainer.qwen3_finetune.inference_semantic_parser \
-  --model_path outputs/qwen3_semantic_parser/run_xxx/final \
+  --model_path outputs/qwen3_finetune/final \
   --text "加强管嘴(短型) 弧底型;BW;2205;GB/T19326(II);φ108X4mmX4mm;DN1000XDN100"
 ```
 
@@ -328,7 +327,7 @@ python -m apps.trainer.qwen3_finetune.predict ner \
 
 # Ollama 后端 —— 测分词 + 编码
 python -m apps.trainer.qwen3_finetune.predict all\
-    --text "法兰盖 BL-RF 150lbs ASME-B16.5 A.240 gr 304L/A.182.F.304 DN100"
+    --text "法兰盖 BL-RF 150lbs ASME-B16.5 /A.240 gr 304L/A.182.F.304 DN100"
 
 # Transformers 后端（用于对比验证量化前后效果）
 python -m apps.trainer.qwen3_finetune.predict all \
