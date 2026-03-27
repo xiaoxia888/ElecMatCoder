@@ -47,12 +47,9 @@ def _collect_platform_predict(text: str, preprocess: bool = True) -> dict:
     return {
         "processed_text": processed_text,
         "entities": entities,
-        "extract_confidence": extract_confidence,
+        "extract_confidence": result.get("extract_confidence", extract_confidence),
         "raw_entities": result.get("entities", []),
         "model_output": result.get("model_output", {}),
-        "model_output_raw": result.get("model_output_raw", {}),
-        "model_output_hybrid": result.get("model_output_hybrid", result.get("model_output", {})),
-        "decision_log": result.get("decision_log", {}),
         "model_raw_response": result.get("model_raw_response", ""),
     }
 
@@ -78,25 +75,13 @@ def run(text, do_encode=False, preprocess=True):
 
     entities = predict_result["entities"]
     raw_entities = predict_result["raw_entities"]
-    model_output_raw = _strip_meta_fields(predict_result.get("model_output_raw", {}))
-    model_output_hybrid = _strip_meta_fields(predict_result.get("model_output_hybrid", {}))
-    decision_log = predict_result.get("decision_log", {}) or {}
+    model_output = _strip_meta_fields(predict_result.get("model_output", {}))
 
-    if model_output_raw:
-        print("  模型原始结构化结果（raw）")
-        print(json.dumps(model_output_raw, ensure_ascii=False, indent=2))
+    if model_output:
+        print("  语义解析结果")
+        print(json.dumps(model_output, ensure_ascii=False, indent=2))
     else:
-        print("  模型原始结构化结果（raw）  {}")
-
-    if model_output_hybrid:
-        print("  Hybrid结构化结果（canonical）")
-        print(json.dumps(model_output_hybrid, ensure_ascii=False, indent=2))
-    else:
-        print("  Hybrid结构化结果（canonical）  {}")
-
-    if decision_log:
-        print("  决策日志（decision_log）")
-        print(json.dumps(decision_log, ensure_ascii=False, indent=2))
+        print("  语义解析结果  {}")
 
     if entities:
         print("  平台聚合后结果")

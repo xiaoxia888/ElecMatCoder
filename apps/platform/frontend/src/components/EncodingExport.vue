@@ -434,9 +434,7 @@ function sanitizeStage1Output(value) {
 }
 
 function buildStage1Output(enc) {
-  const hybrid = enc?.hybrid_debug?.model_output_hybrid
-  const raw = enc?.hybrid_debug?.model_output_raw
-  const source = hybrid || raw || {}
+  const source = enc?.stage1_output || {}
   return sanitizeStage1Output(source)
 }
 

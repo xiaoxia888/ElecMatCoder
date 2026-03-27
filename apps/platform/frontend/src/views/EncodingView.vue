@@ -774,43 +774,6 @@ function hasManualCorrection(result) {
   })
 }
 
-function buildHybridWarnings(predictData) {
-  const warnings = []
-  const decision = predictData?.decision_log || {}
-  const fixes = Array.isArray(decision.rule_fixes) ? decision.rule_fixes : []
-  const alerts = Array.isArray(decision.rule_alerts) ? decision.rule_alerts : []
-
-  for (const f of fixes) {
-    const field = f?.field || 'UNKNOWN'
-    const action = f?.action || 'rule_fix'
-    const from = f?.from || ''
-    const to = f?.to || f?.canonical || ''
-    if (from && to) {
-      warnings.push(`[Hybrid规则补位] ${field} ${action}: ${from} -> ${to}`)
-    } else if (to) {
-      warnings.push(`[Hybrid规则补位] ${field} ${action}: ${to}`)
-    } else {
-      warnings.push(`[Hybrid规则补位] ${field} ${action}`)
-    }
-  }
-
-  for (const a of alerts) {
-    const field = a?.field || 'UNKNOWN'
-    const reason = a?.reason || 'rule_alert'
-    const raw = a?.raw || ''
-    const canonical = a?.canonical || a?.special_req || ''
-    if (raw && canonical) {
-      warnings.push(`[Hybrid规则告警] ${field} ${reason}: raw=${raw}, suggest=${canonical}`)
-    } else if (raw) {
-      warnings.push(`[Hybrid规则告警] ${field} ${reason}: raw=${raw}`)
-    } else {
-      warnings.push(`[Hybrid规则告警] ${field} ${reason}`)
-    }
-  }
-
-  return warnings
-}
-
 // 识别当条
 async function handleEncodeSingle() {
   await encodeCurrentItem('识别完成', '识别失败')
@@ -857,21 +820,10 @@ async function encodeCurrentItem(successMsg, failMsg) {
       text
     })
 
-    const hybridWarnings = buildHybridWarnings(predictRes.data)
-    const mergedWarnings = [
-      ...(encodeRes.data?.warnings || []),
-      ...hybridWarnings
-    ]
-
     encodings.value[currentIndex.value] = {
       ...encodeRes.data,
-      need_review: !!(encodeRes.data?.need_review || hybridWarnings.length > 0),
-      warnings: mergedWarnings,
-      hybrid_debug: {
-        model_output_raw: predictRes.data.model_output_raw || {},
-        model_output_hybrid: predictRes.data.model_output_hybrid || {},
-        decision_log: predictRes.data.decision_log || {}
-      }
+      stage1_output: predictRes.data.model_output || {},
+      stage1_raw_response: predictRes.data.model_raw_response || ''
     }
     showToast(successMsg, 'success')
     
@@ -947,21 +899,10 @@ async function handleBatchEncode() {
               text
             })
 
-            const hybridWarnings = buildHybridWarnings(predictRes.data)
-            const mergedWarnings = [
-              ...(encodeRes.data?.warnings || []),
-              ...hybridWarnings
-            ]
-
             encodings.value[i] = {
               ...encodeRes.data,
-              need_review: !!(encodeRes.data?.need_review || hybridWarnings.length > 0),
-              warnings: mergedWarnings,
-              hybrid_debug: {
-                model_output_raw: predictRes.data.model_output_raw || {},
-                model_output_hybrid: predictRes.data.model_output_hybrid || {},
-                decision_log: predictRes.data.decision_log || {}
-              }
+              stage1_output: predictRes.data.model_output || {},
+              stage1_raw_response: predictRes.data.model_raw_response || ''
             }
             
             if (encodeRes.data.success && !encodeRes.data.need_review) {

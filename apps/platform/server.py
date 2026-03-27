@@ -327,16 +327,18 @@ def _append_pipe_entity(entities: Dict[str, Any], field: str, val: Any):
 
 def _build_pipe_entities_for_encode(result: Dict[str, Any]) -> Dict[str, Any]:
     """
-    优先使用 Qwen3 的结构化 model_output 作为编码输入，
-    保留 TYPE / SIZE / MATERIAL 的嵌套结构。
+    优先使用语义解析器输出中的 decisions 作为编码输入。
     若不存在结构化输出，则回退到旧的打平聚合逻辑。
     """
     model_output = result.get("model_output")
     if isinstance(model_output, dict):
+        decisions = model_output.get("decisions")
+        if isinstance(decisions, dict) and decisions:
+            return copy.deepcopy(decisions)
         structured = {
             k: copy.deepcopy(v)
             for k, v in model_output.items()
-            if not str(k).startswith("_")
+            if not str(k).startswith("_") and k != "model_raw_response"
         }
         if structured:
             return structured
@@ -583,18 +585,7 @@ def pipe_predict(request: PipePredictRequest):
         result = predictor.predict(processed_text)
 
         entities = _build_pipe_entities_for_encode(result)
-        extract_confidence: Dict[str, Any] = {}
-        for e in result.get("entities", []):
-            conf = e.get("confidence")
-            field = e["type"]
-            prev_conf = extract_confidence.get(field)
-            if field in extract_confidence:
-                if isinstance(prev_conf, list):
-                    prev_conf.append(conf)
-                else:
-                    extract_confidence[field] = [prev_conf, conf]
-            else:
-                extract_confidence[field] = conf
+        extract_confidence = result.get("extract_confidence", {}) or {}
 
         return {
             "success": True,
@@ -603,12 +594,8 @@ def pipe_predict(request: PipePredictRequest):
             "entities": entities,
             "extract_confidence": extract_confidence,
             "type_class": result.get("type_class"),
-            "model_output_raw": result.get("model_output_raw", {}),
-            "model_output_hybrid": result.get("model_output_hybrid", result.get("model_output", {})),
-            "decision_log": result.get("decision_log", {}),
-            "need_review": bool(result.get("need_review")),
-            "review_fields": result.get("review_fields", []),
-            "review_reasons": result.get("review_reasons", []),
+            "model_output": result.get("model_output", {}),
+            "model_raw_response": result.get("model_raw_response", ""),
         }
     except Exception as e:
         logger.error(f"NER预测失败: {e}")
@@ -630,18 +617,7 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
             async with semaphore:
                 result = await asyncio.to_thread(predictor.predict, processed_text)
             entities = _build_pipe_entities_for_encode(result)
-            extract_confidence: Dict[str, Any] = {}
-            for e in result.get("entities", []):
-                conf = e.get("confidence")
-                field = e["type"]
-                prev_conf = extract_confidence.get(field)
-                if field in extract_confidence:
-                    if isinstance(prev_conf, list):
-                        prev_conf.append(conf)
-                    else:
-                        extract_confidence[field] = [prev_conf, conf]
-                else:
-                    extract_confidence[field] = conf
+            extract_confidence = result.get("extract_confidence", {}) or {}
 
             return {
                 "success": True,
@@ -650,12 +626,8 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
                 "entities": entities,
                 "extract_confidence": extract_confidence,
                 "type_class": result.get("type_class"),
-                "model_output_raw": result.get("model_output_raw", {}),
-                "model_output_hybrid": result.get("model_output_hybrid", result.get("model_output", {})),
-                "decision_log": result.get("decision_log", {}),
-                "need_review": bool(result.get("need_review")),
-                "review_fields": result.get("review_fields", []),
-                "review_reasons": result.get("review_reasons", []),
+                "model_output": result.get("model_output", {}),
+                "model_raw_response": result.get("model_raw_response", ""),
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
