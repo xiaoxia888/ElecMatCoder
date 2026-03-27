@@ -1,4 +1,19 @@
-# Qwen3-4B 管道材料 NER + 编码 — LoRA 微调
+# Qwen3-4B 管道材料训练工具
+
+当前建议拆成两条线：
+
+1. 一阶段语义解析器
+- 目标：`原始描述 -> mentions + semantics + decisions`
+- 入口：
+  - `prepare_semantic_parser_data.py`
+  - `train_semantic_parser.py`
+  - `inference_semantic_parser.py`
+
+2. 二阶段编码
+- 当前代码仍保留在原有入口中
+- 是否继续使用模型，后续再决定
+
+下面的旧说明主要对应“混合训练/二阶段相关”流程；一阶段请优先看本文件新增的“一阶段语义解析器”章节。
 
 将 Qwen3-4B 微调为双任务模型：
 1. **NER 分词**: 管道材料描述 → 结构化实体 JSON
@@ -44,6 +59,49 @@ encoding_data.json ─┘
 ```
 
 ## 快速开始
+
+## 一阶段语义解析器
+
+### 数据目录
+
+```
+data/pipe/semantic_parser/
+├── train/
+│   ├── parser_train_main.json
+│   ├── parser_train_contrast.json
+│   ├── parser_train_noise.json
+│   └── parser_train_hard.json
+├── eval/
+│   ├── parser_eval_frozen.json
+│   └── parser_eval_hard.json
+└── prepared/
+    ├── train.jsonl
+    ├── val.jsonl
+    ├── eval_hard.jsonl
+    └── summary.json
+```
+
+### 准备数据
+
+```bash
+python apps/trainer/qwen3_finetune/prepare_semantic_parser_data.py \
+  --config apps/trainer/qwen3_finetune/config_semantic_parser.yaml
+```
+
+### 训练
+
+```bash
+python -m apps.trainer.qwen3_finetune.train_semantic_parser \
+  --config apps/trainer/qwen3_finetune/config_semantic_parser.yaml
+```
+
+### 推理
+
+```bash
+python -m apps.trainer.qwen3_finetune.inference_semantic_parser \
+  --model_path outputs/qwen3_semantic_parser/run_xxx/final \
+  --text "加强管嘴(短型) 弧底型;BW;2205;GB/T19326(II);φ108X4mmX4mm;DN1000XDN100"
+```
 
 # 设置允许4个并发请求（根据你的并发数设置）
 OLLAMA_NUM_PARALLEL=4 ollama serve
@@ -278,4 +336,3 @@ python -m apps.trainer.qwen3_finetune.predict all \
     --model_path outputs/qwen3_finetune/merged \
     --text "无缝钢管,DN80,BE,,A312-TP304,ASME B36.19M-2004(R2015),SCH40S"
 ```
-

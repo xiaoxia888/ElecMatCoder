@@ -1,0 +1,59 @@
+# 一阶段语义解析器专用配置
+
+model:
+  name_or_path: "Qwen/Qwen3-4B"
+  torch_dtype: "bfloat16"
+  attn_implementation: "flash_attention_2"
+  max_seq_length: 1024
+
+lora:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  task_type: "CAUSAL_LM"
+  bias: "none"
+
+data:
+  main_source: "data/pipe/semantic_parser/train/parser_train_main.json"
+  contrast_source: "data/pipe/semantic_parser/train/parser_train_contrast.json"
+  noise_source: "data/pipe/semantic_parser/train/parser_train_noise.json"
+  hard_source: "data/pipe/semantic_parser/train/parser_train_hard.json"
+  eval_frozen_source: "data/pipe/semantic_parser/eval/parser_eval_frozen.json"
+  eval_hard_source: "data/pipe/semantic_parser/eval/parser_eval_hard.json"
+  prepared_dir: "data/pipe/semantic_parser/prepared"
+  train_file: "data/pipe/semantic_parser/prepared/train.jsonl"
+  val_file: "data/pipe/semantic_parser/prepared/val.jsonl"
+  split_seed: 42
+  val_ratio: 0.1
+
+training:
+  output_dir: "outputs/qwen3_semantic_parser"
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  logging_steps: 10
+  eval_steps: 500
+  save_steps: 500
+  save_total_limit: 3
+  eval_strategy: "steps"
+  bf16: true
+  gradient_checkpointing: true
+  dataloader_num_workers: 4
+  report_to: "none"
+  seed: 42
+  max_grad_norm: 1.0
+  remove_unused_columns: false
+

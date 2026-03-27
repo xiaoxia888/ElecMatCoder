@@ -33,6 +33,22 @@ NER_SYSTEM_PROMPT = (
 )
 
 
+SEMANTIC_PARSER_SYSTEM_PROMPT = (
+    "你是一个管道材料语义解析助手。"
+    "从材料描述中提取语义解析结果，并严格输出 JSON。\n"
+    "输出结构固定为："
+    "{\"mentions\":[{\"id\":\"m1\",\"text\":\"\",\"type\":\"\"}],"
+    "\"semantics\":[{\"mention_id\":\"m1\",\"semantic_tag\":\"\"}],"
+    "\"decisions\":{...}}。\n"
+    "要求："
+    "1. mentions 必须尽量保留原文证据片段，优先保留连续原文片段；"
+    "2. semantics 用于标记 mention 在当前上下文中的语义角色；"
+    "3. decisions 用于给出最终结构化决策结果，可以做轻度规范化与结构化拆分；"
+    "4. 不要输出解释文字，不要输出 markdown，不要补充原文中不存在的信息；"
+    "5. 只输出合法 JSON。"
+)
+
+
 ENCODING_SYSTEM_PROMPT = (
     "你是一个管道材料编码助手。"
     "将实体原始值转换为标准编码，以JSON格式输出。直接输出JSON。"
