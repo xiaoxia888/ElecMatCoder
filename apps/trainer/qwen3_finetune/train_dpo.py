@@ -44,7 +44,7 @@ from trl import DPOConfig, DPOTrainer
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.llm_ner.predictor import SYSTEM_PROMPT as NER_SYSTEM_PROMPT
+from src.llm_ner.prompts import NER_SYSTEM_PROMPT
 
 logging.basicConfig(
     level=logging.INFO,

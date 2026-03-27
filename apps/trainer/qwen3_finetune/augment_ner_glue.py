@@ -53,6 +53,39 @@ def load_ner_data(path: Path) -> list:
         return json.load(f)
 
 
+def _collect_leaf_values(field: str, value, out: List[Tuple[str, str]]) -> None:
+    """
+    递归收集可定位到 input 中的字符串叶子值。
+    - 保留顶层 field 作为字段归属，兼容新旧 schema。
+    - 对 {"value": "..."} 结构优先取 value 字段。
+    """
+    if value is None:
+        return
+
+    if isinstance(value, str):
+        v = value.strip()
+        if v:
+            out.append((field, v))
+        return
+
+    if isinstance(value, (int, float, bool)):
+        out.append((field, str(value)))
+        return
+
+    if isinstance(value, list):
+        for item in value:
+            _collect_leaf_values(field, item, out)
+        return
+
+    if isinstance(value, dict):
+        if "value" in value and isinstance(value.get("value"), str):
+            _collect_leaf_values(field, value.get("value"), out)
+            return
+        for _, sub_v in value.items():
+            _collect_leaf_values(field, sub_v, out)
+        return
+
+
 def locate_values_in_text(text: str, output: dict) -> List[Tuple[int, int, str, str]]:
     """
     在 input 文本中定位每个 output 字段值的位置。
@@ -63,20 +96,10 @@ def locate_values_in_text(text: str, output: dict) -> List[Tuple[int, int, str, 
     positions = []
 
     for field, value in output.items():
-        if isinstance(value, list):
-            for v in value:
-                if isinstance(v, dict):
-                    field_value = v.get("value")
-                    if field_value:
-                        _find_and_add(text, str(field_value), field, positions)
-                else:
-                    _find_and_add(text, str(v), field, positions)
-        elif isinstance(value, dict):
-            field_value = value.get("value")
-            if field_value:
-                _find_and_add(text, str(field_value), field, positions)
-        else:
-            _find_and_add(text, str(value), field, positions)
+        leaf_values: List[Tuple[str, str]] = []
+        _collect_leaf_values(field, value, leaf_values)
+        for f, v in leaf_values:
+            _find_and_add(text, v, f, positions)
 
     positions.sort(key=lambda x: x[0])
     return positions

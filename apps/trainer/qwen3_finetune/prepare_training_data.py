@@ -15,7 +15,7 @@ Qwen3 微调数据准备（统一入口）
 
 说明:
   - 本脚本对 NER 样本采用“原样透传”策略，不改写 `output` 结构。
-  - 因此一阶段 schema 的变化主要由 `src.llm_ner.predictor.SYSTEM_PROMPT`
+  - 因此一阶段 schema 的变化主要由 `src.llm_ner.prompts`
     和 `data/pipe/llm_lora/ner_data_new_schema.json` 决定。
   - 当前编码样本仍沿用二阶段既有输入格式，不在本脚本内做结构迁移。
 
@@ -42,8 +42,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.llm_ner.predictor import SYSTEM_PROMPT as NER_SYSTEM_PROMPT
-from src.llm_ner.predictor import ENCODING_SYSTEM_PROMPT
+from src.llm_ner.prompts import ENCODING_SYSTEM_PROMPT, NER_SYSTEM_PROMPT
 from src.tokenizer_utils.preprocessor import TextPreprocessor
 from apps.trainer.qwen3_finetune.augment_ner_glue import augment_ner_samples_inplace
 
@@ -69,7 +68,11 @@ def to_chatml(system_prompt: str, user_content: str, assistant_content: str) -> 
     }
 
 
-def convert_ner(samples: list, preprocessor: TextPreprocessor | None = None) -> list:
+def convert_ner(
+    samples: list,
+    preprocessor: TextPreprocessor | None = None,
+    ner_system_prompt: str = NER_SYSTEM_PROMPT,
+) -> list:
     """NER 源数据 → ChatML。保持新 schema 的 output 原样写入 assistant。"""
     results = []
     for s in samples:
@@ -78,7 +81,7 @@ def convert_ner(samples: list, preprocessor: TextPreprocessor | None = None) -> 
             user = preprocessor.process(user)
         output = s["output"]
         assistant = json.dumps(output, ensure_ascii=False) if isinstance(output, dict) else str(output)
-        results.append(to_chatml(NER_SYSTEM_PROMPT, user, assistant))
+        results.append(to_chatml(ner_system_prompt, user, assistant))
     return results
 
 
@@ -168,6 +171,9 @@ def main():
             ner_samples = load_json_or_jsonl(ner_path)
             print(f"NER 数据:  {len(ner_samples):>6} 条  ← {ner_path}")
 
+            ner_system_prompt = NER_SYSTEM_PROMPT
+            print("  NER提示词: new schema")
+
             if not args.no_dedupe:
                 ner_samples, removed = dedupe_samples(ner_samples)
                 if removed:
@@ -186,7 +192,11 @@ def main():
                                             key=lambda x: -x[1]):
                         print(f"    {pair}: {cnt}")
 
-            ner_chatml = convert_ner(ner_samples, preprocessor=preprocessor)
+            ner_chatml = convert_ner(
+                ner_samples,
+                preprocessor=preprocessor,
+                ner_system_prompt=ner_system_prompt,
+            )
             all_chatml.extend(ner_chatml)
         else:
             print(f"⚠ NER 数据文件不存在: {ner_path}")

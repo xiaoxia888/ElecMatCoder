@@ -55,7 +55,7 @@ ner:
   # Qwen3-4B 微调模型配置（推荐）
   qwen3:
     backend: "ollama"                   # ollama / transformers
-    model_name: "qwen3-4b-q8-0323"            # ollama 后端时使用的模型名
+    model_name: "qwen3-4b-q8-0327"            # ollama 后端时使用的模型名
     ollama_url: "http://localhost:11434" # ollama 服务地址
     model_path: "models/qwen3_pipe"     # transformers 后端时使用的模型路径
     device: "auto"                      # transformers 后端设备: auto / cpu / cuda / mps
@@ -76,7 +76,7 @@ encoding:
 
   # LLM 编码配置（method=llm 时生效）
   llm:  
-    model_name: "qwen3-4b-q8-0323"
+    model_name: "qwen3-4b-q8-0327"
     backend: "ollama"             # ollama / transformers
     ollama_url: "http://localhost:11434"
     model_path: "models/qwen3_pipe"  # transformers 后端时使用

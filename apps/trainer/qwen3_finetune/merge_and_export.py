@@ -33,7 +33,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-from src.llm_ner.predictor import SYSTEM_PROMPT
+from src.llm_ner.prompts import NER_SYSTEM_PROMPT as SYSTEM_PROMPT
 
 
 def _resolve_local_model_path(value: str) -> str:

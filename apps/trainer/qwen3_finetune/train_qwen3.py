@@ -20,6 +20,7 @@ import os
 import sys
 import json
 import argparse
+import inspect
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -39,12 +40,55 @@ from trl import SFTTrainer, SFTConfig
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from apps.trainer.qwen3_finetune.training_curves import export_training_curves
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
+
+
+def _build_sft_config_kwargs(eval_dataset, model_cfg: dict, train_cfg: dict, run_dir: Path) -> dict:
+    kwargs = {
+        "output_dir": str(run_dir),
+        "num_train_epochs": train_cfg["num_train_epochs"],
+        "per_device_train_batch_size": train_cfg["per_device_train_batch_size"],
+        "per_device_eval_batch_size": train_cfg.get("per_device_eval_batch_size", 4),
+        "gradient_accumulation_steps": train_cfg["gradient_accumulation_steps"],
+        "learning_rate": train_cfg["learning_rate"],
+        "weight_decay": train_cfg.get("weight_decay", 0.01),
+        "warmup_ratio": train_cfg.get("warmup_ratio", 0.05),
+        "lr_scheduler_type": train_cfg.get("lr_scheduler_type", "cosine"),
+        "logging_steps": train_cfg.get("logging_steps", 10),
+        "eval_steps": train_cfg.get("eval_steps", 200),
+        "save_steps": train_cfg.get("save_steps", 200),
+        "save_total_limit": train_cfg.get("save_total_limit", 3),
+        "eval_strategy": train_cfg.get("eval_strategy", "steps") if eval_dataset else "no",
+        "bf16": train_cfg.get("bf16", True),
+        "gradient_checkpointing": train_cfg.get("gradient_checkpointing", True),
+        "gradient_checkpointing_kwargs": {"use_reentrant": False},
+        "dataloader_num_workers": train_cfg.get("dataloader_num_workers", 4),
+        "report_to": train_cfg.get("report_to", "none"),
+        "seed": train_cfg.get("seed", 42),
+        "max_grad_norm": train_cfg.get("max_grad_norm", 1.0),
+        "max_seq_length": int(model_cfg.get("max_seq_length", 512)),
+        "dataset_text_field": "text",
+        "packing": False,
+    }
+
+    supported = set(inspect.signature(SFTConfig.__init__).parameters.keys())
+    if "max_seq_length" not in supported and "max_length" in supported:
+        kwargs["max_length"] = kwargs.pop("max_seq_length")
+    if "eval_strategy" not in supported and "evaluation_strategy" in supported:
+        kwargs["evaluation_strategy"] = kwargs.pop("eval_strategy")
+
+    filtered = {k: v for k, v in kwargs.items() if k in supported}
+    dropped = sorted(set(kwargs.keys()) - set(filtered.keys()))
+    if dropped:
+        logger.warning(f"SFTConfig 不支持以下参数，已自动忽略: {dropped}")
+    return filtered
 
 
 class CompletionOnlyCollator:
@@ -336,30 +380,12 @@ def main():
 
     # =========== 训练参数 ===========
     sft_config = SFTConfig(
-        output_dir=str(run_dir),
-        num_train_epochs=train_cfg["num_train_epochs"],
-        per_device_train_batch_size=train_cfg["per_device_train_batch_size"],
-        per_device_eval_batch_size=train_cfg.get("per_device_eval_batch_size", 4),
-        gradient_accumulation_steps=train_cfg["gradient_accumulation_steps"],
-        learning_rate=train_cfg["learning_rate"],
-        weight_decay=train_cfg.get("weight_decay", 0.01),
-        warmup_ratio=train_cfg.get("warmup_ratio", 0.05),
-        lr_scheduler_type=train_cfg.get("lr_scheduler_type", "cosine"),
-        logging_steps=train_cfg.get("logging_steps", 10),
-        eval_steps=train_cfg.get("eval_steps", 200),
-        save_steps=train_cfg.get("save_steps", 200),
-        save_total_limit=train_cfg.get("save_total_limit", 3),
-        eval_strategy=train_cfg.get("eval_strategy", "steps") if eval_dataset else "no",
-        bf16=train_cfg.get("bf16", True),
-        gradient_checkpointing=train_cfg.get("gradient_checkpointing", True),
-        gradient_checkpointing_kwargs={"use_reentrant": False},
-        dataloader_num_workers=train_cfg.get("dataloader_num_workers", 4),
-        report_to=train_cfg.get("report_to", "none"),
-        seed=train_cfg.get("seed", 42),
-        max_grad_norm=train_cfg.get("max_grad_norm", 1.0),
-        max_seq_length=max_seq_length,
-        dataset_text_field="text",
-        packing=False,
+        **_build_sft_config_kwargs(
+            eval_dataset=eval_dataset,
+            model_cfg=model_cfg,
+            train_cfg=train_cfg,
+            run_dir=run_dir,
+        )
     )
 
     # =========== 训练 ===========
@@ -400,6 +426,14 @@ def main():
     final_dir = run_dir / "final"
     trainer.save_model(str(final_dir))
     tokenizer.save_pretrained(str(final_dir))
+
+    try:
+        curve_artifacts = export_training_curves(trainer.state.log_history, run_dir)
+        logger.info("训练曲线已导出:")
+        for name, path in curve_artifacts.items():
+            logger.info(f"  {name}: {path}")
+    except Exception as exc:
+        logger.warning(f"训练曲线导出失败，已跳过，不影响模型保存: {exc}")
 
     if eval_dataset:
         logger.info("最终评估...")

@@ -35,7 +35,7 @@ from collections import defaultdict
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
-from src.llm_ner.predictor import SYSTEM_PROMPT
+from src.llm_ner.prompts import NER_SYSTEM_PROMPT as SYSTEM_PROMPT
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))

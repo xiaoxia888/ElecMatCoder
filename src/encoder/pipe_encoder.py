@@ -467,7 +467,7 @@ class PipeEncoderBase:
                 continue
 
             exec_standard = str(item.get('EXEC_STANDARD') or '').strip()
-            grade_code = str(item.get('MATERIAL_GRADE_CODE') or '').strip()
+            grade_code = str(item.get('GRADE') or '').strip()
             special_req = item.get('SPECIAL_REQ') or []
             special_parts = []
             if isinstance(special_req, list):
@@ -499,7 +499,7 @@ class PipeEncoderBase:
             return str(item).strip()
 
         exec_standard = str(item.get('EXEC_STANDARD') or '').strip()
-        grade_code = str(item.get('MATERIAL_GRADE_CODE') or '').strip()
+        grade_code = str(item.get('GRADE') or '').strip()
         special_req = item.get('SPECIAL_REQ') or []
         if isinstance(special_req, list):
             special_parts = [str(v).strip() for v in special_req if str(v).strip()]
@@ -588,7 +588,27 @@ class PipeEncoderBase:
             return self._flatten_type_value_for_stage2(value)
         if field_type == 'MATERIAL':
             return self._flatten_material_value_for_stage2(value)
+        if field_type == 'STANDARD':
+            return self._flatten_standard_value_for_stage2(value)
         return value
+
+    @staticmethod
+    def _flatten_standard_value_for_stage2(value: Any) -> Any:
+        if value in (None, "", []):
+            return ""
+        if isinstance(value, list):
+            flattened = []
+            for item in value:
+                body = PipeEncoder._flatten_standard_value_for_stage2(item)
+                if body:
+                    if isinstance(body, list):
+                        flattened.extend([v for v in body if v])
+                    else:
+                        flattened.append(body)
+            return flattened
+        if isinstance(value, dict):
+            return str(value.get('BODY') or '').strip()
+        return str(value).strip()
 
     @staticmethod
     def _build_loose_entity_pattern(value: str) -> Optional[re.Pattern]:
@@ -1298,6 +1318,28 @@ class PipeEncoderBase:
                 ))
 
         modifier_map: Dict[int, Dict[str, List[str]]] = {}
+
+        # 新 schema: STANDARD 为对象数组 [{BODY, GRADE, APPENDIX, METHOD}]
+        if isinstance(standards, list):
+            embedded_modifier_map = {
+                'GRADE': 'STANDARD_GRADE',
+                'APPENDIX': 'STANDARD_APPENDIX',
+                'METHOD': 'STANDARD_METHOD',
+            }
+            for idx, standard_item in enumerate(standards):
+                if not isinstance(standard_item, dict):
+                    continue
+                for src_key, dst_key in embedded_modifier_map.items():
+                    raw_val = standard_item.get(src_key)
+                    if raw_val in (None, "", []):
+                        continue
+                    vals = raw_val if isinstance(raw_val, list) else [raw_val]
+                    field_map = modifier_map.setdefault(idx, {})
+                    bucket = field_map.setdefault(dst_key, [])
+                    for val in vals:
+                        text = str(val).strip()
+                        if text and text not in bucket:
+                            bucket.append(text)
 
         def _resolve_bind_idx(item: Any) -> Optional[int]:
             if isinstance(item, dict):

@@ -270,7 +270,7 @@ python -m apps.trainer.qwen3_finetune.predict ner \
 
 # Ollama 后端 —— 测分词 + 编码
 python -m apps.trainer.qwen3_finetune.predict all\
-    --text "法兰盖 BL-RF 150lbs ASME-B16.5 /A.240 gr 304L/A.182.F.304 DN100"
+    --text "法兰盖 BL-RF 150lbs ASME-B16.5 A.240 gr 304L/A.182.F.304 DN100"
 
 # Transformers 后端（用于对比验证量化前后效果）
 python -m apps.trainer.qwen3_finetune.predict all \
