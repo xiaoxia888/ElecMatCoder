@@ -55,6 +55,18 @@ class ThicknessProcessor:
         'XS_XS': 'XS/XS',
     }
 
+    @staticmethod
+    def _extract_item_start(item: Any) -> Optional[int]:
+        if not isinstance(item, dict):
+            return None
+        start = item.get("start")
+        if start is None:
+            return None
+        try:
+            return int(start)
+        except (TypeError, ValueError):
+            return None
+
     def process(self, value: Any, original_text: str = "") -> str:
         """
         处理壁厚值，返回标准编码
@@ -113,6 +125,7 @@ class ThicknessProcessor:
                 continue
             if not isinstance(raw_items, list):
                 raw_items = [raw_items]
+            raw_items = self._sort_structured_items(str(subtype).upper(), raw_items, original_text)
 
             for item in raw_items:
                 normalized = self._normalize_structured_part(str(subtype).upper(), item)
@@ -178,6 +191,23 @@ class ThicknessProcessor:
 
         indexed.sort(key=lambda x: (x[2] < 0, x[2] if x[2] >= 0 else 10**9, x[0]))
         return [item[1] for item in indexed]
+
+    def _sort_structured_items(self, subtype: str, items: List[Any], original_text: str) -> List[Any]:
+        if len(items) <= 1:
+            return items
+
+        indexed = []
+        for idx, item in enumerate(items):
+            start = self._extract_item_start(item)
+            if start is None:
+                normalized = self._normalize_structured_part(subtype, item)
+                pos = self._find_part_pos_in_text(normalized, original_text) if normalized else -1
+            else:
+                pos = start
+            indexed.append((idx, pos, item))
+
+        indexed.sort(key=lambda x: (x[1] < 0, x[1] if x[1] >= 0 else 10**9, x[0]))
+        return [item for _, _, item in indexed]
 
     def _find_part_pos_in_text(self, part: str, original_text: str) -> int:
         if not part or not original_text:

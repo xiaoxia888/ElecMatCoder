@@ -27,7 +27,7 @@ import yaml
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.llm_ner.prompts import SEMANTIC_PARSER_SYSTEM_PROMPT
+from src.llm_ner.prompts import get_stage1_finetune_prompt
 
 
 def resolve(path_str: str) -> Path:
@@ -52,9 +52,10 @@ def write_jsonl(path: Path, items: list[dict[str, Any]]) -> None:
 
 
 def to_chatml(user_text: str, assistant_obj: dict[str, Any]) -> dict[str, Any]:
+    system_prompt = get_stage1_finetune_prompt()
     return {
         "messages": [
-            {"role": "system", "content": SEMANTIC_PARSER_SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_text},
             {"role": "assistant", "content": json.dumps(assistant_obj, ensure_ascii=False)},
         ]
@@ -183,4 +184,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

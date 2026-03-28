@@ -35,7 +35,12 @@ from collections import defaultdict
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
-from src.llm_ner.prompts import NER_SYSTEM_PROMPT as SYSTEM_PROMPT
+from src.llm_ner.prompts import (
+    get_stage1_decisions_only_prompt,
+    get_stage1_inference_prompt,
+)
+
+SYSTEM_PROMPT = get_stage1_inference_prompt()
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -361,7 +366,20 @@ def main():
 
     parser.add_argument("--temperature", type=float, default=0.1)
     parser.add_argument("--max_new_tokens", type=int, default=256)
+    parser.add_argument(
+        "--output_mode",
+        type=str,
+        default="full",
+        choices=["full", "decisions_only"],
+        help="full=输出完整语义解析结果；decisions_only=仅输出 decisions",
+    )
     args = parser.parse_args()
+
+    global SYSTEM_PROMPT
+    if args.output_mode == "decisions_only":
+        SYSTEM_PROMPT = get_stage1_decisions_only_prompt()
+    else:
+        SYSTEM_PROMPT = get_stage1_inference_prompt()
 
     extractor = PipeExtractor(args.model_path, merged=args.merged, device=args.device)
 

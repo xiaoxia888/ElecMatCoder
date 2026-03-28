@@ -44,7 +44,7 @@ from trl import DPOConfig, DPOTrainer
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.llm_ner.prompts import NER_SYSTEM_PROMPT
+from src.llm_ner.prompts import get_stage1_finetune_prompt
 
 logging.basicConfig(
     level=logging.INFO,
@@ -352,7 +352,7 @@ def main():
     ref_model_name_or_path = _resolve_model_name_or_path(
         str(model_cfg.get("reference_name_or_path", model_name_or_path))
     )
-    system_prompt = data_cfg.get("system_prompt") or NER_SYSTEM_PROMPT
+    system_prompt = data_cfg.get("system_prompt") or get_stage1_finetune_prompt()
 
     logger.info(f"加载 Tokenizer: {model_name_or_path}")
     tokenizer = AutoTokenizer.from_pretrained(

@@ -90,6 +90,10 @@ passthrough_fields:
   - THICKNESS
   - PRESSURE
 
+# 壁厚毫米换算
+thickness_mm_conversion:
+  enabled: true
+
 # 尺寸处理规则
 size_processing:
   prefer_dn: true           # 优先提取 DN 开头的词

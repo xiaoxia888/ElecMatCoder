@@ -29,8 +29,8 @@
           class="field-group"
           :class="{ 'need-review': field.need_review }"
         >
-          <!-- 有 items 时分行显示 -->
-          <template v-if="field.items && field.items.length > 1">
+          <!-- STANDARD 永远按 items 显示；其他字段有多个 items 时分行显示 -->
+          <template v-if="shouldRenderItems(type, field)">
             <div 
               v-for="(item, idx) in field.items" 
               :key="idx"
@@ -76,13 +76,8 @@
               <div class="field-main">
                 <span class="type-tag" :class="getTypeClass(type)">{{ typeLabels[type] || type }}</span>
                 <span class="field-original" :title="getFieldPrimaryText(type, field)">{{ getFieldPrimaryText(type, field) || '—' }}</span>
-                <!-- STANDARD 字段显示带分类的详情 -->
-                <template v-if="type === 'STANDARD' && field.display">
-                  <span class="field-arrow">→</span>
-                  <span class="field-standard-display" v-html="formatStandardDisplay(field.display)"></span>
-                </template>
                 <!-- 语义匹配字段（TYPE/MATERIAL）显示匹配到的标准词 -->
-                <template v-else-if="showMatchedName(type, field)">
+                <template v-if="showMatchedName(type, field)">
                   <span class="field-arrow">→</span>
                   <span class="field-matched" :title="field.matched_name">{{ field.matched_name }}</span>
                 </template>
@@ -105,6 +100,12 @@
             </div>
           </template>
         </div>
+      </div>
+    </div>
+
+    <div v-if="result.thickness_conversion_notes && result.thickness_conversion_notes.length > 0" class="conversion-notes-section">
+      <div v-for="(note, i) in result.thickness_conversion_notes" :key="i" class="conversion-note-item">
+        {{ note }}
       </div>
     </div>
 
@@ -199,11 +200,19 @@ function getTypeClass(type) {
   return map[type] || ''
 }
 
+function shouldRenderItems(type, field) {
+  if (type === 'STANDARD') {
+    return !!(field?.items && field.items.length > 0)
+  }
+  return !!(field?.items && field.items.length > 1)
+}
+
 // 判断是否显示 matched_name（第二步）
 // TYPE/MATERIAL 语义匹配字段：始终显示
 // 其他字段：matched_name 与 original_value 和 code 都不同时才显示
 function showMatchedName(type, field) {
   if (!field.matched_name) return false
+  if (type === 'STANDARD') return false
   if (shouldHideOriginalValue(type)) {
     return false
   }
@@ -276,16 +285,6 @@ function getItemDisplayText(type, item) {
     return item?.matched || item?.original || ''
   }
   return item?.original || ''
-}
-
-// 格式化规范显示，用颜色标注分类
-function formatStandardDisplay(display) {
-  if (!display || display === '无') return ''
-  // 输入: "GBT4237(生产) SHT3408(制造)"
-  // 输出: "GBT4237(<span class="prod">生产</span>) SHT3408(<span class="manu">制造</span>)"
-  return display
-    .replace(/\(生产\)/g, '(<span class="category-prod">生产</span>)')
-    .replace(/\(制造\)/g, '(<span class="category-manu">制造</span>)')
 }
 
 function emitEditField(type, index = null) {
@@ -533,22 +532,6 @@ function emitEditField(type, index = null) {
   color: #fff;
 }
 
-.field-standard-display {
-  color: var(--text-primary);
-  font-weight: 500;
-  word-break: break-all;
-}
-
-.field-standard-display :deep(.category-prod) {
-  color: #2e7d32;
-  font-weight: 600;
-}
-
-.field-standard-display :deep(.category-manu) {
-  color: #1565c0;
-  font-weight: 600;
-}
-
 .field-code {
   font-family: 'SF Mono', Monaco, monospace;
   font-weight: 600;
@@ -594,6 +577,18 @@ function emitEditField(type, index = null) {
 .candidate-chip small {
   opacity: 0.6;
   margin-left: 3px;
+}
+
+.conversion-notes-section {
+  padding: 10px 16px;
+  background: #f6fbff;
+  border-top: 1px solid #d9ebff;
+}
+
+.conversion-note-item {
+  font-size: 11px;
+  color: #2f527a;
+  padding: 2px 0;
 }
 
 .warnings-section {

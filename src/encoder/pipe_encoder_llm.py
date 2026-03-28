@@ -175,17 +175,26 @@ class LlmPipeEncoder(PipeEncoderBase):
         confidence = similarity if code else 0.0
         return code, confidence
 
-    def _encode_size_multi(self, values: List[Any]) -> FieldEncoding:
-        merged, size_need_review = self.size_processor.process_multi_with_review(values)
+    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> FieldEncoding:
+        merged, size_need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
         display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
-        code, sim, _ = self._encode_with_llm_meta('SIZE', merged) if merged else ("", 0.0, False)
+        length_prefix = ""
+        size_body = merged
+        if merged:
+            m = re.match(r'^(L\d+(?:\.\d+)?)(.*)$', merged, re.IGNORECASE)
+            if m:
+                length_prefix = m.group(1).upper()
+                size_body = m.group(2)
+
+        code, sim, _ = self._encode_with_llm_meta('SIZE', size_body) if size_body else ("", 0.0, False)
+        final_code = f"{length_prefix}{code or size_body}" if (length_prefix or code or size_body) else ""
         return FieldEncoding(
             field_type='SIZE',
             original_value=' | '.join(display_values),
             original_values=display_values,
             matched_name=merged, matched_names=[merged],
-            code=code, codes=[code] if code else [],
-            similarity=sim if code else 0.0, is_exact_match=True, need_review=size_need_review or not bool(code),
+            code=final_code, codes=[final_code] if final_code else [],
+            similarity=sim if final_code else 0.0, is_exact_match=True, need_review=size_need_review or bool(size_body) and not bool(code),
             candidates=[], display='', items=[]
         )
 

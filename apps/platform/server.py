@@ -129,20 +129,32 @@ def get_ner_predictor():
         if backend == "ollama":
             model_name = qwen3_config.get("model_name", "qwen3-pipe")
             ollama_url = qwen3_config.get("ollama_url", "http://localhost:11434")
-            logger.info(f"加载 Qwen3 NER 模型: Ollama 后端, 模型: {model_name}")
+            output_mode = qwen3_config.get("output_mode", "decisions_only")
+            ollama_num_predict = qwen3_config.get("num_predict", 1024)
+            ollama_temperature = qwen3_config.get("temperature", 0.1)
+            ollama_top_p = qwen3_config.get("top_p", 0.9)
+            ollama_logprobs_enabled = qwen3_config.get("logprobs_enabled", True)
+            logger.info(f"加载 Qwen3 NER 模型: Ollama 后端, 模型: {model_name}, 输出模式: {output_mode}")
             _ner_predictor = Qwen3Predictor(
                 model_name=model_name,
                 backend="ollama",
                 ollama_url=ollama_url,
+                output_mode=output_mode,
+                ollama_num_predict=ollama_num_predict,
+                ollama_temperature=ollama_temperature,
+                ollama_top_p=ollama_top_p,
+                ollama_logprobs_enabled=ollama_logprobs_enabled,
             )
         else:
             model_path = str(PROJECT_ROOT / qwen3_config.get("model_path", "models/qwen3_pipe"))
             device = qwen3_config.get("device", "auto")
-            logger.info(f"加载 Qwen3 NER 模型: Transformers 后端, 路径: {model_path}, 设备: {device}")
+            output_mode = qwen3_config.get("output_mode", "decisions_only")
+            logger.info(f"加载 Qwen3 NER 模型: Transformers 后端, 路径: {model_path}, 设备: {device}, 输出模式: {output_mode}")
             _ner_predictor = Qwen3Predictor(
                 model_path=model_path,
                 backend="transformers",
                 device=device,
+                output_mode=output_mode,
             )
         _ner_model_type = "qwen3"
     elif model_type == "globalpointer":
@@ -1164,6 +1176,7 @@ def _convert_pipe_result(result) -> dict:
         "missing_fields": result.missing_fields,
         "errors": result.errors,
         "warnings": result.warnings,
+        "thickness_conversion_notes": getattr(result, "thickness_conversion_notes", []),
         "fields": fields
     }
 

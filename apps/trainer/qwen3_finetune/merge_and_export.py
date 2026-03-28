@@ -33,9 +33,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-from src.llm_ner.prompts import NER_SYSTEM_PROMPT as SYSTEM_PROMPT
-
-
 def _resolve_local_model_path(value: str) -> str:
     """仅解析当前机器上真实存在的本地路径；不对跨环境绝对路径做隐式映射。"""
     if not value:

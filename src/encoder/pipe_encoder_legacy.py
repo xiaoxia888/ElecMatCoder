@@ -43,8 +43,8 @@ class LegacyPipeEncoder(PipeEncoderBase):
         logger.info(f"[Seq2Seq] TYPE (combined): '{merged_value}' -> code='{result.code}', conf={result.confidence:.2f}")
         return result.code, result.confidence
 
-    def _encode_size_multi(self, values: List[Any]) -> FieldEncoding:
-        merged, need_review = self.size_processor.process_multi_with_review(values)
+    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> FieldEncoding:
+        merged, need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
         display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
         return FieldEncoding(
             field_type='SIZE',

@@ -24,8 +24,14 @@ from .pipe_encoder import (
 from .processors import (
     SizeProcessor,
     StandardProcessor,
+    StandardTargetMapper,
+    ThicknessTableProcessor,
     get_size_processor,
     get_standard_processor,
+    get_standard_target_mapper,
+    get_thickness_table_processor,
+    map_standard_to_target,
+    convert_thickness_to_mm,
 )
 from .semantic_matcher import (
     SemanticMatcher,
@@ -65,8 +71,14 @@ __all__ = [
     # 处理器
     'SizeProcessor',
     'StandardProcessor',
+    'StandardTargetMapper',
+    'ThicknessTableProcessor',
     'get_size_processor',
     'get_standard_processor',
+    'get_standard_target_mapper',
+    'get_thickness_table_processor',
+    'map_standard_to_target',
+    'convert_thickness_to_mm',
     
     # 语义匹配器
     'SemanticMatcher',

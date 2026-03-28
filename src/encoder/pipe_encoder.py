@@ -28,6 +28,7 @@ from .processors import get_thickness_processor
 from .processors import get_pressure_processor
 from .processors import get_size_processor
 from .processors import get_regex_extractor
+from .processors import get_thickness_table_processor
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +85,7 @@ class PipeEncodingResult:
     missing_fields: List[str] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
+    thickness_conversion_notes: List[str] = field(default_factory=list)
     
     def to_dict(self) -> dict:
         result = {
@@ -98,6 +100,7 @@ class PipeEncodingResult:
             'missing_fields': self.missing_fields,
             'errors': self.errors,
             'warnings': self.warnings,
+            'thickness_conversion_notes': self.thickness_conversion_notes,
             'fields': {k: v.to_dict() for k, v in self.fields.items()}
         }
         return result
@@ -160,7 +163,10 @@ class PipeEncoderBase:
         self.size_processor = get_size_processor()
         self.standard_processor = get_standard_processor()
         self.thickness_processor = get_thickness_processor()
+        self.thickness_table_processor = get_thickness_table_processor()
         self.regex_extractor = get_regex_extractor()
+        thickness_mm_cfg = self.config.get('thickness_mm_conversion', {}) or {}
+        self.thickness_mm_conversion_enabled = bool(thickness_mm_cfg.get('enabled', False))
         
         self.semantic_match_fields = set(self.config.get('semantic_match_fields', ['TYPE', 'MATERIAL']))
         self.exact_match_fields = set(self.config.get('exact_match_fields', ['MANU', 'CONN']))
@@ -195,7 +201,7 @@ class PipeEncoderBase:
         """编码合并后的 TYPE 值，返回 (code, confidence)"""
         raise NotImplementedError
 
-    def _encode_size_multi(self, values: List[str]) -> FieldEncoding:
+    def _encode_size_multi(self, values: List[str], original_text: str = "") -> FieldEncoding:
         raise NotImplementedError
 
     def _encode_thickness_value(self, value: str, original_text: str = "") -> str:
@@ -662,6 +668,139 @@ class PipeEncoderBase:
                     parts.append(code)
         result.final_code = ''.join(parts)
 
+    @staticmethod
+    def _split_encoded_parts(value: Any) -> List[str]:
+        text = str(value or '').strip()
+        if not text:
+            return []
+        return [p for p in re.split(r'[xX×*/]+', text.replace(' ', '')) if p]
+
+    @staticmethod
+    def _format_mm_code(mm_value: str) -> str:
+        text = str(mm_value or '').strip().upper()
+        if not text:
+            return ''
+        if text.endswith('MM'):
+            return text
+        return f'{text}MM'
+
+    def _apply_thickness_mm_conversion(self, result: PipeEncodingResult):
+        """
+        使用 STANDARD + SIZE + THICKNESS 查壁厚表，将 Sch/S/Series 转成 mm。
+
+        规则：
+        1) 查到则输出 `3.91MM`
+        2) 多段换算后若全部相同，只保留一个（如 `SCH30X3.91` -> `3.91MM`）
+        3) 完全查不到则保持现有编码原样
+        """
+        if not self.thickness_mm_conversion_enabled:
+            return
+
+        thk_field = result.fields.get('THICKNESS')
+        size_field = result.fields.get('SIZE')
+        std_field = result.fields.get('STANDARD')
+        if not thk_field or not thk_field.code or not size_field or not size_field.code or not std_field:
+            return
+
+        standards = std_field.original_value or std_field.original_values or std_field.items or ''
+        if isinstance(size_field.original_value, dict):
+            dn_values = size_field.original_value
+        else:
+            size_code_for_dn = str(size_field.code or '').strip()
+            if not size_code_for_dn:
+                return
+
+            length_prefix = self.size_processor.extract_length_prefix(
+                size_field.original_value or size_field.original_values,
+                original_text=result.original_text,
+            )
+            if length_prefix and size_code_for_dn.upper().startswith(length_prefix.upper()):
+                size_code_for_dn = size_code_for_dn[len(length_prefix):]
+            dn_values = size_code_for_dn
+        thickness_values = thk_field.code
+
+        conversion_details = self.thickness_table_processor.convert_to_mm_details(
+            standards,
+            dn_values,
+            thickness_values,
+            original_text=result.original_text,
+        )
+        if not conversion_details:
+            return
+
+        original_parts = self._split_encoded_parts(thickness_values)
+        if not original_parts:
+            original_parts = [str(thickness_values).strip()]
+
+        changed = False
+        formatted_parts: List[str] = []
+        note_lines: List[str] = []
+        source_standard_text = self._format_standard_source_for_note(standards)
+        for idx, detail in enumerate(conversion_details):
+            converted = str(detail.get('converted') or '').strip()
+            source_part = str(detail.get('source') or '').strip()
+            if not converted:
+                formatted_parts.append(source_part)
+                continue
+            source = original_parts[min(idx, len(original_parts) - 1)] if original_parts else ''
+            if converted.upper() != str(source or '').strip().upper():
+                changed = True
+            formatted = self._format_mm_code(converted) if re.fullmatch(r'\d+(?:\.\d+)?', converted) else converted
+            formatted_parts.append(formatted)
+            if converted.upper() != str(source or '').strip().upper():
+                dn = str(detail.get('dn') or '').strip()
+                target_standard = str(detail.get('target_standard') or '').strip()
+                note_lines.append(
+                    f"[壁厚换算] {source} -> {formatted}（原文描述标准：{source_standard_text}，换算依据标准：{target_standard}，公称直径：DN{dn}）"
+                )
+
+        if not changed or not formatted_parts:
+            return
+
+        deduped_parts: List[str] = []
+        for part in formatted_parts:
+            if part not in deduped_parts:
+                deduped_parts.append(part)
+
+        final_code = deduped_parts[0] if len(set(formatted_parts)) == 1 else 'X'.join(formatted_parts)
+        thk_field.code = final_code
+        thk_field.codes = [final_code]
+        thk_field.matched_name = final_code
+        thk_field.matched_names = [final_code]
+        result.thickness_conversion_notes = note_lines
+
+        logger.info(
+            "[THICKNESS毫米换算] standards=%s, dn=%s, thickness=%s -> %s",
+            standards,
+            dn_values,
+            thickness_values,
+            final_code,
+        )
+
+    @staticmethod
+    def _format_standard_source_for_note(standards: Any) -> str:
+        def _format_item(item: Any) -> str:
+            if isinstance(item, dict):
+                body = str(item.get('BODY') or '').strip()
+                grade = str(item.get('GRADE') or '').strip()
+                appendix = str(item.get('APPENDIX') or '').strip()
+                method = str(item.get('METHOD') or '').strip()
+                text = body
+                if grade:
+                    text = f"{text}({grade})" if text else grade
+                if appendix:
+                    text = f"{text}-{appendix}" if text else appendix
+                if method:
+                    text = f"{text}-{method}" if text else method
+                return text
+            return str(item or '').strip()
+
+        if isinstance(standards, list):
+            parts = [_format_item(item) for item in standards]
+            parts = [part for part in parts if part]
+            return '；'.join(parts) if parts else ''
+        return _format_item(standards)
+
     def _mark_field_review(
         self,
         result: PipeEncodingResult,
@@ -1071,7 +1210,7 @@ class PipeEncoderBase:
             return self._process_material_structured(values[0])
         
         if field_type == 'SIZE':
-            return self._encode_size_multi(values)
+            return self._encode_size_multi(values, original_text=original_text)
         
         if field_type == 'STANDARD':
             return self._process_standard_multi(values, {})
@@ -1708,6 +1847,8 @@ class PipeEncoderBase:
             type_combined_processed,
             original_text=original_text,
         )
+
+        self._apply_thickness_mm_conversion(result)
 
         self._apply_field_verification_penalty(result, field_verified)
         self._apply_review_rules(result)

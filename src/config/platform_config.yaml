@@ -55,10 +55,15 @@ ner:
   # Qwen3-4B 微调模型配置（推荐）
   qwen3:
     backend: "ollama"                   # ollama / transformers
-    model_name: "qwen3-4b-q8-0327"            # ollama 后端时使用的模型名
+    model_name: "qwen3-4b-q8-one"            # ollama 后端时使用的模型名
     ollama_url: "http://localhost:11434" # ollama 服务地址
     model_path: "models/qwen3_pipe"     # transformers 后端时使用的模型路径
     device: "auto"                      # transformers 后端设备: auto / cpu / cuda / mps
+    output_mode: "full"       # full / decisions_only；调试用 full，正式推荐 decisions_only
+    num_predict: 1024                   # 一阶段最大生成 token 数；结构复杂或输出被截断时调大
+    temperature: 0.1                   # 生成随机性；越低越稳定。结构化抽取建议 0~0.2，正式环境推荐 0 或 0.1
+    top_p: 0.9                         # nucleus sampling 截断阈值；仅在 temperature > 0 ，top_p 的值越高，生成的文本越多样、越有创意；值越低，生成的文本越确定、越保守。
+    logprobs_enabled: true             # 是否向 Ollama 请求 logprobs 计算置信度；关闭后通常更快，但抽取置信度会退化为 1.0
   
   # GlobalPointer NER 模型配置
   globalpointer:

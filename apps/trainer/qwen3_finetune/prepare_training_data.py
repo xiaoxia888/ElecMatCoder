@@ -42,7 +42,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.llm_ner.prompts import ENCODING_SYSTEM_PROMPT, NER_SYSTEM_PROMPT
+from src.llm_ner.prompts import get_stage1_finetune_prompt, get_stage2_finetune_prompt
 from src.tokenizer_utils.preprocessor import TextPreprocessor
 from apps.trainer.qwen3_finetune.augment_ner_glue import augment_ner_samples_inplace
 
@@ -71,9 +71,10 @@ def to_chatml(system_prompt: str, user_content: str, assistant_content: str) -> 
 def convert_ner(
     samples: list,
     preprocessor: TextPreprocessor | None = None,
-    ner_system_prompt: str = NER_SYSTEM_PROMPT,
+    ner_system_prompt: str | None = None,
 ) -> list:
     """NER 源数据 → ChatML。保持新 schema 的 output 原样写入 assistant。"""
+    system_prompt = ner_system_prompt or get_stage1_finetune_prompt()
     results = []
     for s in samples:
         user = s["input"]
@@ -81,19 +82,20 @@ def convert_ner(
             user = preprocessor.process(user)
         output = s["output"]
         assistant = json.dumps(output, ensure_ascii=False) if isinstance(output, dict) else str(output)
-        results.append(to_chatml(ner_system_prompt, user, assistant))
+        results.append(to_chatml(system_prompt, user, assistant))
     return results
 
 
 def convert_encoding(samples: list) -> list:
     """编码源数据 → ChatML。当前仍按二阶段既有字符串输入 schema 处理。"""
+    system_prompt = get_stage2_finetune_prompt()
     results = []
     for s in samples:
         inp = s["input"]
         output = s["output"]
         user = json.dumps(inp, ensure_ascii=False) if isinstance(inp, dict) else str(inp)
         assistant = json.dumps(output, ensure_ascii=False) if isinstance(output, dict) else str(output)
-        results.append(to_chatml(ENCODING_SYSTEM_PROMPT, user, assistant))
+        results.append(to_chatml(system_prompt, user, assistant))
     return results
 
 
@@ -171,8 +173,8 @@ def main():
             ner_samples = load_json_or_jsonl(ner_path)
             print(f"NER 数据:  {len(ner_samples):>6} 条  ← {ner_path}")
 
-            ner_system_prompt = NER_SYSTEM_PROMPT
-            print("  NER提示词: new schema")
+            ner_system_prompt = get_stage1_finetune_prompt()
+            print("  NER提示词: stage1_finetune")
 
             if not args.no_dedupe:
                 ner_samples, removed = dedupe_samples(ner_samples)

@@ -18,9 +18,14 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 
-from .prompts import ENCODING_SYSTEM_PROMPT, SEMANTIC_PARSER_SYSTEM_PROMPT as SYSTEM_PROMPT
+from .prompts import (
+    get_stage1_decisions_only_prompt,
+    get_stage1_platform_predict_prompt,
+    get_stage2_platform_predict_prompt,
+)
 
 logger = logging.getLogger(__name__)
+STAGE2_SYSTEM_PROMPT = get_stage2_platform_predict_prompt()
 
 TYPE_CLASS_MAP = {
     "管": "管子", "pipe": "管子", "tube": "管子",
@@ -88,15 +93,30 @@ class Qwen3Predictor:
         backend: str = "ollama",
         device: str = "auto",
         ollama_url: str = "http://localhost:11434",
+        output_mode: str = "full",
+        ollama_num_predict: int = 768,
+        ollama_temperature: float = 0.1,
+        ollama_top_p: float = 0.9,
+        ollama_logprobs_enabled: bool = True,
     ):
         self.backend = backend
         self.model = None
         self.tokenizer = None
+        self.output_mode = output_mode if output_mode in {"full", "decisions_only"} else "full"
+        self.ollama_num_predict = int(ollama_num_predict)
+        self.ollama_temperature = float(ollama_temperature)
+        self.ollama_top_p = float(ollama_top_p)
+        self.ollama_logprobs_enabled = bool(ollama_logprobs_enabled)
+        self.stage1_system_prompt = (
+            get_stage1_decisions_only_prompt()
+            if self.output_mode == "decisions_only"
+            else get_stage1_platform_predict_prompt()
+        )
 
         if backend == "ollama":
             self.ollama_url = ollama_url
             self.model_name = model_name
-            logger.info(f"[Qwen3预测器] Ollama 后端, 模型: {model_name}")
+            logger.info(f"[Qwen3预测器] Ollama 后端, 模型: {model_name}, 输出模式: {self.output_mode}")
         else:
             import torch
             from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -109,7 +129,7 @@ class Qwen3Predictor:
                 device = "cpu"
             self.device = device
 
-            logger.info(f"[Qwen3预测器] Transformers 后端, 模型: {self.model_path}, 设备: {device}")
+            logger.info(f"[Qwen3预测器] Transformers 后端, 模型: {self.model_path}, 设备: {device}, 输出模式: {self.output_mode}")
             self.tokenizer = AutoTokenizer.from_pretrained(
                 str(self.model_path), trust_remote_code=True, padding_side="left"
             )
@@ -151,8 +171,10 @@ class Qwen3Predictor:
             return self._fallback_result(text)
 
         model_conf = extracted.get("_model_confidence")
-        if model_conf is None:
+        if model_conf is None and self.ollama_logprobs_enabled:
             raise RuntimeError("模型未返回 logprobs，无法计算置信度（严格模式）")
+        if model_conf is None:
+            model_conf = 1.0
 
         decisions = extracted.get("decisions")
         if not isinstance(decisions, dict):
@@ -194,7 +216,7 @@ class Qwen3Predictor:
         confidences: Dict[str, Any] = {}
 
         if single:
-            result = self._call_model(ENCODING_SYSTEM_PROMPT, json.dumps(single, ensure_ascii=False))
+            result = self._call_model(STAGE2_SYSTEM_PROMPT, json.dumps(single, ensure_ascii=False))
             if not result.get("_parse_error"):
                 model_conf = result.get("_model_confidence")
                 for key in single.keys():
@@ -206,7 +228,7 @@ class Qwen3Predictor:
             encoded_list = []
             conf_list = []
             for value in values:
-                result = self._call_model(ENCODING_SYSTEM_PROMPT, json.dumps({field: value}, ensure_ascii=False))
+                result = self._call_model(STAGE2_SYSTEM_PROMPT, json.dumps({field: value}, ensure_ascii=False))
                 if not result.get("_parse_error"):
                     encoded_list.append(result.get(field, value))
                     model_conf = result.get("_model_confidence")
@@ -217,7 +239,7 @@ class Qwen3Predictor:
         return codes, confidences
 
     def _extract(self, text: str) -> dict:
-        return self._call_model(SYSTEM_PROMPT, text)
+        return self._call_model(self.stage1_system_prompt, text)
 
     def _call_model(self, system_prompt: str, user_content: str) -> dict:
         if self.backend == "ollama":
@@ -234,12 +256,12 @@ class Qwen3Predictor:
                     {"role": "user", "content": user_content},
                 ],
                 "stream": False,
-                "logprobs": True,
+                "logprobs": self.ollama_logprobs_enabled,
                 "options": {
-                    "temperature": 0.1,
-                    "top_p": 0.9,
+                    "temperature": self.ollama_temperature,
+                    "top_p": self.ollama_top_p,
                     "repeat_penalty": 1.05,
-                    "num_predict": 768,
+                    "num_predict": self.ollama_num_predict,
                 },
             },
             timeout=30,
@@ -247,8 +269,8 @@ class Qwen3Predictor:
         resp.raise_for_status()
         payload = resp.json()
         response = payload.get("message", {}).get("content", "")
-        model_confidence = self._compute_ollama_confidence(payload)
-        if model_confidence is None:
+        model_confidence = self._compute_ollama_confidence(payload) if self.ollama_logprobs_enabled else 1.0
+        if model_confidence is None and self.ollama_logprobs_enabled:
             raise RuntimeError("Ollama 未返回可用 logprobs，无法计算置信度（严格模式）")
         return self._parse_response(response, model_confidence=model_confidence)
 
