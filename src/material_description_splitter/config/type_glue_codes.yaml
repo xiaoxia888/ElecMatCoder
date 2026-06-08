@@ -1,0 +1,34 @@
+seal_codes:
+  - RJ
+  # - RF
+  - FF
+  - RTJ
+  - MFM
+  - LM
+  - MF
+  - FM
+  # - M
+  - LF
+  - FLRJ
+
+conn_codes:
+  - SO
+  - THD
+  - NPT
+  - MTE
+  - FTE
+  - MNPT
+  - FNPT
+  - SW
+
+manu_codes:
+  - WELDED
+  - SAW
+  - SAWH
+  - SAWL
+  - DSAW
+  - DSAWL
+  - DSAWH
+  - ERW
+  - HFW
+  - EFW

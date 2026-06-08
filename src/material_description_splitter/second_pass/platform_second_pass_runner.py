@@ -1,0 +1,301 @@
+# -*- coding: utf-8 -*-
+"""Unified second-pass runner for platform payloads."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+from .material_second_pass_splitter import MaterialSecondPassSplitter
+from .pressure_second_pass_splitter import PressureSecondPassSplitter
+from .size_second_pass_splitter import SizeSecondPassSplitter
+from .standard_second_pass_splitter import StandardSecondPassSplitter
+from .thickness_second_pass_splitter import ThicknessSecondPassSplitter
+from .type_second_pass_splitter import TypeSecondPassSplitter
+
+
+@dataclass
+class PlatformSecondPassRunner:
+    size_splitter: SizeSecondPassSplitter = field(default_factory=SizeSecondPassSplitter)
+    thickness_splitter: ThicknessSecondPassSplitter = field(default_factory=ThicknessSecondPassSplitter)
+    pressure_splitter: PressureSecondPassSplitter = field(default_factory=PressureSecondPassSplitter)
+    material_splitter: MaterialSecondPassSplitter = field(default_factory=MaterialSecondPassSplitter)
+    type_splitter: TypeSecondPassSplitter = field(default_factory=TypeSecondPassSplitter)
+    standard_splitter: StandardSecondPassSplitter = field(default_factory=StandardSecondPassSplitter)
+
+    def analyze_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        text = self._clean(payload.get("text") or payload.get("original_text"))
+        stage1_difficulty = self._clean(payload.get("stage1_difficulty") or payload.get("difficulty"))
+        fields = payload.get("fields") if isinstance(payload.get("fields"), dict) else {}
+
+        extracted = {
+            "SIZE": self._extract_stage1_value(fields.get("SIZE")),
+            "THICKNESS": self._extract_stage1_value(fields.get("THICKNESS")),
+            "PRESSURE": self._extract_stage1_value(fields.get("PRESSURE")),
+            "MATERIAL_CODE": self._extract_code(fields.get("MATERIAL")),
+            "TYPE_CODE": self._extract_code(fields.get("TYPE")),
+            "STANDARD_ITEMS": self._extract_standard_items(fields.get("STANDARD")),
+        }
+        return self.analyze(
+            text=text,
+            stage1_difficulty=stage1_difficulty,
+            size_value=extracted["SIZE"],
+            thickness_value=extracted["THICKNESS"],
+            pressure_value=extracted["PRESSURE"],
+            material_code=extracted["MATERIAL_CODE"],
+            type_code=extracted["TYPE_CODE"],
+            standard_items=extracted["STANDARD_ITEMS"],
+        )
+
+    def analyze(
+        self,
+        *,
+        text: str,
+        stage1_difficulty: str = "",
+        size_value: Any = None,
+        thickness_value: Any = None,
+        pressure_value: Any = None,
+        material_code: str = "",
+        type_code: str = "",
+        standard_items: list[dict[str, str]] | None = None,
+    ) -> dict[str, Any]:
+        clean_text = self._clean(text)
+        clean_difficulty = self._clean(stage1_difficulty)
+        results: dict[str, Any] = {}
+        skipped_fields: dict[str, str] = {}
+
+        if clean_difficulty and clean_difficulty != "简单":
+            for field_name in ("SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "TYPE", "STANDARD"):
+                if self._field_provided(field_name, size_value, thickness_value, pressure_value, material_code, type_code, standard_items):
+                    skipped_fields[field_name] = f"一阶段非简单: {clean_difficulty}"
+            return {
+                "text": clean_text,
+                "stage1_difficulty": clean_difficulty,
+                "final_level": "困难",
+                "results": results,
+                "skipped_fields": skipped_fields,
+            }
+
+        consumed_spans: list[tuple[int, int]] = []
+
+        if not self._is_empty_value(size_value):
+            size_result = self.size_splitter.analyze(clean_text, size_value)
+            results["SIZE"] = size_result.to_dict()
+            consumed_spans = list(size_result.consumed_spans)
+
+        if not self._is_empty_value(thickness_value):
+            thickness_result = self.thickness_splitter.analyze(
+                clean_text,
+                thickness_value,
+                consumed_spans=consumed_spans,
+            )
+            results["THICKNESS"] = thickness_result.to_dict()
+            consumed_spans = list(thickness_result.consumed_spans)
+
+        if not self._is_empty_value(pressure_value):
+            pressure_result = self.pressure_splitter.analyze(
+                clean_text,
+                pressure_value,
+                consumed_spans=consumed_spans,
+            )
+            results["PRESSURE"] = pressure_result.to_dict()
+
+        material_code = self._clean(material_code)
+        if material_code:
+            results["MATERIAL"] = self.material_splitter.analyze(clean_text, material_code).to_dict()
+
+        type_code = self._clean(type_code)
+        if type_code:
+            results["TYPE"] = self.type_splitter.analyze(clean_text, type_code).to_dict()
+
+        normalized_standard_items = self._normalize_standard_items(standard_items)
+        if normalized_standard_items:
+            results["STANDARD"] = self.standard_splitter.analyze_items(clean_text, normalized_standard_items).to_dict()
+
+        final_level = self._build_final_level(
+            clean_difficulty,
+            results,
+            size_value=size_value,
+            thickness_value=thickness_value,
+            pressure_value=pressure_value,
+            material_code=material_code,
+            type_code=type_code,
+            standard_items=normalized_standard_items,
+        )
+        return {
+            "text": clean_text,
+            "stage1_difficulty": clean_difficulty,
+            "final_level": final_level,
+            "results": results,
+            "skipped_fields": skipped_fields,
+        }
+
+    @staticmethod
+    def _clean(value: Any) -> str:
+        if value is None:
+            return ""
+        text = str(value).strip()
+        return "" if text.lower() == "nan" else text
+
+    @classmethod
+    def _extract_stage1_value(cls, field_obj: Any) -> Any:
+        if not isinstance(field_obj, dict):
+            return None
+        stage1_final_value = field_obj.get("stage1_final_value")
+        if not cls._is_empty_value(stage1_final_value):
+            return stage1_final_value
+        original_value = field_obj.get("original_value")
+        if not cls._is_empty_value(original_value):
+            return original_value
+        return None
+
+    @classmethod
+    def _extract_code(cls, field_obj: Any) -> str:
+        if not isinstance(field_obj, dict):
+            return ""
+        return cls._clean(field_obj.get("code"))
+
+    @classmethod
+    def _extract_standard_items(cls, field_obj: Any) -> list[dict[str, str]]:
+        if not isinstance(field_obj, dict):
+            return []
+        return cls._normalize_standard_items(field_obj.get("items"))
+
+    @classmethod
+    def _normalize_standard_items(cls, items: Any) -> list[dict[str, str]]:
+        if not isinstance(items, list):
+            return []
+        normalized: list[dict[str, str]] = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            code = cls._clean(item.get("code"))
+            if not code:
+                continue
+            normalized.append(
+                {
+                    "code": code,
+                    "category": cls._clean(item.get("category")),
+                }
+            )
+        return normalized
+
+    @classmethod
+    def _is_empty_value(cls, value: Any) -> bool:
+        if value is None:
+            return True
+        if isinstance(value, str):
+            return cls._clean(value) == ""
+        if isinstance(value, (list, tuple, set)):
+            return len(value) == 0
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if str(key).startswith("_"):
+                    continue
+                if not cls._is_empty_value(item):
+                    return False
+            return True
+        return False
+
+    @staticmethod
+    def _field_provided(
+        field_name: str,
+        size_value: Any,
+        thickness_value: Any,
+        pressure_value: Any,
+        material_code: str,
+        type_code: str,
+        standard_items: list[dict[str, str]] | None,
+    ) -> bool:
+        if field_name == "SIZE":
+            return not PlatformSecondPassRunner._is_empty_value(size_value)
+        if field_name == "THICKNESS":
+            return not PlatformSecondPassRunner._is_empty_value(thickness_value)
+        if field_name == "PRESSURE":
+            return not PlatformSecondPassRunner._is_empty_value(pressure_value)
+        if field_name == "MATERIAL":
+            return bool(material_code)
+        if field_name == "TYPE":
+            return bool(type_code)
+        if field_name == "STANDARD":
+            return bool(standard_items)
+        return False
+
+    @classmethod
+    def _second_easy_field_presence(
+        cls,
+        *,
+        size_value: Any,
+        thickness_value: Any,
+        pressure_value: Any,
+        material_code: str,
+        type_code: str,
+        standard_items: list[dict[str, str]] | None,
+    ) -> dict[str, bool]:
+        return {
+            "SIZE": not cls._is_empty_value(size_value),
+            "THICKNESS": not cls._is_empty_value(thickness_value),
+            "PRESSURE": not cls._is_empty_value(pressure_value),
+            "MATERIAL": bool(cls._clean(material_code)),
+            "TYPE": bool(cls._clean(type_code)),
+            "STANDARD": bool(standard_items),
+        }
+
+    @classmethod
+    def _is_second_easy_eligible(
+        cls,
+        *,
+        size_value: Any,
+        thickness_value: Any,
+        pressure_value: Any,
+        material_code: str,
+        type_code: str,
+        standard_items: list[dict[str, str]] | None,
+    ) -> bool:
+        presence = cls._second_easy_field_presence(
+            size_value=size_value,
+            thickness_value=thickness_value,
+            pressure_value=pressure_value,
+            material_code=material_code,
+            type_code=type_code,
+            standard_items=standard_items,
+        )
+        base_required = presence["TYPE"] and presence["SIZE"] and presence["MATERIAL"] and presence["STANDARD"]
+        thickness_or_pressure = presence["THICKNESS"] or presence["PRESSURE"]
+        return base_required and thickness_or_pressure
+
+    @classmethod
+    def _build_final_level(
+        cls,
+        stage1_difficulty: str,
+        results: dict[str, Any],
+        *,
+        size_value: Any,
+        thickness_value: Any,
+        pressure_value: Any,
+        material_code: str,
+        type_code: str,
+        standard_items: list[dict[str, str]] | None,
+    ) -> str:
+        if stage1_difficulty and stage1_difficulty != "简单":
+            return "困难"
+        material_result = results.get("MATERIAL") if isinstance(results, dict) else None
+        material_reason = cls._clean(material_result.get("reason")) if isinstance(material_result, dict) else ""
+        if material_reason.startswith("文本命中后缀表达，但编码缺少后缀"):
+            return "困难"
+        provided_results = [payload for payload in results.values() if isinstance(payload, dict)]
+        if not provided_results:
+            return "简单" if stage1_difficulty == "简单" else "困难"
+        if not cls._is_second_easy_eligible(
+            size_value=size_value,
+            thickness_value=thickness_value,
+            pressure_value=pressure_value,
+            material_code=material_code,
+            type_code=type_code,
+            standard_items=standard_items,
+        ):
+            return "简单"
+        all_passed = all(bool(payload.get("passed")) for payload in provided_results)
+        if stage1_difficulty == "简单" and all_passed:
+            return "二次简单"
+        return "简单"

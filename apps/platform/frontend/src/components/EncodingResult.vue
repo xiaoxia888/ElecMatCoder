@@ -75,12 +75,7 @@
             <div class="field-item" @dblclick.stop="emitEditField(type)">
               <div class="field-main">
                 <span class="type-tag" :class="getTypeClass(type)">{{ typeLabels[type] || type }}</span>
-                <span class="field-original" :title="getFieldPrimaryText(type, field)">{{ getFieldPrimaryText(type, field) || '—' }}</span>
-                <!-- 语义匹配字段（TYPE/MATERIAL）显示匹配到的标准词 -->
-                <template v-if="showMatchedName(type, field)">
-                  <span class="field-arrow">→</span>
-                  <span class="field-matched" :title="field.matched_name">{{ field.matched_name }}</span>
-                </template>
+                <span class="field-original" :title="getFieldDisplayText(type, field)">{{ getFieldDisplayText(type, field) || '—' }}</span>
                 <span v-if="field.manual_override" class="field-manual-tag">修正</span>
                 <!-- 最后一列：编码结果（靠右） -->
                 <span class="field-code" :title="field.code">{{ field.code || '—' }}</span>
@@ -109,6 +104,127 @@
       </div>
     </div>
 
+    <div v-if="hasDifficultySplit" class="route-section">
+      <div class="route-header">
+        <div class="route-header-main">
+          <span class="route-title">分流结果</span>
+          <span class="route-hint">一阶段 + 二次校验</span>
+        </div>
+      </div>
+      <div class="route-meta-list">
+        <div class="route-meta-chip">
+          <span class="route-label">难度</span>
+          <span class="route-value route-value-strong" :class="displayDifficultyClass">{{ displayDifficultyText }}</span>
+        </div>
+      </div>
+      <div v-if="displayDifficultyReason" class="route-detail-line">
+        <span class="route-label">原因</span>
+        <span class="route-value">{{ displayDifficultyReason }}</span>
+      </div>
+    </div>
+
+    <div v-if="hasRouteInfo" class="route-section">
+      <div class="route-header route-header-collapsible" @click="routeCollapsed = !routeCollapsed">
+        <div class="route-header-main">
+          <span class="route-title">路由信息</span>
+          <span class="route-hint">一阶段模型分发</span>
+        </div>
+        <span class="route-collapse-icon">{{ routeCollapsed ? '展开' : '收起' }}</span>
+      </div>
+      <template v-if="!routeCollapsed">
+      <div class="route-meta-list">
+        <div class="route-meta-chip">
+          <span class="route-label">目标类别</span>
+          <span class="route-value route-value-strong">{{ routeInfo.selected_category || routeInfo.category || '—' }}</span>
+        </div>
+        <div class="route-meta-chip">
+          <span class="route-label">路由置信度</span>
+          <span class="route-value">{{ routeConfidenceText }}</span>
+        </div>
+        <div class="route-meta-chip">
+          <span class="route-label">路由来源</span>
+          <span class="route-value">{{ routeInfo.source || '—' }}</span>
+        </div>
+        <div class="route-meta-chip">
+          <span class="route-label">命中模型</span>
+          <span class="route-value route-value-strong">{{ routeInfo.selected_model_scope || '—' }}</span>
+        </div>
+      </div>
+      <div v-if="routeInfo.reason" class="route-detail-line">
+        <span class="route-label">判定理由</span>
+        <span class="route-value">{{ routeInfo.reason }}</span>
+      </div>
+      <div v-if="routeCandidatesText" class="route-detail-line">
+        <span class="route-label">候选类别</span>
+        <span class="route-value">{{ routeCandidatesText }}</span>
+      </div>
+      <div v-if="routeBreakdownText" class="route-detail-line">
+        <span class="route-label">置信度分解</span>
+        <span class="route-value">{{ routeBreakdownText }}</span>
+      </div>
+      </template>
+    </div>
+
+    <div v-if="extractConfidenceV2Rows.length > 0" class="route-section">
+      <div class="route-header route-header-collapsible" @click="stage1Collapsed = !stage1Collapsed">
+        <div class="route-header-main">
+          <span class="route-title">一阶段提取置信度V2</span>
+          <span class="route-hint">字段级调试信息</span>
+        </div>
+        <span class="route-collapse-icon">{{ stage1Collapsed ? '展开' : '收起' }}</span>
+      </div>
+      <template v-if="!stage1Collapsed">
+      <div
+        v-for="row in extractConfidenceV2Rows"
+        :key="row.field"
+        class="route-detail-line route-detail-line-block"
+      >
+        <span class="route-label route-label-strong">{{ row.fieldLabel }}</span>
+        <span class="route-value">{{ row.summary }}</span>
+      </div>
+      </template>
+    </div>
+
+    <div v-if="encodeConfidenceV2Rows.length > 0" class="route-section">
+      <div class="route-header route-header-collapsible" @click="stage2Collapsed = !stage2Collapsed">
+        <div class="route-header-main">
+          <span class="route-title">二阶段编码置信度V2</span>
+          <span class="route-hint">字段级调试信息</span>
+        </div>
+        <span class="route-collapse-icon">{{ stage2Collapsed ? '展开' : '收起' }}</span>
+      </div>
+      <template v-if="!stage2Collapsed">
+      <div
+        v-for="row in encodeConfidenceV2Rows"
+        :key="row.field"
+        class="route-detail-line route-detail-line-block"
+      >
+        <span class="route-label route-label-strong">{{ row.fieldLabel }}</span>
+        <span class="route-value">{{ row.summary }}</span>
+      </div>
+      </template>
+    </div>
+
+    <div v-if="fieldConfidenceRows.length > 0" class="route-section">
+      <div class="route-header route-header-collapsible" @click="finalConfidenceCollapsed = !finalConfidenceCollapsed">
+        <div class="route-header-main">
+          <span class="route-title">总置信度信息</span>
+          <span class="route-hint">一阶段 / 二阶段 / 字段最终</span>
+        </div>
+        <span class="route-collapse-icon">{{ finalConfidenceCollapsed ? '展开' : '收起' }}</span>
+      </div>
+      <template v-if="!finalConfidenceCollapsed">
+      <div
+        v-for="row in fieldConfidenceRows"
+        :key="row.field"
+        class="route-detail-line route-detail-line-block"
+      >
+        <span class="route-label route-label-strong">{{ row.fieldLabel }}</span>
+        <span class="route-value">{{ row.summary }}</span>
+      </div>
+      </template>
+    </div>
+
     <!-- 警告信息 -->
     <div v-if="result.warnings && result.warnings.length > 0" class="warnings-section">
       <div v-for="(warn, i) in result.warnings" :key="i" class="warning-item">
@@ -120,7 +236,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { buildDifficultyReason } from '../utils/difficulty'
 
 const props = defineProps({
   result: {
@@ -130,6 +247,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['select-candidate', 'edit-field'])
+
+const routeCollapsed = ref(true)
+const stage1Collapsed = ref(true)
+const stage2Collapsed = ref(true)
+const finalConfidenceCollapsed = ref(true)
 
 const fieldOrder = ['TYPE', 'ENDS', 'SEAL', 'MANU', 'CONN', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
 
@@ -175,6 +297,298 @@ const totalConfidenceText = computed(() => {
   return `${(conf * 100).toFixed(2)}%`
 })
 
+const difficultySplit = computed(() => props.result?.difficulty_split || null)
+const secondPass = computed(() => props.result?.second_pass || null)
+
+const hasDifficultySplit = computed(() => !!difficultySplit.value?.difficulty)
+const hasSecondPass = computed(() => !!secondPass.value?.final_level)
+
+const difficultyValueClass = computed(() => {
+  return difficultySplit.value?.difficulty === '困难' ? 'route-value-danger' : 'route-value-success'
+})
+
+const secondPassValueClass = computed(() => {
+  const level = secondPass.value?.final_level
+  if (level === '困难') return 'route-value-danger'
+  if (level === '二次简单') return 'route-value-success'
+  return 'route-value-warning'
+})
+
+const displayDifficultyText = computed(() => {
+  return secondPass.value?.final_level || difficultySplit.value?.difficulty || '—'
+})
+
+const displayDifficultyClass = computed(() => {
+  return hasSecondPass.value ? secondPassValueClass.value : difficultyValueClass.value
+})
+
+const displayDifficultyReason = computed(() => buildDifficultyReason(props.result))
+
+const routeInfo = computed(() => props.result?.route_info || null)
+
+const hasRouteInfo = computed(() => !!routeInfo.value)
+
+const routeConfidenceText = computed(() => {
+  const conf = Number(routeInfo.value?.confidence ?? 0)
+  if (Number.isNaN(conf) || conf <= 0) return '—'
+  return `${(conf * 100).toFixed(2)}%`
+})
+
+const routeCandidatesText = computed(() => {
+  const items = routeInfo.value?.candidates
+  if (!Array.isArray(items) || items.length === 0) return ''
+  return items
+    .map(item => {
+      const name = item?.category || ''
+      const score = Number(item?.score ?? 0)
+      if (!name) return ''
+      if (Number.isNaN(score) || score <= 0) return name
+      return `${name}(${(score * 100).toFixed(1)}%)`
+    })
+    .filter(Boolean)
+    .join('，')
+})
+
+const routeBreakdownText = computed(() => {
+  const breakdown = routeInfo.value?.confidence_breakdown
+  if (!breakdown || typeof breakdown !== 'object') return ''
+
+  const labelMap = {
+    mode: '模式',
+    evidence_score: '证据分',
+    margin_score: '分差分',
+    anchor_score: '主体词分',
+    model_confidence: '模型分',
+    llm_confidence: 'LLM分',
+    rule_confidence: '规则分',
+    rule_support_score: '规则支持分',
+    agreement_score: '一致性分',
+    strong_hit_count: '强词命中',
+    keyword_hit_count: '普通词命中',
+    top_raw_score: '原始分',
+    same_category: '规则一致',
+    rules_direct_threshold: '直通阈值'
+  }
+
+  return Object.entries(breakdown)
+    .filter(([, value]) => value !== null && value !== undefined && value !== '')
+    .map(([key, value]) => {
+      const label = labelMap[key] || key
+      if (typeof value === 'boolean') {
+        return `${label}: ${value ? '是' : '否'}`
+      }
+      if (typeof value === 'number') {
+        if (key.endsWith('_score') || key.endsWith('_confidence') || key === 'rules_direct_threshold') {
+          return `${label}: ${(value * 100).toFixed(2)}%`
+        }
+        return `${label}: ${value}`
+      }
+      return `${label}: ${value}`
+    })
+    .join('；')
+})
+
+const extractConfidenceV2Rows = computed(() => {
+  const raw = props.result?.extract_confidence_v2
+  if (!raw || typeof raw !== 'object') return []
+
+  const sourceLabelMap = {
+    finetuned_model: '微调模型',
+    prompt_extraction: '提示词抽取',
+    unknown: '未知来源'
+  }
+
+  const reasonLabelMap = {
+    field_present_and_schema_valid: '字段已提取，结构完整',
+    field_missing_or_invalid: '字段缺失或结构无效',
+    field_missing: '字段缺失',
+    field_missing_with_anchor: '原文存在锚点，但字段未提取',
+    explicit_pattern_match: '原文有明确模式，抽取较稳定',
+    partial_pattern_match: '原文有部分模式，抽取存在缺口',
+    no_signal_detected: '原文缺少明显信号',
+    not_applicable: '原文无该字段信号，不适用'
+  }
+
+  const evidenceLabelMap = {
+    field_present: '字段已提取',
+    structure_valid: '结构有效',
+    body_present: '主体值已提取',
+    aux_signal_count: '辅助属性数',
+    item_count: '提取项数',
+    valid_item_count: '有效项数',
+    valid_ratio: '有效比例',
+    explicit_anchor: '原文有明确锚点',
+    has_dn_pair: '存在双DN模式',
+    has_length_anchor: '存在长度锚点',
+    pair_expected: '应为双值结构',
+    pair_complete: '双值提取完整',
+    grouped_layers: '存在分层/复合壁厚',
+    pressure_anchor: '存在压力锚点',
+    value_present: '字段有值',
+    base_confidence: '基础置信度',
+    validation_issue_count: '验证问题数',
+    validation_penalty_factor: '验证惩罚系数',
+    validation_reasons: '验证原因'
+  }
+
+  const yesNoText = value => (value ? '是' : '否')
+  const formatEvidenceValue = (key, value) => {
+    if (typeof value === 'boolean') return yesNoText(value)
+    if (typeof value === 'number') {
+      if (key === 'valid_ratio' || key === 'base_confidence') return `${(value * 100).toFixed(0)}%`
+      return String(value)
+    }
+    return String(value)
+  }
+
+  const fieldOrderV2 = ['TYPE', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
+  return fieldOrderV2
+    .map(field => {
+      const item = raw[field]
+      if (!item || typeof item !== 'object') return null
+      const confidence = item.confidence === null || item.confidence === undefined ? null : Number(item.confidence)
+      const source = sourceLabelMap[item.source] || item.source || '—'
+      const reason = reasonLabelMap[item.reason] || item.reason || '—'
+      const evidence = item.evidence && typeof item.evidence === 'object' ? item.evidence : {}
+      const evidenceText = Object.entries(evidence)
+        .filter(([, value]) => value !== null && value !== undefined && value !== '')
+        .map(([key, value]) => {
+          const label = evidenceLabelMap[key] || key
+          return `${label}: ${formatEvidenceValue(key, value)}`
+        })
+        .join('，')
+
+      return {
+        field,
+        fieldLabel: typeLabels[field] || field,
+        summary: `置信度 ${confidence === null || Number.isNaN(confidence) ? '—' : `${(confidence * 100).toFixed(2)}%`}；来源：${source}；判断：${reason}${evidenceText ? `；依据：${evidenceText}` : ''}`
+      }
+    })
+    .filter(Boolean)
+})
+
+const encodeConfidenceV2Rows = computed(() => {
+  const fields = props.result?.fields
+  if (!fields || typeof fields !== 'object') return []
+
+  const sourceLabelMap = {
+    type_mapping: '类型映射',
+    material_mapping: '材质映射',
+    standard_processor: '规范规则编码器',
+    size_processor: '尺寸编码器',
+    thickness_processor: '壁厚编码器',
+    pressure_processor: '压力编码器',
+    llm_fallback: '大模型兜底',
+    regex_direct: '正则直提',
+    mixed: '混合来源',
+    unknown: '未知来源'
+  }
+
+  const reasonLabelMap = {
+    type_mapping_resolved: '类型映射命中',
+    type_mapping_unresolved_llm_used: '类型映射未命中，转大模型兜底',
+    type_mapping_unresolved_llm_failed: '类型映射未命中，且大模型兜底失败',
+    material_mapping_resolved: '材质映射命中',
+    standard_processor_resolved: '规范规则编码成功',
+    standard_processor_unresolved_llm_used: '规范规则未命中，转大模型兜底',
+    standard_processor_unresolved_llm_failed: '规范规则未命中，且大模型兜底失败',
+    size_processor_resolved: '尺寸编码成功',
+    size_processor_failed: '尺寸编码失败',
+    thickness_processor_resolved: '壁厚编码成功',
+    thickness_processor_failed: '壁厚编码失败',
+    pressure_processor_resolved: '压力编码成功',
+    pressure_processor_failed: '压力编码失败',
+    llm_fallback_used: '使用大模型兜底',
+    llm_fallback_failed: '大模型兜底失败',
+    regex_direct_match: '正则直接命中',
+    multi_item_aggregated: '多项结果聚合',
+    fallback_from_similarity: '由旧相似度回填',
+    no_item_results: '没有可用编码项'
+  }
+
+  const evidenceLabelMap = {
+    strategy: '命中策略',
+    matched_key: '命中键',
+    body_present: '主体值存在',
+    base_code: '基础编码',
+    suffix_count: '后缀数',
+    item_count: '编码项数',
+    code_present: '编码结果存在',
+    need_review: '需要审核',
+    field_type: '字段类型',
+    formatted_present: '格式化结果存在',
+    category: '分类',
+    source_count: '来源种类数',
+    mapping_item_count: '映射项数',
+    processor_item_count: '规则项数',
+    llm_item_count: '大模型项数',
+    used_model_confidence: '使用模型置信度',
+    merged_value_present: '编码输入存在',
+    value_present: '值存在'
+  }
+
+  const yesNoText = value => (value ? '是' : '否')
+  const formatEvidenceValue = (key, value) => {
+    if (typeof value === 'boolean') return yesNoText(value)
+    if (typeof value === 'number') return String(value)
+    return String(value)
+  }
+
+  const fieldOrderV2 = ['TYPE', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
+  return fieldOrderV2
+    .map(field => {
+      const item = fields[field]?.encode_confidence_v2
+      if (!item || typeof item !== 'object') return null
+      const confidence = Number(item.confidence ?? 0)
+      const source = sourceLabelMap[item.source] || item.source || '—'
+      const reason = reasonLabelMap[item.reason] || item.reason || '—'
+      const evidence = item.evidence && typeof item.evidence === 'object' ? item.evidence : {}
+      const evidenceText = Object.entries(evidence)
+        .filter(([, value]) => value !== null && value !== undefined && value !== '')
+        .map(([key, value]) => {
+          const label = evidenceLabelMap[key] || key
+          return `${label}: ${formatEvidenceValue(key, value)}`
+        })
+        .join('，')
+
+      return {
+        field,
+        fieldLabel: typeLabels[field] || field,
+        summary: `置信度 ${(confidence * 100).toFixed(2)}%；来源：${source}；判断：${reason}${evidenceText ? `；依据：${evidenceText}` : ''}`
+      }
+    })
+    .filter(Boolean)
+})
+
+const fieldConfidenceRows = computed(() => {
+  const fields = props.result?.fields
+  if (!fields || typeof fields !== 'object') return []
+
+  const fieldOrderV2 = ['TYPE', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
+  const formatPercent = value => {
+    const num = Number(value)
+    if (Number.isNaN(num) || num < 0) return '—'
+    return `${(num * 100).toFixed(2)}%`
+  }
+
+  return fieldOrderV2
+    .map(field => {
+      const item = fields[field]
+      if (!item || typeof item !== 'object') return null
+      const hasAny =
+        item.stage1_confidence !== null && item.stage1_confidence !== undefined ||
+        item.stage2_confidence !== null && item.stage2_confidence !== undefined ||
+        item.field_confidence !== null && item.field_confidence !== undefined
+      if (!hasAny) return null
+      return {
+        field,
+        fieldLabel: typeLabels[field] || field,
+        summary: `一阶段 ${formatPercent(item.stage1_confidence)}；二阶段 ${formatPercent(item.stage2_confidence)}；字段最终 ${formatPercent(item.field_confidence)}`
+      }
+    })
+    .filter(Boolean)
+})
+
 const hasCorrection = computed(() => {
   const fields = props.result?.fields || {}
   return Object.values(fields).some(field => {
@@ -207,25 +621,8 @@ function shouldRenderItems(type, field) {
   return !!(field?.items && field.items.length > 1)
 }
 
-// 判断是否显示 matched_name（第二步）
-// TYPE/MATERIAL 语义匹配字段：始终显示
-// 其他字段：matched_name 与 original_value 和 code 都不同时才显示
-function showMatchedName(type, field) {
-  if (!field.matched_name) return false
-  if (type === 'STANDARD') return false
-  if (shouldHideOriginalValue(type)) {
-    return false
-  }
-  // 语义匹配字段始终显示第二步
-  if (type === 'TYPE' || type === 'MATERIAL') {
-    return true
-  }
-  // 其他字段：matched_name 和 original/code 都不同才显示
-  return field.matched_name !== field.original_value && field.matched_name !== field.code
-}
-
 function shouldHideOriginalValue(type) {
-  return type === 'TYPE' || type === 'MATERIAL'
+  return type === 'MATERIAL'
 }
 
 function safeParseJson(value) {
@@ -239,26 +636,83 @@ function safeParseJson(value) {
   }
 }
 
-function getFieldOriginalText(type, field) {
-  if (type !== 'SIZE' && type !== 'THICKNESS') {
-    return field.original_value || ''
+function formatTypeSummary(parsed) {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return String(parsed || '')
   }
+
+  const parts = []
+  const body = String(parsed.BODY || '').trim()
+  const geometry = parsed.GEOMETRY && typeof parsed.GEOMETRY === 'object' ? parsed.GEOMETRY : {}
+  const angle = String(geometry.ANGLE || '').trim()
+  const radius = String(geometry.RADIUS || '').trim()
+  const manu = Array.isArray(parsed.MANU) ? parsed.MANU.map(item => String(item || '').trim()).filter(Boolean) : []
+  const conn = Array.isArray(parsed.CONN) ? parsed.CONN.map(item => String(item || '').trim()).filter(Boolean) : []
+  const seal = Array.isArray(parsed.SEAL) ? parsed.SEAL.map(item => String(item || '').trim()).filter(Boolean) : []
+  const ends = Array.isArray(parsed.ENDS) ? parsed.ENDS.map(item => String(item || '').trim()).filter(Boolean) : []
+
+  if (angle && body) {
+    parts.push(`${angle}度${body}`)
+  } else if (body) {
+    parts.push(body)
+  } else if (angle) {
+    parts.push(`${angle}度`)
+  }
+  if (radius) parts.push(radius)
+  if (manu.length) parts.push(manu.join(' x '))
+  if (conn.length) parts.push(conn.join(' x '))
+  if (seal.length) parts.push(seal.join(' x '))
+  if (ends.length) parts.push(ends.join(' x '))
+  return parts.join(';')
+}
+
+function getFieldOriginalText(type, field) {
   const parsed = safeParseJson(field.original_value || '')
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     return field.original_value || ''
   }
+
+  if (type === 'TYPE') {
+    const parts = []
+    const body = String(parsed.BODY || '').trim()
+    const geometry = parsed.GEOMETRY && typeof parsed.GEOMETRY === 'object' ? parsed.GEOMETRY : {}
+    const angle = String(geometry.ANGLE || '').trim()
+    const radius = String(geometry.RADIUS || '').trim()
+    const manu = Array.isArray(parsed.MANU) ? parsed.MANU.map(item => String(item || '').trim()).filter(Boolean) : []
+    const conn = Array.isArray(parsed.CONN) ? parsed.CONN.map(item => String(item || '').trim()).filter(Boolean) : []
+    const seal = Array.isArray(parsed.SEAL) ? parsed.SEAL.map(item => String(item || '').trim()).filter(Boolean) : []
+    const ends = Array.isArray(parsed.ENDS) ? parsed.ENDS.map(item => String(item || '').trim()).filter(Boolean) : []
+    if (angle) parts.push(`${angle}度`)
+    if (body) parts.push(body)
+    if (radius) parts.push(radius)
+    if (manu.length) parts.push(manu.join(' x '))
+    if (conn.length) parts.push(conn.join(' x '))
+    if (seal.length) parts.push(seal.join(' x '))
+    if (ends.length) parts.push(ends.join(' x '))
+    return parts.join(';')
+  }
+
+  if (type !== 'SIZE' && type !== 'THICKNESS') {
+    return field.original_value || ''
+  }
+
   const subtypeOrderMap = {
-    SIZE: ['DN', 'OD', 'NPS', 'ID'],
+    SIZE: ['DN', 'OD', 'INCH', 'LENGTH'],
     THICKNESS: ['MM', 'INCH', 'SCHEDULE', 'SERIES', 'BWG']
   }
   const order = subtypeOrderMap[type] || []
   return [
     ...order.filter(key => Object.prototype.hasOwnProperty.call(parsed, key)),
-    ...Object.keys(parsed).filter(key => !order.includes(key))
+    ...Object.keys(parsed).filter(
+      key =>
+        !order.includes(key) &&
+        !String(key).startsWith('_') &&
+        typeof parsed[key] !== 'object'
+    )
   ]
     .map(key => {
       const values = Array.isArray(parsed[key]) ? parsed[key] : [parsed[key]]
-      const text = values.map(item => String(item || '').trim()).filter(Boolean).join(' x ')
+      const text = values.map(item => (item && typeof item === 'object') ? '' : String(item || '').trim()).filter(Boolean).join(' x ')
       return text ? `${key}: ${text}` : ''
     })
     .filter(Boolean)
@@ -267,9 +721,51 @@ function getFieldOriginalText(type, field) {
 
 function getFieldPrimaryText(type, field) {
   if (shouldHideOriginalValue(type)) {
-    return field.matched_name || getFieldOriginalText(type, field) || ''
+    return field.encoding_input || field.matched_name || getFieldOriginalText(type, field) || ''
   }
   return getFieldOriginalText(type, field)
+}
+
+function formatFieldTextByType(type, value) {
+  if (type === 'TYPE') {
+    const parsed = safeParseJson(value)
+    return formatTypeSummary(parsed)
+  }
+  const text = String(value || '').trim()
+  if (!text) return ''
+  if (type === 'SIZE' || type === 'THICKNESS' || type === 'PRESSURE') {
+    return getFieldOriginalText(type, { original_value: text }) || text
+  }
+  return text
+}
+
+function normalizeComparableText(text) {
+  return String(text || '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*;\s*/g, ';')
+    .replace(/\s*[xX×]\s*/g, 'x')
+    .trim()
+}
+
+function getFieldProcessedText(type, field) {
+  let candidate = null
+  if (type === 'TYPE') {
+    candidate = field?.encoding_input ?? field?.stage1_final_value ?? null
+  } else {
+    candidate = field?.encoding_input ?? field?.stage1_final_value ?? null
+  }
+  if (candidate === null || candidate === undefined || candidate === '') return ''
+  return formatFieldTextByType(type, candidate)
+}
+
+function getFieldDisplayText(type, field) {
+  const originalText = getFieldPrimaryText(type, field)
+  const processedText = getFieldProcessedText(type, field)
+  if (!processedText) return originalText
+  if (normalizeComparableText(processedText) === normalizeComparableText(originalText)) {
+    return originalText
+  }
+  return `${originalText} → ${processedText}`
 }
 
 function showItemMatchedName(type, item) {
@@ -298,7 +794,7 @@ function emitEditField(type, index = null) {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .result-header {
@@ -591,6 +1087,118 @@ function emitEditField(type, index = null) {
   padding: 2px 0;
 }
 
+.route-section {
+  padding: 10px 16px;
+  background: #fafcff;
+  border-top: 1px solid var(--border-light);
+  overflow: visible;
+}
+
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.route-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.route-header-collapsible {
+  cursor: pointer;
+  user-select: none;
+}
+
+.route-collapse-icon {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.route-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.route-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.route-meta-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.route-meta-chip {
+  min-width: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.route-detail-line {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  overflow: visible;
+}
+
+.route-detail-line + .route-detail-line {
+  margin-top: 8px;
+}
+
+.route-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.route-value {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.route-value-strong {
+  font-weight: 600;
+}
+
+.route-value-success {
+  color: var(--success);
+}
+
+.route-value-danger {
+  color: var(--danger);
+}
+
+.route-value-warning {
+  color: #b26a00;
+}
+
 .warnings-section {
   padding: 10px 16px;
   background: var(--warning-light);
@@ -601,6 +1209,16 @@ function emitEditField(type, index = null) {
   font-size: 11px;
   color: #8b5a00;
   padding: 2px 0;
+}
+
+@media (max-width: 768px) {
+  .route-meta-list {
+    grid-template-columns: 1fr;
+  }
+
+  .route-meta-chip {
+    min-width: 100%;
+  }
 }
 
 </style>

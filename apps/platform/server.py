@@ -8,6 +8,9 @@ import os
 import sys
 import logging
 import yaml
+import time
+import uuid
+from collections import deque
 from typing import List, Optional, Dict, Any
 from pathlib import Path
 
@@ -38,6 +41,11 @@ from src.bert_ner.predictor import PipePredictor
 # 导入编码模块
 from src.encoder.pipe_encoder import PipeEncoder, get_pipe_encoder
 from src.encoder.semantic_matcher import get_semantic_matcher
+from src.material_description_splitter.platform_integration import (
+    build_base_difficulty,
+    finalize_batch_difficulty,
+)
+from src.material_description_splitter.second_pass import PlatformSecondPassRunner
 
 # 导入第三方集成模块
 from src.integrations import get_h3yun_client
@@ -104,6 +112,839 @@ _tokenizers: Dict[str, LLMTokenizer] = {}
 _preprocessor = TextPreprocessor()
 _ner_predictor = None
 _ner_model_type: str = "bert"
+_pipe_router = None
+_structural_prompt_extractor = None
+_second_pass_runner = PlatformSecondPassRunner()
+_batch_jobs: Dict[str, Dict[str, Any]] = {}
+_batch_job_queue: deque[str] = deque()
+_batch_job_active_id: Optional[str] = None
+_batch_job_scheduler_task: Optional[asyncio.Task] = None
+_batch_job_lock = asyncio.Lock()
+
+_BATCH_JOB_KEEP_SECONDS = 60.0
+_BATCH_JOB_TERMINAL_STATUSES = {"finished", "cancelled", "failed"}
+_BATCH_JOB_ACTIVE_STATUSES = {"queued", "running", "cancelling"}
+
+
+def _merge_nested_dict(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    merged = copy.deepcopy(base)
+    for key, value in (override or {}).items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _merge_nested_dict(merged[key], value)
+        else:
+            merged[key] = copy.deepcopy(value)
+    return merged
+
+
+def _utc_ts() -> float:
+    return time.time()
+
+
+def _batch_job_public(job: Dict[str, Any], *, include_results: bool = True) -> Dict[str, Any]:
+    queue_position = 0
+    if job.get("status") == "queued":
+        try:
+            queue_position = list(_batch_job_queue).index(job["job_id"]) + 1
+        except ValueError:
+            queue_position = 0
+    result: Dict[str, Any] = {
+        "job_id": job["job_id"],
+        "status": job.get("status", ""),
+        "total": int(job.get("total", 0) or 0),
+        "processed": int(job.get("processed", 0) or 0),
+        "success_count": int(job.get("success_count", 0) or 0),
+        "review_count": int(job.get("review_count", 0) or 0),
+        "threshold": job.get("threshold"),
+        "queue_position": queue_position,
+        "created_at": job.get("created_at"),
+        "started_at": job.get("started_at"),
+        "finished_at": job.get("finished_at"),
+        "updated_at": job.get("updated_at"),
+        "cancel_requested": bool(job.get("cancel_requested")),
+        "error": job.get("error", ""),
+        "items": copy.deepcopy(job.get("items_meta", [])),
+    }
+    if include_results:
+        result["results"] = copy.deepcopy(job.get("results", {}))
+    return result
+
+
+def _build_batch_item_trace_base(
+    *,
+    text: str,
+    processed_text: str,
+    route_info: Dict[str, Any],
+    stage1_output: Dict[str, Any],
+    stage1_raw_response: str,
+    structural_prompt_output: Any,
+    structural_prompt_raw_response: str,
+) -> Dict[str, Any]:
+    return {
+        "original_text": text,
+        "processed_text": processed_text,
+        "route_info": copy.deepcopy(route_info),
+        "stage1_output": copy.deepcopy(stage1_output),
+        "stage1_raw_response": stage1_raw_response,
+        "structural_prompt_output": copy.deepcopy(structural_prompt_output),
+        "structural_prompt_raw_response": structural_prompt_raw_response,
+        "difficulty_stage1_before_project": None,
+        "second_pass_before_project": None,
+        "difficulty_stage1_after_project": None,
+        "second_pass_after_project": None,
+        "status": "pending",
+        "skip_reason": "",
+        "error": "",
+    }
+
+
+def _build_batch_item_trace_summary(
+    converted: Optional[Dict[str, Any]],
+    trace: Optional[Dict[str, Any]],
+) -> Dict[str, Any]:
+    converted = converted or {}
+    trace = trace or {}
+    route_info = trace.get("route_info") or converted.get("route_info") or {}
+    stage1_output = trace.get("stage1_output") or converted.get("stage1_output") or {}
+    extract_confidence_v2 = converted.get("extract_confidence_v2") or {}
+
+    def _source_label(source: str) -> str:
+        source = str(source or "").strip()
+        if source == "finetuned_model":
+            return "微调模型"
+        if source == "rule_extraction":
+            return "规则/正则"
+        if source == "prompt_extraction":
+            return "提示词模型"
+        return source or "未知"
+
+    def _field_source(field: str) -> str:
+        info = extract_confidence_v2.get(field)
+        if isinstance(info, dict):
+            return str(info.get("source", "") or "")
+        return ""
+
+    def _stringify_stage1_value(field: str, value: Any) -> str:
+        if value is None:
+            return ""
+        if field == "TYPE" and isinstance(value, dict):
+            body = str(value.get("BODY", "") or "").strip()
+            return body
+        if field == "MATERIAL" and isinstance(value, list):
+            values = []
+            for item in value:
+                if isinstance(item, dict):
+                    raw = str(item.get("VALUE", "") or "").strip()
+                    if raw:
+                        values.append(raw)
+            return "; ".join(values)
+        if field == "STANDARD" and isinstance(value, list):
+            values = []
+            for item in value:
+                if isinstance(item, dict):
+                    raw = str(item.get("BODY", "") or "").strip()
+                    if raw:
+                        values.append(raw)
+            return "; ".join(values)
+        if isinstance(value, dict):
+            parts = []
+            for key in ("DN", "OD", "INCH", "MM", "SCHEDULE", "SERIES", "BWG"):
+                raw = value.get(key)
+                if isinstance(raw, list):
+                    raw = " | ".join(str(v).strip() for v in raw if str(v).strip())
+                elif raw is None:
+                    raw = ""
+                raw = str(raw or "").strip()
+                if raw:
+                    parts.append(f"{key}: {raw}")
+            return "; ".join(parts)
+        if isinstance(value, list):
+            return "; ".join(str(v).strip() for v in value if str(v).strip())
+        return str(value or "").strip()
+
+    def _stage1_field(field: str, value: Any) -> Dict[str, Any]:
+        source = _field_source(field)
+        return {
+            "value": _stringify_stage1_value(field, value),
+            "source": source,
+            "source_label": _source_label(source),
+        }
+
+    return {
+        "route": {
+            "category": route_info.get("category", ""),
+            "confidence": route_info.get("confidence"),
+            "reason": route_info.get("reason", ""),
+        },
+        "stage1": {
+            "type": _stage1_field("TYPE", stage1_output.get("TYPE")),
+            "size": _stage1_field("SIZE", stage1_output.get("SIZE")),
+            "thickness": _stage1_field("THICKNESS", stage1_output.get("THICKNESS")),
+            "pressure": _stage1_field("PRESSURE", stage1_output.get("PRESSURE")),
+            "material": _stage1_field("MATERIAL", stage1_output.get("MATERIAL")),
+            "standard": _stage1_field("STANDARD", stage1_output.get("STANDARD")),
+        },
+        "split": {
+            "difficulty_before_project": (trace.get("difficulty_stage1_before_project") or {}).get("difficulty", ""),
+            "difficulty_before_project_reason": (trace.get("difficulty_stage1_before_project") or {}).get("reason", ""),
+            "second_pass_before_project": (trace.get("second_pass_before_project") or {}).get("final_level", ""),
+            "second_pass_before_project_reason": (trace.get("second_pass_before_project") or {}).get("reason", ""),
+            "difficulty_after_project": (trace.get("difficulty_stage1_after_project") or {}).get("difficulty", ""),
+            "difficulty_after_project_reason": (trace.get("difficulty_stage1_after_project") or {}).get("reason", ""),
+            "second_pass_after_project": (trace.get("second_pass_after_project") or {}).get("final_level", ""),
+            "second_pass_after_project_reason": (trace.get("second_pass_after_project") or {}).get("reason", ""),
+        },
+        "skip": {
+            "skipped": bool(converted.get("skipped_encoding")),
+            "reason": trace.get("skip_reason", "") or converted.get("skip_reason", ""),
+        },
+        "status": trace.get("status", ""),
+    }
+
+
+async def _batch_job_emit(job: Dict[str, Any], event: Dict[str, Any]) -> None:
+    event_payload = copy.deepcopy(event)
+    event_payload["job_id"] = job["job_id"]
+    event_payload["job_status"] = job.get("status", "")
+    subscribers = list(job.get("subscribers", []))
+    for queue in subscribers:
+        try:
+            queue.put_nowait(copy.deepcopy(event_payload))
+        except asyncio.QueueFull:
+            continue
+
+
+async def _batch_job_cleanup_locked() -> None:
+    now = _utc_ts()
+    remove_ids: list[str] = []
+    for job_id, job in list(_batch_jobs.items()):
+        status = str(job.get("status", "") or "")
+        finished_at = float(job.get("finished_at") or 0.0)
+        if status in _BATCH_JOB_TERMINAL_STATUSES and finished_at and (now - finished_at) >= _BATCH_JOB_KEEP_SECONDS:
+            remove_ids.append(job_id)
+    for job_id in remove_ids:
+        _batch_jobs.pop(job_id, None)
+        try:
+            _batch_job_queue.remove(job_id)
+        except ValueError:
+            pass
+
+
+async def _batch_job_get(job_id: str) -> Optional[Dict[str, Any]]:
+    async with _batch_job_lock:
+        await _batch_job_cleanup_locked()
+        return _batch_jobs.get(job_id)
+
+
+async def _batch_job_mark_finished(job: Dict[str, Any], status: str, error: str = "") -> None:
+    job["status"] = status
+    job["updated_at"] = _utc_ts()
+    job["finished_at"] = _utc_ts()
+    job["error"] = str(error or "")
+
+
+async def _run_batch_job(job_id: str) -> None:
+    async with _batch_job_lock:
+        job = _batch_jobs.get(job_id)
+        if not job:
+            return
+        job["status"] = "running"
+        job["started_at"] = _utc_ts()
+        job["updated_at"] = _utc_ts()
+        job["error"] = ""
+    await _batch_job_emit(job, {"type": "start", "snapshot": _batch_job_public(job)})
+
+    encoder = get_pipe_encoder()
+    predictor = get_ner_predictor()
+    items = list(job.get("items", []))
+    total = len(items)
+    threshold = encoder.get_threshold()
+    job["threshold"] = threshold
+    max_concurrent = int(job.get("max_concurrent") or get_batch_max_concurrent())
+    semaphore = asyncio.Semaphore(max(1, max_concurrent))
+    index_lock = asyncio.Lock()
+    next_index = 0
+    converted_results: list[Optional[Dict[str, Any]]] = [None] * total
+
+    async def process_one(order_index: int, item: Dict[str, Any]) -> tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
+        text = item.get("text", "")
+        preprocess = bool(item.get("preprocess", True))
+        processed_text = _preprocessor.process(text) if preprocess else text
+
+        async with semaphore:
+            predict_result = await asyncio.to_thread(predictor.predict, processed_text)
+        if predict_result.get("structural_prompt_output") is None:
+            _apply_structural_prompt_override(predict_result, processed_text)
+
+        route_info = _decorate_predict_route_info(predict_result.get("route_info"))
+        stage1_output = dict(predict_result.get("model_output", {}) or {})
+        stage1_output["_STRUCTURAL_PROMPT"] = predict_result.get("structural_prompt_output")
+        stage1_raw_response = "".join([
+            predict_result.get("model_raw_response", "") or "",
+            f"\n\n[STRUCTURAL_PROMPT_RAW]\n{predict_result.get('structural_prompt_raw_response')}"
+            if predict_result.get("structural_prompt_raw_response")
+            else "",
+        ])
+        trace = _build_batch_item_trace_base(
+            text=text,
+            processed_text=processed_text,
+            route_info=route_info,
+            stage1_output=stage1_output,
+            stage1_raw_response=stage1_raw_response,
+            structural_prompt_output=predict_result.get("structural_prompt_output"),
+            structural_prompt_raw_response=predict_result.get("structural_prompt_raw_response", ""),
+        )
+
+        if route_info.get("encoding_enabled") is False:
+            converted: Dict[str, Any] = {
+                "original_text": text,
+                "processed_text": processed_text,
+                "final_code": "",
+                "success": True,
+                "need_review": False,
+                "skipped_encoding": True,
+                "skip_reason": route_info.get("skip_encoding_reason", "") or "",
+                "errors": [],
+                "fields": {},
+                "route_info": route_info,
+                "stage1_output": stage1_output,
+                "stage1_raw_response": stage1_raw_response,
+                "structural_prompt_output": predict_result.get("structural_prompt_output"),
+                "structural_prompt_raw_response": predict_result.get("structural_prompt_raw_response", ""),
+            }
+            trace["status"] = "skipped"
+            trace["skip_reason"] = converted.get("skip_reason", "")
+            return converted, trace
+
+        entities = _build_pipe_entities_for_encode(predict_result)
+        extract_confidence = predict_result.get("extract_confidence", {}) or {}
+        extract_confidence_v2 = predict_result.get("extract_confidence_v2", {}) or {}
+
+        async with semaphore:
+            result = await asyncio.to_thread(
+                encoder.encode,
+                entities,
+                text,
+                extract_confidence,
+                extract_confidence_v2,
+            )
+
+        converted = _convert_pipe_result(result)
+        converted["processed_text"] = processed_text
+        converted["extract_confidence_v2"] = converted.get("extract_confidence_v2") or extract_confidence_v2
+        converted["route_info"] = route_info
+        converted["stage1_output"] = stage1_output
+        converted["stage1_raw_response"] = stage1_raw_response
+        converted["structural_prompt_output"] = predict_result.get("structural_prompt_output")
+        converted["structural_prompt_raw_response"] = predict_result.get("structural_prompt_raw_response", "")
+        converted = _attach_base_difficulty(converted, str(item.get("project_name", "") or "").strip())
+        converted = _attach_second_pass(converted)
+        trace["status"] = "processed"
+        trace["difficulty_stage1_before_project"] = copy.deepcopy(converted.get("difficulty_split"))
+        trace["second_pass_before_project"] = copy.deepcopy(converted.get("second_pass"))
+        return converted, trace
+
+    async def worker() -> None:
+        nonlocal next_index
+        while True:
+            async with _batch_job_lock:
+                current_job = _batch_jobs.get(job_id)
+                if not current_job:
+                    return
+                if current_job.get("cancel_requested"):
+                    current_job["status"] = "cancelling"
+                    current_job["updated_at"] = _utc_ts()
+                    return
+            async with index_lock:
+                if next_index >= total:
+                    return
+                order_index = next_index
+                next_index += 1
+            item = items[order_index]
+            try:
+                converted, trace = await process_one(order_index, item)
+                converted_results[order_index] = converted
+                async with _batch_job_lock:
+                    current_job = _batch_jobs.get(job_id)
+                    if not current_job:
+                        return
+                    current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
+                    if converted and converted.get("success"):
+                        current_job["success_count"] = int(current_job.get("success_count", 0) or 0) + 1
+                    if converted and converted.get("need_review"):
+                        current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
+                    current_job["results"][str(order_index)] = copy.deepcopy(converted)
+                    current_job["item_traces"][str(order_index)] = copy.deepcopy(trace)
+                    current_job["updated_at"] = _utc_ts()
+                    snapshot = _batch_job_public(current_job)
+                await _batch_job_emit(job, {
+                    "type": "progress",
+                    "index": int(item.get("client_index", order_index)),
+                    "order_index": order_index,
+                    "result": converted,
+                    "trace_summary": _build_batch_item_trace_summary(converted, trace),
+                    "snapshot": snapshot,
+                })
+            except Exception as exc:
+                logger.exception("批量编码任务处理失败: job=%s index=%s", job_id, order_index)
+                failed_result = {
+                    "original_text": item.get("text", ""),
+                    "final_code": "",
+                    "success": False,
+                    "need_review": True,
+                    "errors": [str(exc)],
+                    "fields": {},
+                }
+                failed_trace = {
+                    "original_text": item.get("text", ""),
+                    "processed_text": "",
+                    "route_info": None,
+                    "stage1_output": None,
+                    "stage1_raw_response": "",
+                    "structural_prompt_output": None,
+                    "structural_prompt_raw_response": "",
+                    "difficulty_stage1_before_project": None,
+                    "second_pass_before_project": None,
+                    "difficulty_stage1_after_project": None,
+                    "second_pass_after_project": None,
+                    "status": "failed",
+                    "skip_reason": "",
+                    "error": str(exc),
+                }
+                converted_results[order_index] = failed_result
+                async with _batch_job_lock:
+                    current_job = _batch_jobs.get(job_id)
+                    if not current_job:
+                        return
+                    current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
+                    current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
+                    current_job["results"][str(order_index)] = copy.deepcopy(failed_result)
+                    current_job["item_traces"][str(order_index)] = failed_trace
+                    current_job["updated_at"] = _utc_ts()
+                    snapshot = _batch_job_public(current_job)
+                await _batch_job_emit(job, {
+                    "type": "progress",
+                    "index": int(item.get("client_index", order_index)),
+                    "order_index": order_index,
+                    "result": failed_result,
+                    "trace_summary": _build_batch_item_trace_summary(failed_result, failed_trace),
+                    "snapshot": snapshot,
+                })
+
+    try:
+        workers = [asyncio.create_task(worker()) for _ in range(max(1, max_concurrent))]
+        await asyncio.gather(*workers)
+
+        async with _batch_job_lock:
+            current_job = _batch_jobs.get(job_id)
+            if not current_job:
+                return
+            cancel_requested = bool(current_job.get("cancel_requested"))
+
+        if cancel_requested:
+            async with _batch_job_lock:
+                current_job = _batch_jobs.get(job_id)
+                if not current_job:
+                    return
+                await _batch_job_mark_finished(current_job, "cancelled")
+                snapshot = _batch_job_public(current_job)
+            await _batch_job_emit(job, {"type": "cancelled", "snapshot": snapshot})
+            return
+
+        finalized = finalize_batch_difficulty(
+            [
+                {
+                    "text": (converted or {}).get("original_text", "") if isinstance(converted, dict) else "",
+                    "project_name": str(item.get("project_name", "") or "").strip(),
+                    "type_code": _extract_code_from_field(converted or {}, "TYPE") if isinstance(converted, dict) else "",
+                    "material_code": _extract_code_from_field(converted or {}, "MATERIAL") if isinstance(converted, dict) else "",
+                    "standard_code": _extract_code_from_field(converted or {}, "STANDARD") if isinstance(converted, dict) else "",
+                    "standard_codes": _extract_standard_codes_from_field(converted or {}) if isinstance(converted, dict) else [],
+                    "base_difficulty": (converted or {}).get("difficulty_split") if isinstance(converted, dict) else None,
+                }
+                for item, converted in zip(items, converted_results)
+            ]
+        )
+
+        for order_index, (item, converted, difficulty) in enumerate(zip(items, converted_results, finalized)):
+            if not isinstance(converted, dict) or converted.get("skipped_encoding"):
+                continue
+            converted["difficulty_split"] = difficulty
+            _attach_second_pass(converted)
+            async with _batch_job_lock:
+                current_job = _batch_jobs.get(job_id)
+                if not current_job:
+                    return
+                current_job["results"][str(order_index)] = copy.deepcopy(converted)
+                trace = current_job["item_traces"].setdefault(str(order_index), {})
+                trace["difficulty_stage1_after_project"] = copy.deepcopy(converted.get("difficulty_split"))
+                trace["second_pass_after_project"] = copy.deepcopy(converted.get("second_pass"))
+                trace["status"] = "finalized"
+                current_job["updated_at"] = _utc_ts()
+                snapshot = _batch_job_public(current_job)
+            await _batch_job_emit(job, {
+                "type": "finalize",
+                "index": int(item.get("client_index", order_index)),
+                "order_index": order_index,
+                "result": converted,
+                "trace_summary": _build_batch_item_trace_summary(converted, trace),
+                "snapshot": snapshot,
+            })
+
+        async with _batch_job_lock:
+            current_job = _batch_jobs.get(job_id)
+            if not current_job:
+                return
+            await _batch_job_mark_finished(current_job, "finished")
+            snapshot = _batch_job_public(current_job)
+        await _batch_job_emit(job, {"type": "end", "snapshot": snapshot})
+    except Exception as exc:
+        logger.exception("批量编码任务失败: job=%s", job_id)
+        async with _batch_job_lock:
+            current_job = _batch_jobs.get(job_id)
+            if current_job:
+                await _batch_job_mark_finished(current_job, "failed", str(exc))
+                snapshot = _batch_job_public(current_job)
+            else:
+                snapshot = {}
+        await _batch_job_emit(job, {"type": "failed", "error": str(exc), "snapshot": snapshot})
+
+
+async def _batch_job_scheduler() -> None:
+    global _batch_job_active_id, _batch_job_scheduler_task
+    while True:
+        async with _batch_job_lock:
+            await _batch_job_cleanup_locked()
+            next_job_id = None
+            while _batch_job_queue:
+                candidate = _batch_job_queue.popleft()
+                candidate_job = _batch_jobs.get(candidate)
+                if candidate_job and candidate_job.get("status") == "queued":
+                    next_job_id = candidate
+                    break
+            if not next_job_id:
+                _batch_job_active_id = None
+                _batch_job_scheduler_task = None
+                return
+            _batch_job_active_id = next_job_id
+        try:
+            await _run_batch_job(next_job_id)
+        finally:
+            async with _batch_job_lock:
+                if _batch_job_active_id == next_job_id:
+                    _batch_job_active_id = None
+
+
+async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]:
+    global _batch_job_scheduler_task
+    job_id = uuid.uuid4().hex
+    threshold = get_pipe_encoder().get_threshold()
+    job = {
+        "job_id": job_id,
+        "status": "queued",
+        "items": copy.deepcopy(request.items),
+        "items_meta": [
+            {
+                "index": int(item.get("client_index", idx)),
+                "text": str(item.get("text", "") or ""),
+                "project_name": str(item.get("project_name", "") or ""),
+            }
+            for idx, item in enumerate(request.items)
+        ],
+        "results": {},
+        "item_traces": {},
+        "processed": 0,
+        "success_count": 0,
+        "review_count": 0,
+        "total": len(request.items),
+        "threshold": threshold,
+        "max_concurrent": request.max_concurrent or get_batch_max_concurrent(),
+        "cancel_requested": False,
+        "created_at": _utc_ts(),
+        "started_at": None,
+        "finished_at": None,
+        "updated_at": _utc_ts(),
+        "error": "",
+        "subscribers": [],
+    }
+    async with _batch_job_lock:
+        await _batch_job_cleanup_locked()
+        _batch_jobs[job_id] = job
+        _batch_job_queue.append(job_id)
+        if _batch_job_scheduler_task is None or _batch_job_scheduler_task.done():
+            _batch_job_scheduler_task = asyncio.create_task(_batch_job_scheduler())
+    return _batch_job_public(job)
+
+
+def _resolve_qwen3_stage1_config(
+    qwen3_config: Dict[str, Any],
+    ner_config: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """
+    统一解析阶段一配置。
+
+    新结构优先：
+    qwen3.stage1.{router,type_models,material_model,standard_model,structural_prompt,structural_rules}
+
+    旧结构兼容：
+    qwen3.router / qwen3.category_models / ner.structural_prompt
+    """
+    qwen3_config = qwen3_config or {}
+    ner_config = ner_config or {}
+
+    stage1 = copy.deepcopy(qwen3_config.get("stage1") or {})
+    if not stage1:
+        stage1 = {
+            "router": copy.deepcopy(qwen3_config.get("router") or {}),
+            "type_models": copy.deepcopy(qwen3_config.get("category_models") or {}),
+            "material_model": copy.deepcopy(qwen3_config.get("material_model") or {}),
+            "standard_model": copy.deepcopy(qwen3_config.get("standard_model") or {}),
+            "structural_prompt": copy.deepcopy(ner_config.get("structural_prompt") or {}),
+            "structural_rules": {},
+        }
+    else:
+        stage1.setdefault("router", copy.deepcopy(qwen3_config.get("router") or {}))
+        stage1.setdefault("type_models", copy.deepcopy(qwen3_config.get("category_models") or {}))
+        stage1.setdefault("material_model", copy.deepcopy(qwen3_config.get("material_model") or {}))
+        stage1.setdefault("standard_model", copy.deepcopy(qwen3_config.get("standard_model") or {}))
+        stage1.setdefault("structural_rules", {})
+        if not stage1.get("structural_prompt"):
+            stage1["structural_prompt"] = copy.deepcopy(ner_config.get("structural_prompt") or {})
+    return stage1
+
+
+def _build_qwen3_predictor_from_config(qwen3_config: Dict[str, Any]):
+    adapter = qwen3_config.get("adapter")
+    backend = qwen3_config.get("backend")
+    if not adapter:
+        raise RuntimeError("缺少配置: ner.qwen3.adapter")
+    if not backend:
+        raise RuntimeError("缺少配置: ner.qwen3.backend")
+
+    if adapter == "structured_llamafactory":
+        from src.llm_ner.structured_llamafactory_adapter import StructuredLlamaFactoryPredictor
+
+        max_new_tokens = qwen3_config.get("num_predict")
+        temperature = qwen3_config.get("temperature")
+        if max_new_tokens is None:
+            raise RuntimeError("缺少配置: ner.qwen3.num_predict")
+        if temperature is None:
+            raise RuntimeError("缺少配置: ner.qwen3.temperature")
+        if backend == "ollama":
+            device = qwen3_config.get("device")
+            if device is None:
+                raise RuntimeError("缺少配置: ner.qwen3.device")
+            model_name = qwen3_config.get("model_name")
+            ollama_url = qwen3_config.get("ollama_url")
+            if not model_name:
+                raise RuntimeError("缺少配置: ner.qwen3.model_name")
+            if not ollama_url:
+                raise RuntimeError("缺少配置: ner.qwen3.ollama_url")
+            logger.info(
+                "加载 Qwen3 结构化一阶段模型: model=%s, backend=%s, adapter=%s",
+                model_name,
+                backend,
+                adapter,
+            )
+            return StructuredLlamaFactoryPredictor(
+                backend="ollama",
+                model_name=model_name,
+                ollama_url=ollama_url,
+                device=device,
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+            )
+        if backend == "hf_lazy_service":
+            model_name = qwen3_config.get("model_name")
+            service_url = qwen3_config.get("service_url")
+            if not model_name:
+                raise RuntimeError("缺少配置: ner.qwen3.model_name")
+            if not service_url:
+                raise RuntimeError("缺少配置: ner.qwen3.service_url")
+            logger.info(
+                "加载 Qwen3 结构化一阶段模型: model=%s, backend=%s, adapter=%s, service=%s",
+                model_name,
+                backend,
+                adapter,
+                service_url,
+            )
+            return StructuredLlamaFactoryPredictor(
+                backend="hf_lazy_service",
+                model_name=model_name,
+                service_url=service_url,
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+            )
+
+        device = qwen3_config.get("device")
+        if device is None:
+            raise RuntimeError("缺少配置: ner.qwen3.device")
+        configured_model_path = qwen3_config.get("model_path")
+        if not configured_model_path:
+            raise RuntimeError("缺少配置: ner.qwen3.model_path")
+        model_path = str(PROJECT_ROOT / configured_model_path)
+        if Path(configured_model_path).is_absolute():
+            model_path = configured_model_path
+        logger.info(
+            "加载 Qwen3 结构化一阶段模型: 路径=%s, 设备=%s, adapter=%s",
+            model_path,
+            device,
+            adapter,
+        )
+        return StructuredLlamaFactoryPredictor(
+            backend="transformers",
+            model_path=model_path,
+            device=device,
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+        )
+
+    from src.llm_ner.predictor import Qwen3Predictor
+    if backend == "ollama":
+        model_name = qwen3_config.get("model_name")
+        ollama_url = qwen3_config.get("ollama_url")
+        output_mode = qwen3_config.get("output_mode")
+        ollama_num_predict = qwen3_config.get("num_predict")
+        ollama_temperature = qwen3_config.get("temperature")
+        ollama_top_p = qwen3_config.get("top_p")
+        ollama_logprobs_enabled = qwen3_config.get("logprobs_enabled")
+        if not model_name:
+            raise RuntimeError("缺少配置: ner.qwen3.model_name")
+        if not ollama_url:
+            raise RuntimeError("缺少配置: ner.qwen3.ollama_url")
+        if output_mode is None:
+            raise RuntimeError("缺少配置: ner.qwen3.output_mode")
+        if ollama_num_predict is None:
+            raise RuntimeError("缺少配置: ner.qwen3.num_predict")
+        if ollama_temperature is None:
+            raise RuntimeError("缺少配置: ner.qwen3.temperature")
+        if ollama_top_p is None:
+            raise RuntimeError("缺少配置: ner.qwen3.top_p")
+        if ollama_logprobs_enabled is None:
+            raise RuntimeError("缺少配置: ner.qwen3.logprobs_enabled")
+        logger.info("加载 Qwen3 NER 模型: Ollama 后端, 模型: %s, 输出模式: %s", model_name, output_mode)
+        return Qwen3Predictor(
+            model_name=model_name,
+            backend="ollama",
+            ollama_url=ollama_url,
+            output_mode=output_mode,
+            ollama_num_predict=ollama_num_predict,
+            ollama_temperature=ollama_temperature,
+            ollama_top_p=ollama_top_p,
+            ollama_logprobs_enabled=ollama_logprobs_enabled,
+        )
+
+    configured_model_path = qwen3_config.get("model_path")
+    device = qwen3_config.get("device")
+    output_mode = qwen3_config.get("output_mode")
+    if not configured_model_path:
+        raise RuntimeError("缺少配置: ner.qwen3.model_path")
+    if device is None:
+        raise RuntimeError("缺少配置: ner.qwen3.device")
+    if output_mode is None:
+        raise RuntimeError("缺少配置: ner.qwen3.output_mode")
+    model_path = str(PROJECT_ROOT / configured_model_path)
+    if Path(configured_model_path).is_absolute():
+        model_path = configured_model_path
+    logger.info(
+        "加载 Qwen3 NER 模型: Transformers 后端, 路径: %s, 设备: %s, 输出模式: %s",
+        model_path,
+        device,
+        output_mode,
+    )
+    return Qwen3Predictor(
+        model_path=model_path,
+        backend="transformers",
+        device=device,
+        output_mode=output_mode,
+    )
+
+
+def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
+    from src.llm_ner.stage1_orchestrator import Stage1FieldOrchestrator
+
+    ner_config = get_ner_config()
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    router_cfg = copy.deepcopy(stage1_cfg.get("router", {}) or {})
+    type_models = copy.deepcopy(stage1_cfg.get("type_models") or {})
+    material_model = copy.deepcopy(stage1_cfg.get("material_model") or {})
+    standard_model = copy.deepcopy(stage1_cfg.get("standard_model") or {})
+    structural_prompt_cfg = copy.deepcopy(stage1_cfg.get("structural_prompt") or {})
+    structural_rules_cfg = copy.deepcopy(stage1_cfg.get("structural_rules") or {})
+
+    base_qwen3_config = copy.deepcopy(qwen3_config)
+    base_qwen3_config.pop("router", None)
+    base_qwen3_config.pop("category_models", None)
+    base_qwen3_config.pop("stage1", None)
+
+    router = None
+    if router_cfg.get("enabled", False):
+        from src.llm_ner.router import build_category_router
+
+        router = build_category_router(router_cfg, project_root=PROJECT_ROOT)
+    fallback_category = str(router_cfg.get("fallback_category", "其他管件")).strip() or "其他管件"
+
+    shared_default_predictor: Dict[str, Any] = {"instance": None}
+
+    def default_factory():
+        if shared_default_predictor["instance"] is None:
+            shared_default_predictor["instance"] = _build_qwen3_predictor_from_config(base_qwen3_config)
+        return shared_default_predictor["instance"]
+
+    type_factories = {}
+    for category, override in type_models.items():
+        if category in {"默认", "default"}:
+            continue
+        merged_cfg = _merge_nested_dict(base_qwen3_config, override or {})
+        type_factories[category] = (
+            lambda cfg=merged_cfg: _build_qwen3_predictor_from_config(cfg)
+        )
+    if material_model:
+        material_cfg = _merge_nested_dict(base_qwen3_config, material_model or {})
+        material_factory = lambda cfg=material_cfg: _build_qwen3_predictor_from_config(cfg)
+    else:
+        material_cfg = base_qwen3_config
+        material_factory = default_factory
+    if standard_model:
+        standard_cfg = _merge_nested_dict(base_qwen3_config, standard_model or {})
+        standard_factory = lambda cfg=standard_cfg: _build_qwen3_predictor_from_config(cfg)
+    else:
+        standard_cfg = base_qwen3_config
+        standard_factory = default_factory
+
+    share_material_standard = material_cfg == standard_cfg
+
+    def structural_extractor_factory():
+        if not structural_prompt_cfg.get("enabled", False) and not structural_rules_cfg.get("enabled", False):
+            return None
+        from src.llm_ner.structural_field_resolver import StructuralFieldResolver
+
+        return StructuralFieldResolver.from_configs(
+            prompt_config=structural_prompt_cfg,
+            rule_config=structural_rules_cfg,
+        )
+
+    logger.info(
+        "加载路由版 Qwen3 一阶段编排器: router=%s, TYPE覆盖分类数=%s, material_override=%s, standard_override=%s, structural_prompt=%s, structural_rules=%s",
+        router_cfg.get("backend", "disabled"),
+        len(type_factories),
+        bool(material_model),
+        bool(standard_model),
+        bool(structural_prompt_cfg.get("enabled", False)),
+        bool(structural_rules_cfg.get("enabled", False)),
+    )
+    return Stage1FieldOrchestrator(
+        router=router,
+        default_type_factory=default_factory,
+        type_factories=type_factories,
+        material_factory=material_factory,
+        standard_factory=standard_factory,
+        share_material_standard=share_material_standard,
+        structural_extractor_factory=structural_extractor_factory if (structural_prompt_cfg.get("enabled", False) or structural_rules_cfg.get("enabled", False)) else None,
+        fallback_category=fallback_category,
+        direct_threshold=float(router_cfg.get("direct_threshold", 0.9)),
+        review_threshold=float(router_cfg.get("review_threshold", 0.7)),
+        encodable_categories=set(router_cfg.get("encodable_categories") or []),
+    )
 
 
 def get_ner_predictor():
@@ -120,42 +961,22 @@ def get_ner_predictor():
     if model_type == "qwen3":
         # 使用 Qwen3-4B 微调模型
         logger.info("使用 Qwen3 NER 模型")
-        
-        from src.llm_ner.predictor import Qwen3Predictor
-        
+
         qwen3_config = ner_config.get("qwen3", {})
-        backend = qwen3_config.get("backend", "ollama")
-        
-        if backend == "ollama":
-            model_name = qwen3_config.get("model_name", "qwen3-pipe")
-            ollama_url = qwen3_config.get("ollama_url", "http://localhost:11434")
-            output_mode = qwen3_config.get("output_mode", "decisions_only")
-            ollama_num_predict = qwen3_config.get("num_predict", 1024)
-            ollama_temperature = qwen3_config.get("temperature", 0.1)
-            ollama_top_p = qwen3_config.get("top_p", 0.9)
-            ollama_logprobs_enabled = qwen3_config.get("logprobs_enabled", True)
-            logger.info(f"加载 Qwen3 NER 模型: Ollama 后端, 模型: {model_name}, 输出模式: {output_mode}")
-            _ner_predictor = Qwen3Predictor(
-                model_name=model_name,
-                backend="ollama",
-                ollama_url=ollama_url,
-                output_mode=output_mode,
-                ollama_num_predict=ollama_num_predict,
-                ollama_temperature=ollama_temperature,
-                ollama_top_p=ollama_top_p,
-                ollama_logprobs_enabled=ollama_logprobs_enabled,
-            )
+        stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+        router_enabled = bool((stage1_cfg.get("router") or {}).get("enabled", False))
+        stage1_orchestrator_enabled = bool(
+            router_enabled
+            or (stage1_cfg.get("type_models") or {})
+            or (stage1_cfg.get("material_model") or {})
+            or (stage1_cfg.get("standard_model") or {})
+            or (stage1_cfg.get("structural_prompt") or {}).get("enabled", False)
+            or (stage1_cfg.get("structural_rules") or {}).get("enabled", False)
+        )
+        if stage1_orchestrator_enabled:
+            _ner_predictor = _build_routed_qwen3_predictor(qwen3_config)
         else:
-            model_path = str(PROJECT_ROOT / qwen3_config.get("model_path", "models/qwen3_pipe"))
-            device = qwen3_config.get("device", "auto")
-            output_mode = qwen3_config.get("output_mode", "decisions_only")
-            logger.info(f"加载 Qwen3 NER 模型: Transformers 后端, 路径: {model_path}, 设备: {device}, 输出模式: {output_mode}")
-            _ner_predictor = Qwen3Predictor(
-                model_path=model_path,
-                backend="transformers",
-                device=device,
-                output_mode=output_mode,
-            )
+            _ner_predictor = _build_qwen3_predictor_from_config(qwen3_config)
         _ner_model_type = "qwen3"
     elif model_type == "globalpointer":
         # 使用 GlobalPointer 模型
@@ -197,6 +1018,189 @@ def get_ner_predictor():
         _ner_model_type = "bert"
     
     return _ner_predictor
+
+
+def get_pipe_router():
+    """获取管道描述路由器实例（惰性加载）"""
+    global _pipe_router
+    if _pipe_router is not None:
+        return _pipe_router
+
+    ner_config = get_ner_config()
+    qwen3_config = ner_config.get("qwen3", {}) or {}
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    router_cfg = stage1_cfg.get("router", {}) or {}
+    if not router_cfg.get("enabled", False):
+        return None
+
+    from src.llm_ner.router import build_category_router
+
+    _pipe_router = build_category_router(router_cfg, project_root=PROJECT_ROOT)
+    return _pipe_router
+
+
+def get_structural_prompt_extractor():
+    """获取结构字段决策器（规则优先 + 提示词回退，惰性加载）。"""
+    global _structural_prompt_extractor
+
+    ner_config = get_ner_config()
+    qwen3_config = ner_config.get("qwen3", {}) or {}
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    prompt_cfg = stage1_cfg.get("structural_prompt", {}) or {}
+    rule_cfg = stage1_cfg.get("structural_rules", {}) or {}
+    if not prompt_cfg.get("enabled", False) and not rule_cfg.get("enabled", False):
+        return None
+
+    if _structural_prompt_extractor is None:
+        from src.llm_ner.structural_field_resolver import StructuralFieldResolver
+
+        _structural_prompt_extractor = StructuralFieldResolver.from_configs(
+            prompt_config=prompt_cfg,
+            rule_config=rule_cfg,
+        )
+        logger.info(
+            "启用结构字段决策: prompt=%s, rules=%s, model=%s",
+            bool(prompt_cfg.get("enabled", False)),
+            bool(rule_cfg.get("enabled", False)),
+            prompt_cfg.get("model_name"),
+        )
+    return _structural_prompt_extractor
+
+
+def _is_empty_structural_value(field: str, value: Any) -> bool:
+    if field in {"SIZE", "THICKNESS"}:
+        return not isinstance(value, dict) or not any(
+            v not in (None, "", [], {}) for v in value.values()
+        )
+    if field == "PRESSURE":
+        return value in (None, "", [], {})
+    return True
+
+
+def _size_debug_snapshot(value: Any) -> Any:
+    """收缩 SIZE 调试输出，避免日志过长。"""
+    if isinstance(value, dict):
+        snapshot = {
+            "DN": copy.deepcopy(value.get("DN", [])),
+            "OD": copy.deepcopy(value.get("OD", [])),
+            "INCH": copy.deepcopy(value.get("INCH", [])),
+            "LENGTH": copy.deepcopy(value.get("LENGTH", [])),
+        }
+        if isinstance(value.get("_ITEMS"), list):
+            snapshot["_ITEMS"] = copy.deepcopy(value.get("_ITEMS"))
+        return snapshot
+    return copy.deepcopy(value)
+
+
+def _apply_structural_prompt_override(result: Dict[str, Any], text: str) -> Optional[Dict[str, Any]]:
+    """
+    用结构字段决策器（规则优先 + 提示词回退）覆盖强结构字段。
+
+    微调模型仍负责 TYPE / MATERIAL / STANDARD。SIZE / THICKNESS / PRESSURE
+    以统一结构字段决策结果为准，避免微调模型按训练分布补 SCH/CL 等不存在的值。
+    """
+    structural = _extract_structural_prompt_fields(text)
+    return _merge_structural_prompt_output(result, structural)
+
+
+def _extract_structural_prompt_fields(text: str) -> Optional[Dict[str, Any]]:
+    extractor = get_structural_prompt_extractor()
+    if extractor is None:
+        return None
+    try:
+        structural = extractor.extract(text)
+        return structural
+    except Exception as exc:
+        logger.warning("[结构字段提示词] 抽取失败，保留微调结果: %s", exc)
+        return None
+
+
+def _merge_structural_prompt_output(
+    result: Dict[str, Any],
+    structural: Optional[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    if not structural:
+        return None
+
+    model_output = result.get("model_output")
+    if not isinstance(model_output, dict):
+        model_output = {}
+        result["model_output"] = model_output
+
+    target = model_output.get("decisions") if isinstance(model_output.get("decisions"), dict) else model_output
+    for field in ("SIZE", "THICKNESS", "PRESSURE"):
+        value = structural.get(field)
+        target[field] = copy.deepcopy(value)
+
+    structural_visible = {
+        k: copy.deepcopy(v) for k, v in structural.items() if not str(k).startswith("_")
+    }
+    structural_status = copy.deepcopy(structural.get("_status", {}) or {})
+    structural_errors = copy.deepcopy(structural.get("_errors", {}) or {})
+    model_output["_STRUCTURAL_PROMPT"] = structural_visible
+    model_output["_STRUCTURAL_PROMPT_RAW"] = structural.get("_raw", "")
+    model_output["_STRUCTURAL_PROMPT_STATUS"] = structural_status
+    model_output["_STRUCTURAL_PROMPT_ERRORS"] = structural_errors
+    result["structural_prompt_output"] = structural_visible
+    result["structural_prompt_raw_response"] = structural.get("_raw", "")
+    result["structural_prompt_status"] = structural_status
+    result["structural_prompt_errors"] = structural_errors
+
+    logger.info(
+        "[结构字段覆盖] source=%s SIZE=%s THICKNESS=%s PRESSURE=%s",
+        structural.get("_sources"),
+        structural_visible.get("SIZE"),
+        structural_visible.get("THICKNESS"),
+        structural_visible.get("PRESSURE"),
+    )
+
+    extract_confidence = result.get("extract_confidence")
+    if not isinstance(extract_confidence, dict):
+        extract_confidence = {}
+        result["extract_confidence"] = extract_confidence
+    for field in ("SIZE", "THICKNESS", "PRESSURE"):
+        extract_confidence[field] = 1.0 if not _is_empty_structural_value(field, structural.get(field)) else 0.0
+
+    extract_confidence_v2 = result.get("extract_confidence_v2")
+    if not isinstance(extract_confidence_v2, dict):
+        extract_confidence_v2 = {}
+        result["extract_confidence_v2"] = extract_confidence_v2
+    source_map = structural.get("_sources") if isinstance(structural.get("_sources"), dict) else {}
+    prompt_status_map = structural_status if isinstance(structural_status, dict) else {}
+    field_to_prompt_task = {
+        "SIZE": "size_length",
+        "THICKNESS": "thickness",
+        "PRESSURE": "pressure",
+    }
+    for field in ("SIZE", "THICKNESS", "PRESSURE"):
+        source = str(source_map.get(field, "prompt_extraction"))
+        prompt_task = field_to_prompt_task[field]
+        prompt_status = str(prompt_status_map.get(prompt_task, "") or "")
+        if _is_empty_structural_value(field, structural.get(field)):
+            reason = "field_missing"
+            evidence: Dict[str, Any] = {}
+            if source == "prompt_extraction" and prompt_status:
+                reason = f"prompt_{prompt_status}"
+                if prompt_task in structural_errors:
+                    evidence["prompt_error"] = structural_errors[prompt_task]
+            extract_confidence_v2[field] = {
+                "source": source,
+                "confidence": 0.0,
+                "reason": reason,
+                "evidence": evidence,
+            }
+        else:
+            evidence = {}
+            if source == "prompt_extraction" and prompt_status:
+                evidence["prompt_status"] = prompt_status
+            extract_confidence_v2[field] = {
+                "source": source,
+                "confidence": 1.0,
+                "reason": "rule_based_extraction" if source == "rule_extraction" else "prompt_extraction",
+                "evidence": evidence,
+            }
+
+    return structural_visible
 
 
 def get_ner_confidence_threshold() -> float:
@@ -255,18 +1259,34 @@ class PipeEncodeRequest(BaseModel):
     """管道材料编码请求"""
     entities: Dict[str, Any] = Field(..., description="NER识别结果")
     text: str = Field("", description="原始描述")
+    project_name: str = Field("", description="项目名称，可选")
     extract_confidence: Optional[Dict[str, Any]] = Field(None, description="第一阶段抽取置信度（按字段）")
+    extract_confidence_v2: Optional[Dict[str, Any]] = Field(None, description="第一阶段抽取置信度V2（结构化）")
 
 
 class PipeEncodeFromTokensRequest(BaseModel):
     """管道材料编码请求（基于分词结果）"""
     tokens: List[TokenInfo] = Field(..., description="分词结果")
     text: str = Field("", description="原始描述")
+    project_name: str = Field("", description="项目名称，可选")
 
 
 class PipeBatchEncodeRequest(BaseModel):
     """批量管道材料编码请求"""
     items: List[Dict] = Field(..., description="编码项列表")
+    max_concurrent: Optional[int] = Field(None, description="批量编码并发数，可选")
+
+
+class PipeDifficultyFinalizeRequest(BaseModel):
+    """批量分流修正请求（项目维度）"""
+    items: List[Dict[str, Any]] = Field(..., description="已编码项列表")
+
+
+class PipeBatchJobCreateResponse(BaseModel):
+    job_id: str
+    status: str
+    total: int
+    processed: int
 
 
 class H3yunImportItem(BaseModel):
@@ -361,6 +1381,22 @@ def _build_pipe_entities_for_encode(result: Dict[str, Any]) -> Dict[str, Any]:
         val = _serialize_pipe_entity_for_encode(e)
         _append_pipe_entity(entities, field, val)
     return entities
+
+
+def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
+    info = copy.deepcopy(route_info) if isinstance(route_info, dict) else {}
+    encodable_categories = set(
+        (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {}), get_ner_config()).get("router", {}) or {}).get("encodable_categories")) or [])
+    )
+    selected_category = str(info.get("category") or "").strip()
+    if selected_category:
+        encoding_enabled = selected_category in encodable_categories if encodable_categories else True
+        info["encoding_enabled"] = encoding_enabled
+        info["skip_encoding_reason"] = "" if encoding_enabled else f"类别“{selected_category}”只分类，不参与编码"
+    else:
+        info.setdefault("encoding_enabled", True)
+        info.setdefault("skip_encoding_reason", "")
+    return info
 
 
 # ============================================================
@@ -581,8 +1617,20 @@ class PipeBatchPredictRequest(BaseModel):
     preprocess: bool = Field(True, description="是否预处理")
 
 
+class PipeRouteRequest(BaseModel):
+    """管道材料路由请求"""
+    text: str = Field(..., description="待路由文本")
+    preprocess: bool = Field(True, description="是否预处理")
+
+
+class PipeBatchRouteRequest(BaseModel):
+    """批量管道材料路由请求"""
+    texts: List[str] = Field(..., description="待路由文本列表")
+    preprocess: bool = Field(True, description="是否预处理")
+
+
 @app.post("/api/pipe/predict")
-def pipe_predict(request: PipePredictRequest):
+async def pipe_predict(request: PipePredictRequest):
     """管道材料NER预测（直接返回JSON实体，供编码平台使用）"""
     text = request.text
     if not text or not text.strip():
@@ -594,10 +1642,12 @@ def pipe_predict(request: PipePredictRequest):
 
     try:
         predictor = get_ner_predictor()
-        result = predictor.predict(processed_text)
-
+        result = await asyncio.to_thread(predictor.predict, processed_text)
+        if result.get("structural_prompt_output") is None:
+            _apply_structural_prompt_override(result, processed_text)
         entities = _build_pipe_entities_for_encode(result)
         extract_confidence = result.get("extract_confidence", {}) or {}
+        extract_confidence_v2 = result.get("extract_confidence_v2", {}) or {}
 
         return {
             "success": True,
@@ -605,9 +1655,13 @@ def pipe_predict(request: PipePredictRequest):
             "processed_text": processed_text,
             "entities": entities,
             "extract_confidence": extract_confidence,
+            "extract_confidence_v2": extract_confidence_v2,
             "type_class": result.get("type_class"),
             "model_output": result.get("model_output", {}),
             "model_raw_response": result.get("model_raw_response", ""),
+            "structural_prompt_output": result.get("structural_prompt_output"),
+            "structural_prompt_raw_response": result.get("structural_prompt_raw_response", ""),
+            "route_info": result.get("route_info"),
         }
     except Exception as e:
         logger.error(f"NER预测失败: {e}")
@@ -628,8 +1682,11 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
         try:
             async with semaphore:
                 result = await asyncio.to_thread(predictor.predict, processed_text)
+            if result.get("structural_prompt_output") is None:
+                _apply_structural_prompt_override(result, processed_text)
             entities = _build_pipe_entities_for_encode(result)
             extract_confidence = result.get("extract_confidence", {}) or {}
+            extract_confidence_v2 = result.get("extract_confidence_v2", {}) or {}
 
             return {
                 "success": True,
@@ -637,9 +1694,13 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
                 "processed_text": processed_text,
                 "entities": entities,
                 "extract_confidence": extract_confidence,
+                "extract_confidence_v2": extract_confidence_v2,
                 "type_class": result.get("type_class"),
                 "model_output": result.get("model_output", {}),
                 "model_raw_response": result.get("model_raw_response", ""),
+                "structural_prompt_output": result.get("structural_prompt_output"),
+                "structural_prompt_raw_response": result.get("structural_prompt_raw_response", ""),
+                "route_info": result.get("route_info"),
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -649,12 +1710,89 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
     return {"success": True, "total": len(results), "results": results}
 
 
+@app.post("/api/pipe/route")
+def pipe_route(request: PipeRouteRequest):
+    """管道材料类别路由，仅返回路由结果，不执行一阶段抽取"""
+    text = request.text
+    if not text or not text.strip():
+        return {"success": False, "error": "文本为空"}
+
+    processed_text = _preprocessor.process(text) if request.preprocess else text
+
+    try:
+        router = get_pipe_router()
+        if router is None:
+            return {"success": False, "error": "当前未启用路由器"}
+
+        route_info = router.route(processed_text)
+        encodable_categories = set(
+            (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {}), get_ner_config()).get("router", {}) or {}).get("encodable_categories")) or [])
+        )
+        selected_category = str(route_info.get("category") or "").strip()
+        encoding_enabled = selected_category in encodable_categories
+        route_info["encoding_enabled"] = encoding_enabled
+        route_info["skip_encoding_reason"] = "" if encoding_enabled else f"类别“{selected_category}”只分类，不参与编码"
+        return {
+            "success": True,
+            "original_text": text,
+            "processed_text": processed_text,
+            "route_info": route_info,
+        }
+    except Exception as e:
+        logger.error(f"路由失败: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/pipe/route/batch")
+async def pipe_batch_route(request: PipeBatchRouteRequest):
+    """批量管道材料类别路由，仅返回路由结果"""
+    router = get_pipe_router()
+    if router is None:
+        return {"success": False, "error": "当前未启用路由器"}
+
+    semaphore = asyncio.Semaphore(get_batch_max_concurrent())
+
+    async def process_one(text: str):
+        if not text or not text.strip():
+            return {"success": False, "error": "文本为空"}
+
+        processed_text = _preprocessor.process(text) if request.preprocess else text
+        try:
+            async with semaphore:
+                route_info = await asyncio.to_thread(router.route, processed_text)
+            encodable_categories = set(
+                (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {}), get_ner_config()).get("router", {}) or {}).get("encodable_categories")) or [])
+            )
+            selected_category = str(route_info.get("category") or "").strip()
+            encoding_enabled = selected_category in encodable_categories
+            route_info["encoding_enabled"] = encoding_enabled
+            route_info["skip_encoding_reason"] = "" if encoding_enabled else f"类别“{selected_category}”只分类，不参与编码"
+            return {
+                "success": True,
+                "original_text": text,
+                "processed_text": processed_text,
+                "route_info": route_info,
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    results = await asyncio.gather(*(process_one(t) for t in request.texts))
+    return {"success": True, "total": len(results), "results": results}
+
+
 @app.post("/api/pipe/encode")
 def pipe_encode(request: PipeEncodeRequest):
     """管道材料编码（基于实体）"""
     encoder = get_pipe_encoder()
-    result = encoder.encode(request.entities, request.text, request.extract_confidence)
-    return _convert_pipe_result(result)
+    result = encoder.encode(
+        request.entities,
+        request.text,
+        request.extract_confidence,
+        request.extract_confidence_v2,
+    )
+    converted = _convert_pipe_result(result)
+    converted = _attach_base_difficulty(converted, request.project_name)
+    return _attach_second_pass(converted)
 
 
 @app.post("/api/pipe/encode/tokens")
@@ -663,7 +1801,9 @@ def pipe_encode_from_tokens(request: PipeEncodeFromTokensRequest):
     encoder = get_pipe_encoder()
     tokens = [{"word": t.word, "tag": t.tag} for t in request.tokens]
     result = encoder.encode_from_tokens(tokens, request.text)
-    return _convert_pipe_result(result)
+    converted = _convert_pipe_result(result)
+    converted = _attach_base_difficulty(converted, request.project_name)
+    return _attach_second_pass(converted)
 
 
 @app.post("/api/pipe/encode/batch")
@@ -693,92 +1833,168 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
     success_count = sum(1 for r in results if r.success)
     review_count = sum(1 for r in results if r.need_review)
     
+    converted_results = []
+    for item, result in zip(request.items, results):
+        converted_results.append(
+            _attach_base_difficulty(
+                _convert_pipe_result(result),
+                str(item.get("project_name", "") or "").strip(),
+            )
+        )
+
+    finalized = finalize_batch_difficulty(
+        [
+            {
+                "text": converted.get("original_text", "") or "",
+                "project_name": str(item.get("project_name", "") or "").strip(),
+                "type_code": _extract_code_from_field(converted, "TYPE"),
+                "material_code": _extract_code_from_field(converted, "MATERIAL"),
+                "standard_code": _extract_code_from_field(converted, "STANDARD"),
+                "standard_codes": _extract_standard_codes_from_field(converted),
+                "base_difficulty": converted.get("difficulty_split"),
+            }
+            for item, converted in zip(request.items, converted_results)
+        ]
+    )
+    for converted, difficulty in zip(converted_results, finalized):
+        converted["difficulty_split"] = difficulty
+        _attach_second_pass(converted)
+
     return {
         "total": total,
         "success_count": success_count,
         "review_count": review_count,
         "threshold": encoder.get_threshold(),
-        "results": [_convert_pipe_result(r) for r in results]
+        "results": converted_results
     }
 
 
-@app.post("/api/pipe/encode/batch/stream")
-async def pipe_batch_encode_stream(request: PipeBatchEncodeRequest):
-    """批量管道材料编码（SSE流式返回）"""
-    encoder = get_pipe_encoder()
-    items = request.items
-    total = len(items)
-    threshold = encoder.get_threshold()
-    
-    async def generate_sse():
-        success_count = 0
-        review_count = 0
-        
-        # 开始事件
-        start_event = {"type": "start", "total": total, "threshold": threshold}
-        yield f"data: {json.dumps(start_event, ensure_ascii=False)}\n\n"
-        
-        for index, item in enumerate(items):
+@app.post("/api/pipe/difficulty/finalize")
+async def pipe_finalize_difficulty(request: PipeDifficultyFinalizeRequest):
+    """根据项目维度对已编码结果做最终分流修正。"""
+    finalized = finalize_batch_difficulty(request.items)
+    return {
+        "success": True,
+        "total": len(finalized),
+        "results": finalized,
+    }
+
+
+@app.post("/api/pipe/encode/batch/jobs")
+async def pipe_batch_encode_create_job(request: PipeBatchEncodeRequest):
+    snapshot = await _batch_job_create(request)
+    return {"success": True, "job": snapshot}
+
+
+@app.get("/api/pipe/encode/batch/jobs")
+async def pipe_batch_encode_list_jobs():
+    async with _batch_job_lock:
+        await _batch_job_cleanup_locked()
+        jobs = [
+            _batch_job_public(job, include_results=False)
+            for job in _batch_jobs.values()
+            if str(job.get("status", "") or "") in _BATCH_JOB_ACTIVE_STATUSES
+        ]
+    jobs.sort(key=lambda item: float(item.get("created_at") or 0.0))
+    return {"success": True, "jobs": jobs}
+
+
+@app.get("/api/pipe/encode/batch/jobs/{job_id}")
+async def pipe_batch_encode_get_job(job_id: str):
+    job = await _batch_job_get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="任务不存在或已过期")
+    return {"success": True, "job": _batch_job_public(job)}
+
+
+@app.get("/api/pipe/encode/batch/jobs/{job_id}/items/{item_index}")
+async def pipe_batch_encode_get_job_item(job_id: str, item_index: int):
+    job = await _batch_job_get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="任务不存在或已过期")
+
+    items_meta = list(job.get("items_meta", []))
+    order_index = -1
+    item_meta: Dict[str, Any] | None = None
+    for idx, meta in enumerate(items_meta):
+        if int(meta.get("index", idx)) == item_index:
+            order_index = idx
+            item_meta = copy.deepcopy(meta)
+            break
+    if order_index < 0:
+        raise HTTPException(status_code=404, detail="任务条目不存在")
+
+    result = copy.deepcopy(job.get("results", {}).get(str(order_index)))
+    trace = copy.deepcopy(job.get("item_traces", {}).get(str(order_index), {}))
+    item_status = str(trace.get("status", "") or "")
+    if not item_status:
+        item_status = "pending" if result is None else "processed"
+
+    return {
+        "success": True,
+        "job_id": job_id,
+        "job_status": str(job.get("status", "") or ""),
+        "item_index": int(item_index),
+        "order_index": order_index,
+        "item": item_meta or {"index": int(item_index)},
+        "status": item_status,
+        "result": result,
+        "trace": trace,
+    }
+
+
+@app.post("/api/pipe/encode/batch/jobs/{job_id}/cancel")
+async def pipe_batch_encode_cancel_job(job_id: str):
+    async with _batch_job_lock:
+        await _batch_job_cleanup_locked()
+        job = _batch_jobs.get(job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail="任务不存在或已过期")
+        status = str(job.get("status", "") or "")
+        if status == "queued":
+            job["cancel_requested"] = True
             try:
-                if 'tokens' in item:
-                    result = encoder.encode_from_tokens(item['tokens'], item.get('text', ''))
-                else:
-                    result = encoder.encode(
-                        item.get('entities', {}),
-                        item.get('text', ''),
-                        item.get('extract_confidence')
-                    )
-                
-                if result.success:
-                    success_count += 1
-                if result.need_review:
-                    review_count += 1
-                
-                converted = _convert_pipe_result(result)
-                
-                progress_event = {
-                    "type": "progress",
-                    "index": index,
-                    "total": total,
-                    "current": index + 1,
-                    "success_count": success_count,
-                    "review_count": review_count,
-                    "result": converted
-                }
-                yield f"data: {json.dumps(progress_event, ensure_ascii=False)}\n\n"
-                
-            except Exception as e:
-                logger.error(f"处理第 {index + 1} 条数据失败: {e}")
-                review_count += 1
-                error_event = {
-                    "type": "progress",
-                    "index": index,
-                    "total": total,
-                    "current": index + 1,
-                    "success_count": success_count,
-                    "review_count": review_count,
-                    "result": {
-                        "original_text": item.get('text', ''),
-                        "final_code": "",
-                        "success": False,
-                        "need_review": True,
-                        "errors": [str(e)]
-                    }
-                }
-                yield f"data: {json.dumps(error_event, ensure_ascii=False)}\n\n"
-            
-            await asyncio.sleep(0)
-        
-        # 完成事件
-        end_event = {
-            "type": "end",
-            "total": total,
-            "success_count": success_count,
-            "review_count": review_count,
-            "threshold": threshold
-        }
-        yield f"data: {json.dumps(end_event, ensure_ascii=False)}\n\n"
-    
+                _batch_job_queue.remove(job_id)
+            except ValueError:
+                pass
+            await _batch_job_mark_finished(job, "cancelled")
+            snapshot = _batch_job_public(job)
+        elif status in {"running", "cancelling"}:
+            job["cancel_requested"] = True
+            job["status"] = "cancelling"
+            job["updated_at"] = _utc_ts()
+            snapshot = _batch_job_public(job)
+        else:
+            snapshot = _batch_job_public(job)
+    await _batch_job_emit(job, {"type": "cancel_requested", "snapshot": snapshot})
+    return {"success": True, "job": snapshot}
+
+
+@app.get("/api/pipe/encode/batch/jobs/{job_id}/stream")
+async def pipe_batch_encode_job_stream(job_id: str):
+    async with _batch_job_lock:
+        await _batch_job_cleanup_locked()
+        job = _batch_jobs.get(job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail="任务不存在或已过期")
+        subscriber_queue: asyncio.Queue[Dict[str, Any]] = asyncio.Queue(maxsize=2000)
+        job.setdefault("subscribers", []).append(subscriber_queue)
+        snapshot = _batch_job_public(job)
+
+    async def generate_sse():
+        try:
+            yield f"data: {json.dumps({'type': 'snapshot', 'snapshot': snapshot, 'job_id': job_id}, ensure_ascii=False)}\n\n"
+            while True:
+                event = await subscriber_queue.get()
+                yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+                if event.get("type") in {"end", "cancelled", "failed"}:
+                    break
+        finally:
+            async with _batch_job_lock:
+                current_job = _batch_jobs.get(job_id)
+                if current_job and subscriber_queue in current_job.get("subscribers", []):
+                    current_job["subscribers"].remove(subscriber_queue)
+
     return StreamingResponse(
         generate_sse(),
         media_type="text/event-stream",
@@ -788,6 +2004,13 @@ async def pipe_batch_encode_stream(request: PipeBatchEncodeRequest):
             "X-Accel-Buffering": "no"
         }
     )
+
+
+@app.post("/api/pipe/encode/batch/stream")
+async def pipe_batch_encode_stream(request: PipeBatchEncodeRequest):
+    snapshot = await _batch_job_create(request)
+    job_id = snapshot["job_id"]
+    return await pipe_batch_encode_job_stream(job_id)
 
 
 @app.get("/api/pipe/config")
@@ -1154,7 +2377,13 @@ def _convert_pipe_result(result) -> dict:
         fields[field_type] = {
             "field_type": field_data.field_type,
             "original_value": field_data.original_value,
+            "stage1_final_value": getattr(field_data, "stage1_final_value", ""),
+            "stage1_confidence": getattr(field_data, "stage1_confidence", None),
+            "stage2_confidence": getattr(field_data, "stage2_confidence", None),
+            "field_confidence": getattr(field_data, "field_confidence", None),
             "matched_name": field_data.matched_name,
+            "encoding_input": getattr(field_data, "encoding_input", ""),
+            "encode_confidence_v2": getattr(field_data, "encode_confidence_v2", {}) or {},
             "code": field_data.code,
             "similarity": round(field_data.similarity, 4),
             "is_exact_match": field_data.is_exact_match,
@@ -1177,8 +2406,68 @@ def _convert_pipe_result(result) -> dict:
         "errors": result.errors,
         "warnings": result.warnings,
         "thickness_conversion_notes": getattr(result, "thickness_conversion_notes", []),
+        "extract_confidence_v2": getattr(result, "extract_confidence_v2", {}) or {},
         "fields": fields
     }
+
+
+def _extract_code_from_field(result_dict: Dict[str, Any], field: str) -> str:
+    fields = result_dict.get("fields", {}) if isinstance(result_dict, dict) else {}
+    field_data = fields.get(field, {}) if isinstance(fields, dict) else {}
+    return str(field_data.get("code", "") or "").strip()
+
+
+def _extract_standard_codes_from_field(result_dict: Dict[str, Any]) -> List[str]:
+    fields = result_dict.get("fields", {}) if isinstance(result_dict, dict) else {}
+    field_data = fields.get("STANDARD", {}) if isinstance(fields, dict) else {}
+    items = field_data.get("items", []) if isinstance(field_data, dict) else []
+    codes: list[str] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        code = str(item.get("code", "") or "").strip()
+        if code:
+            codes.append(code)
+    if codes:
+        return codes
+    fallback = str(field_data.get("code", "") or "").strip() if isinstance(field_data, dict) else ""
+    return [fallback] if fallback else []
+
+
+def _attach_base_difficulty(result_dict: Dict[str, Any], project_name: str = "") -> Dict[str, Any]:
+    difficulty = build_base_difficulty(
+        result_dict.get("original_text", "") or "",
+        type_code=_extract_code_from_field(result_dict, "TYPE"),
+        material_code=_extract_code_from_field(result_dict, "MATERIAL"),
+        standard_code=_extract_code_from_field(result_dict, "STANDARD"),
+        standard_codes=_extract_standard_codes_from_field(result_dict),
+    )
+    difficulty["project_name"] = str(project_name or "").strip()
+    result_dict["difficulty_split"] = difficulty
+    return result_dict
+
+
+def _attach_second_pass(result_dict: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(result_dict, dict):
+        return result_dict
+
+    difficulty_info = result_dict.get("difficulty_split") if isinstance(result_dict.get("difficulty_split"), dict) else {}
+    payload = {
+        "text": result_dict.get("original_text", "") or "",
+        "stage1_difficulty": str(difficulty_info.get("difficulty", "") or "").strip(),
+        "fields": result_dict.get("fields", {}) if isinstance(result_dict.get("fields"), dict) else {},
+    }
+    try:
+        result_dict["second_pass"] = _second_pass_runner.analyze_payload(payload)
+    except Exception as exc:
+        logger.exception("二次校验执行失败: %s", exc)
+        result_dict["second_pass"] = {
+            "final_level": "",
+            "results": {},
+            "skipped_fields": {},
+            "error": str(exc),
+        }
+    return result_dict
 
 
 # ============================================================

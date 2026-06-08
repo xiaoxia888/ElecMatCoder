@@ -8,10 +8,13 @@
 3. 特殊值：SCHXXS → XXS, SCHSTD → STD
 4. mm 格式：8.1mm → 8.1MM, T=3.0mm → 3MM
 5. 异径处理：SCH80XSCH80 → S80 (相同合并), SCH80XSCH40 → S80XS40
-6. 分隔符统一：x, *, ×, /, , → X
+6. 分隔符统一：x, *, ×, , → X；但结构化多层壁厚值中的组内 `/` 可保留
 """
 
 import re
+import yaml
+from pathlib import Path
+from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Dict, List, Tuple, Optional
 
@@ -19,6 +22,11 @@ from typing import Any, Dict, List, Tuple, Optional
 class ThicknessProcessor:
     """壁厚处理器"""
     STRUCTURED_SUBTYPE_ORDER = ("MM", "INCH", "SCHEDULE", "SERIES", "BWG")
+    # 弱数值 schedule 白名单。
+    # 仅用于最弱的 `S数字` / `S-数字` / `数字S` 规则，避免把标准号残片误识别成壁厚。
+    WEAK_SCHEDULE_BASE_VALUES = ("5", "10", "20", "30", "40", "60", "80", "100", "120", "140", "160")
+    # 只有这些完整 token 存在合法的 `...S` 形式。
+    WEAK_SCHEDULE_SUFFIX_S_TOKENS = ("5S", "10S", "20S", "40S", "30S", "60S" "80S", "120S", "160S")
     
     # 分隔符正则（用于异径规格）
     SEPARATOR_PATTERN = re.compile(r'\s*[xX*×/,]\s*')
@@ -29,6 +37,7 @@ class ThicknessProcessor:
     
     # S- 格式正则
     S_DASH_PATTERN = re.compile(r'S-(XXS|XS|STD|\d+S?)', re.IGNORECASE)
+    S_DASH_MM_PATTERN = re.compile(r'^S-(\d+\.\d+)\s*(?:MM|毫米)?$', re.IGNORECASE)
     
     # mm 格式正则（数字+mm）
     MM_PATTERN = re.compile(r'(\d+(?:\.\d+)?)\s*mm', re.IGNORECASE)
@@ -55,17 +64,43 @@ class ThicknessProcessor:
         'XS_XS': 'XS/XS',
     }
 
-    @staticmethod
-    def _extract_item_start(item: Any) -> Optional[int]:
-        if not isinstance(item, dict):
-            return None
-        start = item.get("start")
-        if start is None:
-            return None
+    def __init__(self, enable_rule_layered: bool = False):
+        # 按当前要求：规则路径暂不处理分层壁厚
+        self.enable_rule_layered = enable_rule_layered
+        self.config_path = Path(__file__).parent.parent / "config" / "encoder_config.yaml"
+        self._common_dn_values = self._load_common_dn_values()
+
+    def _load_common_dn_values(self) -> List[int]:
         try:
-            return int(start)
-        except (TypeError, ValueError):
-            return None
+            if not self.config_path.exists():
+                return []
+            with open(self.config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+            values = config.get('size_processing', {}).get('common_dn_values', [])
+            return sorted({int(v) for v in values if str(v).strip()}, key=lambda x: len(str(x)), reverse=True)
+        except Exception:
+            return []
+
+    @classmethod
+    @lru_cache(maxsize=1)
+    def _weak_schedule_patterns(cls) -> Tuple[str, str, str, str]:
+        """
+        生成最弱 schedule 规则使用的公共模式。
+        返回：
+        1. prefixed: S10 / S10S / S120 ...
+        2. s_dash: S-10 / S-10S / S-120 ...
+        3. suffix: 10S / 40S ...
+        4. combined: 三者 + XS/XXS/STD 的合并模式
+        """
+        base_group = "|".join(re.escape(v) for v in cls.WEAK_SCHEDULE_BASE_VALUES)
+        suffix_tokens = tuple(token[:-1] for token in cls.WEAK_SCHEDULE_SUFFIX_S_TOKENS)
+        suffix_base_group = "|".join(re.escape(v) for v in suffix_tokens)
+        suffix_token_group = "|".join(re.escape(v) for v in cls.WEAK_SCHEDULE_SUFFIX_S_TOKENS)
+        prefixed = rf'(?:S(?:{suffix_base_group})S|S(?:{base_group}))'
+        s_dash = rf'(?:S-(?:{suffix_base_group})S|S-(?:{base_group}))'
+        suffix = rf'(?:{suffix_token_group})'
+        combined = rf'(?:{prefixed}|{s_dash}|{suffix}|XS|XXS|STD)'
+        return prefixed, s_dash, suffix, combined
 
     def process(self, value: Any, original_text: str = "") -> str:
         """
@@ -97,9 +132,9 @@ class ThicknessProcessor:
         
         value = str(value).strip()
         
-        # 1. 预处理
+        # 1. 局部预处理（仅清理壁厚 token 前后缀，不做全文删空格）
         value = self._preprocess(value)
-        
+
         # 2. 分割异径规格
         parts = self._split_parts(value)
         
@@ -114,6 +149,10 @@ class ThicknessProcessor:
         return self._merge_parts(converted)
 
     def _process_structured(self, value: Dict[str, Any], original_text: str = "") -> str:
+        ordered = self._process_structured_items(value.get("_ITEMS"))
+        if ordered:
+            return ordered
+
         parts: List[str] = []
 
         ordered_keys = [k for k in self.STRUCTURED_SUBTYPE_ORDER if k in value]
@@ -125,14 +164,1276 @@ class ThicknessProcessor:
                 continue
             if not isinstance(raw_items, list):
                 raw_items = [raw_items]
-            raw_items = self._sort_structured_items(str(subtype).upper(), raw_items, original_text)
-
             for item in raw_items:
                 normalized = self._normalize_structured_part(str(subtype).upper(), item)
                 if normalized and normalized not in parts:
                     parts.append(normalized)
+        return 'X'.join(parts)
 
-        parts = self._reorder_parts_by_original_text(parts, original_text)
+    def extract_by_rules(
+        self,
+        text: str,
+        blocked_spans: Optional[List[Tuple[int, int]]] = None,
+        size_context: Optional[Any] = None,
+    ) -> "RuleThicknessExtraction":
+        """
+        基于显式锚点和高频稳定结构做壁厚抽取。
+
+        规则：
+        1. 只认显式 THK/T/壁厚/S=、SCH/STD/XS/XXS、明确 mm 结构
+        2. `THK=a mm X b mm` 直接按普通双壁厚处理
+        3. 不在规则路径处理分层壁厚
+        4. 不从 `DNx整数` 推断壁厚
+        """
+        source = str(text or "")
+        normalized = source.replace('”', '"').replace('“', '"').replace('″', '"')
+        normalized = self._normalize_section_labels(normalized)
+
+        # 0) 明显脏小数串直接交给大模型：
+        # 例如 6.31.5D / 12.70.31mm
+        if self._has_malformed_decimal_chain(normalized):
+            return RuleThicknessExtraction(
+                schedule=[],
+                mm=[],
+                thickness_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+
+        # 0) 主壁厚(次壁厚) 结构直接交给大模型：
+        # 例如 114x4.0(3.0)、THK=8.0(6.0)mm
+        if self._has_parenthesized_thickness_variant(normalized):
+            return RuleThicknessExtraction(
+                schedule=[],
+                mm=[],
+                thickness_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+
+        # 0) 复杂复合规格先基于原始归一化文本判定，避免后续切分把复杂结构改写掉。
+        if self._has_complex_composite_size(normalized) and not self._has_phi_dual_od_dual_thk_structure(normalized):
+            return RuleThicknessExtraction(
+                schedule=[],
+                mm=[],
+                thickness_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+
+        normalized = self._normalize_glued_dn_mm(normalized)
+        blocked_spans = blocked_spans or []
+        explicit = self._extract_explicit_thickness_rules(normalized, blocked_spans)
+        if explicit.get("invalid"):
+            return RuleThicknessExtraction(
+                schedule=[],
+                mm=[],
+                thickness_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+        schedule_parts = explicit["schedule"]
+        mm_parts = explicit["mm"]
+        ordered_items = explicit["ordered_items"]
+        matched_texts = explicit["matched_texts"]
+        matched_spans = explicit["matched_spans"]
+
+        self._apply_weak_thickness_fallback(
+            normalized=normalized,
+            blocked_spans=blocked_spans,
+            schedule_parts=schedule_parts,
+            mm_parts=mm_parts,
+            ordered_items=ordered_items,
+            matched_texts=matched_texts,
+            matched_spans=matched_spans,
+        )
+        if self._has_invalid_thickness_items(schedule_parts, mm_parts):
+            return RuleThicknessExtraction(
+                schedule=[],
+                mm=[],
+                thickness_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+
+        if self._has_size_context(size_context):
+            self._apply_size_context_glued_schedule_rules(
+                normalized=normalized,
+                blocked_spans=blocked_spans,
+                size_context=size_context,
+                schedule_parts=schedule_parts,
+                ordered_items=ordered_items,
+                matched_texts=matched_texts,
+                matched_spans=matched_spans,
+            )
+            if self._has_invalid_thickness_items(schedule_parts, mm_parts):
+                return RuleThicknessExtraction(
+                    schedule=[],
+                    mm=[],
+                    thickness_code="",
+                    matched_texts=[],
+                    matched_spans=[],
+                    ordered_items=[],
+                )
+            self._apply_size_context_thickness_rules(
+                normalized=normalized,
+                blocked_spans=blocked_spans,
+                size_context=size_context,
+                schedule_parts=schedule_parts,
+                mm_parts=mm_parts,
+                ordered_items=ordered_items,
+                matched_texts=matched_texts,
+                matched_spans=matched_spans,
+            )
+            if self._has_invalid_thickness_items(schedule_parts, mm_parts):
+                return RuleThicknessExtraction(
+                    schedule=[],
+                    mm=[],
+                    thickness_code="",
+                    matched_texts=[],
+                    matched_spans=[],
+                    ordered_items=[],
+                )
+
+        sorted_ordered_items = sorted(ordered_items, key=lambda x: (x["span"][0], x["span"][1]))
+        schedule_parts = [str(item["code"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "SCHEDULE"]
+        mm_parts = [str(item["code"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "MM"]
+
+        thickness_code = ""
+        if sorted_ordered_items:
+            thickness_code = 'X'.join(str(item["code"]) for item in sorted_ordered_items)
+        elif schedule_parts and mm_parts:
+            thickness_code = 'X'.join(schedule_parts + mm_parts)
+        elif schedule_parts:
+            thickness_code = 'X'.join(schedule_parts)
+        elif mm_parts:
+            thickness_code = 'X'.join(mm_parts)
+
+        consumed_spans = self._derive_consumed_spans_from_ordered_items(normalized, ordered_items)
+
+        return RuleThicknessExtraction(
+            schedule=schedule_parts,
+            mm=mm_parts,
+            thickness_code=thickness_code,
+            matched_texts=matched_texts,
+            matched_spans=matched_spans,
+            consumed_spans=consumed_spans,
+            ordered_items=[
+                {"type": str(item["type"]), "value": str(item["value"])}
+                for item in sorted_ordered_items
+            ],
+        )
+
+    @staticmethod
+    def _has_size_context(size_context: Optional[Any]) -> bool:
+        if not size_context:
+            return False
+        return bool(
+            getattr(size_context, "dn", None)
+            or getattr(size_context, "od", None)
+            or getattr(size_context, "inch", None)
+        )
+
+    @staticmethod
+    def _derive_consumed_spans_from_ordered_items(text: str, ordered_items: List[Dict[str, Any]]) -> List[Tuple[int, int]]:
+        consumed_spans: List[Tuple[int, int]] = []
+        cursor_by_span: Dict[Tuple[int, int], int] = {}
+        mm_index_by_span: Dict[Tuple[int, int], int] = {}
+        mm_items_per_span: Dict[Tuple[int, int], int] = {}
+        numeric_tokens_by_span: Dict[Tuple[int, int], List[re.Match[str]]] = {}
+        mm_tokens_by_span: Dict[Tuple[int, int], List[re.Match[str]]] = {}
+        numeric_token_re = re.compile(r'\d+(?:\.\d+)?')
+        mm_token_re = re.compile(r'(?i)\d+(?:\.\d+)?\s*(?:MM|毫米)')
+        schedule_like_re = re.compile(r'(?i)SCH\s*\.?\s*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|S\d+S?|\d+S|STD|XS|XXS')
+
+        for item in ordered_items:
+            span = item.get("span")
+            if not span or not isinstance(span, tuple) or len(span) != 2:
+                continue
+            key = (int(span[0]), int(span[1]))
+            if str(item.get("type") or "").upper() == "MM":
+                mm_items_per_span[key] = mm_items_per_span.get(key, 0) + 1
+
+        for item in ordered_items:
+            span = item.get("span")
+            if not span or not isinstance(span, tuple) or len(span) != 2:
+                continue
+            start, end = int(span[0]), int(span[1])
+            if start < 0 or end > len(text) or start >= end:
+                continue
+            full_text = text[start:end]
+            cursor = cursor_by_span.get((start, end), 0)
+            search_text = full_text[cursor:]
+            item_type = str(item.get("type") or "").upper()
+            token_start = token_end = None
+            if item_type == "MM":
+                mm_total = mm_items_per_span.get((start, end), 1)
+                mm_idx = mm_index_by_span.get((start, end), 0)
+
+                mm_tokens = mm_tokens_by_span.get((start, end))
+                if mm_tokens is None:
+                    mm_tokens = list(mm_token_re.finditer(full_text))
+                    mm_tokens_by_span[(start, end)] = mm_tokens
+                if mm_tokens:
+                    base_index = max(0, len(mm_tokens) - mm_total)
+                    token_index = min(len(mm_tokens) - 1, base_index + mm_idx)
+                    token_match = mm_tokens[token_index]
+                    token_start = start + token_match.start()
+                    token_end = start + token_match.end()
+                else:
+                    tokens = numeric_tokens_by_span.get((start, end))
+                    if tokens is None:
+                        tokens = list(numeric_token_re.finditer(full_text))
+                        numeric_tokens_by_span[(start, end)] = tokens
+                    if not tokens:
+                        continue
+                    base_index = max(0, len(tokens) - mm_total)
+                    token_index = min(len(tokens) - 1, base_index + mm_idx)
+                    token_match = tokens[token_index]
+                    token_start = start + token_match.start()
+                    token_end = start + token_match.end()
+                mm_index_by_span[(start, end)] = mm_idx + 1
+            else:
+                token_match = schedule_like_re.search(search_text)
+                if not token_match:
+                    continue
+                token_start = start + cursor + token_match.start()
+                token_end = start + cursor + token_match.end()
+            candidate = (token_start, token_end)
+            if candidate not in consumed_spans:
+                consumed_spans.append(candidate)
+            if item_type != "MM":
+                cursor_by_span[(start, end)] = cursor + token_match.end()
+
+        return consumed_spans
+
+    def _extract_explicit_thickness_rules(
+        self,
+        normalized: str,
+        blocked_spans: List[Tuple[int, int]],
+    ) -> Dict[str, Any]:
+        schedule_parts: List[str] = []
+        mm_parts: List[str] = []
+        ordered_items: List[Dict[str, Any]] = []
+        matched_texts: List[str] = []
+        matched_spans: List[Tuple[int, int]] = []
+        invalid = False
+
+        def _add_unique(items: List[str], value: str) -> None:
+            if value and value not in items:
+                items.append(value)
+
+        def _add_ordered(item_type: str, raw_value: str, code_value: str, span: Tuple[int, int]) -> None:
+            candidate = {"type": item_type, "value": str(raw_value), "code": str(code_value), "span": span}
+            if candidate not in ordered_items:
+                ordered_items.append(candidate)
+
+        def _overlaps_blocked(span: Tuple[int, int]) -> bool:
+            for start, end in blocked_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _record(match_text: str, span: Optional[Tuple[int, int]] = None) -> None:
+            mt = str(match_text or "").strip()
+            if mt and mt not in matched_texts:
+                matched_texts.append(mt)
+            if span and span not in matched_spans:
+                matched_spans.append(span)
+
+        def _overlaps_recorded(span: Tuple[int, int]) -> bool:
+            for start, end in matched_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _overlaps_recorded(span: Tuple[int, int]) -> bool:
+            for start, end in matched_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _mark_invalid_if_needed(mm_raw: Optional[str] = None, schedule_raw: Optional[str] = None) -> bool:
+            nonlocal invalid
+            if mm_raw and not self._is_valid_mm_candidate(mm_raw):
+                invalid = True
+                return True
+            if schedule_raw and not self._is_valid_schedule_candidate(schedule_raw):
+                invalid = True
+                return True
+            return False
+
+        def _mark_invalid_schedule_boundary_conflict(pattern: re.Pattern[str]) -> bool:
+            nonlocal invalid
+            if pattern.search(normalized):
+                invalid = True
+                return True
+            return False
+
+        def _normalize_two_part_operand(raw_operand: str) -> Optional[Tuple[str, str, str]]:
+            operand = str(raw_operand or "").strip()
+            if not operand:
+                return None
+
+            operand = re.sub(r'(?i)\s*\([LS]\)\s*$', '', operand).strip()
+
+            if re.fullmatch(r'(?i)(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|S\d+S?|\d+S|XS|XXS|STD)', operand):
+                if _mark_invalid_if_needed(schedule_raw=operand):
+                    return None
+                code = self._convert_single(operand).strip()
+                return ("SCHEDULE", code, code) if code else None
+
+            prefixed_numeric = re.match(
+                r'(?i)^(?:(?:THK|T|壁厚)\s*[:：=]?\s*(\d+(?:\.\d+)?)\s*(?:MM|毫米)?|S\s*[:：=]\s*(\d+(?:\.\d+)?)\s*(?:MM|毫米)?|S-(\d+\.\d+)\s*(?:MM|毫米)?)$',
+                operand,
+            )
+            if prefixed_numeric:
+                raw_num = prefixed_numeric.group(1) or prefixed_numeric.group(2) or prefixed_numeric.group(3)
+                if _mark_invalid_if_needed(mm_raw=raw_num):
+                    return None
+                normalized_num = self._normalize_number(raw_num)
+                return ("MM", normalized_num, f"{normalized_num}MM")
+
+            plain_mm = re.match(r'(?i)^(\d+(?:\.\d+)?)\s*(?:MM|毫米)$', operand)
+            if plain_mm:
+                raw_num = plain_mm.group(1)
+                if _mark_invalid_if_needed(mm_raw=raw_num):
+                    return None
+                normalized_num = self._normalize_number(raw_num)
+                return ("MM", normalized_num, f"{normalized_num}MM")
+
+            return None
+
+        # 0) 泛化二元组合解析器：
+        # 左右两侧只要都是合法壁厚 token，就按组合处理；
+        # 不再把组合规则写死成 `mm x schedule`、`schedule x schedule` 等固定方向。
+        sch_token = r'SCH[.\s]*(?>(?:XXS|XS|STD|\d+S?(?!\.\d)))'
+        s_dash_token = r'S-(?>(?:XXS|XS|STD|\d+S?(?!\.\d)))'
+        # 最弱的数值 schedule 只认白名单：
+        # SCH5/SCH5S、SCH10/SCH10S ... SCH160/SCH160S 对应的弱写法。
+        # 这样可以避免把 S3408 这类标准残片误当壁厚。
+        weak_schedule_prefixed_token, weak_schedule_s_dash_token, weak_schedule_numeric_suffix_token, weak_schedule_token = self._weak_schedule_patterns()
+        schedule_boundary_conflict_pattern = re.compile(
+            rf'(?i)(?:{sch_token}|{s_dash_token})(?=(?:[0-9]|[A-WYZ]))'
+        )
+        if _mark_invalid_schedule_boundary_conflict(schedule_boundary_conflict_pattern):
+            return {
+                "schedule": [],
+                "mm": [],
+                "ordered_items": [],
+                "matched_texts": [],
+                "matched_spans": [],
+                "invalid": invalid,
+            }
+
+        schedule_operand = rf'(?:{sch_token}|{s_dash_token}|{weak_schedule_token})(?:\s*\([LS]\))?'
+        mm_operand = r'(?:(?:THK|T|壁厚)\s*[:：=]?\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S\s*[:：=]\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S-\d+\.\d+\s*(?:MM|毫米)?|\d+(?:\.\d+)?\s*(?:MM|毫米))(?:\s*\([LS]\))?'
+        generic_operand = rf'(?:{schedule_operand}|{mm_operand})'
+        generic_two_part_combo_pattern = re.compile(
+            rf'(?i)(?<![A-Za-z0-9])({generic_operand})\s*[xX×*/]\s*({generic_operand})(?=$|[^A-Za-z0-9])'
+        )
+        for m in generic_two_part_combo_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span) or _overlaps_recorded(span):
+                continue
+
+            left = _normalize_two_part_operand(m.group(1))
+            right = _normalize_two_part_operand(m.group(2))
+            if not left or not right:
+                continue
+
+            for operand, operand_span in ((left, m.span(1)), (right, m.span(2))):
+                item_type, raw_value, code_value = operand
+                if item_type == "MM":
+                    _add_unique(mm_parts, code_value)
+                    _add_ordered("MM", raw_value, code_value, operand_span)
+                else:
+                    _add_unique(schedule_parts, code_value)
+                    _add_ordered("SCHEDULE", raw_value, code_value, operand_span)
+            _record(m.group(0), span)
+
+        thk_mm_schedule_pattern = re.compile(
+            r'(?i)(?:\bTHK(?=\s*[:=]?\s*\d)\s*[:=]?\s*|\bT\b\s*[:=]\s*|壁厚\s*[:：=]?\s*|\bS\b\s*[:=]\s*)'
+            r'(\d+(?:\.\d+)?)\s*(?:MM)?\s*(?:\([LS]\))?'
+            r'\s*[xX×]\s*'
+            r'((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)|\d+S))(?:\s*\([LS]\))?'
+        )
+        for m in thk_mm_schedule_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1), schedule_raw=m.group(2)):
+                continue
+            mm_value = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, mm_value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), mm_value, m.span(1))
+            schedule_part = self._convert_single(m.group(2)).strip()
+            if schedule_part:
+                _add_unique(schedule_parts, schedule_part)
+                _add_ordered("SCHEDULE", schedule_part, schedule_part, m.span(2))
+            _record(m.group(0), span)
+
+        single_s_dash_mm_pattern = re.compile(
+            r'(?i)(?<![A-Za-z0-9])S-(\d+\.\d+)\s*(?:MM|毫米)?(?=$|[^A-Za-z0-9])'
+        )
+        for m in single_s_dash_mm_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)):
+                continue
+            mm_value = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, mm_value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), mm_value, span)
+            _record(m.group(0), span)
+
+        thk_repeated_prefix_pair_pattern = re.compile(
+            r'(?i)(?:\bTHK(?=\s*[:=]?\s*\d)\s*[:=]?\s*|\bT\b\s*[:=]\s*|壁厚\s*[:：=]?\s*)'
+            r'(\d+(?:\.\d+)?)\s*(?:MM)?\s*(?:\([LS]\))?'
+            r'\s*[xX×]\s*'
+            r'(?:THK(?=\s*[:=]?\s*\d)\s*[:=]?\s*|T\s*[:=]\s*|壁厚\s*[:：=]?\s*)'
+            r'(\d+(?:\.\d+)?)\s*(?:MM)?\s*(?:\([LS]\))?'
+        )
+        for m in thk_repeated_prefix_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or _mark_invalid_if_needed(mm_raw=m.group(2)):
+                continue
+            left = f"{self._normalize_number(m.group(1))}MM"
+            right = f"{self._normalize_number(m.group(2))}MM"
+            _add_unique(mm_parts, left)
+            _add_unique(mm_parts, right)
+            _add_ordered("MM", self._normalize_number(m.group(1)), left, m.span(1))
+            _add_ordered("MM", self._normalize_number(m.group(2)), right, m.span(2))
+            _record(m.group(0), span)
+
+        thk_pair_pattern = re.compile(
+            r'(?i)(?:\bTHK(?=\s*[:=]?\s*\d)\s*[:=]?\s*|\bT\b\s*[:=]\s*|壁厚\s*[:：=]?\s*|\bS\b\s*[:=]\s*)'
+            r'(\d+(?:\.\d+)?)\s*(?:MM)?\s*(?:\([LS]\))?'
+            r'\s*[xX×]\s*'
+            r'(\d+(?:\.\d+)?)\s*(?:MM)?\s*(?:\([LS]\))?'
+        )
+        for m in thk_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or _mark_invalid_if_needed(mm_raw=m.group(2)):
+                continue
+            left = f"{self._normalize_number(m.group(1))}MM"
+            right = f"{self._normalize_number(m.group(2))}MM"
+            _add_unique(mm_parts, left)
+            _add_unique(mm_parts, right)
+            _add_ordered("MM", self._normalize_number(m.group(1)), left, m.span(1))
+            _add_ordered("MM", self._normalize_number(m.group(2)), right, m.span(2))
+            _record(m.group(0), span)
+
+        dn_pair_dual_mm_pattern = re.compile(
+            r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?\s*[xX×*]\s*(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)'
+        )
+        for m in dn_pair_dual_mm_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if any(span[0] < end and start < span[1] for start, end in matched_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or _mark_invalid_if_needed(mm_raw=m.group(2)):
+                continue
+            left = f"{self._normalize_number(m.group(1))}MM"
+            right = f"{self._normalize_number(m.group(2))}MM"
+            _add_unique(mm_parts, left)
+            _add_unique(mm_parts, right)
+            _add_ordered("MM", self._normalize_number(m.group(1)), left, m.span(1))
+            _add_ordered("MM", self._normalize_number(m.group(2)), right, m.span(2))
+            _record(m.group(0), span)
+
+        thk_pattern = re.compile(
+            r'(?i)(?:\bTHK(?=\s*[:=]?\s*\d)\s*[:=]?\s*|\bT\b\s*[:=]\s*|壁厚\s*[:：=]?\s*|\bS\b\s*[:=]\s*)'
+            r'(\d+(?:\.\d+)?)\s*(?:MM)?'
+            r'(?:\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?)?'
+        )
+        for m in thk_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if any(span[0] < end and start < span[1] for start, end in matched_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or (m.group(2) and _mark_invalid_if_needed(mm_raw=m.group(2))):
+                continue
+            left = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, left)
+            _add_ordered("MM", self._normalize_number(m.group(1)), left, m.span(1))
+            if m.group(2):
+                right = f"{self._normalize_number(m.group(2))}MM"
+                _add_unique(mm_parts, right)
+                _add_ordered("MM", self._normalize_number(m.group(2)), right, m.span(2))
+            _record(m.group(0), span)
+
+        if self._common_dn_values:
+            dn_pair_mm_pair_pattern = re.compile(
+                r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*/]\s*DN\s*'
+                r'(' + '|'.join(map(re.escape, [str(v) for v in self._common_dn_values])) + r')'
+                r'(\d+\.\d+)\s*MM\s*[xX×]\s*(\d+\.\d+)\s*MM'
+            )
+            for m in dn_pair_mm_pair_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _overlaps_blocked(span):
+                    continue
+                if _mark_invalid_if_needed(mm_raw=m.group(2)) or _mark_invalid_if_needed(mm_raw=m.group(3)):
+                    continue
+                _add_unique(mm_parts, f"{self._normalize_number(m.group(2))}MM")
+                _add_unique(mm_parts, f"{self._normalize_number(m.group(3))}MM")
+                _record(m.group(0), span)
+
+        # 1) 强规则：组合 schedule 优先，避免后面的弱 token 越权。
+        #
+        # 关键点：
+        # - SCH... 和 S-... 不能混在一个大正则里直接“猜”组合关系。
+        # - 组合规则必须有明确的 x/X/× 分隔，或是少量已知紧凑拼写（如 SCH10Sch20S）。
+        # - 一旦命中，后续规则不能再从该片段内部重复提取。
+        schedule_left_boundary = r'(?:(?<=^)|(?<=[^A-Za-z])|(?<=[xX×*]))'
+        schedule_right_boundary = r'(?=$|[^A-Za-z0-9]|[xX×*/])'
+        compact_schedule_pair_patterns = [
+            re.compile(
+                rf'(?i){schedule_left_boundary}({sch_token}\s*[xX×]\s*{sch_token}){schedule_right_boundary}'
+            ),
+            re.compile(
+                rf'(?i){schedule_left_boundary}({s_dash_token}\s*[xX×]\s*{s_dash_token}){schedule_right_boundary}'
+            ),
+            re.compile(
+                rf'(?i){schedule_left_boundary}((?:{sch_token}|{s_dash_token})\s*[xX×]\s*(?:{sch_token}|{s_dash_token}|{weak_schedule_token})){schedule_right_boundary}'
+            ),
+            re.compile(
+                rf'(?i){schedule_left_boundary}((?:{weak_schedule_token})\s*[xX×]\s*(?:{sch_token}|{s_dash_token}|{weak_schedule_token})){schedule_right_boundary}'
+            ),
+            # 紧凑拼写：SCH10Sch20S / SCH10SXSCH10S 等，留给 split_concatenated_tokens 做切分。
+            re.compile(
+                rf'(?i){schedule_left_boundary}(({sch_token}(?:\s*[xX×]\s*)?{sch_token})){schedule_right_boundary}'
+            ),
+        ]
+        consumed_schedule_spans: List[Tuple[int, int]] = []
+        for pair_pattern in compact_schedule_pair_patterns:
+            for m in pair_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _overlaps_blocked(span):
+                    continue
+                if _overlaps_recorded(span):
+                    continue
+                if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
+                    continue
+                raw_value = m.group(1)
+                if _mark_invalid_if_needed(schedule_raw=raw_value):
+                    continue
+                raw_parts = self._split_parts(raw_value)
+                if len(raw_parts) < 2:
+                    compact_parts = self._split_concatenated_tokens(raw_value)
+                    if len(compact_parts) > 1:
+                        raw_parts = compact_parts
+                normalized_parts: List[str] = []
+                for raw_part in raw_parts:
+                    part = self._convert_single(raw_part).strip()
+                    if part:
+                        normalized_parts.append(part)
+                if len(normalized_parts) < 2:
+                    continue
+                for part in normalized_parts:
+                    _add_unique(schedule_parts, part)
+                    _add_ordered("SCHEDULE", part, part, span)
+                consumed_schedule_spans.append(span)
+                _record(m.group(0), span)
+
+        # 2) 强规则：单个 SCH... / S-... token
+        strong_schedule_token_pattern = re.compile(
+            rf'(?i){schedule_left_boundary}(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)){schedule_right_boundary}'
+        )
+        for m in strong_schedule_token_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
+                continue
+            if _mark_invalid_if_needed(schedule_raw=m.group(0)):
+                continue
+            part = self._convert_single(m.group(0)).strip()
+            if part:
+                _add_unique(schedule_parts, part)
+                _add_ordered("SCHEDULE", part, part, span)
+                consumed_schedule_spans.append(span)
+                _record(m.group(0), span)
+
+        # 3) 弱规则拆分：
+        # - XS / XXS / STD：弱 token，但可以在无强 schedule 的情况下直接使用
+        # - 数字S（10S/40S/...）：只有在前面完全没有提到任何显式壁厚时才允许启用
+        #
+        # 同时保持硬边界：
+        # - 不允许从 B16.9S-40S 里截出 9S
+        # - 不把 Mnf Std / MFR STD / MFRS STD 当壁厚
+        weak_schedule_alpha_pattern = re.compile(
+            r'(?i)(?<![A-Za-z0-9.])(?:XXS|XS|STD)(?![A-Za-z0-9])'
+        )
+        for m in weak_schedule_alpha_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
+                continue
+            raw_token = m.group(0)
+            prefix = normalized[max(0, m.start() - 8):m.start()]
+            if raw_token.upper() == 'STD' and re.search(r'(?i)(?:MNF|MFRS?|MFR)\s*$', prefix):
+                continue
+            if _mark_invalid_if_needed(schedule_raw=raw_token):
+                continue
+            part = self._convert_single(raw_token).strip()
+            if part:
+                _add_unique(schedule_parts, part)
+                _add_ordered("SCHEDULE", part, part, span)
+                consumed_schedule_spans.append(span)
+                _record(raw_token, span)
+
+        # 数字S / S整数 是最弱的一层：
+        # 只有在前面没有任何显式壁厚（schedule/mm）时才允许启用，
+        # 避免像 P150S40S 这种编码串里的 150S 越权进入壁厚。
+        if not schedule_parts and not mm_parts:
+            weak_numeric_schedule_pattern = re.compile(
+                rf'(?i)(?<![A-Za-z0-9.])(?:{weak_schedule_prefixed_token}|{weak_schedule_s_dash_token}|{weak_schedule_numeric_suffix_token})(?![A-Za-z0-9.]|\.\d)'
+            )
+            for m in weak_numeric_schedule_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _overlaps_blocked(span):
+                    continue
+                if _overlaps_recorded(span):
+                    continue
+                if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
+                    continue
+                raw_token = m.group(0)
+                # 弱规则候选非法时只跳过该候选，不整条作废。
+                if not self._is_valid_schedule_candidate(raw_token):
+                    continue
+                part = self._convert_single(raw_token).strip()
+                if part:
+                    _add_unique(schedule_parts, part)
+                    _add_ordered("SCHEDULE", part, part, span)
+                    consumed_schedule_spans.append(span)
+                    _record(raw_token, span)
+
+        od_schedule_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×*]\s*((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)|\d+S))'
+        )
+        for m in od_schedule_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _mark_invalid_if_needed(schedule_raw=m.group(1)):
+                continue
+            raw_parts = self._split_parts(m.group(1))
+            for raw_part in raw_parts:
+                part = self._convert_single(raw_part)
+                part = part.strip()
+                if part:
+                    _add_unique(schedule_parts, part)
+                    _add_ordered("SCHEDULE", part, part, span)
+            _record(m.group(0), span)
+
+        # 结构族：ΦA×B/T1×T2 或 ΦA×ΦB/T1×T2
+        # 当前两段为尺寸、后两段为壁厚时，直接提取后两段壁厚。
+        phi_dual_od_dual_thk_pattern = re.compile(
+            r'(?i)[φΦФф]\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:[φΦФф]\s*)?(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)'
+        )
+        consumed_phi_dual_spans: List[Tuple[int, int]] = []
+        for m in phi_dual_od_dual_thk_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            value_spans = [m.span(3), m.span(4)]
+            if any(_overlaps_blocked(value_span) for value_span in value_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(3)) or _mark_invalid_if_needed(mm_raw=m.group(4)):
+                continue
+            first = f"{self._normalize_number(m.group(3))}MM"
+            second = f"{self._normalize_number(m.group(4))}MM"
+            _add_unique(mm_parts, first)
+            _add_unique(mm_parts, second)
+            _add_ordered("MM", self._normalize_number(m.group(3)), first, m.span(3))
+            _add_ordered("MM", self._normalize_number(m.group(4)), second, m.span(4))
+            consumed_phi_dual_spans.append(span)
+            _record(m.group(0), span)
+
+        od_double_head_thk_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×]\s*(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+        )
+        od_three_thk_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?'
+        )
+        consumed_thk_spans: List[Tuple[int, int]] = []
+        for m in od_double_head_thk_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            value_spans = [m.span(1)] + ([m.span(2)] if m.group(2) else [])
+            if any(_overlaps_blocked(value_span) for value_span in value_spans):
+                continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_phi_dual_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or (m.group(2) and _mark_invalid_if_needed(mm_raw=m.group(2))):
+                continue
+            first = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, first)
+            _add_ordered("MM", self._normalize_number(m.group(1)), first, m.span(1))
+            if m.group(2):
+                second = f"{self._normalize_number(m.group(2))}MM"
+                _add_unique(mm_parts, second)
+                _add_ordered("MM", self._normalize_number(m.group(2)), second, m.span(2))
+            consumed_thk_spans.append(span)
+            _record(m.group(0), span)
+        for m in od_three_thk_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(m.span(1)):
+                continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_phi_dual_spans):
+                continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_thk_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)):
+                continue
+            value = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), value, span)
+            consumed_thk_spans.append(span)
+            _record(m.group(0), span)
+
+        od_thk_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×*]\s*\d)'
+        )
+        for m in od_thk_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(m.span(1)):
+                continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_phi_dual_spans):
+                continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_thk_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)):
+                continue
+            value = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), value, span)
+            _record(m.group(0), span)
+
+        mm_pair_pattern = re.compile(
+            r'(?i)(\d+(?:\.\d+)?)\s*(?:MM|毫米)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM|毫米)'
+        )
+        for m in mm_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or _mark_invalid_if_needed(mm_raw=m.group(2)):
+                continue
+            left = f"{self._normalize_number(m.group(1))}MM"
+            right = f"{self._normalize_number(m.group(2))}MM"
+            _add_unique(mm_parts, left)
+            _add_unique(mm_parts, right)
+            _add_ordered("MM", self._normalize_number(m.group(1)), left, m.span(1))
+            _add_ordered("MM", self._normalize_number(m.group(2)), right, m.span(2))
+            _record(m.group(0), span)
+
+        mm_mixed_pair_pattern = re.compile(
+            r'(?i)(\d+(?:\.\d+)?)\s*(?:MM|毫米)\s*[xX×]\s*(\d+(?:\.\d+)?)(?!\s*(?:MM|毫米))'
+        )
+        for m in mm_mixed_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)) or _mark_invalid_if_needed(mm_raw=m.group(2)):
+                continue
+            left = f"{self._normalize_number(m.group(1))}MM"
+            right = f"{self._normalize_number(m.group(2))}MM"
+            _add_unique(mm_parts, left)
+            _add_unique(mm_parts, right)
+            _add_ordered("MM", self._normalize_number(m.group(1)), left, m.span(1))
+            _add_ordered("MM", self._normalize_number(m.group(2)), right, m.span(2))
+            _record(m.group(0), span)
+
+        dn_pair_trailing_mm_pattern = re.compile(
+            r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*DN\s*\d+(?:\.\d+)?\s+(\d+(?:\.\d+)?)\s*(?:MM|毫米)\b'
+        )
+        for m in dn_pair_trailing_mm_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if any(span[0] < end and start < span[1] for start, end in matched_spans):
+                continue
+            if _mark_invalid_if_needed(mm_raw=m.group(1)):
+                continue
+            value = f"{self._normalize_number(m.group(1))}MM"
+            _add_unique(mm_parts, value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), value, span)
+            _record(m.group(0), span)
+
+        return {
+            "schedule": schedule_parts,
+            "mm": mm_parts,
+            "ordered_items": ordered_items,
+            "matched_texts": matched_texts,
+            "matched_spans": matched_spans,
+            "invalid": invalid,
+        }
+
+    def _apply_weak_thickness_fallback(
+        self,
+        normalized: str,
+        blocked_spans: List[Tuple[int, int]],
+        schedule_parts: List[str],
+        mm_parts: List[str],
+        ordered_items: List[Dict[str, Any]],
+        matched_texts: List[str],
+        matched_spans: List[Tuple[int, int]],
+    ) -> None:
+        if schedule_parts or mm_parts:
+            return
+
+        def _add_unique(items: List[str], value: str) -> None:
+            if value and value not in items:
+                items.append(value)
+
+        def _add_ordered(item_type: str, raw_value: str, code_value: str, span: Tuple[int, int]) -> None:
+            candidate = {"type": item_type, "value": str(raw_value), "code": str(code_value), "span": span}
+            if candidate not in ordered_items:
+                ordered_items.append(candidate)
+
+        def _overlaps_blocked(span: Tuple[int, int]) -> bool:
+            for start, end in blocked_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _record(match_text: str, span: Optional[Tuple[int, int]] = None) -> None:
+            mt = str(match_text or "").strip()
+            if mt and mt not in matched_texts:
+                matched_texts.append(mt)
+            if span and span not in matched_spans:
+                matched_spans.append(span)
+
+        for block in self._extract_bare_od_thickness_blocks(normalized):
+            span = block["span"]
+            if _overlaps_blocked(span):
+                continue
+            value = f"{self._normalize_number(block['thickness'])}MM"
+            _add_unique(mm_parts, value)
+            _add_ordered("MM", self._normalize_number(block["thickness"]), value, span)
+            _record(block["raw"], span)
+
+        dn_decimal_pattern = re.compile(r'(?i)\bDN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+\.\d+)\b')
+        for m in dn_decimal_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            value = f"{self._normalize_number(m.group(1))}MM"
+            if value not in mm_parts:
+                _add_unique(mm_parts, value)
+                _add_ordered("MM", self._normalize_number(m.group(1)), value, span)
+                _record(m.group(0), span)
+
+    def _apply_size_context_thickness_rules(
+        self,
+        normalized: str,
+        blocked_spans: List[Tuple[int, int]],
+        size_context: Any,
+        schedule_parts: List[str],
+        mm_parts: List[str],
+        ordered_items: List[Dict[str, Any]],
+        matched_texts: List[str],
+        matched_spans: List[Tuple[int, int]],
+    ) -> None:
+        """
+        当尺寸已经明确存在时，允许把无 THK 前缀但结构稳定的 `数字mm x schedule`
+        / `数字mm x 数字mm` / `数字mm x 数字` 视为壁厚组合。
+        """
+
+        def _add_unique(items: List[str], value: str) -> None:
+            if value and value not in items:
+                items.append(value)
+
+        def _add_ordered(item_type: str, raw_value: str, code_value: str, span: Tuple[int, int]) -> None:
+            candidate = {"type": item_type, "value": str(raw_value), "code": str(code_value), "span": span}
+            if candidate not in ordered_items:
+                ordered_items.append(candidate)
+
+        def _overlaps_blocked(span: Tuple[int, int]) -> bool:
+            for start, end in blocked_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _record(match_text: str, span: Optional[Tuple[int, int]] = None) -> None:
+            mt = str(match_text or "").strip()
+            if mt and mt not in matched_texts:
+                matched_texts.append(mt)
+            if span and span not in matched_spans:
+                matched_spans.append(span)
+
+        def _overlaps_recorded(span: Tuple[int, int]) -> bool:
+            for start, end in matched_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        # 尺寸右侧 x 厚度值：DN20x5.6mm / OD219.1X4.00 / 6"x10mm
+        size_spans = list(getattr(size_context, "consumed_spans", None) or getattr(size_context, "matched_spans", []) or [])
+        right_mm_pattern = re.compile(
+            r'(?i)^\s*[xX×*]\s*(?:(\d+(?:\.\d+)?)\s*(MM|毫米)|(\d+\.\d+)(?!\s*[A-Za-z]))'
+        )
+        for size_start, size_end in size_spans:
+            if not (0 <= size_end < len(normalized)):
+                continue
+            right_tail = normalized[size_end:]
+            m = right_mm_pattern.match(right_tail)
+            if not m:
+                continue
+            if m.group(1):
+                raw_num = m.group(1)
+                unit = m.group(2) or "MM"
+                token_start = size_end + m.start(1)
+                token_end = size_end + m.end(2)
+            else:
+                raw_num = m.group(3)
+                unit = ""
+                token_start = size_end + m.start(3)
+                token_end = size_end + m.end(3)
+            span = (token_start, token_end)
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if not self._is_valid_mm_candidate(raw_num):
+                continue
+            value = f"{self._normalize_number(raw_num)}MM"
+            _add_unique(mm_parts, value)
+            _add_ordered("MM", self._normalize_number(raw_num), value, span)
+            record_end = token_end
+            if unit:
+                record_text = normalized[token_start:token_end]
+            else:
+                record_text = normalized[token_start:token_end]
+            _record(record_text, span)
+
+        # 数字mm x Sch/STD/XS
+        mm_schedule_pattern = re.compile(
+            r'(?i)(\d+(?:\.\d+)?)\s*(?:MM|毫米)\s*(?:\([LS]\))?\s*[xX×*]\s*'
+            r'((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)|\d+S))(?:\s*\([LS]\))?'
+        )
+        for m in mm_schedule_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if not self._is_valid_mm_candidate(m.group(1)) or not self._is_valid_schedule_candidate(m.group(2)):
+                continue
+            mm_value = f"{self._normalize_number(m.group(1))}MM"
+            schedule_value = self._convert_single(m.group(2)).strip()
+            _add_unique(mm_parts, mm_value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), mm_value, m.span(1))
+            if schedule_value and schedule_value not in schedule_parts:
+                _add_unique(schedule_parts, schedule_value)
+                _add_ordered("SCHEDULE", schedule_value, schedule_value, m.span(2))
+            _record(m.group(0), span)
+
+    def _apply_size_context_glued_schedule_rules(
+        self,
+        normalized: str,
+        blocked_spans: List[Tuple[int, int]],
+        size_context: Any,
+        schedule_parts: List[str],
+        ordered_items: List[Dict[str, Any]],
+        matched_texts: List[str],
+        matched_spans: List[Tuple[int, int]],
+    ) -> None:
+        """
+        当尺寸已经提取成功时，允许尺寸 span 直接充当 schedule token 的左右边界。
+
+        例如：
+        - DN40S10S
+        - S10SDN10
+        - S10SOD108
+
+        这里只放宽边界，不放宽 token 本体：
+        后续仍要求命中的内容本身是合法 schedule。
+        """
+
+        def _add_unique(items: List[str], value: str) -> None:
+            if value and value not in items:
+                items.append(value)
+
+        def _add_ordered(item_type: str, raw_value: str, code_value: str, span: Tuple[int, int]) -> None:
+            candidate = {"type": item_type, "value": str(raw_value), "code": str(code_value), "span": span}
+            if candidate not in ordered_items:
+                ordered_items.append(candidate)
+
+        def _overlaps_blocked(span: Tuple[int, int]) -> bool:
+            for start, end in blocked_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _record(match_text: str, span: Optional[Tuple[int, int]] = None) -> None:
+            mt = str(match_text or "").strip()
+            if mt and mt not in matched_texts:
+                matched_texts.append(mt)
+            if span and span not in matched_spans:
+                matched_spans.append(span)
+
+        def _overlaps_recorded(span: Tuple[int, int]) -> bool:
+            for start, end in matched_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        weak_schedule_prefixed_token, weak_schedule_s_dash_token, weak_schedule_numeric_suffix_token, _ = self._weak_schedule_patterns()
+        schedule_token_pattern = (
+            rf'(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|'
+            rf'S-(?:\d+S?|STD|XS|XXS)|'
+            rf'{weak_schedule_prefixed_token}|'
+            rf'{weak_schedule_s_dash_token}|'
+            rf'{weak_schedule_numeric_suffix_token}|'
+            rf'XS|XXS|STD)'
+        )
+        separator_prefixed_right_schedule_pattern = re.compile(
+            rf'(?i)^[xX×*/,]\s*({schedule_token_pattern})(?=$|[^A-Za-z0-9.]|\.\d)'
+        )
+        right_schedule_pattern = re.compile(
+            rf'(?i)^({schedule_token_pattern})(?=$|[^A-Za-z0-9.]|\.\d)'
+        )
+        left_schedule_pattern = re.compile(
+            rf'(?i){schedule_token_pattern}$'
+        )
+
+        size_spans = list(getattr(size_context, "consumed_spans", None) or getattr(size_context, "matched_spans", []) or [])
+        for size_span in size_spans:
+            size_start, size_end = size_span
+
+            # 尺寸右侧紧贴 schedule：DN40S10S
+            # 尺寸右侧通过分隔符连接 schedule：DN20xXS / OD89xSTD
+            if 0 <= size_end < len(normalized):
+                right_tail = normalized[size_end:]
+                separator_prefixed_match = separator_prefixed_right_schedule_pattern.match(right_tail)
+                if separator_prefixed_match:
+                    raw_token = separator_prefixed_match.group(1)
+                    span = (
+                        size_end + separator_prefixed_match.start(1),
+                        size_end + separator_prefixed_match.end(1),
+                    )
+                    if not _overlaps_blocked(span) and not _overlaps_recorded(span):
+                        if self._is_valid_schedule_candidate(raw_token):
+                            part = self._convert_single(raw_token).strip()
+                            if part:
+                                _add_unique(schedule_parts, part)
+                                _add_ordered("SCHEDULE", part, part, span)
+                                _record(raw_token, span)
+                else:
+                    right_match = right_schedule_pattern.match(right_tail)
+                    if right_match:
+                        raw_token = right_match.group(1)
+                        span = (size_end, size_end + len(raw_token))
+                        if not _overlaps_blocked(span) and not _overlaps_recorded(span):
+                            if self._is_valid_schedule_candidate(raw_token):
+                                part = self._convert_single(raw_token).strip()
+                                if part:
+                                    _add_unique(schedule_parts, part)
+                                    _add_ordered("SCHEDULE", part, part, span)
+                                    _record(raw_token, span)
+
+            # 尺寸左侧紧贴 schedule：S10SDN10 / S10SOD108
+            if size_start > 0:
+                left_head = normalized[:size_start]
+                left_match = left_schedule_pattern.search(left_head)
+                if left_match:
+                    raw_token = left_match.group(0)
+                    span = (size_start - len(raw_token), size_start)
+                    if not _overlaps_blocked(span) and not _overlaps_recorded(span):
+                        if self._is_valid_schedule_candidate(raw_token):
+                            part = self._convert_single(raw_token).strip()
+                            if part:
+                                _add_unique(schedule_parts, part)
+                                _add_ordered("SCHEDULE", part, part, span)
+                                _record(raw_token, span)
+
+    @staticmethod
+    def _is_valid_mm_candidate(raw_value: str) -> bool:
+        value = str(raw_value or "").strip()
+        match = re.match(r'^\d+(?:\.(\d+))?$', value)
+        if not match:
+            return False
+        decimal_part = match.group(1) or ""
+        if len(decimal_part) > 2:
+            return False
+        try:
+            return float(value) <= 100
+        except ValueError:
+            return False
+
+    @staticmethod
+    def _is_valid_schedule_candidate(raw_value: str) -> bool:
+        value = str(raw_value or "").upper()
+        for numeric_part in re.findall(r'\d+', value):
+            if len(numeric_part) >= 4:
+                return False
+        return True
+
+    def _has_invalid_thickness_items(self, schedule_parts: List[str], mm_parts: List[str]) -> bool:
+        for item in mm_parts:
+            raw_value = str(item).upper().removesuffix('MM')
+            if not self._is_valid_mm_candidate(raw_value):
+                return True
+        for item in schedule_parts:
+            if not self._is_valid_schedule_candidate(item):
+                return True
+        return False
+
+    @staticmethod
+    def _has_complex_composite_size(text: str) -> bool:
+        patterns = [
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+\.\d+'),
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?(?:\s*[xX×*]\s*\d+(?:\.\d+)?){2,}'),
+            # DN 复合尺寸中，第二个 DN 后若直接连小数厚度，整体交给大模型。
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*/]\s*DN\s*\d+(?=\d+\.\d+\s*(?:MM|毫米))'),
+            re.compile(r'(?i)(?:\bD|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?(?:\s*[xX×]\s*\d+(?:\.\d+)?){2,}'),
+            re.compile(r'(?i)(?:\bD|[φΦФф])\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?'),
+        ]
+        return any(pattern.search(text) for pattern in patterns)
+
+    @staticmethod
+    def _has_malformed_decimal_chain(text: str) -> bool:
+        """
+        识别明显脏小数串：
+        - 6.31.5
+        - 12.70.31mm
+        只要出现“数字.数字.”这种结构，壁厚规则直接失效。
+        """
+        patterns = (
+            re.compile(r'\d+\.\d+\.\d+'),
+            re.compile(r'\d+\.\d+\.(?=[A-Za-z\u4e00-\u9fff]|$)'),
+        )
+        return any(p.search(text) for p in patterns)
+
+    @staticmethod
+    def _has_parenthesized_thickness_variant(text: str) -> bool:
+        """
+        识别主壁厚(次壁厚) 写法，规则层直接放弃：
+        - 114x4.0(3.0)
+        - THK=8.0(6.0)mm
+        - 12.7mm(10.3mm)
+        """
+        patterns = (
+            re.compile(r'(?i)\d+(?:\.\d+)?\s*(?:MM|毫米)?\s*\(\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?\s*\)'),
+            re.compile(r'(?i)(?:THK|T|S|壁厚)\s*[:：=]?\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?\s*\(\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?\s*\)'),
+        )
+        return any(p.search(text) for p in patterns)
+
+    @staticmethod
+    def _has_phi_dual_od_dual_thk_structure(text: str) -> bool:
+        pattern = re.compile(
+            r'(?i)[φΦФф]\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:[φΦФф]\s*)?(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)'
+        )
+        for m in pattern.finditer(text):
+            a = float(m.group(1))
+            b = float(m.group(2))
+            t1 = float(m.group(3))
+            t2 = float(m.group(4))
+            if t1 <= a * 0.12 and t2 <= b * 0.12:
+                return True
+        return False
+
+    @staticmethod
+    def _extract_bare_od_thickness_blocks(text: str) -> List[Dict[str, Any]]:
+        pattern = re.compile(
+            r'(?<![A-Za-z0-9])'
+            r'(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+\.\d+)'
+            r'(?!\s*")\s*(?:MM|毫米)?(?:[A-Z]{1,6})?'
+            r'(?=$|[^A-Za-z0-9])',
+            re.IGNORECASE,
+        )
+        blocks: List[Dict[str, Any]] = []
+        for m in pattern.finditer(text):
+            # 不能从前一个小数的尾部起跳：
+            # 168.3x7.11 不应截成 3x7.11
+            if m.start() >= 2 and text[m.start() - 1] == '.' and text[m.start() - 2].isdigit():
+                continue
+            try:
+                od = float(m.group(1))
+                thk = float(m.group(2))
+            except ValueError:
+                continue
+            blocks.append({
+                "od": od,
+                "thickness": thk,
+                "raw": m.group(0).strip(),
+                "span": (m.start(), m.end()),
+            })
+        return blocks
+
+    @staticmethod
+    def _normalize_section_labels(text: str) -> str:
+        """切开历史表中粘连的编号字段标签，不影响规范小数点写法。"""
+        text = re.sub(
+            r'(?<=[A-Za-z0-9])([1-9])\.(?=[\u4e00-\u9fffA-Za-z][^:：]{0,20}[:：])',
+            r' \1.',
+            text,
+        )
+        text = re.sub(r'(?<=[A-Za-z0-9.])(?=DN\s*\d)', ' ', text, flags=re.IGNORECASE)
+        return text
+
+    def _normalize_glued_dn_mm(self, text: str) -> str:
+        """
+        切开 `DN1506.3mm` 这类 `DN + 壁厚` 粘连：
+        - DN200XDN1506.3mmX7.1mm -> DN200XDN150 6.3mmX7.1mm
+        - DN150×DN40S-10S×SCH40S -> DN150×DN40 S-10S×SCH40S
+        """
+        if not self._common_dn_values:
+            return text
+        dn_tokens = sorted((str(v) for v in self._common_dn_values), key=len, reverse=True)
+        decimal_mm_pattern = re.compile(
+            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=(\d+\.\d+\s*(?:MM|毫米)(?:\b|\s*[xX×/,;)])))'
+        )
+        text = decimal_mm_pattern.sub(r'\1\2 ', text)
+        glued_schedule_pattern = re.compile(
+            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=((?:S-\d+S?|SCH\d+S?|\d+S)\b))'
+        )
+        return glued_schedule_pattern.sub(r'\1\2 ', text)
+
+    def _process_structured_items(self, items: Any) -> str:
+        if not isinstance(items, list):
+            return ""
+
+        parts: List[str] = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            subtype = str(item.get("type", "")).strip().upper()
+            raw_value = item.get("value")
+            if raw_value in (None, ""):
+                continue
+            normalized = self._normalize_structured_part(subtype, raw_value)
+            if normalized and normalized not in parts:
+                parts.append(normalized)
         return 'X'.join(parts)
 
     def _normalize_structured_part(self, subtype: str, item: Any) -> str:
@@ -146,6 +1447,10 @@ class ThicknessProcessor:
             return ""
 
         if subtype == "MM":
+            slash_group = self._normalize_layered_mm_group(text)
+            if slash_group:
+                return slash_group
+
             # 兼容 LLM 子类型误标：如 MM: SCH20 / MM: STD。
             # 这类值应走通用壁厚规则，不能强行转成 20MM。
             upper = text.upper()
@@ -176,126 +1481,54 @@ class ThicknessProcessor:
 
         return self.process(text)
 
-    def _reorder_parts_by_original_text(self, parts: List[str], original_text: str) -> List[str]:
-        """
-        按原始描述中的出现顺序重排壁厚片段。
-        匹配失败的片段保持原顺序并放在后面。
-        """
-        if not original_text or len(parts) <= 1:
-            return parts
+    def _normalize_layered_mm_group(self, text: str) -> str:
+        parts = [part.strip() for part in text.split('/') if part.strip()]
+        if len(parts) < 2:
+            return ""
 
-        indexed = []
-        for idx, part in enumerate(parts):
-            pos = self._find_part_pos_in_text(part, original_text)
-            indexed.append((idx, part, pos))
+        normalized: List[str] = []
+        for part in parts:
+            if re.search(r'[xX*×,]', part):
+                return ""
+            match = re.fullmatch(r'(\d+(?:\.\d+)?)(?:\s*MM)?', part, flags=re.IGNORECASE)
+            if not match:
+                return ""
+            normalized.append(f"{self._normalize_number(match.group(1))}MM")
 
-        indexed.sort(key=lambda x: (x[2] < 0, x[2] if x[2] >= 0 else 10**9, x[0]))
-        return [item[1] for item in indexed]
+        return '/'.join(normalized)
 
-    def _sort_structured_items(self, subtype: str, items: List[Any], original_text: str) -> List[Any]:
-        if len(items) <= 1:
-            return items
-
-        indexed = []
-        for idx, item in enumerate(items):
-            start = self._extract_item_start(item)
-            if start is None:
-                normalized = self._normalize_structured_part(subtype, item)
-                pos = self._find_part_pos_in_text(normalized, original_text) if normalized else -1
-            else:
-                pos = start
-            indexed.append((idx, pos, item))
-
-        indexed.sort(key=lambda x: (x[1] < 0, x[1] if x[1] >= 0 else 10**9, x[0]))
-        return [item for _, _, item in indexed]
-
-    def _find_part_pos_in_text(self, part: str, original_text: str) -> int:
-        if not part or not original_text:
-            return -1
-
-        text = original_text.upper()
-        p = part.strip().upper()
-
-        # 直接命中
-        direct = text.find(p)
-        if direct >= 0:
-            return direct
-
-        # 特殊值
-        if p in self.SPECIAL_VALUES:
-            for cand in (p, f"S{p}", f"S-{p}", f"SCH{p}", f"SCH {p}", f"SCH.{p}"):
-                pos = text.find(cand)
-                if pos >= 0:
-                    return pos
-            return -1
-
-        # S80 / S80S / S6.3
-        m_s = re.match(r'^S(\d+(?:\.\d+)?)(S?)$', p)
-        if m_s:
-            num = m_s.group(1)
-            tail = m_s.group(2)
-            candidates = [
-                f"SCH{num}{tail}",
-                f"SCH {num}{tail}",
-                f"SCH.{num}{tail}",
-                f"S-{num}{tail}",
-                f"S{num}{tail}",
-                f"{num}{tail}",
-            ]
-            for cand in candidates:
-                pos = text.find(cand)
-                if pos >= 0:
-                    return pos
-            return -1
-
-        # 10MM / 6.3MM
-        m_mm = re.match(r'^(\d+(?:\.\d+)?)MM$', p)
-        if m_mm:
-            num = m_mm.group(1)
-            for cand in (f"{num}MM", f"{num} MM", num):
-                pos = text.find(cand)
-                if pos >= 0:
-                    return pos
-            return -1
-
-        return -1
-    
     def _preprocess(self, value: str) -> str:
         """
-        预处理：去除前缀、后缀、无效字符等
+        预处理：仅清理壁厚 token 的局部前缀/后缀和脏字符。
+        不做全文删空格，避免破坏字段边界。
         """
         result = value
 
         result = self._normalize_known_aliases(result)
 
         # 先去掉裸露的大小端标记（如 "SCH40 L x SCH80 S"）。
-        # 这一类 L/S 只是位置标识，不是壁厚值本体；必须在删空格前处理，
-        # 否则会被粘成 "SCH40LxSCH80S"，后续无法区分。
+        # 这一类 L/S 只是位置标识，不是壁厚值本体。
         result = self.SUFFIX_PATTERN.sub('', result)
-        
-        # 第一步：去除所有空格
-        result = result.replace(' ', '')
 
+        result = result.replace(' ', '')
         # 去掉 II-/Ⅱ- 前缀（只表示系列，不是壁厚本体）。
         result = re.sub(r'(?i)(?:^|(?<=[xX*×/,]))(?:II|Ⅱ)-', '', result)
-        
-        # 去除所有位置的 T=/THK= 前缀（开头和分隔符后的）
-        # 匹配：T=, THK=, T =, THK =（在开头或分隔符后）
+
+        # 去除所有位置的 T=/THK= 前缀（开头和分隔符后的）。
         result = re.sub(r'(?:^|(?<=[xX*×/,]))(?:T|THK)\s*=\s*', '', result, flags=re.IGNORECASE)
-        
-        # 容错处理：去除单独的 = 号（NER 可能漏掉 T，只识别出 =4.0mm）
-        # 匹配开头或分隔符后的 = 号（后面跟数字）
+
+        # 容错处理：去除单独的 = 号（NER 可能漏掉 T，只识别出 =4.0mm）。
         result = re.sub(r'(?:^|(?<=[xX*×/,]))=\s*(?=\d)', '', result, flags=re.IGNORECASE)
-        
-        # 处理 Thk 格式：thk3X6 → 3X6, thk3Xthk6 → 3X6
+
+        # 处理 thk 格式：thk3X6 → 3X6, thk3Xthk6 → 3X6
         result = re.sub(r'(?:^|(?<=[xX*×/,]))(?:THK|Thk|thk)', '', result, flags=re.IGNORECASE)
-        
-        # 去除 (L)/(S) 后缀（此时空格已去除，只匹配括号形式）
+
+        # 去除 (L)/(S) 后缀。
         result = re.sub(r'\([LS]\)', '', result, flags=re.IGNORECASE)
-        
-        # 去除无效字符（如单引号、反引号等）
+
+        # 去除无效字符（如单引号、反引号等）。
         result = re.sub(r"[''`]", '', result)
-        
+
         return result
 
     def _normalize_known_aliases(self, value: str) -> str:
@@ -327,7 +1560,7 @@ class ThicknessProcessor:
         # 使用更精确的分割模式
         # 匹配异径分隔符（前后有数字或字母）
         split_pattern = re.compile(
-            r'(?<=[0-9SsDdMmXx])\s*[xX*×/,]\s*(?=[0-9SsTsHhCcXx])',
+            r'(?<=[0-9SsDdMm])\s*[xX*×/,]\s*(?=[0-9SsTtHhCcXx])',
             re.IGNORECASE
         )
         
@@ -416,12 +1649,16 @@ class ThicknessProcessor:
                 token = f'S-{special}'
                 if rest.startswith(token):
                     candidates.append(token)
-            num_match = re.match(r'S-(\d+(?:\.\d+)?)', rest)
-            if num_match:
-                base = num_match.group(0)
-                if rest.startswith(base + 'S'):
-                    candidates.append(base + 'S')
-                candidates.append(base)
+            decimal_mm_match = re.match(r'S-(\d+\.\d+)(MM|毫米)?', rest)
+            if decimal_mm_match:
+                candidates.append(decimal_mm_match.group(0))
+            else:
+                num_match = re.match(r'S-(\d+)', rest)
+                if num_match:
+                    base = num_match.group(0)
+                    if rest.startswith(base + 'S'):
+                        candidates.append(base + 'S')
+                    candidates.append(base)
 
         if rest.startswith('S'):
             num_match = re.match(r'S(\d+(?:\.\d+)?)', rest)
@@ -467,16 +1704,21 @@ class ThicknessProcessor:
             return upper_value
         
         # 尝试 SCH 格式：SCH80 → S80, SCH40S → S40S, SCHXXS → XXS
-        sch_match = self.SCH_PATTERN.match(value)
+        sch_match = self.SCH_PATTERN.fullmatch(value)
         if sch_match:
             suffix = sch_match.group(1).upper()
             # 特殊值不加 S 前缀
             if suffix in self.SPECIAL_VALUES:
                 return suffix
             return f"S{suffix}"
-        
+
+        s_dash_mm_match = self.S_DASH_MM_PATTERN.fullmatch(value)
+        if s_dash_mm_match:
+            num = self._normalize_number(s_dash_mm_match.group(1))
+            return f"{num}MM"
+
         # 尝试 S- 格式：S-80 → S80, S-10S → S10S, S-XS → XS
-        s_dash_match = self.S_DASH_PATTERN.match(value)
+        s_dash_match = self.S_DASH_PATTERN.fullmatch(value)
         if s_dash_match:
             suffix = s_dash_match.group(1).upper()
             if suffix in self.SPECIAL_VALUES:
@@ -559,6 +1801,17 @@ class ThicknessProcessor:
 
 # 单例
 _processor_instance: Optional[ThicknessProcessor] = None
+
+
+@dataclass
+class RuleThicknessExtraction:
+    schedule: List[str]
+    mm: List[str]
+    thickness_code: str
+    matched_texts: List[str]
+    matched_spans: List[Tuple[int, int]]
+    consumed_spans: List[Tuple[int, int]] = field(default_factory=list)
+    ordered_items: List[Dict[str, str]] = field(default_factory=list)
 
 
 def get_thickness_processor() -> ThicknessProcessor:

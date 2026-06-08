@@ -10,9 +10,11 @@
 import re
 import logging
 import yaml
+
+from .combo_fallback_extractor import ComboFallbackExtractor
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,20 @@ class SizeResult:
     values: List[float]  # 数值列表（按原始出现顺序去重）
     original: str  # 原始值
     format_type: str  # 格式类型：dn, phi, other
+
+
+@dataclass
+class RuleSizeExtraction:
+    """基于确定性规则的尺寸抽取结果。"""
+    dn: List[str]
+    od: List[str]
+    inch: List[str]
+    length: List[str]
+    size_code: str
+    matched_texts: List[str]
+    matched_spans: List[Tuple[int, int]] = field(default_factory=list)
+    consumed_spans: List[Tuple[int, int]] = field(default_factory=list)
+    ordered_items: List[Dict[str, str]] = field(default_factory=list)
 
 
 class SizeProcessor:
@@ -38,13 +54,77 @@ class SizeProcessor:
     
     # 管外径 -> 公称直径 映射表（类变量，延迟加载）
     _od_to_dn_mapping: dict = None
+    _od_candidate_rows: dict = None
     _instance: 'SizeProcessor' = None
     _nps_to_dn_mapping: dict = None
+    _common_dn_values: set = None
     STRUCTURED_SUBTYPES = ("DN", "OD", "INCH")
     
-    def __init__(self):
-        self._load_od_mapping()
-        self._load_nps_mapping()
+    def __init__(
+        self,
+        od_mapping_path: Optional[Union[str, Path]] = None,
+        nps_config_path: Optional[Union[str, Path]] = None,
+    ):
+        self.od_mapping_path = Path(od_mapping_path) if od_mapping_path else Path(__file__).parent.parent / "config" / "壁厚对照汇总表.xlsx"
+        self.nps_config_path = Path(nps_config_path) if nps_config_path else Path(__file__).parent.parent / "config" / "encoder_config.yaml"
+        self._od_to_dn_mapping = {}
+        self._od_candidate_rows = {}
+        self._nps_to_dn_mapping = {}
+        self._common_dn_values = set()
+        self._load_od_mapping_for_instance()
+        self._load_nps_mapping_for_instance()
+
+    def _load_od_mapping_for_instance(self) -> None:
+        """实例化加载 OD -> DN 映射。"""
+        try:
+            import pandas as pd
+
+            if not self.od_mapping_path.exists():
+                logger.warning(f"[SizeProcessor] 管外径映射文件不存在: {self.od_mapping_path}")
+                return
+
+            df = pd.read_excel(self.od_mapping_path, header=0)
+            for _, row in df.iterrows():
+                try:
+                    od = float(row['管外径'])
+                    dn = int(float(row['公称直径']))
+                    thickness_code = str(row.get('壁厚号') or '').strip()
+                    thickness_mm = None
+                    raw_mm = row.get('壁厚')
+                    if raw_mm not in (None, ''):
+                        try:
+                            thickness_mm = float(raw_mm)
+                        except (ValueError, TypeError):
+                            thickness_mm = None
+                    self._od_to_dn_mapping[od] = dn
+                    self._od_candidate_rows.setdefault(od, []).append({
+                        'od': od,
+                        'dn': dn,
+                        'thickness_code': thickness_code,
+                        'thickness_mm': thickness_mm,
+                    })
+                except (ValueError, TypeError, KeyError):
+                    continue
+        except Exception as e:
+            logger.warning(f"[SizeProcessor] 加载管外径映射失败: {e}")
+
+    def _load_nps_mapping_for_instance(self) -> None:
+        """实例化加载 NPS -> DN 映射。"""
+        try:
+            if not self.nps_config_path.exists():
+                logger.warning(f"[SizeProcessor] 配置文件不存在: {self.nps_config_path}")
+                return
+            with open(self.nps_config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+            size_config = config.get('size_processing', {})
+            nps_config = size_config.get('nps_to_dn', {})
+            self._nps_to_dn_mapping = {str(k): int(v) for k, v in nps_config.items()}
+            self._common_dn_values = {
+                int(v) for v in size_config.get('common_dn_values', [])
+                if str(v).strip()
+            }
+        except Exception as e:
+            logger.warning(f"[SizeProcessor] 加载NPS映射失败: {e}")
     
     @classmethod
     def _load_od_mapping(cls):
@@ -53,6 +133,7 @@ class SizeProcessor:
             return
         
         cls._od_to_dn_mapping = {}
+        cls._od_candidate_rows = {}
         
         try:
             import pandas as pd
@@ -65,7 +146,21 @@ class SizeProcessor:
                     try:
                         od = float(row['管外径'])
                         dn = int(float(row['公称直径']))
+                        thickness_code = str(row.get('壁厚号') or '').strip()
+                        thickness_mm = None
+                        raw_mm = row.get('壁厚')
+                        if raw_mm not in (None, ''):
+                            try:
+                                thickness_mm = float(raw_mm)
+                            except (ValueError, TypeError):
+                                thickness_mm = None
                         cls._od_to_dn_mapping[od] = dn
+                        cls._od_candidate_rows.setdefault(od, []).append({
+                            'od': od,
+                            'dn': dn,
+                            'thickness_code': thickness_code,
+                            'thickness_mm': thickness_mm,
+                        })
                     except (ValueError, TypeError, KeyError):
                         continue
                 
@@ -87,8 +182,13 @@ class SizeProcessor:
             if config_path.exists():
                 with open(config_path, 'r', encoding='utf-8') as f:
                     config = yaml.safe_load(f)
-                nps_config = config.get('size_processing', {}).get('nps_to_dn', {})
+                size_config = config.get('size_processing', {})
+                nps_config = size_config.get('nps_to_dn', {})
                 cls._nps_to_dn_mapping = {str(k): int(v) for k, v in nps_config.items()}
+                cls._common_dn_values = {
+                    int(v) for v in size_config.get('common_dn_values', [])
+                    if str(v).strip()
+                }
                 logger.info(f"[SizeProcessor] 加载NPS映射: {len(cls._nps_to_dn_mapping)} 条")
             else:
                 logger.warning(f"[SizeProcessor] 配置文件不存在: {config_path}")
@@ -104,11 +204,12 @@ class SizeProcessor:
         if mapped is not None:
             return mapped
 
-        # 兜底规则：当英制尺寸未配置且为纯数字且 > 10 时，按 inch * 25 转换为 DN
-        # 例如：11" -> DN275, NPS13 -> DN325
+        # 兜底规则：当英制尺寸未配置且为纯数字时，按 inch * 25 转换为 DN。
+        # 例如：9" -> DN225, 11" -> DN275, NPS13 -> DN325
+        # 分数/混合分数会优先在 _normalize_nps_token 中归一后走映射表。
         if re.fullmatch(r'\d+(?:\.\d+)?', normalized):
             inch_val = float(normalized)
-            if inch_val > 10:
+            if inch_val > 0:
                 return int(round(inch_val * 25))
 
         return None
@@ -127,6 +228,10 @@ class SizeProcessor:
         # 统一引号（英寸）
         t = t.replace('”', '"').replace('“', '"').replace('″', '"')
         t = re.sub(r'["\']', '', t).strip()
+        # 小数点周围脏空格：2 .5 -> 2.5
+        t = re.sub(r'(?<=\d)\s*\.\s*(?=\d)', '.', t)
+        # 混合分数另一种脏写法：1.1/2 -> 1-1/2
+        t = re.sub(r'^(\d+)\.(\d+/\d+)$', r'\1-\2', t)
         # 统一混合分数写法：1 1/4 -> 1-1/4
         t = re.sub(r'\s+', ' ', t)
         if re.fullmatch(r'\d+\s+\d+/\d+', t):
@@ -159,22 +264,86 @@ class SizeProcessor:
             except Exception:
                 pass
         return t
+
+    def _is_common_dn_integer(self, token: Any) -> bool:
+        text = self._normalize_number_text(token)
+        if not re.fullmatch(r'\d+', text):
+            return False
+        return int(text) in self._common_dn_values
     
-    def _od_to_dn(self, od_value: float) -> Optional[int]:
-        """将管外径转换为公称直径"""
+    def _resolve_candidate_rows(self, rows: List[Dict[str, Any]], thickness_mm: Optional[float]) -> Optional[int]:
+        """在同一 OD 对应多条候选记录时，优先用显式 mm 壁厚消歧。"""
+        if not rows:
+            return None
+        if len(rows) == 1:
+            return int(rows[0]['dn'])
+        if thickness_mm is not None:
+            eligible = [
+                row for row in rows
+                if row.get('thickness_mm') is not None and float(row['thickness_mm']) <= float(thickness_mm)
+            ]
+            if eligible:
+                best = max(eligible, key=lambda row: float(row['thickness_mm']))
+                return int(best['dn'])
+        # 无可用 mm 壁厚时，回退到当前旧逻辑（保持既有行为）
+        first_od = rows[0].get('od')
+        if first_od in self._od_to_dn_mapping:
+            return int(self._od_to_dn_mapping[first_od])
+        return int(rows[-1]['dn'])
+
+    def _od_to_dn(self, od_value: float, thickness_mm: Optional[float] = None) -> Optional[int]:
+        """
+        将管外径转换为公称直径。
+
+        规则：
+        1. 先精确匹配映射表
+        2. 再做小容差匹配（±0.5mm）
+        3. 若同一 OD 命中多条记录，且存在显式 mm 壁厚，则按「表中壁厚 <= 描述壁厚」且最接近描述壁厚的记录选 DN
+        4. 若仍未命中，则按工程直径规则，取「小于等于当前 OD 数值」且最接近的 DN
+        4. 若不存在满足条件的 DN，则返回 None，由上层决定是否回退原始 OD
+        """
         if not self._od_to_dn_mapping:
             return None
         
         # 精确匹配
-        if od_value in self._od_to_dn_mapping:
-            return self._od_to_dn_mapping[od_value]
+        if od_value in self._od_candidate_rows:
+            return self._resolve_candidate_rows(self._od_candidate_rows[od_value], thickness_mm)
         
         # 容差匹配（±0.5mm）
-        for od, dn in self._od_to_dn_mapping.items():
+        for od, rows in self._od_candidate_rows.items():
             if abs(od - od_value) <= 0.5:
-                return dn
-        
+                return self._resolve_candidate_rows(rows, thickness_mm)
+
+        # 工程直径回退：按 DN 数值比较，取不大于当前 OD 且最接近的 DN
+        dn_candidates = [int(dn) for dn in self._od_to_dn_mapping.values() if float(dn) <= od_value]
+        if dn_candidates:
+            return max(dn_candidates)
+
         return None
+
+    @staticmethod
+    def _extract_mm_context(value: Dict[str, Any]) -> List[float]:
+        """提取挂在 SIZE 结构上的显式 mm 壁厚上下文。"""
+        raw = value.get('_THICKNESS_MM_CONTEXT')
+        if not isinstance(raw, list):
+            return []
+        result: List[float] = []
+        for item in raw:
+            try:
+                result.append(float(item))
+            except (ValueError, TypeError):
+                continue
+        return result
+
+    @staticmethod
+    def _pick_mm_for_index(mm_values: List[float], index: int) -> Optional[float]:
+        if not mm_values:
+            return None
+        if len(mm_values) == 1:
+            return float(mm_values[0])
+        if 0 <= index < len(mm_values):
+            return float(mm_values[index])
+        return float(mm_values[-1])
 
     @staticmethod
     def _extract_numeric_value(value: Any) -> Optional[float]:
@@ -216,96 +385,6 @@ class SizeProcessor:
         return f"{value:.6f}".rstrip("0").rstrip(".")
 
     @staticmethod
-    def _extract_item_start(item: Any) -> Optional[int]:
-        if not isinstance(item, dict):
-            return None
-        start = item.get("start")
-        if start is None:
-            return None
-        try:
-            return int(start)
-        except (TypeError, ValueError):
-            return None
-
-    def _find_size_position(self, subtype: str, item: Any, original_text: str) -> int:
-        if not original_text:
-            return -1
-
-        if isinstance(item, dict):
-            raw = item.get("value")
-        else:
-            raw = item
-        raw_text = str(raw or "").strip()
-        if not raw_text:
-            return -1
-
-        text = original_text.upper()
-        raw_upper = raw_text.upper()
-        direct = text.find(raw_upper)
-        if direct >= 0:
-            return direct
-
-        if subtype == "DN":
-            m = re.search(r'(\d+(?:\.\d+)?)', raw_text)
-            if not m:
-                return -1
-            num = m.group(1)
-            for pattern in (
-                rf'DN\s*{re.escape(num)}\b',
-                rf'(?<![A-Z]){re.escape(num)}(?![A-Z])',
-            ):
-                hit = re.search(pattern, text, re.IGNORECASE)
-                if hit:
-                    return hit.start()
-            return -1
-
-        if subtype == "OD":
-            m = re.search(r'(\d+(?:\.\d+)?)', raw_text)
-            if not m:
-                return -1
-            num = m.group(1)
-            for pattern in (
-                rf'外径\s*{re.escape(num)}(?:MM)?',
-                rf'[Φφ]\s*{re.escape(num)}\b',
-                rf'OD\s*{re.escape(num)}\b',
-                rf'(?<![A-Z0-9]){re.escape(num)}MM(?![A-Z0-9])',
-            ):
-                hit = re.search(pattern, text, re.IGNORECASE)
-                if hit:
-                    return hit.start()
-            return -1
-
-        if subtype == "INCH":
-            normalized = self._normalize_nps_token(raw_text)
-            variants = [raw_text, normalized]
-            if normalized and "-" in normalized:
-                variants.append(normalized.replace("-", " "))
-                decimal_variant = self._mixed_fraction_to_decimal(normalized)
-                if decimal_variant:
-                    variants.append(decimal_variant)
-            if normalized:
-                variants.append(f'NPS{normalized}')
-                variants.append(f'NPS {normalized}')
-                if "-" in normalized:
-                    spaced = normalized.replace("-", " ")
-                    variants.append(f'NPS{spaced}')
-                    variants.append(f'NPS {spaced}')
-                    decimal_variant = self._mixed_fraction_to_decimal(normalized)
-                    if decimal_variant:
-                        variants.append(f'NPS{decimal_variant}')
-                        variants.append(f'NPS {decimal_variant}')
-            for variant in variants:
-                variant = str(variant or "").strip()
-                if not variant:
-                    continue
-                pos = text.find(variant.upper())
-                if pos >= 0:
-                    return pos
-            return -1
-
-        return -1
-
-    @staticmethod
     def _mixed_fraction_to_decimal(token: str) -> str:
         """
         2-1/2 -> 2.5
@@ -329,22 +408,6 @@ class SizeProcessor:
         except Exception:
             return ""
 
-    def _sort_structured_items(self, subtype: str, items: List[Any], original_text: str = "") -> List[Any]:
-        if len(items) <= 1:
-            return items
-
-        indexed = []
-        for idx, item in enumerate(items):
-            start = self._extract_item_start(item)
-            if start is None:
-                pos = self._find_size_position(subtype, item, original_text)
-            else:
-                pos = start
-            indexed.append((idx, pos, item))
-
-        indexed.sort(key=lambda x: (x[1] < 0, x[1] if x[1] >= 0 else 10**9, x[0]))
-        return [item for _, _, item in indexed]
-
     def _build_positioned_size_items(self, value: Dict[str, Any], original_text: str = "") -> List[Dict[str, Any]]:
         """
         构建带位置的尺寸对象列表。
@@ -352,59 +415,50 @@ class SizeProcessor:
         规则：
         1. 若显式存在 DN，则只保留 DN 参与编码/壁厚换算
         2. 若无 DN，则使用可转换为 DN 的 OD / INCH，并按原文位置排序
-        3. 若无 DN 且 OD 无法转换，则保留 OD 原值仅用于尺寸编码回退
+        3. OD 优先按映射表、公差或向下最近工程直径转换；仅在完全找不到更小映射外径时才保留 OD 原值回退
         """
         dn_items: List[Dict[str, Any]] = []
         converted_items: List[Dict[str, Any]] = []
         od_fallback_items: List[Dict[str, Any]] = []
+        mm_context = self._extract_mm_context(value)
 
-        for item in self._sort_structured_items("DN", self._ensure_list(value.get("DN")), original_text):
+        for item in self._ensure_list(value.get("DN")):
             raw = item.get("value") if isinstance(item, dict) else item
-            start = self._extract_item_start(item)
-            if start is None:
-                start = self._find_size_position("DN", item, original_text)
+            raw_text = str(raw or "").strip()
             dn = self._extract_numeric_value(item)
             if dn is None:
                 continue
             dn_items.append({
                 "subtype": "DN",
-                "raw": str(raw or "").strip(),
-                "start": start,
+                "raw": raw_text,
                 "encode_value": float(dn),
                 "dn_value": float(dn),
             })
 
-        for item in self._sort_structured_items("OD", self._ensure_list(value.get("OD")), original_text):
+        for idx, item in enumerate(self._ensure_list(value.get("OD"))):
             raw = item.get("value") if isinstance(item, dict) else item
-            start = self._extract_item_start(item)
-            if start is None:
-                start = self._find_size_position("OD", item, original_text)
+            raw_text = str(raw or "").strip()
             od = self._extract_numeric_value(item)
             if od is None:
                 continue
-            dn = self._od_to_dn(od)
+            dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, idx))
             if dn is not None:
                 converted_items.append({
                     "subtype": "OD",
-                    "raw": str(raw or "").strip(),
-                    "start": start,
+                    "raw": raw_text,
                     "encode_value": float(dn),
                     "dn_value": float(dn),
                 })
             else:
                 od_fallback_items.append({
                     "subtype": "OD",
-                    "raw": str(raw or "").strip(),
-                    "start": start,
+                    "raw": raw_text,
                     "encode_value": float(od),
                     "dn_value": None,
                 })
 
-        for item in self._sort_structured_items("INCH", self._ensure_list(value.get("INCH")), original_text):
+        for item in self._ensure_list(value.get("INCH")):
             raw = item.get("value") if isinstance(item, dict) else item
-            start = self._extract_item_start(item)
-            if start is None:
-                start = self._find_size_position("INCH", item, original_text)
             raw_text = str(raw or "").strip()
             if not raw_text:
                 continue
@@ -413,23 +467,22 @@ class SizeProcessor:
                 converted_items.append({
                     "subtype": "INCH",
                     "raw": raw_text,
-                    "start": start,
                     "encode_value": float(dn),
                     "dn_value": float(dn),
                 })
 
         if dn_items:
-            return sorted(dn_items, key=lambda x: (x["start"] < 0, x["start"] if x["start"] >= 0 else 10**9))
+            return dn_items
         if converted_items:
-            return sorted(converted_items, key=lambda x: (x["start"] < 0, x["start"] if x["start"] >= 0 else 10**9))
+            return converted_items
         if od_fallback_items:
-            return sorted(od_fallback_items, key=lambda x: (x["start"] < 0, x["start"] if x["start"] >= 0 else 10**9))
+            return od_fallback_items
         return []
 
     def _extract_length_prefix(self, value: Any, original_text: str = "") -> str:
         """
-        从 SIZE 中提取 LENGTH，并格式化为编码前缀 `L数字`。
-        不参与 DN/OD/INCH 的尺寸计算，仅用于最终 SIZE code 前缀。
+        从 SIZE 中提取 LENGTH，并格式化为编码片段 `L数字`。
+        不参与 DN/OD/INCH 的尺寸计算，仅用于最终 SIZE code 拼接。
         """
         if not value:
             return ""
@@ -444,12 +497,18 @@ class SizeProcessor:
             if not s:
                 return ""
             m = re.search(r'(?:L|LEN|LENGTH)\s*=?\s*(\d+(?:\.\d+)?)(?:\s*(?:MM|CM|M))?', s)
+            if m:
+                return f"L{self._normalize_number_text(m.group(1))}"
+
+            # 结构化 SIZE.LENGTH 常常只有纯长度值，如 `1000mm` / `1000`
+            # 这类值在字段层面已经被识别为 LENGTH，可直接转成编码片段。
+            m = re.fullmatch(r'(\d+(?:\.\d+)?)(?:\s*(?:MM|CM|M))?', s)
             if not m:
                 return ""
             return f"L{self._normalize_number_text(m.group(1))}"
 
         if isinstance(value, dict):
-            items = self._sort_structured_items("LENGTH", self._ensure_list(value.get("LENGTH")), original_text)
+            items = self._ensure_list(value.get("LENGTH"))
             for item in items:
                 prefix = _from_text(_raw_item_text(item))
                 if prefix:
@@ -466,15 +525,15 @@ class SizeProcessor:
         return _from_text(str(value))
 
     def extract_length_prefix(self, value: Any, original_text: str = "") -> str:
-        """公开方法：提取 SIZE.LENGTH 对应的编码前缀 `L数字`。"""
+        """公开方法：提取 SIZE.LENGTH 对应的编码片段 `L数字`。"""
         return self._extract_length_prefix(value, original_text=original_text)
 
-    def _prepend_length_prefix(self, code: str, length_prefix: str) -> str:
-        if not length_prefix:
+    def _append_length_suffix(self, code: str, length_token: str) -> str:
+        if not length_token:
             return code or ""
         if not code:
-            return length_prefix
-        return f"{length_prefix}{code}"
+            return length_token
+        return f"{code}{length_token}"
 
     def _collect_structured_values(self, value: Dict[str, Any], original_text: str = "") -> List[float]:
         """
@@ -483,6 +542,9 @@ class SizeProcessor:
         - OD / INCH 先转换为 DN
         - 最终统一按原始出现顺序去重
         """
+        ordered_values = self._collect_ordered_item_values(value)
+        if ordered_values:
+            return self._sort_sizes(ordered_values)
         return self._sort_sizes([float(item["encode_value"]) for item in self._build_positioned_size_items(value, original_text=original_text)])
 
     def _analyze_structured_values(self, value: Dict[str, Any], original_text: str = "") -> Tuple[List[float], bool]:
@@ -492,28 +554,33 @@ class SizeProcessor:
         规则：
         1. 若显式给出了 DN，则编码仅使用 DN。
         2. 若同时存在 OD/INCH，先换算成 DN；只要换算结果不在显式 DN 集合中，则标记待审。
-        3. 若没有 DN，则按现有逻辑将 OD/INCH 全部换算为 DN 后按原始顺序去重编码。
+        3. 若没有 DN，则优先按映射、公差或向下最近工程直径将 OD/INCH 换算为 DN 后编码。
         """
+        ordered_values = self._collect_ordered_item_values(value)
+        if ordered_values:
+            return self._sort_sizes(ordered_values), False
+
         explicit_dn_values: List[float] = []
         converted_values: List[float] = []
         od_fallback_values: List[float] = []
+        mm_context = self._extract_mm_context(value)
 
-        for item in self._sort_structured_items("DN", self._ensure_list(value.get("DN")), original_text):
+        for item in self._ensure_list(value.get("DN")):
             dn = self._extract_numeric_value(item)
             if dn is not None:
                 explicit_dn_values.append(float(dn))
 
-        for item in self._sort_structured_items("OD", self._ensure_list(value.get("OD")), original_text):
+        for idx, item in enumerate(self._ensure_list(value.get("OD"))):
             od = self._extract_numeric_value(item)
             if od is None:
                 continue
-            dn = self._od_to_dn(od)
+            dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, idx))
             if dn is not None:
                 converted_values.append(float(dn))
             else:
                 od_fallback_values.append(float(od))
 
-        for item in self._sort_structured_items("INCH", self._ensure_list(value.get("INCH")), original_text):
+        for item in self._ensure_list(value.get("INCH")):
             raw = item.get("value") if isinstance(item, dict) else item
             dn = self._nps_to_dn(str(raw).strip()) if raw not in (None, "") else None
             if dn is not None:
@@ -527,6 +594,53 @@ class SizeProcessor:
 
         merged = self._sort_sizes([float(item["encode_value"]) for item in self._build_positioned_size_items(value, original_text=original_text)])
         return merged, False
+
+    def _collect_ordered_item_values(self, value: Dict[str, Any]) -> List[float]:
+        items = value.get("_ITEMS")
+        if not isinstance(items, list):
+            return []
+
+        has_explicit_dn = any(
+            isinstance(item, dict)
+            and str(item.get("type", "")).strip().upper() == "DN"
+            and item.get("value") not in (None, "")
+            for item in items
+        )
+
+        result: List[float] = []
+        mm_context = self._extract_mm_context(value)
+        od_idx = 0
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            subtype = str(item.get("type", "")).strip().upper()
+            raw_value = item.get("value")
+            if raw_value in (None, ""):
+                continue
+
+            if has_explicit_dn and subtype != "DN":
+                continue
+
+            encoded: Optional[float] = None
+            if subtype == "DN":
+                encoded = self._extract_numeric_value(raw_value)
+            elif subtype == "OD":
+                od = self._extract_numeric_value(raw_value)
+                if od is not None:
+                    dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, od_idx))
+                    encoded = float(dn) if dn is not None else float(od)
+                    od_idx += 1
+            elif subtype == "INCH":
+                dn = self._nps_to_dn(str(raw_value).strip())
+                if dn is not None:
+                    encoded = float(dn)
+            elif subtype == "LENGTH":
+                continue
+
+            if encoded is None:
+                continue
+            result.append(float(encoded))
+        return result
     
     def parse(self, value: str) -> SizeResult:
         """
@@ -567,7 +681,7 @@ class SizeProcessor:
         if dn_match:
             size = float(dn_match.group(1))
             return SizeResult(values=[size], original=value, format_type='dn')
-        
+
         # ========== NPS 格式：转换为公称直径 ==========
         # NPS14×1/2, NPS14xNPS1/2, NPS1/2xNPS1/4, NPS1/2×NPS1/4
         nps_cross = re.search(
@@ -755,12 +869,859 @@ class SizeProcessor:
         length_prefix = self._extract_length_prefix(value, original_text=original_text)
         if isinstance(value, dict):
             values, _ = self._analyze_structured_values(value, original_text=original_text)
-            return self._prepend_length_prefix(self.format_code(values), length_prefix)
+            return self._append_length_suffix(self.format_code(values), length_prefix)
         if isinstance(value, list):
             return self.process_multi(value, original_text=original_text)
 
         result = self.parse(str(value))
-        return self._prepend_length_prefix(self.format_code(result.values), length_prefix)
+        return self._append_length_suffix(self.format_code(result.values), length_prefix)
+
+    def extract_by_rules(self, text: str) -> RuleSizeExtraction:
+        """
+        基于显式锚点和高频稳定结构做尺寸抽取。
+
+        规则：
+        1. 显式 DN/NPS/英制/OD/φ/Φ/D/LENGTH 直接走规则
+        2. `DNx整数` 视为双 DN
+        3. `DNx小数` 仅保留首个显式 DN，第二段不进入尺寸
+        4. `OD/φ/Φ/D x 小数` 视为外径+壁厚，尺寸只保留第一段
+        5. 不处理无锚点裸数字 / 裸 AxB
+        """
+        source = str(text or "")
+        normalized = source.replace('”', '"').replace('“', '"').replace('″', '"')
+        normalized = self._normalize_section_labels(normalized)
+        normalized = self._normalize_glued_dn_mm(normalized)
+
+        # 0) 只有当脏小数串实际落在尺寸片段里，才让尺寸规则失效。
+        # 例如：
+        # - OD108.73.2      -> 影响尺寸，应失效
+        # - DN250×6.31.5... -> DN250 本身未受影响，不应整条尺寸失效
+        if self._has_malformed_size_fragment(normalized):
+            return RuleSizeExtraction(
+                dn=[],
+                od=[],
+                inch=[],
+                length=[],
+                size_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+
+        # 0. 显式复杂复合规格直接留给大模型，例如：
+        # DN114.3x114.3x60.3x6.02 / D323.5x219.1x114.3x8.74
+        # 这类四段及以上结构当前不进入规则路径。
+        if self._has_complex_composite_size(normalized) and not self._has_phi_dual_od_dual_thk_structure(normalized):
+            return RuleSizeExtraction(
+                dn=[],
+                od=[],
+                inch=[],
+                length=[],
+                size_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
+        explicit_result = self._extract_explicit_size_rules(normalized)
+        dn_values = explicit_result["dn"]
+        od_values = explicit_result["od"]
+        inch_values = explicit_result["inch"]
+        length_values = explicit_result["length"]
+        matched_texts = explicit_result["matched_texts"]
+        matched_spans = explicit_result["matched_spans"]
+        ordered_items = explicit_result["ordered_items"]
+
+        self._apply_bare_size_fallback(
+            normalized=normalized,
+            dn_values=dn_values,
+            od_values=od_values,
+            inch_values=inch_values,
+            matched_texts=matched_texts,
+            matched_spans=matched_spans,
+            ordered_items=ordered_items,
+        )
+        sorted_ordered_items = sorted(ordered_items, key=lambda x: (x["span"][0], x["span"][1]))
+        dn_values = [str(item["value"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "DN"]
+        od_values = [str(item["value"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "OD"]
+        inch_values = [str(item["value"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "INCH"]
+        length_values = [str(item["value"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "LENGTH"]
+        consumed_spans = self._derive_consumed_spans_from_ordered_items(normalized, ordered_items)
+
+        # 5.5 主体规格使用校验：
+        # 若描述中存在裸复合主体规格，但规则没有拿到显式 DN，
+        # 说明规则结果只是从别的弱片段（如尾部 10"、单独 OD）捞出来的，
+        # 这类结果整体作废，交给大模型。
+        if self._has_unconsumed_bare_complex_spec(normalized) and not dn_values and not od_values:
+            return RuleSizeExtraction(
+                dn=[],
+                od=[],
+                inch=[],
+                length=[],
+                size_code="",
+                matched_texts=[],
+                matched_spans=[],
+                consumed_spans=[],
+                ordered_items=[],
+            )
+
+        # 6. 生成规则尺寸编码
+        code_values: List[str] = []
+        if dn_values:
+            code_values = dn_values
+        elif od_values:
+            converted: List[str] = []
+            for item in od_values:
+                numeric = self._extract_numeric_value(item)
+                if numeric is None:
+                    continue
+                mapped = self._od_to_dn(float(numeric))
+                if mapped is not None:
+                    converted.append(self._normalize_number_text(mapped))
+                else:
+                    converted.append(self._normalize_number_text(item))
+            code_values = converted
+        elif inch_values:
+            converted = []
+            for item in inch_values:
+                mapped = self._nps_to_dn(item)
+                if mapped is not None:
+                    converted.append(self._normalize_number_text(mapped))
+            code_values = converted
+
+        size_code = self.format_code([float(v) for v in code_values if re.fullmatch(r'\d+(?:\.\d+)?', v)]) if code_values else ""
+        if length_values:
+            size_code = self._append_length_suffix(size_code, f"L{length_values[0]}")
+
+        result = RuleSizeExtraction(
+            dn=dn_values,
+            od=od_values,
+            inch=inch_values,
+            length=length_values,
+            size_code=size_code,
+            matched_texts=matched_texts,
+            matched_spans=matched_spans,
+            consumed_spans=consumed_spans,
+            ordered_items=[
+                {"type": item["type"], "value": item["value"]}
+                for item in sorted_ordered_items
+            ],
+        )
+        return result
+
+    @staticmethod
+    def _derive_consumed_spans_from_ordered_items(text: str, ordered_items: List[Dict[str, Any]]) -> List[Tuple[int, int]]:
+        consumed_spans: List[Tuple[int, int]] = []
+        cursor_by_span: Dict[Tuple[int, int], int] = {}
+        numeric_token_re = re.compile(r'\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?')
+        schedule_like_re = re.compile(r'(?i)SCH\s*\.?\s*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|S\d+S?|\d+S|STD|XS|XXS')
+
+        for item in ordered_items:
+            span = item.get("span")
+            if not span or not isinstance(span, tuple) or len(span) != 2:
+                continue
+            start, end = int(span[0]), int(span[1])
+            if start < 0 or end > len(text) or start >= end:
+                continue
+            full_text = text[start:end]
+            cursor = cursor_by_span.get((start, end), 0)
+            search_text = full_text[cursor:]
+            item_type = str(item.get("type") or "").upper()
+            token_match = None
+            if item_type in {"DN", "OD", "MM", "LENGTH", "PRESSURE", "INCH"}:
+                token_match = numeric_token_re.search(search_text)
+            elif item_type == "SCHEDULE":
+                token_match = schedule_like_re.search(search_text)
+            if not token_match:
+                continue
+            token_start = start + cursor + token_match.start()
+            token_end = start + cursor + token_match.end()
+            candidate = (token_start, token_end)
+            if candidate not in consumed_spans:
+                consumed_spans.append(candidate)
+            cursor_by_span[(start, end)] = cursor + token_match.end()
+
+        return consumed_spans
+
+    def _extract_explicit_size_rules(self, normalized: str) -> Dict[str, Any]:
+        normalized = re.sub(r'(?<=\d)\s*\.\s*(?=\d)', '.', normalized)
+        normalized = re.sub(r'(?<!\d)(\d+)\.(\d+/\d+)(?=\s*")', r'\1-\2', normalized)
+        imperial_token = r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)'
+
+        dn_values: List[str] = []
+        od_values: List[str] = []
+        inch_values: List[str] = []
+        length_values: List[str] = []
+        matched_texts: List[str] = []
+        matched_spans: List[Tuple[int, int]] = []
+        ordered_items: List[Dict[str, Any]] = []
+
+        def _add_unique(items: List[str], value: str) -> None:
+            if value and value not in items:
+                items.append(value)
+
+        def _record(match_text: str, span: Optional[Tuple[int, int]] = None) -> None:
+            mt = str(match_text or "").strip()
+            if mt and mt not in matched_texts:
+                matched_texts.append(mt)
+            if span and span not in matched_spans:
+                matched_spans.append(span)
+
+        def _add_ordered_item(item_type: str, value: str, span: Tuple[int, int]) -> None:
+            candidate = {"type": item_type, "value": str(value), "span": span}
+            if candidate not in ordered_items:
+                ordered_items.append(candidate)
+
+        def _is_astm_d_context(start: int) -> bool:
+            prefix = normalized[max(0, start - 12):start]
+            return bool(re.search(r'(?i)ASTM\s*$', prefix))
+
+        mm_length_candidates: List[str] = []
+        generic_length_candidates: List[str] = []
+        consumed_length_spans: List[Tuple[int, int]] = []
+
+        def _overlaps_consumed_length(span: Tuple[int, int]) -> bool:
+            for start, end in consumed_length_spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        def _overlaps_spans(span: Tuple[int, int], spans: List[Tuple[int, int]]) -> bool:
+            for start, end in spans:
+                if span[0] < end and start < span[1]:
+                    return True
+            return False
+
+        cn_range_pattern = re.compile(
+            r'长度\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:MM|mm)?\s*[~\-]\s*(\d+(?:\.\d+)?)\s*(?:MM|mm)?',
+            re.IGNORECASE,
+        )
+        for m in cn_range_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            first = float(m.group(1))
+            second = float(m.group(2))
+            mm_length_candidates.append(self._normalize_number_text(max(first, second)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'(?i)(\d+(?:\.\d+)?)\s*MM\s*LENGTH\b', normalized):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            mm_length_candidates.append(self._normalize_number_text(m.group(1)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'长度\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:MM|mm)', normalized, re.IGNORECASE):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            mm_length_candidates.append(self._normalize_number_text(m.group(1)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'(?i)\bLENGTH\s*[:=]?\s*(\d+(?:\.\d+)?)\s*MM', normalized):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            mm_length_candidates.append(self._normalize_number_text(m.group(1)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'(?i)\bLENGTH\s*[:=]?\s*(\d+(?:\.\d+)?)(?:\s*(?:MM|CM|M))?\b', normalized):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            generic_length_candidates.append(self._normalize_number_text(m.group(1)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'(?i)\bCUT\s*[-]?\s*TO\s*(\d+(?:\.\d+)?)\b', normalized):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            mm_length_candidates.append(self._normalize_number_text(m.group(1)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'(?i)(?<![A-Z0-9])L\s*=\s*(\d+(?:\.\d+)?)\s*MM', normalized):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            mm_length_candidates.append(self._normalize_number_text(m.group(1)))
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        for m in re.finditer(r'(?i)(?<![A-Z0-9])L\s*=\s*(\d+(?:\.\d+)?)\s*(CM|M)?\b', normalized):
+            span = (m.start(), m.end())
+            if _overlaps_consumed_length(span):
+                continue
+            value = self._normalize_number_text(m.group(1))
+            generic_length_candidates.append(value)
+            consumed_length_spans.append(span)
+            _record(m.group(0), span)
+        if mm_length_candidates:
+            _add_unique(length_values, mm_length_candidates[0])
+            if consumed_length_spans:
+                _add_ordered_item("LENGTH", mm_length_candidates[0], consumed_length_spans[0])
+        elif generic_length_candidates:
+            _add_unique(length_values, generic_length_candidates[0])
+            if consumed_length_spans:
+                _add_ordered_item("LENGTH", generic_length_candidates[0], consumed_length_spans[0])
+
+        dn_pair_mm_pair_pattern = re.compile(
+            r'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*DN\s*'
+            r'(' + '|'.join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) + r')'
+            r'(?=\d+\.\d+\s*MM(?:\b|\s*[xX×/,;)]))'
+        ) if self._common_dn_values else None
+        consumed_pair_spans: List[Tuple[int, int]] = []
+        if dn_pair_mm_pair_pattern:
+            for m in dn_pair_mm_pair_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                first_value = self._normalize_number_text(m.group(1))
+                second_value = self._normalize_number_text(m.group(2))
+                _add_unique(dn_values, first_value)
+                _add_unique(dn_values, second_value)
+                _add_ordered_item("DN", first_value, m.span(1))
+                _add_ordered_item("DN", second_value, m.span(2))
+                consumed_pair_spans.append(span)
+                _record(m.group(0), span)
+
+        dn_pair_pattern = re.compile(
+            rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*(?:DN\s*)?({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})(?!\.\d)(?!\s*(?:MM|毫米))'
+        )
+        for m in dn_pair_pattern.finditer(normalized):
+            first, second = m.group(1), m.group(2)
+            span = (m.start(), m.end())
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_pair_spans):
+                continue
+            first_value = self._normalize_number_text(first)
+            _add_unique(dn_values, first_value)
+            _add_ordered_item("DN", first_value, m.span(1))
+            if '.' not in second:
+                second_value = self._normalize_number_text(second)
+                _add_unique(dn_values, second_value)
+                _add_ordered_item("DN", second_value, m.span(2))
+            consumed_pair_spans.append(span)
+            _record(m.group(0), span)
+
+        dn_single_pattern = re.compile(
+            rf'(?i)(?<![A-Z0-9])DN\s*({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})(?!\.\d)'
+        )
+        for m in dn_single_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_pair_spans):
+                continue
+            dn_value = self._normalize_number_text(m.group(1))
+            _add_unique(dn_values, dn_value)
+            _add_ordered_item("DN", dn_value, span)
+            _record(m.group(0), span)
+
+        d_pair_pattern = re.compile(
+            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+        )
+        consumed_d_spans: List[Tuple[int, int]] = []
+        for m in d_pair_pattern.finditer(normalized):
+            first, second = m.group(1), m.group(2)
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if self._is_common_dn_integer(first) and self._is_common_dn_integer(second):
+                first_value = self._normalize_number_text(first)
+                second_value = self._normalize_number_text(second)
+                _add_unique(dn_values, first_value)
+                _add_unique(dn_values, second_value)
+                _add_ordered_item("DN", first_value, m.span(1))
+                _add_ordered_item("DN", second_value, m.span(2))
+                consumed_d_spans.append(span)
+                _record(m.group(0), span)
+
+        # D数字x数字 / D数字xD数字：
+        # 若前两段都在 common DN 表中，则默认 D 表示 DN，而不是 OD。
+        d_dn_pair_pattern = re.compile(
+            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\b'
+        )
+        consumed_d_dn_pair_spans: List[Tuple[int, int]] = []
+        for m in d_dn_pair_pattern.finditer(normalized):
+            first, second = m.group(1), m.group(2)
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if self._is_common_dn_integer(first) and self._is_common_dn_integer(second):
+                first_value = self._normalize_number_text(first)
+                second_value = self._normalize_number_text(second)
+                _add_unique(dn_values, first_value)
+                _add_unique(dn_values, second_value)
+                _add_ordered_item("DN", first_value, m.span(1))
+                _add_ordered_item("DN", second_value, m.span(2))
+                consumed_d_dn_pair_spans.append(span)
+                _record(m.group(0), span)
+
+        # 结构族：ΦA×B/T1×T2 或 ΦA×ΦB/T1×T2
+        # 前两段按双外径处理，后两段交给壁厚规则。
+        phi_dual_od_dual_thk_pattern = re.compile(
+            r'(?i)[φΦФф]\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:[φΦФф]\s*)?(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)'
+        )
+        consumed_phi_dual_spans: List[Tuple[int, int]] = []
+        for m in phi_dual_od_dual_thk_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            first_value = self._normalize_number_text(m.group(1))
+            second_value = self._normalize_number_text(m.group(2))
+            _add_unique(od_values, first_value)
+            _add_unique(od_values, second_value)
+            _add_ordered_item("OD", first_value, m.span(1))
+            _add_ordered_item("OD", second_value, m.span(2))
+            consumed_phi_dual_spans.append(span)
+            _record(m.group(0), span)
+
+        od_double_head_three_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+        )
+        od_three_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\b'
+        )
+        consumed_od_spans: List[Tuple[int, int]] = []
+        for m in od_double_head_three_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_phi_dual_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            first_value = self._normalize_number_text(m.group(1))
+            second_value = self._normalize_number_text(m.group(2))
+            _add_unique(od_values, first_value)
+            _add_unique(od_values, second_value)
+            _add_ordered_item("OD", first_value, m.span(1))
+            _add_ordered_item("OD", second_value, m.span(2))
+            consumed_od_spans.append(span)
+            _record(m.group(0), span)
+        for m in od_three_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_phi_dual_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            first_value = self._normalize_number_text(m.group(1))
+            second_value = self._normalize_number_text(m.group(2))
+            _add_unique(od_values, first_value)
+            _add_unique(od_values, second_value)
+            _add_ordered_item("OD", first_value, m.span(1))
+            _add_ordered_item("OD", second_value, m.span(2))
+            consumed_od_spans.append(span)
+            _record(m.group(0), span)
+
+        d_od_pair_pattern = re.compile(
+            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
+        )
+        for m in d_od_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            od_value = self._normalize_number_text(m.group(1))
+            _add_unique(od_values, od_value)
+            _add_ordered_item("OD", od_value, span)
+            consumed_od_spans.append(span)
+            _record(m.group(0), span)
+
+        od_pair_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
+        )
+        for m in od_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_phi_dual_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            od_value = self._normalize_number_text(m.group(1))
+            _add_unique(od_values, od_value)
+            _add_ordered_item("OD", od_value, span)
+            consumed_od_spans.append(span)
+            _record(m.group(0), span)
+
+        d_od_schedule_pattern = re.compile(
+            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
+        )
+        for m in d_od_schedule_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            od_value = self._normalize_number_text(m.group(1))
+            _add_unique(od_values, od_value)
+            _add_ordered_item("OD", od_value, span)
+            consumed_od_spans.append(span)
+            _record(m.group(0), span)
+
+        od_schedule_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
+        )
+        for m in od_schedule_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            od_value = self._normalize_number_text(m.group(1))
+            _add_unique(od_values, od_value)
+            _add_ordered_item("OD", od_value, span)
+            consumed_od_spans.append(span)
+            _record(m.group(0), span)
+
+        d_single_pattern = re.compile(r'(?i)\bD\s*(\d+(?:\.\d+)?)\b')
+        consumed_d_single_spans: List[Tuple[int, int]] = []
+        for m in d_single_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            value = m.group(1)
+            if self._is_common_dn_integer(value):
+                dn_value = self._normalize_number_text(value)
+                _add_unique(dn_values, dn_value)
+                _add_ordered_item("DN", dn_value, span)
+            else:
+                od_value = self._normalize_number_text(value)
+                _add_unique(od_values, od_value)
+                _add_ordered_item("OD", od_value, span)
+            consumed_d_single_spans.append(span)
+            _record(m.group(0), span)
+
+        od_single_pattern = re.compile(r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\b')
+        for m in od_single_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _is_astm_d_context(m.start()):
+                continue
+            if _overlaps_spans(span, consumed_phi_dual_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_single_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_spans):
+                continue
+            if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                continue
+            if _overlaps_spans(span, consumed_od_spans):
+                continue
+            od_value = self._normalize_number_text(m.group(1))
+            _add_unique(od_values, od_value)
+            _add_ordered_item("OD", od_value, span)
+            _record(m.group(0), span)
+
+        inch_pair_pattern = re.compile(
+            r'(?<![A-Za-z0-9])'
+            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:")?\s*[xX×*]\s*'
+            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*"'
+            r'(?![A-Za-z0-9])'
+        )
+        consumed_inch_spans: List[Tuple[int, int]] = []
+        for m in inch_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            first_value = self._normalize_nps_token(m.group(1))
+            second_value = self._normalize_nps_token(m.group(2))
+            _add_unique(inch_values, first_value)
+            _add_unique(inch_values, second_value)
+            _add_ordered_item("INCH", first_value, m.span(1))
+            _add_ordered_item("INCH", second_value, m.span(2))
+            consumed_inch_spans.append(span)
+            _record(m.group(0), span)
+
+        nps_pair_pattern = re.compile(
+            r'(?i)(?<![A-Z0-9])NPS\s*(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:["])?\s*[xX×*]\s*(?:NPS\s*)?(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)'
+        )
+        for m in nps_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            first_value = self._normalize_nps_token(m.group(1))
+            second_value = self._normalize_nps_token(m.group(2))
+            _add_unique(inch_values, first_value)
+            _add_unique(inch_values, second_value)
+            _add_ordered_item("INCH", first_value, m.span(1))
+            _add_ordered_item("INCH", second_value, m.span(2))
+            consumed_inch_spans.append(span)
+            _record(m.group(0), span)
+
+        for m in re.finditer(r'(?i)(?<![A-Z0-9])NPS\s*(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)', normalized):
+            span = (m.start(), m.end())
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_inch_spans):
+                continue
+            inch_value = self._normalize_nps_token(m.group(1))
+            _add_unique(inch_values, inch_value)
+            _add_ordered_item("INCH", inch_value, span)
+            consumed_inch_spans.append(span)
+            _record(m.group(0), span)
+
+        size_labeled_inch_pattern = re.compile(rf'(?i)\bSIZE\s*{imperial_token}\s*["]')
+        for m in size_labeled_inch_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            inch_value = self._normalize_nps_token(m.group(1))
+            _add_unique(inch_values, inch_value)
+            _add_ordered_item("INCH", inch_value, span)
+            consumed_inch_spans.append(span)
+            _record(m.group(0), span)
+
+        inch_quote_pattern = re.compile(rf'(?<![A-Za-z0-9./-]){imperial_token}\s*["](?![A-Za-z0-9])')
+        for m in inch_quote_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if m.start() > 0 and normalized[m.start() - 1] in {'/', '-', '.'}:
+                continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_inch_spans):
+                continue
+            prefix = normalized[max(0, m.start() - 16):m.start()]
+            if re.search(r'(?i)NPS\s*\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?\s*$', prefix):
+                continue
+            inch_value = self._normalize_nps_token(m.group(1))
+            _add_unique(inch_values, inch_value)
+            _add_ordered_item("INCH", inch_value, span)
+            consumed_inch_spans.append(span)
+            _record(m.group(0), span)
+
+        return {
+            "dn": dn_values,
+            "od": od_values,
+            "inch": inch_values,
+            "length": length_values,
+            "matched_texts": matched_texts,
+            "matched_spans": matched_spans,
+            "ordered_items": ordered_items,
+        }
+
+    @staticmethod
+    def _has_phi_dual_od_dual_thk_structure(text: str) -> bool:
+        pattern = re.compile(
+            r'(?i)[φΦФф]\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:[φΦФф]\s*)?(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)'
+        )
+        for m in pattern.finditer(text):
+            return True
+        return False
+
+    def _apply_bare_size_fallback(
+        self,
+        normalized: str,
+        dn_values: List[str],
+        od_values: List[str],
+        inch_values: List[str],
+        matched_texts: List[str],
+        matched_spans: List[Tuple[int, int]],
+        ordered_items: List[Dict[str, Any]],
+    ) -> None:
+        if dn_values or od_values or inch_values:
+            return
+
+        def _add_unique(items: List[str], value: str) -> None:
+            if value and value not in items:
+                items.append(value)
+
+        def _record(match_text: str, span: Optional[Tuple[int, int]] = None) -> None:
+            mt = str(match_text or "").strip()
+            if mt and mt not in matched_texts:
+                matched_texts.append(mt)
+            if span and span not in matched_spans:
+                matched_spans.append(span)
+
+        def _add_ordered_item(item_type: str, value: str, span: Tuple[int, int]) -> None:
+            candidate = {"type": item_type, "value": str(value), "span": span}
+            if candidate not in ordered_items:
+                ordered_items.append(candidate)
+
+        flange_spec_blocks = self._extract_flange_spec_dn_pressure_blocks(normalized)
+        for block in flange_spec_blocks:
+            dn_value = self._normalize_number_text(block["dn"])
+            _add_unique(dn_values, dn_value)
+            _add_ordered_item("DN", dn_value, block["size_span"])
+            _record(block["raw"], block["full_span"])
+
+        bare_blocks = self._extract_bare_od_thickness_blocks(normalized)
+        for block in bare_blocks:
+            od_value = self._normalize_number_text(block["od"])
+            _add_unique(od_values, od_value)
+            _add_ordered_item("OD", od_value, block["span"])
+            _record(block["raw"], block["span"])
+
+    @staticmethod
+    def _has_complex_composite_size(text: str) -> bool:
+        """
+        对复合尺寸规格，三段及以上暂不走规则，直接留给大模型。
+        例如：
+        - DN114.3x114.3x60.3
+        - DN114.3x114.3x60.3x6.02
+        - D323.5x219.1x8.74
+        - D323.5x219.1x114.3x8.74
+        """
+        patterns = [
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+\.\d+'),
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?(?:\s*[xX×*]\s*\d+(?:\.\d+)?){2,}'),
+            # DN 复合尺寸中，第二个 DN 后若直接连小数厚度，整体交给大模型。
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*/]\s*DN\s*\d+(?=\d+\.\d+\s*(?:MM|毫米))'),
+            re.compile(r'(?i)(?:\bD|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?(?:\s*[xX×]\s*\d+(?:\.\d+)?){2,}'),
+            re.compile(r'(?i)(?:\bD|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?'),
+        ]
+        return any(pattern.search(text) for pattern in patterns)
+
+    @staticmethod
+    def _has_malformed_size_fragment(text: str) -> bool:
+        """
+        识别真正影响尺寸解释的脏小数片段。
+
+        仅当脏小数链出现在尺寸锚点片段里时才失效，例如：
+        - OD108.73.2
+        - φ108.73.2
+        - D108.73.2
+        - DN108.73.2
+
+        不因为后续别的脏串就整条尺寸失效，例如：
+        - DN250×6.31.5D12459
+        这里 DN250 仍然可安全提取。
+        """
+        patterns = (
+            re.compile(r'(?i)(?:\bOD|[φΦФфØø]|\bD)\s*\d+\.\d+\.\d+'),
+            re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+\.\d+\.\d+'),
+        )
+        return any(p.search(text) for p in patterns)
+
+    def _has_unconsumed_bare_complex_spec(self, text: str) -> bool:
+        """
+        裸复合主体规格存在，但当前规则若没拿到显式 DN，就不应仅靠别的弱尺寸片段出结果。
+        例如：
+        - 273x8.0/295x3.6;10"
+        - 273x8.0/295x3.6;OD100
+        """
+        return bool(self._extract_bare_od_thickness_blocks(text))
+
+    @staticmethod
+    def _extract_bare_od_thickness_blocks(text: str) -> List[Dict[str, Any]]:
+        """
+        识别裸规格块：ODxTHK / ODxTHKBW / 多段串接中的单块。
+
+        只负责识别“一个块”，不直接决定是否交给大模型。
+        例：
+        - 48x2.8
+        - 610x9.53-323.9x9.53BW
+        - 273x8.0；10"
+        """
+        pattern = re.compile(
+            r'(?<![A-Za-z0-9])'
+            r'(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+\.\d+)'
+            r'(?!\s*")\s*(?:MM|毫米)?'
+            r'(?=$|[^0-9])',
+            re.IGNORECASE,
+        )
+        blocks: List[Dict[str, Any]] = []
+        for m in pattern.finditer(text):
+            # 不能从前一个小数的尾部起跳：
+            # 168.3x7.11 不应截成 3x7.11
+            if m.start() >= 2 and text[m.start() - 1] == '.' and text[m.start() - 2].isdigit():
+                continue
+            try:
+                od = float(m.group(1))
+                thk = float(m.group(2))
+            except ValueError:
+                continue
+            blocks.append({
+                "od": od,
+                "thickness": thk,
+                "raw": m.group(0).strip(),
+                "span": (m.start(), m.end()),
+            })
+        return blocks
+
+    def _extract_flange_spec_dn_pressure_blocks(self, text: str) -> List[Dict[str, Any]]:
+        """
+        识别法兰型号规格中的兜底组合，例如：
+        - SO100(B)-10RF
+        - SO100(B)- 10 RF
+
+        语义：
+        - 第一段数字兜底为 DN100
+        - 第二段数字留给 pressure_processor 兜底为 PN10
+
+        只在尺寸规则未命中任何显式结果时参与。
+        """
+        blocks: List[Dict[str, Any]] = []
+        for combo in ComboFallbackExtractor.extract_flange_spec_rf_combos(
+            text,
+            allow_rf_right_glue=False,
+        ):
+            dn_raw = self._normalize_number_text(combo.first_value)
+            try:
+                dn_numeric = int(float(dn_raw))
+            except Exception:
+                continue
+            if self._common_dn_values and dn_numeric not in self._common_dn_values:
+                continue
+            blocks.append({
+                "raw": combo.raw,
+                "dn": dn_raw,
+                "pn": self._normalize_number_text(combo.second_value),
+                "full_span": combo.full_span,
+                "size_span": combo.first_span,
+                "pressure_span": combo.second_span,
+            })
+        return blocks
+
+    @staticmethod
+    def _normalize_section_labels(text: str) -> str:
+        """
+        处理历史表中常见的编号字段标签粘连：
+        - DN50X253.连接方式 -> DN50X25 3.连接方式
+        - 2.规格:DN50X253.连接方式 -> 2.规格:DN50X25 3.连接方式
+
+        只在 `数字.` 后面紧跟中文/英文字段标签并带 `:`/`：` 时切开，
+        不影响 B36.10 这类规范写法。
+        """
+        text = re.sub(
+            r'(?<=[A-Za-z0-9])([1-9])\.(?=[\u4e00-\u9fffA-Za-z][^:：]{0,20}[:：])',
+            r' \1.',
+            text,
+        )
+        text = re.sub(r'(?<=[A-Za-z0-9.])(?=DN\s*\d)', ' ', text, flags=re.IGNORECASE)
+        return text
+
+    def _normalize_glued_dn_mm(self, text: str) -> str:
+        """
+        切开 `DN1506.3mm` 这类 `DN + 壁厚` 粘连：
+        - DN200XDN1506.3mmX7.1mm -> DN200XDN150 6.3mmX7.1mm
+        - DN150×DN40S-10S×SCH40S -> DN150×DN40 S-10S×SCH40S
+        仅当 `DN<常见公称直径>` 后面紧跟 `小数mm` 时生效。
+        """
+        if not self._common_dn_values:
+            return text
+        dn_tokens = sorted((str(v) for v in self._common_dn_values), key=len, reverse=True)
+        decimal_mm_pattern = re.compile(
+            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=(\d+\.\d+\s*MM(?:\b|\s*[xX×/,;)])))'
+        )
+        text = decimal_mm_pattern.sub(r'\1\2 ', text)
+        glued_schedule_pattern = re.compile(
+            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=((?:S-\d+S?|SCH\d+S?|\d+S)\b))'
+        )
+        return glued_schedule_pattern.sub(r'\1\2 ', text)
     
     def process_multi(self, values: Any, original_text: str = "") -> str:
         """
@@ -800,7 +1761,7 @@ class SizeProcessor:
                     all_values.extend(normalized_values)
                 else:
                     all_values.extend(self.parse(str(v).strip()).values)
-            return self._prepend_length_prefix(self.format_code(self._sort_sizes(all_values)), length_prefix)
+            return self._append_length_suffix(self.format_code(self._sort_sizes(all_values)), length_prefix)
         
         # 分离不同格式
         dn_results = []
@@ -824,17 +1785,17 @@ class SizeProcessor:
             for r in dn_results:
                 all_values.extend(r.values)
             sorted_values = self._sort_sizes(all_values)
-            return self._prepend_length_prefix(self.format_code(sorted_values), length_prefix)
+            return self._append_length_suffix(self.format_code(sorted_values), length_prefix)
         
         if other_results:
-            return self._prepend_length_prefix(self.format_code(other_results[0].values), length_prefix)
+            return self._append_length_suffix(self.format_code(other_results[0].values), length_prefix)
         
         if phi_results:
             all_values = []
             for r in phi_results:
                 all_values.extend(r.values)
             sorted_values = self._sort_sizes(all_values)
-            return self._prepend_length_prefix(self.format_code(sorted_values), length_prefix)
+            return self._append_length_suffix(self.format_code(sorted_values), length_prefix)
 
         return length_prefix
 
@@ -849,7 +1810,7 @@ class SizeProcessor:
 
         if isinstance(values, dict):
             normalized_values, need_review = self._analyze_structured_values(values, original_text=original_text)
-            return self._prepend_length_prefix(self.format_code(normalized_values), length_prefix), need_review
+            return self._append_length_suffix(self.format_code(normalized_values), length_prefix), need_review
 
         if not isinstance(values, list):
             return self.process(values), False
@@ -866,7 +1827,7 @@ class SizeProcessor:
                     need_review = need_review or item_review
                 else:
                     all_values.extend(self.parse(str(v).strip()).values)
-            return self._prepend_length_prefix(self.format_code(self._sort_sizes(all_values)), length_prefix), need_review
+            return self._append_length_suffix(self.format_code(self._sort_sizes(all_values)), length_prefix), need_review
 
         return self.process_multi(values, original_text=original_text), False
 
@@ -908,6 +1869,7 @@ class SizeProcessor:
             else:
                 result.append(str(num).rstrip('0').rstrip('.'))
         return result
+
 
 
 # 单例
@@ -971,3 +1933,4 @@ if __name__ == '__main__':
         if code != expected:
             print(f"  *** 不匹配 ***")
         print("-" * 40)
+        imperial_token = r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)'

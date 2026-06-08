@@ -1,0 +1,604 @@
+common_types:
+  P:
+    body:
+      - 管子
+      - 接管
+      - 无缝钢管
+      - 钢管
+      - PIPE
+    block_if_matches:
+      - PW
+      - FP
+
+  PW:
+    direct:
+      - 焊接钢管
+      - 焊管
+    body:
+      - 管子
+      - 无缝钢管
+      - 钢管
+      - PIPE
+    manu:
+      - 钢板制
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+      - EFW
+      - SAW
+      - 埋弧焊
+      - SAWH
+      - SAWL
+      - DSAW
+      - DSAWL
+      - DSAWH
+      - ERW
+      - 高频电阻焊
+      - HFW
+      - 高频焊管
+      - 电熔焊管
+
+  F:
+    body:
+      - 带颈对焊法兰
+      - 对焊法兰
+      - 法兰
+      - FLANGE
+      - Flanged
+      - WELDING NECK FLANGE
+      - WN FLANGE
+      - FLANGE WN
+      - WN Flg
+    block_if_matches:
+      - FSO
+      - FS
+      - FRJ
+      - BF
+
+  FSO:
+    direct:
+      - 带颈平焊法兰
+      - 平焊法兰
+      - SO FLANGE
+      - FLANGE SO
+      - SO法兰
+    body:
+      - 带颈平焊法兰
+      - 平焊法兰
+      - 法兰
+      - FLANGE
+    conn:
+      - SO
+
+  FS:
+    direct:
+      - 承插焊法兰
+      - SOCKET FLANGE
+    body:
+      - 承插焊法兰
+      - 法兰
+      - FLANGE
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+
+  45EL:
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 45度
+      - 45°
+      - 45 DEG
+      - 45-DEG
+      - 45 DEGREE
+    block_if_matches:
+      - 45ELW
+      - 45ELS
+      - 45ES
+
+  45ELW:
+    direct:
+      - 45°焊接弯头
+      - 焊接弯头 45°
+      - W45EL弯头
+      - 有缝弯头\\45°
+      - 有缝弯头45°
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 45度
+      - 45°
+      - 45 DEG
+      - 45-DEG
+      - 45 DEGREE
+    manu:
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+
+  45ELS:
+    direct:
+      - 45度承插焊弯头
+      - 45°承插焊弯头
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 45度
+      - 45°
+      - 45 DEG
+      - 45-DEG
+      - 45 DEGREE
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+  45ES:
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 45度
+      - 45°
+      - 45 DEG
+      - 45-DEG
+      - 45 DEGREE
+    radius:
+      - 短半径
+      - SR
+      - 1D
+      - R=1D
+
+  90EL:
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 90度
+      - 90°
+      - 90 DEG
+      - 90-DEG
+      - 90 DEGREE
+    block_if_matches:
+      - 90ELW
+      - 90ELS
+      - 90ES
+
+  90ELW:
+    direct:
+      - 90°焊接弯头
+      - 焊接弯头 90°
+      - W90EL弯头
+      - 有缝弯头\\90°
+      - 有缝弯头90°
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 90度
+      - 90°
+      - 90 DEG
+      - 90-DEG
+      - 90 DEGREE
+    manu:
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+  90ELS:
+    direct:
+      - 90度承插焊弯头
+      - 90°承插焊弯头
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 90度
+      - 90°
+      - 90 DEG
+      - 90-DEG
+      - 90 DEGREE
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+  90ES:
+    body:
+      - 弯头
+      - ELBOW
+    angle:
+      - 90度
+      - 90°
+      - 90 DEG
+      - 90-DEG
+      - 90 DEGREE
+    radius:
+      - 短半径
+      - SR
+      - 1D
+      - R=1D
+
+  RT:
+    body:
+      - 异径三通
+      - REDUCING TEE
+      - RED TEE
+      - REDTEE
+      - TEE REDUCED
+      - TEE(TR)
+    block_if_matches:
+      - RTS
+      - RTW
+
+  RTS:
+    direct:
+      - 承插焊异径三通
+      - ST(R)
+      - ST(S)
+    body:
+      - 异径三通
+      - REDUCING TEE
+      - RED TEE
+      - REDTEE
+      - TEE REDUCED
+      - TEE(TR)
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+
+  RTW:
+    direct:
+      - WTR
+      - 有缝异径三通
+      - 焊接异径三通
+    body:
+      - 异径三通
+      - REDUCING TEE
+      - RED TEE
+      - REDTEE
+      - TEE REDUCED
+      - TEE(TR)
+    manu:
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+      - WTR
+
+  T:
+    body:
+      - 等径三通
+      - 同径三通
+      - STRAIGHT TEE
+      - TEE STRAIGHT
+      - TEE
+    block_if_matches:
+      - TS
+      - TW
+      - RT
+      - RTS
+      - RTW
+
+  TS:
+    direct:
+      - 承插焊等径三通
+    body:
+      - 等径三通
+      - 同径三通
+      - 三通
+      - STRAIGHT TEE
+      - TEE
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+
+  TW:
+    direct:
+      - 有缝三通
+      - 焊接等径三通
+    body:
+      - 等径三通
+      - 同径三通
+      - 三通
+      - STRAIGHT TEE
+      - TEE
+    manu:
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+
+  RE:
+    body:
+      - 偏心异径管
+      - 偏心大小头
+      - 偏心管大小头
+      - 偏心异径短节
+      - ECCENTRIC REDUCER
+      - ECCENTRIC REDUCE
+      - ECCENTRIC RED
+      - ECC REDUCER
+      - ECC SWAGE
+      - REDUCER(RE)
+      - REDUCER ECC
+      - R(E)
+      - (RE)
+    block_if_matches:
+      - REW
+
+  REW:
+    direct:
+      - WRE
+      - 有缝偏心大小头
+      - 焊接偏心异径管
+    body:
+      - 偏心异径管
+      - 偏心大小头
+      - 偏心管大小头
+      - 偏心异径短节
+      - ECCENTRIC REDUCER
+      - ECCENTRIC REDUCE
+      - ECCENTRIC RED
+      - ECC REDUCER
+      - ECC SWAGE
+      - REDUCER(RE)
+      - REDUCER ECC
+      - R(E)
+    manu:
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+
+  RC:
+    body:
+      - 同心异径管
+      - 同心大小头
+      - 同心头
+      - 同心管大小头
+      - 同心异径短节
+      - 同心异径管接头
+      - 同心异径短接
+      - Red Coup
+      - Conc Swage
+      - CONCENTRIC REDUCER
+      - CON REDUCER
+      - CONC REDUCER
+      - REDUCER(RC)
+      - swage nipple
+      - Concentric Swaged Nipple
+      - reducing coupling
+      - CON SWAGE
+      - R(C)
+      - 异径短节
+    block_if_matches:
+      - RCW
+
+  RCW:
+    direct:
+      - 有缝同心头
+      - 有缝同心大小头
+      - 焊接同心异径管接头
+      - 同心焊接异径管
+    body:
+      - 同心异径管
+      - 同心大小头
+      - 同心头
+      - 同心管大小头
+      - 同心异径短节
+      - 同心异径管接头
+      - 同心异径短接
+      - Red Coup
+      - Conc Swage
+      - CONCENTRIC REDUCER
+      - CON REDUCER
+      - CONC REDUCER
+      - REDUCER(RC)
+      - swage nipple
+      - Concentric Swaged Nipple
+      - reducing coupling
+      - CON SWAGE
+      - R(C)
+      - 异径短节
+    manu:
+      - 有缝
+      - 焊接
+      - WELD
+      - WELDED
+
+  O:
+    direct:
+      - WELDOLET
+      - WOL
+      - 对焊支管台
+      - 对焊管接台
+      - 对焊支管座
+      - 加强管嘴
+    body:
+      - 支管台
+      - 管接台
+      - 支管座
+      - 加强管接头
+      - 加强管嘴
+      - 对焊支管台
+      - 加强管嘴
+      - 对焊管接台
+      - 对焊支管座
+      - OLET
+      - WELDOLET
+      - WELDING OUTLET
+    block_if_matches:
+      - OS
+      - OW
+
+  OS:
+    direct:
+      - SOCKOLET
+      - SOCKET OLET
+      - SOCKET OUTLET
+      - 承插焊支管台
+      - 承插焊管接台
+      - 承插焊支管座
+    body:
+      - 支管台
+      - 管接台
+      - 支管座
+      - 加强管接头
+      - 加强管嘴
+      - 承插焊支管台
+      - 承插焊管接台
+      - 承插焊支管座
+      - OLET
+      - SOCKOLET
+      - SOCKET OLET
+      - SOCKET OUTLET
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+      - SOCKET
+
+  HC:
+    body:
+      - HALF COUPLING
+      - HALF COUP
+      - HALF CPLG
+      - 半管接头
+      - 单头管箍
+      - 半耦合
+    block_if_matches:
+      - HCS
+
+  HCS:
+    direct:
+      - 承插焊半管接头
+    body:
+      - HALF COUPLING
+      - HALF COUP
+      - HALF CPLG
+      - 半管接头
+      - 单头管箍
+    conn:
+      - SW
+      - 承插焊
+      - 承插
+
+  CAP:
+    direct:
+      - 管帽
+      - 封头
+      - CAP
+      - END CAP
+      - PIPE CAP
+    body:
+      - 管帽
+      - 封头
+      - CAP
+      - END CAP
+      - PIPE CAP
+
+  8BF:
+    direct:
+      - 八字盲板
+      - 8字盲板
+      - SPECTACLE BLANK
+      - SPECTACLE BLIND
+      - FIGURE 8
+      - FIGURE-8 BLANK
+      - FIG-8 BLANK
+      - PADDLE BLIND
+    body:
+      - 八字盲板
+      - 8字盲板
+      - SPECTACLE BLANK
+      - SPECTACLE BLIND
+      - FIGURE 8
+      - FIGURE-8 BLANK
+      - FIG-8 BLANK
+      - PADDLE BLIND
+    block_if_matches:
+      - 8BFFF
+
+  8BFFF:
+    body:
+      - 八字盲板
+      - 8字盲板
+      - SPECTACLE BLANK
+      - SPECTACLE BLIND
+      - FIGURE 8
+      - FIGURE-8 BLANK
+      - FIG-8 BLANK
+      - PADDLE BLIND
+    seal:
+      - FF
+
+  FRJ:
+    direct:
+      - RJ法兰
+      - RTJ法兰
+      - FLANGE RJ
+      - FLANGE RTJ
+      - RING JOINT FLANGE
+    body:
+      - 带颈对焊法兰
+      - 对焊法兰
+      - 法兰
+      - FLANGE
+      - WELDING NECK FLANGE
+      - WN FLANGE
+      - FLANGE WN
+      - WN Flg
+      - WN
+    seal:
+      - RJ
+      - RTJ
+      - FLRJ
+
+  BF:
+    body:
+      - 盲法兰
+      - 盲板
+      - 单盲板
+      - BLIND FLANGE
+      - BLD FLANGE
+      - FLANGE BL
+      - Bld Flg
+      - 法兰盖
+      - BLIND
+    block_if_matches:
+      - BFFF
+
+  BFFF:
+    body:
+      - 盲法兰
+      - 盲板
+      - 单盲板
+      - BLIND FLANGE
+      - BLD FLANGE
+      - FLANGE BL
+      - Bld Flg
+      - 法兰盖
+      - BLIND
+    seal:
+      - FF
+
+  FP:
+    direct:
+      - 法兰管
+      - FLANGED PIPE
+      - PIPE FLANGED
+    body:
+      - 管子
+      - 无缝钢管
+      - 钢管
+      - PIPE
+    conn:
+      - FLANGED
+      - 法兰

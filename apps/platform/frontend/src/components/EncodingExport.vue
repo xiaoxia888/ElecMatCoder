@@ -51,6 +51,7 @@ import { inject, ref } from 'vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import axios from 'axios'
+import { buildDifficultyReason, getDisplayDifficultyLevel } from '../utils/difficulty'
 
 const props = defineProps({
   encodings: { type: Object, default: () => ({}) },
@@ -305,9 +306,63 @@ function buildStandardRaw(fields, useOriginal = false) {
   return valueToText(standardField.original_value)
 }
 
+function formatPercent(value) {
+  const num = Number(value ?? 0)
+  if (Number.isNaN(num) || num <= 0) return ''
+  return `${(num * 100).toFixed(2)}%`
+}
+
+function safeParseJson(value) {
+  if (typeof value !== 'string') return value
+  const text = value.trim()
+  if (!text || (!text.startsWith('{') && !text.startsWith('['))) return value
+  try {
+    return JSON.parse(text)
+  } catch {
+    return value
+  }
+}
+
+function buildStructuredRaw(type, value) {
+  const parsed = safeParseJson(value)
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return valueToText(value)
+  }
+
+  if (type === 'PRESSURE') {
+    return valueToText(value)
+  }
+
+  const subtypeOrderMap = {
+    SIZE: ['DN', 'OD', 'INCH', 'LENGTH'],
+    THICKNESS: ['MM', 'INCH', 'SCHEDULE', 'SERIES', 'BWG']
+  }
+  const order = subtypeOrderMap[type] || []
+
+  return [
+    ...order.filter(key => Object.prototype.hasOwnProperty.call(parsed, key)),
+    ...Object.keys(parsed).filter(
+      key =>
+        !order.includes(key) &&
+        !String(key).startsWith('_') &&
+        typeof parsed[key] !== 'object'
+    )
+  ]
+    .map(key => {
+      const values = Array.isArray(parsed[key]) ? parsed[key] : [parsed[key]]
+      const text = values
+        .map(item => (item && typeof item === 'object') ? '' : String(item || '').trim())
+        .filter(Boolean)
+        .join(' x ')
+      return text ? `${key}: ${text}` : ''
+    })
+    .filter(Boolean)
+    .join(' ; ')
+}
+
 function exportCSV() {
   const headers = [
-    '序号', '原始描述', '原始总编码', '修正总编码', '是否需审核', '最低相似度',
+    '序号', '项目名称', '原始描述', '原始总编码', '修正总编码', '是否需审核', '总置信度', '最低相似度', '分流难度', '分流原因', '二次分流最终难度',
     'TYPE_原始结果', 'TYPE_原始编码', 'TYPE_修正结果', 'TYPE_修正编码',
     'SIZE_原始结果', 'SIZE_原始编码', 'SIZE_修正结果', 'SIZE_修正编码',
     'THICKNESS_原始结果', 'THICKNESS_原始编码', 'THICKNESS_修正结果', 'THICKNESS_修正编码',
@@ -319,28 +374,35 @@ function exportCSV() {
   
   Object.entries(props.encodings).forEach(([index, enc]) => {
     const fields = enc.fields || {}
+    const projectName = props.dataList?.[parseInt(index)]?.projectName || ''
+    const difficulty = enc.difficulty_split || {}
     const row = [
       parseInt(index) + 1,
+      csvCell(projectName),
       csvCell(enc.original_text || ''),
       enc.original_final_code || enc.final_code || '',
       enc.final_code || '',
       enc.need_review ? '是' : '否',
-      enc.min_similarity ? (enc.min_similarity * 100).toFixed(1) + '%' : '',
+      formatPercent(enc.confidence),
+      formatPercent(enc.min_similarity),
+      csvCell(difficulty.difficulty || ''),
+      csvCell(buildDifficultyReason(enc)),
+      csvCell(getDisplayDifficultyLevel(enc)),
       csvCell(buildTypeRaw(fields, true)),
       getFieldView(fields.TYPE, true).code || '',
       csvCell(buildTypeRaw(fields)),
       fields.TYPE?.code || '',
-      csvCell(getFieldView(fields.SIZE, true).original_value || ''),
+      csvCell(buildStructuredRaw('SIZE', getFieldView(fields.SIZE, true).original_value || '')),
       getFieldView(fields.SIZE, true).code || '',
-      csvCell(fields.SIZE?.original_value || ''),
+      csvCell(buildStructuredRaw('SIZE', fields.SIZE?.original_value || '')),
       fields.SIZE?.code || '',
-      csvCell(getFieldView(fields.THICKNESS, true).original_value || ''),
+      csvCell(buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS, true).original_value || '')),
       getFieldView(fields.THICKNESS, true).code || '',
-      csvCell(fields.THICKNESS?.original_value || ''),
+      csvCell(buildStructuredRaw('THICKNESS', fields.THICKNESS?.original_value || '')),
       fields.THICKNESS?.code || '',
-      csvCell(getFieldView(fields.PRESSURE, true).original_value || ''),
+      csvCell(buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE, true).original_value || '')),
       getFieldView(fields.PRESSURE, true).code || '',
-      csvCell(fields.PRESSURE?.original_value || ''),
+      csvCell(buildStructuredRaw('PRESSURE', fields.PRESSURE?.original_value || '')),
       fields.PRESSURE?.code || '',
       csvCell(buildMaterialRaw(fields, true)),
       getFieldView(fields.MATERIAL, true).code || '',
@@ -360,7 +422,7 @@ function exportCSV() {
 
 function exportExcel() {
   const headers = [
-    '序号', '原始描述', '原始总编码', '修正总编码', '是否需审核', '最低相似度',
+    '序号', '项目名称', '原始描述', '原始总编码', '修正总编码', '是否需审核', '总置信度', '最低相似度', '分流难度', '分流原因', '二次分流最终难度',
     'TYPE_原始结果', 'TYPE_原始编码', 'TYPE_修正结果', 'TYPE_修正编码',
     'SIZE_原始结果', 'SIZE_原始编码', 'SIZE_修正结果', 'SIZE_修正编码',
     'THICKNESS_原始结果', 'THICKNESS_原始编码', 'THICKNESS_修正结果', 'THICKNESS_修正编码',
@@ -373,28 +435,35 @@ function exportExcel() {
   
   Object.entries(props.encodings).forEach(([index, enc]) => {
     const fields = enc.fields || {}
+    const projectName = props.dataList?.[parseInt(index)]?.projectName || ''
+    const difficulty = enc.difficulty_split || {}
     data.push([
       parseInt(index) + 1,
+      projectName,
       enc.original_text || '',
       enc.original_final_code || enc.final_code || '',
       enc.final_code || '',
       enc.need_review ? '是' : '否',
-      enc.min_similarity ? (enc.min_similarity * 100).toFixed(1) + '%' : '',
+      formatPercent(enc.confidence),
+      formatPercent(enc.min_similarity),
+      difficulty.difficulty || '',
+      buildDifficultyReason(enc),
+      getDisplayDifficultyLevel(enc),
       buildTypeRaw(fields, true),
       getFieldView(fields.TYPE, true).code || '',
       buildTypeRaw(fields),
       fields.TYPE?.code || '',
-      valueToText(getFieldView(fields.SIZE, true).original_value || ''),
+      buildStructuredRaw('SIZE', getFieldView(fields.SIZE, true).original_value || ''),
       getFieldView(fields.SIZE, true).code || '',
-      valueToText(fields.SIZE?.original_value || ''),
+      buildStructuredRaw('SIZE', fields.SIZE?.original_value || ''),
       fields.SIZE?.code || '',
-      valueToText(getFieldView(fields.THICKNESS, true).original_value || ''),
+      buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS, true).original_value || ''),
       getFieldView(fields.THICKNESS, true).code || '',
-      valueToText(fields.THICKNESS?.original_value || ''),
+      buildStructuredRaw('THICKNESS', fields.THICKNESS?.original_value || ''),
       fields.THICKNESS?.code || '',
-      valueToText(getFieldView(fields.PRESSURE, true).original_value || ''),
+      buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE, true).original_value || ''),
       getFieldView(fields.PRESSURE, true).code || '',
-      valueToText(fields.PRESSURE?.original_value || ''),
+      buildStructuredRaw('PRESSURE', fields.PRESSURE?.original_value || ''),
       fields.PRESSURE?.code || '',
       buildMaterialRaw(fields, true),
       getFieldView(fields.MATERIAL, true).code || '',
@@ -433,9 +502,183 @@ function sanitizeStage1Output(value) {
   return value
 }
 
+function buildStage1Skeleton() {
+  return {
+    TYPE: {
+      BODY: '',
+      GEOMETRY: { ANGLE: '', RADIUS: '' },
+      MANU: [],
+      CONN: [],
+      SEAL: [],
+      ENDS: []
+    },
+    SIZE: {
+      DN: [],
+      OD: [],
+      INCH: [],
+      LENGTH: []
+    },
+    THICKNESS: {
+      MM: [],
+      SCHEDULE: [],
+      SERIES: [],
+      BWG: [],
+      INCH: []
+    },
+    PRESSURE: '',
+    MATERIAL: [],
+    STANDARD: []
+  }
+}
+
+function cloneValue(value) {
+  return JSON.parse(JSON.stringify(value))
+}
+
+function normalizeToArray(value) {
+  if (Array.isArray(value)) return value.filter(v => v != null && v !== '')
+  if (value == null || value === '') return []
+  return [value]
+}
+
+function normalizeMaterialEntries(material) {
+  if (Array.isArray(material)) {
+    return material.map(item => ({
+      ROLE: item?.ROLE || 'MAIN',
+      VALUE: item?.VALUE || '',
+      SPECIAL_REQ: normalizeToArray(item?.SPECIAL_REQ)
+    }))
+  }
+
+  if (material && typeof material === 'object') {
+    // 新结构单项兜底
+    if ('VALUE' in material || 'ROLE' in material) {
+      return [{
+        ROLE: material.ROLE || 'MAIN',
+        VALUE: material.VALUE || '',
+        SPECIAL_REQ: normalizeToArray(material.SPECIAL_REQ)
+      }]
+    }
+
+    // 旧结构兼容: { RELATION, ITEMS }
+    return normalizeToArray(material.ITEMS).map(item => ({
+      ROLE: 'MAIN',
+      VALUE: [item?.EXEC_STANDARD || '', item?.GRADE || ''].filter(Boolean).join(' ').trim(),
+      SPECIAL_REQ: normalizeToArray(item?.SPECIAL_REQ)
+    }))
+  }
+
+  if (material == null || material === '') return []
+  return [{
+    ROLE: 'MAIN',
+    VALUE: String(material),
+    SPECIAL_REQ: []
+  }]
+}
+
+function normalizeStandardItems(items) {
+  return normalizeToArray(items).map(item => ({
+    BODY: item?.BODY || '',
+    GRADE: item?.GRADE || '',
+    METHOD: item?.METHOD || '',
+    APPENDIX: item?.APPENDIX || ''
+  }))
+}
+
+function looksLikeAngle(part) {
+  const s = String(part || '').trim()
+  return /^(\d+(?:\.\d+)?)°?$/.test(s)
+}
+
+function looksLikeRadius(part) {
+  const s = String(part || '').trim().toUpperCase()
+  return (
+    /^R\s*=/.test(s) ||
+    /(?:^|[\s])\d+(?:\.\d+)?D(?:N)?$/.test(s) ||
+    /^(?:LR|SR|LR90|LR45|IR)$/i.test(s)
+  )
+}
+
+function restoreTypeGeometry(typeObj) {
+  const source = typeObj && typeof typeObj === 'object' ? typeObj : {}
+  const mergedBody = String(source.BODY || '').trim()
+  const geometry = source.GEOMETRY && typeof source.GEOMETRY === 'object'
+    ? { ANGLE: source.GEOMETRY.ANGLE || '', RADIUS: source.GEOMETRY.RADIUS || '' }
+    : { ANGLE: '', RADIUS: '' }
+
+  let body = mergedBody
+  if ((!geometry.ANGLE || !geometry.RADIUS) && mergedBody.includes(';')) {
+    const parts = mergedBody.split(';').map(x => String(x).trim()).filter(Boolean)
+    let angle = geometry.ANGLE
+    let radius = geometry.RADIUS
+    const bodyParts = []
+
+    parts.forEach((part, idx) => {
+      if (!angle && idx === 0 && looksLikeAngle(part)) {
+        angle = part
+        return
+      }
+      if (!radius && idx === parts.length - 1 && looksLikeRadius(part)) {
+        radius = part
+        return
+      }
+      bodyParts.push(part)
+    })
+
+    geometry.ANGLE = angle || ''
+    geometry.RADIUS = radius || ''
+    body = bodyParts.join(';')
+  }
+
+  return {
+    BODY: body,
+    GEOMETRY: geometry,
+    MANU: normalizeToArray(source.MANU),
+    CONN: normalizeToArray(source.CONN),
+    SEAL: normalizeToArray(source.SEAL),
+    ENDS: normalizeToArray(source.ENDS)
+  }
+}
+
+function normalizeStage1Output(output) {
+  const skeleton = buildStage1Skeleton()
+  const source = sanitizeStage1Output(output || {})
+  const normalized = cloneValue(skeleton)
+
+  normalized.TYPE = restoreTypeGeometry(source.TYPE)
+
+  const size = source.SIZE && typeof source.SIZE === 'object' ? source.SIZE : {}
+  normalized.SIZE = {
+    DN: normalizeToArray(size.DN),
+    OD: normalizeToArray(size.OD),
+    INCH: normalizeToArray(size.INCH),
+    LENGTH: normalizeToArray(size.LENGTH)
+  }
+
+  const thickness = source.THICKNESS && typeof source.THICKNESS === 'object' ? source.THICKNESS : {}
+  normalized.THICKNESS = {
+    MM: normalizeToArray(thickness.MM),
+    SCHEDULE: normalizeToArray(thickness.SCHEDULE),
+    SERIES: normalizeToArray(thickness.SERIES),
+    BWG: normalizeToArray(thickness.BWG),
+    INCH: normalizeToArray(thickness.INCH)
+  }
+
+  normalized.PRESSURE = source.PRESSURE || ''
+
+  normalized.MATERIAL = normalizeMaterialEntries(source.MATERIAL)
+
+  normalized.STANDARD = normalizeStandardItems(source.STANDARD)
+
+  return normalized
+}
+
 function buildStage1Output(enc) {
-  const source = enc?.stage1_output || {}
-  return sanitizeStage1Output(source)
+  const container = enc?.stage1_output || {}
+  const source = (container && typeof container === 'object' && container.decisions && typeof container.decisions === 'object')
+    ? container.decisions
+    : container
+  return normalizeStage1Output(source)
 }
 
 function exportStage1Dataset() {

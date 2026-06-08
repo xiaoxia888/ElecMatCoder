@@ -120,7 +120,7 @@ function exportJSONL() {
 }
 
 function exportEncodingCSV() {
-  const headers = ['序号', '原始描述', '编码结果', '是否需审核', '最低相似度', 'TYPE', 'MANU', 'CONN', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
+  const headers = ['序号', '原始描述', '编码结果', '是否需审核', '总置信度', '最低相似度', '分流难度', '二次分流最终难度', 'TYPE', 'MANU', 'CONN', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
   let csv = headers.join(',') + '\n'
   
   Object.entries(props.encodings).forEach(([index, enc]) => {
@@ -130,7 +130,10 @@ function exportEncodingCSV() {
       `"${(enc.original_text || '').replace(/"/g, '""')}"`,
       enc.final_code || '',
       enc.need_review ? '是' : '否',
-      enc.min_similarity ? (enc.min_similarity * 100).toFixed(1) + '%' : '',
+      enc.confidence ? (enc.confidence * 100).toFixed(2) + '%' : '',
+      enc.min_similarity ? (enc.min_similarity * 100).toFixed(2) + '%' : '',
+      enc.difficulty_split?.difficulty || '',
+      enc.second_pass?.final_level || '',
       fields.TYPE?.code || '',
       fields.MANU?.code || '',
       fields.CONN?.code || '',

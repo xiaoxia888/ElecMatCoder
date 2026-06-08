@@ -1,0 +1,1057 @@
+meta:
+  total_locator_codes: 187
+  ignore_suffix: true
+  note: 规范粘连定位只匹配主体标准，不考虑后缀等级。
+locator_codes:
+  AB1201:
+    family: AB
+    core: '1201'
+    patterns:
+    - ASME\s*-?\s*B\s*1\.20\.1(?:M)?
+    - ASMEB\s*1\.20\.1(?:M)?
+    - B\s*1\.20\.1(?:M)?
+  AB1611:
+    family: AB
+    core: '1611'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.11(?:M)?
+    - ASMEB\s*16\.11(?:M)?
+    - B\s*16\.11(?:M)?
+  AB1625:
+    family: AB
+    core: '1625'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.25(?:M)?
+    - ASMEB\s*16\.25(?:M)?
+    - B\s*16\.25(?:M)?
+  AB1636:
+    family: AB
+    core: '1636'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.36(?:M)?
+    - ASMEB\s*16\.36(?:M)?
+    - B\s*16\.36(?:M)?
+  AB1647:
+    family: AB
+    core: '1647'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.47(?:M)?
+    - ASMEB\s*16\.47(?:M)?
+    - B\s*16\.47(?:M)?
+  AB1648:
+    family: AB
+    core: '1648'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.48(?:M)?
+    - ASMEB\s*16\.48(?:M)?
+    - B\s*16\.48(?:M)?
+  AB1649:
+    family: AB
+    core: '1649'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.49(?:M)?
+    - ASMEB\s*16\.49(?:M)?
+    - B\s*16\.49(?:M)?
+  AB165:
+    family: AB
+    core: '165'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.5(?:M)?
+    - ASMEB\s*16\.5(?:M)?
+    - B\s*16\.5(?:M)?
+  AB169:
+    family: AB
+    core: '169'
+    patterns:
+    - ASME\s*-?\s*B\s*16\.9(?:M)?
+    - ASMEB\s*16\.9(?:M)?
+    - B\s*16\.9(?:M)?
+  AB313:
+    family: AB
+    core: '313'
+    patterns:
+    - ASME\s*-?\s*B\s*31\.3(?:M)?
+    - ASMEB\s*31\.3(?:M)?
+    - B\s*31\.3(?:M)?
+  AB318:
+    family: AB
+    core: '318'
+    patterns:
+    - ASME\s*-?\s*B\s*31\.8(?:M)?
+    - ASMEB\s*31\.8(?:M)?
+    - B\s*31\.8(?:M)?
+  AB3610:
+    family: AB
+    core: '3610'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.10(?:M)?
+    - ASMEB\s*36\.10(?:M)?
+    - B\s*36\.10(?:M)?
+  AB3612:
+    family: AB
+    core: '3612'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.12(?:M)?
+    - ASMEB\s*36\.12(?:M)?
+    - B\s*36\.12(?:M)?
+  AB3614:
+    family: AB
+    core: '3614'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.14(?:M)?
+    - ASMEB\s*36\.14(?:M)?
+    - B\s*36\.14(?:M)?
+  AB3618:
+    family: AB
+    core: '3618'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.18(?:M)?
+    - ASMEB\s*36\.18(?:M)?
+    - B\s*36\.18(?:M)?
+  AB3619:
+    family: AB
+    core: '3619'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.19(?:M)?
+    - ASMEB\s*36\.19(?:M)?
+    - B\s*36\.19(?:M)?
+  AB3620:
+    family: AB
+    core: '3620'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.20(?:M)?
+    - ASMEB\s*36\.20(?:M)?
+    - B\s*36\.20(?:M)?
+  AB3621:
+    family: AB
+    core: '3621'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.21(?:M)?
+    - ASMEB\s*36\.21(?:M)?
+    - B\s*36\.21(?:M)?
+  AB3622:
+    family: AB
+    core: '3622'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.22(?:M)?
+    - ASMEB\s*36\.22(?:M)?
+    - B\s*36\.22(?:M)?
+  AB3623:
+    family: AB
+    core: '3623'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.23(?:M)?
+    - ASMEB\s*36\.23(?:M)?
+    - B\s*36\.23(?:M)?
+  AB3625:
+    family: AB
+    core: '3625'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.25(?:M)?
+    - ASMEB\s*36\.25(?:M)?
+    - B\s*36\.25(?:M)?
+  AB3626:
+    family: AB
+    core: '3626'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.26(?:M)?
+    - ASMEB\s*36\.26(?:M)?
+    - B\s*36\.26(?:M)?
+  AB3627:
+    family: AB
+    core: '3627'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.27(?:M)?
+    - ASMEB\s*36\.27(?:M)?
+    - B\s*36\.27(?:M)?
+  AB3629:
+    family: AB
+    core: '3629'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.29(?:M)?
+    - ASMEB\s*36\.29(?:M)?
+    - B\s*36\.29(?:M)?
+  AB3630:
+    family: AB
+    core: '3630'
+    patterns:
+    - ASME\s*-?\s*B\s*36\.30(?:M)?
+    - ASMEB\s*36\.30(?:M)?
+    - B\s*36\.30(?:M)?
+  AB619:
+    family: AB
+    core: '619'
+    patterns:
+    - ASME\s*-?\s*B\s*6\.19(?:M)?
+    - ASMEB\s*6\.19(?:M)?
+    - B\s*6\.19(?:M)?
+  ANM1:
+    family: ANM
+    core: '1'
+    patterns:
+    - ASME\s*NM\.?\s*1
+    - NM\.?\s*1
+    # - ANM\s*1
+  API6:
+    family: API
+    core: '6'
+    patterns:
+    - API\s*6
+  API600:
+    family: API
+    core: '600'
+    patterns:
+    - API\s*600
+  API602:
+    family: API
+    core: '602'
+    patterns:
+    - API\s*602
+  API608:
+    family: API
+    core: '608'
+    patterns:
+    - API\s*608
+  API623:
+    family: API
+    core: '623'
+    patterns:
+    - API\s*623
+  ASMC09:
+    family: ASMC
+    core: 09
+    patterns:
+    - AS\s*MC\s*09
+    - ASMC\s*09
+    - ASME\s*C\.?\s*09
+  ASTM420:
+    family: ASTM
+    core: '420'
+    patterns:
+    - ASTM\s*[A-Z]?\s*420
+    - ASTM\s*420
+  CJT120:
+    family: CJT
+    core: '120'
+    patterns:
+    - CJ/T\s*120
+    - CJT\s*120
+  CJT123:
+    family: CJT
+    core: '123'
+    patterns:
+    - CJ/T\s*123
+    - CJT\s*123
+  CJT124:
+    family: CJT
+    core: '124'
+    patterns:
+    - CJ/T\s*124
+    - CJT\s*124
+  CJT192:
+    family: CJT
+    core: '192'
+    patterns:
+    - CJ/T\s*192
+    - CJT\s*192
+  DIN11850:
+    family: DIN
+    core: '11850'
+    patterns:
+    - DIN\s*11850
+  DIN11853:
+    family: DIN
+    core: '118532'
+    patterns:
+    - DIN\s*11853
+  DIN16966:
+    family: DIN
+    core: '16966'
+    patterns:
+    - DIN\s*16966
+  DIN17455:
+    family: DIN
+    core: '17455'
+    patterns:
+    - DIN\s*17455
+  DIN2605:
+    family: DIN
+    core: '2605'
+    patterns:
+    - DIN\s*2605
+  DIN2615:
+    family: DIN
+    core: '2615'
+    patterns:
+    - DIN\s*2615
+  DIN2616:
+    family: DIN
+    core: '2616'
+    patterns:
+    - DIN\s*2616
+  DIN2626:
+    family: DIN
+    core: '2626'
+    patterns:
+    - DIN\s*2626
+  DLT695:
+    family: DLT
+    core: '695'
+    patterns:
+    - DL/T\s*695
+    - DLT\s*695
+  EN10028:
+    family: EN
+    core: '10028'
+    patterns:
+    - EN\s*10028
+  EN10216:
+    family: EN
+    core: '10216'
+    patterns:
+    - EN\s*10216
+  EN10217:
+    family: EN
+    core: '10217'
+    patterns:
+    - EN\s*10217
+  EN10220:
+    family: EN
+    core: '10220'
+    patterns:
+    - EN\s*10220
+  EN10222:
+    family: EN
+    core: '10222'
+    patterns:
+    - EN\s*10222
+  EN10253:
+    family: EN
+    core: '10253'
+    patterns:
+    - EN\s*10253
+  EN10305:
+    family: EN
+    core: '10305'
+    patterns:
+    - EN\s*10305
+  EN10374:
+    family: EN
+    core: '10374'
+    patterns:
+    - EN\s*10374
+  EN1092:
+    family: EN
+    core: '1092'
+    patterns:
+    - EN\s*1092
+  ENI1127:
+    family: ENI
+    core: '1127'
+    patterns:
+    - EN\s*ISO\s*1127
+    - ENI\s*1127
+  GB26500:
+    family: GB
+    core: '26500'
+    patterns:
+    - GB\s*/?\s*T?\s*26500
+    - GB\s*26500
+  GB713:
+    family: GB
+    core: '713'
+    patterns:
+    - GB\s*/?\s*T?\s*713
+    - GB\s*713
+  GB8163:
+    family: GB
+    core: '8163'
+    patterns:
+    - GB\s*/?\s*T?\s*8163
+    - GB\s*8163
+  GBT10002.2:
+    family: GBT
+    core: '10002.2'
+    patterns:
+    - GB/T\s*10002\.2
+    - GBT\s*10002\.2
+  GBT10002.1:
+    family: GBT
+    core: '10002.1'
+    patterns:
+    - GB/T\s*10002\.1
+    - GBT\s*10002\.1
+  GBT10002:
+    family: GBT
+    core: '10002'
+    patterns:
+    - GB/T\s*10002
+    - GBT\s*10002
+  GBT12228:
+    family: GBT
+    core: '12228'
+    patterns:
+    - GB/T\s*12228
+    - GBT\s*12228
+  GBT1245:
+    family: GBT
+    core: '1245'
+    patterns:
+    - GB/T\s*1245
+    - GBT\s*1245
+  GBT12459:
+    family: GBT
+    core: '12459'
+    patterns:
+    - GB/T\s*12459
+    - GBT\s*12459
+  GBT12771:
+    family: GBT
+    core: '12771'
+    patterns:
+    - GB/T\s*12771
+    - GBT\s*12771
+  GBT12976:
+    family: GBT
+    core: '12976'
+    patterns:
+    - GB/T\s*12976
+    - GBT\s*12976
+  GBT13401:
+    family: GBT
+    core: '13401'
+    patterns:
+    - GB/T\s*13401
+    - GBT\s*13401
+  GBT13663:
+    family: GBT
+    core: '13663'
+    patterns:
+    - GB/T\s*13663
+    - GBT\s*13663
+  GBT13663.2:
+    family: GBT
+    core: '13663.2'
+    patterns:
+    - GB/T\s*13663\.2
+    - GBT\s*13663\.2
+  GBT13663.3:
+    family: GBT
+    core: '13663.3'
+    patterns:
+    - GB/T\s*13663\.3
+    - GBT\s*13663\.3
+  GBT13793:
+    family: GBT
+    core: '13793'
+    patterns:
+    - GB/T\s*13793
+    - GBT\s*13793
+  GBT14383:
+    family: GBT
+    core: '14383'
+    patterns:
+    - GB/T\s*14383
+    - GBT\s*14383
+  GBT14525:
+    family: GBT
+    core: '14525'
+    patterns:
+    - GB/T\s*14525
+    - GBT\s*14525
+  GBT14976:
+    family: GBT
+    core: '14976'
+    patterns:
+    - GB/T\s*14976
+    - GBT\s*14976
+  GBT16693:
+    family: GBT
+    core: '16693'
+    patterns:
+    - GB/T\s*16693
+    - GBT\s*16693
+  GBT17395:
+    family: GBT
+    core: '17395'
+    patterns:
+    - GB/T\s*17395
+    - GBT\s*17395
+  GBT18742:
+    family: GBT
+    core: '18742'
+    patterns:
+    - GB/T\s*18742
+    - GBT\s*18742
+  GBT18742.3:
+    family: GBT
+    core: '18742.3'
+    patterns:
+    - GB/T\s*18742\.3
+    - GBT\s*18742\.3
+  GBT18742.2:
+    family: GBT
+    core: '18742.2'
+    patterns:
+    - GB/T\s*18742\.2
+    - GBT\s*18742\.2
+  GBT18984:
+    family: GBT
+    core: '18984'
+    patterns:
+    - GB/T\s*18984
+    - GBT\s*18984
+  GBT19326:
+    family: GBT
+    core: '19326'
+    patterns:
+    - GB/T\s*19326
+    - GBT\s*19326
+  GBT20801:
+    family: GBT
+    core: '20801'
+    patterns:
+    - GB/T\s*20801
+    - GBT\s*20801
+  GBT21547:
+    family: GBT
+    core: '21547'
+    patterns:
+    - GB/T\s*21547
+    - GBT\s*21547
+  GBT21832:
+    family: GBT
+    core: '21832'
+    patterns:
+    - GB/T\s*21832
+    - GBT\s*21832
+  GBT21832.2:
+    family: GBT
+    core: '21832.2'
+    patterns:
+    - GB/T\s*21832\.2
+    - GBT\s*21832\.2
+  GBT21833:
+    family: GBT
+    core: '21833'
+    patterns:
+    - GB/T\s*21833
+    - GBT\s*21833
+  GBT21833.2:
+    family: GBT
+    core: '21833.2'
+    patterns:
+    - GB/T\s*21833\.2
+    - GBT\s*21833\.2
+  GBT21835:
+    family: GBT
+    core: '21835'
+    patterns:
+    - GB/T\s*21835
+    - GBT\s*21835
+  GBT2205:
+    family: GBT
+    core: '2205'
+    patterns:
+    - GB/T\s*2205
+    - GBT\s*2205
+  GBT23257:
+    family: GBT
+    core: '23257'
+    patterns:
+    - GB/T\s*23257
+    - GBT\s*23257
+  GBT24511:
+    family: GBT
+    core: '24511'
+    patterns:
+    - GB/T\s*24511
+    - GBT\s*24511
+  GBT26500:
+    family: GBT
+    core: '26500'
+    patterns:
+    - GB/T\s*26500
+    - GBT\s*26500
+  GBT27684:
+    family: GBT
+    core: '27684'
+    patterns:
+    - GB/T\s*27684
+    - GBT\s*27684
+  GBT3087:
+    family: GBT
+    core: '3087'
+    patterns:
+    - GB/T\s*3087
+    - GBT\s*3087
+  GBT3089:
+    family: GBT
+    core: '3089'
+    patterns:
+    - GB/T\s*3089
+    - GBT\s*3089
+  GBT3091:
+    family: GBT
+    core: '3091'
+    patterns:
+    - GB/T\s*3091
+    - GBT\s*3091
+  GBT3274:
+    family: GBT
+    core: '3274'
+    patterns:
+    - GB/T\s*3274
+    - GBT\s*3274
+  GBT3287:
+    family: GBT
+    core: '3287'
+    patterns:
+    - GB/T\s*3287
+    - GBT\s*3287
+  GBT3406:
+    family: GBT
+    core: '3406'
+    patterns:
+    - GB/T\s*3406
+    - GBT\s*3406
+  GBT3408:
+    family: GBT
+    core: '3408'
+    patterns:
+    - GB/T\s*3408
+    - GBT\s*3408
+  GBT3410:
+    family: GBT
+    core: '3410'
+    patterns:
+    - GB/T\s*3410
+    - GBT\s*3410
+  GBT3621:
+    family: GBT
+    core: '3621'
+    patterns:
+    - GB/T\s*3621
+    - GBT\s*3621
+  GBT3624:
+    family: GBT
+    core: '3624'
+    patterns:
+    - GB/T\s*3624
+    - GBT\s*3624
+  GBT40317:
+    family: GBT
+    core: '40317'
+    patterns:
+    - GB/T\s*40317
+    - GBT\s*40317
+  GBT4237:
+    family: GBT
+    core: '4237'
+    patterns:
+    - GB/T\s*4237
+    - GBT\s*4237
+  GBT4334:
+    family: GBT
+    core: '4334'
+    patterns:
+    - GB/T\s*4334
+    - GBT\s*4334
+  GBT47008:
+    family: GBT
+    core: '47008'
+    patterns:
+    - GB/T\s*47008
+    - GBT\s*47008
+  GBT50235:
+    family: GBT
+    core: '50235'
+    patterns:
+    - GB/T\s*50235
+    - GBT\s*50235
+  GBT531:
+    family: GBT
+    core: '531'
+    patterns:
+    - GB/T\s*531
+    - GBT\s*531
+  GBT5310:
+    family: GBT
+    core: '5310'
+    patterns:
+    - GB/T\s*5310
+    - GBT\s*5310
+  GBT5836:
+    family: GBT
+    core: '5836'
+    patterns:
+    - GB/T\s*5836
+    - GBT\s*5836
+  GBT5836.1:
+    family: GBT
+    core: '58361'
+    patterns:
+    - GB/T\s*5836\.1
+    - GBT\s*5836\.1
+  GBT6479:
+    family: GBT
+    core: '6479'
+    patterns:
+    - GB/T\s*6479
+    - GBT\s*6479
+  GBT669:
+    family: GBT
+    core: '669'
+    patterns:
+    - GB/T\s*669
+    - GBT\s*669
+  GBT699:
+    family: GBT
+    core: '699'
+    patterns:
+    - GB/T\s*699
+    - GBT\s*699
+  GBT700:
+    family: GBT
+    core: '700'
+    patterns:
+    - GB/T\s*700
+    - GBT\s*700
+  GBT711:
+    family: GBT
+    core: '711'
+    patterns:
+    - GB/T\s*711
+    - GBT\s*711
+  GBT713:
+    family: GBT
+    core: '713'
+    patterns:
+    - GB/T\s*713
+    - GBT\s*713
+  GBT8136:
+    family: GBT
+    core: '8136'
+    patterns:
+    - GB/T\s*8136
+    - GBT\s*8136
+  GBT8162:
+    family: GBT
+    core: '8162'
+    patterns:
+    - GB/T\s*8162
+    - GBT\s*8162
+  GBT8163:
+    family: GBT
+    core: '8163'
+    patterns:
+    - GB/T\s*8163
+    - GBT\s*8163
+  GBT9118:
+    family: GBT
+    core: '9118'
+    patterns:
+    - GB/T\s*9118
+    - GBT\s*9118
+  GBT9124:
+    family: GBT
+    core: '9124'
+    patterns:
+    - GB/T\s*9124
+    - GBT\s*9124
+  GBT9124.1:
+    family: GBT
+    core: '9124.1'
+    patterns:
+    - GB/T\s*9124\.1
+    - GBT\s*9124\.1
+  GBT9124.2:
+    family: GBT
+    core: '9124.2'
+    patterns:
+    - GB/T\s*9124\.2
+    - GBT\s*9124\.2
+  GBT9711:
+    family: GBT
+    core: '9711'
+    patterns:
+    - GB/T\s*9711
+    - GBT\s*9711
+  GBT9948:
+    family: GBT
+    core: '9948'
+    patterns:
+    - GB/T\s*9948
+    - GBT\s*9948
+  GD2016:
+    family: GD
+    core: '2016'
+    patterns:
+    - GD\s*2016
+  HGT20538:
+    family: HGT
+    core: '20538'
+    patterns:
+    - HG/T\s*20538
+    - HGT\s*20538
+  HGT20539:
+    family: HGT
+    core: '20539'
+    patterns:
+    - HG/T\s*20539
+    - HGT\s*20539
+  HGT20553:
+    family: HGT
+    core: '20553'
+    patterns:
+    - HG/T\s*20553
+    - HGT\s*20553
+  HGT20592:
+    family: HGT
+    core: '20592'
+    patterns:
+    - HG/T\s*20592
+    - HGT\s*20592
+  HGT20610:
+    family: HGT
+    core: '20610'
+    patterns:
+    - HG/T\s*20610
+    - HGT\s*20610
+  HGT20613:
+    family: HGT
+    core: '20613'
+    patterns:
+    - HG/T\s*20613
+    - HGT\s*20613
+  HGT20615:
+    family: HGT
+    core: '20615'
+    patterns:
+    - HG/T\s*20615
+    - HGT\s*20615
+  HGT20623:
+    family: HGT
+    core: '20623'
+    patterns:
+    - HG/T\s*20623
+    - HGT\s*20623
+  HGT2130:
+    family: HGT
+    core: '2130'
+    patterns:
+    - HG/T\s*2130
+    - HGT\s*2130
+  HGT21501:
+    family: HGT
+    core: '21501'
+    patterns:
+    - HG/T\s*21501
+    - HGT\s*21501
+  HGT21547:
+    family: HGT
+    core: '21547'
+    patterns:
+    - HG/T\s*21547
+    - HGT\s*21547
+  HGT21632:
+    family: HGT
+    core: '21632'
+    patterns:
+    - HG/T\s*21632
+    - HGT\s*21632
+  HGT2437:
+    family: HGT
+    core: '2437'
+    patterns:
+    - HG/T\s*2437
+    - HGT\s*2437
+  HGT3651:
+    family: HGT
+    core: '3651'
+    patterns:
+    - HG/T\s*3651
+    - HGT\s*3651
+  HGT3731:
+    family: HGT
+    core: '3731'
+    patterns:
+    - HG/T\s*3731
+    - HGT\s*3731
+  HGT4284:
+    family: HGT
+    core: '4284'
+    patterns:
+    - HG/T\s*4284
+    - HGT\s*4284
+  HGT4372:
+    family: HGT
+    core: '4372'
+    patterns:
+    - HG/T\s*4372
+    - HGT\s*4372
+  I2037:
+    family: I
+    core: '2037'
+    patterns:
+    - ISO\s*2037
+    - I\s*2037
+  I2852:
+    family: I
+    core: '2852'
+    patterns:
+    - ISO\s*2852
+    - I\s*2852
+  MS75:
+    family: MS
+    core: '75'
+    patterns:
+    - MS\s*75
+    - MSS\s*SP\s*-?\s*75
+  MS83:
+    family: MS
+    core: '83'
+    patterns:
+    - MS\s*83
+    - MSS\s*SP\s*-?\s*83
+  MS95:
+    family: MS
+    core: '95'
+    patterns:
+    - MS\s*95
+    - MSS\s*SP\s*-?\s*95
+  MS97:
+    family: MS
+    core: '97'
+    patterns:
+    - MS\s*97
+    - MSS\s*SP\s*-?\s*97
+  NBT4700:
+    family: NBT
+    core: '4700'
+    patterns:
+    - NB/T\s*4700
+    - NBT\s*4700
+  NBT47008:
+    family: NBT
+    core: '47008'
+    patterns:
+    - NB/T\s*47008
+    - NBT\s*47008
+  NBT47009:
+    family: NBT
+    core: '47009'
+    patterns:
+    - NB/T\s*47009
+    - NBT\s*47009
+  NBT47010:
+    family: NBT
+    core: '47010'
+    patterns:
+    - NB/T\s*47010
+    - NBT\s*47010
+  NBT47023:
+    family: NBT
+    core: '47023'
+    patterns:
+    - NB/T\s*47023
+    - NBT\s*47023
+  NBT8163:
+    family: NBT
+    core: '8163'
+    patterns:
+    - NB/T\s*8163
+    - NBT\s*8163
+  SHT3401:
+    family: SHT
+    core: '3401'
+    patterns:
+    - SH/T\s*3401
+    - SHT\s*3401
+  SHT3405:
+    family: SHT
+    core: '3405'
+    patterns:
+    - SH/T\s*3405
+    - SHT\s*3405
+  SHT3406:
+    family: SHT
+    core: '3406'
+    patterns:
+    - SH/T\s*3406
+    - SHT\s*3406
+  SHT3408:
+    family: SHT
+    core: '3408'
+    patterns:
+    - SH/T\s*3408
+    - SHT\s*3408
+  SHT3410:
+    family: SHT
+    core: '3410'
+    patterns:
+    - SH/T\s*3410
+    - SHT\s*3410
+  SHT3411:
+    family: SHT
+    core: '3411'
+    patterns:
+    - SH/T\s*3411
+    - SHT\s*3411
+  SHT3412:
+    family: SHT
+    core: '3412'
+    patterns:
+    - SH/T\s*3412
+    - SHT\s*3412
+  SHT3419:
+    family: SHT
+    core: '3419'
+    patterns:
+    - SH/T\s*3419
+    - SHT\s*3419
+  SHT3424:
+    family: SHT
+    core: '3424'
+    patterns:
+    - SH/T\s*3424
+    - SHT\s*3424
+  SHT3425:
+    family: SHT
+    core: '3425'
+    patterns:
+    - SH/T\s*3425
+    - SHT\s*3425
+  SHT3426:
+    family: SHT
+    core: '3426'
+    patterns:
+    - SH/T\s*3426
+    - SHT\s*3426
+  SYT5037:
+    family: SYT
+    core: '5037'
+    patterns:
+    - SY/T\s*5037
+    - SYT\s*5037
+  SYT5257:
+    family: SYT
+    core: '5257'
+    patterns:
+    - SY/T\s*5257
+    - SYT\s*5257
+  TB1960-003:
+    family: TB
+    core: '1960-003'
+    patterns:
+    - TB\s*1960-003
+  TB1960-004:
+    family: TB
+    core: '1960-004'
+    patterns:
+    - TB\s*1960-004
+  TB1960-006:
+    family: TB
+    core: '1960-006'
+    patterns:
+    - TB\s*1960-006

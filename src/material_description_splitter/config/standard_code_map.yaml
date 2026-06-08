@@ -1,0 +1,541 @@
+meta:
+  total_unique_standards: 263
+  group_count: 22
+standard_groups:
+  AB:
+  - code: AB169
+    count: 5693
+  - code: AB165
+    count: 2487
+  - code: AB3610
+    count: 1747
+  - code: AB3619
+    count: 1025
+  - code: AB1611
+    count: 507
+  - code: AB1648
+    count: 185
+  - code: AB313
+    count: 45
+  - code: AB1647B
+    count: 41
+  - code: AB318
+    count: 39
+  - code: AB169B
+    count: 34
+  - code: AB3623
+    count: 9
+  - code: AB1647
+    count: 9
+  - code: AB1625
+    count: 8
+  - code: AB1201
+    count: 7
+  - code: AB3619M
+    count: 6
+  - code: AB1636
+    count: 4
+  - code: AB3620
+    count: 3
+  - code: AB3621
+    count: 3
+  - code: AB3622
+    count: 2
+  - code: AB1647A
+    count: 2
+  - code: AB3612
+    count: 1
+  - code: AB3614
+    count: 1
+  - code: AB3625
+    count: 1
+  - code: AB3626
+    count: 1
+  - code: AB3627
+    count: 1
+  - code: AB3629
+    count: 1
+  - code: AB3630
+    count: 1
+  - code: AB3618
+    count: 1
+  - code: AB1649
+    count: 1
+  - code: AB619
+    count: 1
+  - code: AB36.10
+    count: 1
+  ANM:
+  - code: ANM1
+    count: 487
+  API:
+  - code: API6D
+    count: 21
+  - code: API608
+    count: 16
+  - code: API602
+    count: 13
+  - code: API623
+    count: 8
+  - code: API600
+    count: 1
+  ASMC:
+  - code: ASMC09
+    count: 1
+  ASTM:
+  - code: ASTM420
+    count: 1
+  CJT:
+  - code: CJT124
+    count: 65
+  - code: CJT123
+    count: 11
+  - code: CJT120
+    count: 11
+  - code: CJT192
+    count: 2
+  DIN:
+  - code: DIN17455
+    count: 200
+  - code: DIN11850
+    count: 32
+  - code: DIN26051
+    count: 22
+  - code: DIN16966
+    count: 21
+  - code: DIN26162
+    count: 18
+  - code: DIN118532
+    count: 14
+  - code: DIN26151
+    count: 11
+  - code: DIN26052
+    count: 4
+  - code: DIN26122
+    count: 2
+  - code: DIN26152
+    count: 2
+  - code: DIN2626BB
+    count: 2
+  DLT:
+  - code: DLT695II
+    count: 3
+  EN:
+  - code: EN10374
+    count: 164
+  - code: EN10921
+    count: 45
+  - code: EN102534A
+    count: 29
+  - code: EN102165
+    count: 28
+  - code: EN102534B
+    count: 23
+  - code: EN10921B
+    count: 21
+  - code: EN102225
+    count: 19
+  - code: EN102534
+    count: 15
+  - code: EN102162
+    count: 11
+  - code: EN102177
+    count: 4
+  - code: EN10305
+    count: 4
+  - code: EN102201
+    count: 4
+  - code: EN100287
+    count: 3
+  - code: EN102163
+    count: 2
+  - code: EN102532B
+    count: 2
+  - code: EN102224
+    count: 2
+  - code: EN102222
+    count: 2
+  ENI:
+  - code: ENI1127
+    count: 11
+  - code: ENI11271
+    count: 3
+  GBT:
+  - code: GBT13401
+    count: 9481
+  - code: GBT8163
+    count: 7941
+  - code: GBT14976
+    count: 4727
+  - code: GBT12459I
+    count: 4236
+  - code: GBT12459II
+    count: 2949
+  - code: GBT9948
+    count: 2765
+  - code: GBT12459
+    count: 2083
+  - code: GBT19326
+    count: 1595
+  - code: GBT19326I
+    count: 1334
+  - code: GBT12459IA
+    count: 931
+  - code: GBT14383I
+    count: 895
+  - code: GBT12228
+    count: 812
+  - code: GBT5310
+    count: 773
+  - code: GBT12459IB
+    count: 759
+  - code: GBT713
+    count: 713
+  - code: GBT19326II
+    count: 686
+  - code: GBT6479
+    count: 684
+  - code: GBT3087
+    count: 678
+  - code: GBT12459B
+    count: 623
+  - code: GBT4237
+    count: 463
+  - code: GBT711
+    count: 398
+  - code: GBT9711
+    count: 392
+  - code: GBT14383II
+    count: 352
+  - code: GBT17395
+    count: 188
+  - code: GBT3621
+    count: 152
+  - code: GBT21833.2
+    count: 151
+  - code: GBT4334C
+    count: 142
+  - code: GBT12771I
+    count: 140
+  - code: GBT14383
+    count: 139
+  - code: GBT3091
+    count: 137
+  - code: GBT91241
+    count: 134
+  - code: GBT27684I
+    count: 133
+  - code: GBT12771
+    count: 120
+  - code: GBT12771IV
+    count: 84
+  - code: GBT3274
+    count: 83
+  - code: GBT700
+    count: 83
+  - code: GBT91242
+    count: 61
+  - code: GBT8162
+    count: 61
+  - code: GBT18984
+    count: 56
+  - code: GBT13401II
+    count: 55
+  - code: GBT19326IA
+    count: 51
+  - code: GBT50235
+    count: 42
+  - code: GBT12771II
+    count: 41
+  - code: GBT3624
+    count: 40
+  - code: GBT21833
+    count: 38
+  - code: GBT40317
+    count: 37
+  - code: GBT24511
+    count: 36
+  - code: GBT8163IA
+    count: 34
+  - code: GBT5310IA
+    count: 34
+  - code: GBT14525
+    count: 32
+  - code: GBT699
+    count: 31
+  - code: GBT12459A
+    count: 27
+  - code: GBT14976IA
+    count: 26
+  - code: GBT26500
+    count: 26
+  - code: GBT13401I
+    count: 24
+  - code: GBT5310LA
+    count: 23
+  - code: GBT12771III
+    count: 22
+  - code: GBT14976I
+    count: 21
+  - code: GBT14383IA
+    count: 19
+  - code: GBT3087IA
+    count: 19
+  - code: GBT14976II
+    count: 19
+  - code: GBT91241I
+    count: 16
+  - code: GBT3087LA
+    count: 16
+  - code: GBT8163II
+    count: 13
+  - code: GBT12771V
+    count: 12
+  - code: GBT21832.2B
+    count: 12
+  - code: GBT2205
+    count: 9
+  - code: GBT3091II
+    count: 8
+  - code: GBT8163I
+    count: 8
+  - code: GBT20801
+    count: 7
+  - code: GBT21547
+    count: 7
+  - code: GBT21833A
+    count: 7
+  - code: GBT12976
+    count: 6
+  - code: GBT3624A
+    count: 6
+  - code: GBT9118
+    count: 6
+  - code: GBT8136
+    count: 6
+  - code: GBT17395I
+    count: 5
+  - code: GBT531
+    count: 5
+  - code: GBT3287
+    count: 5
+  - code: GBT13401IA
+    count: 5
+  - code: GBT21832.2
+    count: 5
+  - code: GBT3091A
+    count: 5
+  - code: GBT3406
+    count: 5
+  - code: GBT8163B
+    count: 5
+  - code: GBT58361
+    count: 4
+  - code: GBT10002.2
+    count: 4
+  - code: GBT23257
+    count: 4
+  - code: GBT13663.3
+    count: 3
+  - code: GBT3408
+    count: 3
+  - code: GBT9948D
+    count: 3
+  - code: GBT309
+    count: 3
+  - code: GBT18742.3
+    count: 3
+  - code: GBT3087I
+    count: 3
+  - code: GBT14976B
+    count: 3
+  - code: GBT14976A
+    count: 3
+  - code: GBT1245II9
+    count: 2
+  - code: GBT21832
+    count: 2
+  - code: GBT21835
+    count: 2
+  - code: GBT100021
+    count: 2
+  - code: GBT3091I
+    count: 2
+  - code: GBT3410
+    count: 2
+  - code: GBT1245I9
+    count: 1
+  - code: GBT12771Ⅳ
+    count: 1
+  - code: GBT136633
+    count: 1
+  - code: GBT218332
+    count: 1
+  - code: GBT16693
+    count: 1
+  - code: GBT13401B
+    count: 1
+  - code: GBT13401064
+    count: 1
+  - code: GBT187422
+    count: 1
+  - code: GBT187423
+    count: 1
+  - code: GBT3089
+    count: 1
+  - code: GBT669
+    count: 1
+  - code: GBT13793
+    count: 1
+  - code: GBT8163A
+    count: 1
+  - code: GBT47008II
+    count: 1
+  GD:
+  - code: GD2016
+    count: 4
+  HGT:
+  - code: HGT20615
+    count: 2290
+  - code: HGT20553IA
+    count: 1925
+  - code: HGT20592B
+    count: 1425
+  - code: HGT20592
+    count: 1357
+  - code: HGT20553II
+    count: 1103
+  - code: HGT20538
+    count: 859
+  - code: HGT20592A
+    count: 509
+  - code: HGT21547
+    count: 290
+  - code: HGT3731
+    count: 218
+  - code: HGT20592I
+    count: 201
+  - code: HGT2130
+    count: 116
+  - code: HGT20623B
+    count: 59
+  - code: HGT20615A
+    count: 58
+  - code: HGT21501
+    count: 53
+  - code: HGT2437
+    count: 53
+  - code: HGT20538II
+    count: 27
+  - code: HGT3651A
+    count: 17
+  - code: HGT20539
+    count: 16
+  - code: HGT20553
+    count: 12
+  - code: HGT20538B
+    count: 10
+  - code: HGT20592II
+    count: 8
+  - code: HGT4372
+    count: 8
+  - code: HGT20553I
+    count: 7
+  - code: HGT20610
+    count: 5
+  - code: HGT20613
+    count: 5
+  - code: HGT21632
+    count: 2
+  - code: HGT4284
+    count: 2
+  - code: HGT20623A
+    count: 1
+  - code: HGT2437II
+    count: 1
+  I:
+  - code: I2037
+    count: 96
+  - code: I2852
+    count: 26
+  MC:
+  - code: MC0901
+    count: 2
+  MS:
+  - code: MS97
+    count: 1416
+  - code: MS95
+    count: 164
+  - code: MS83
+    count: 5
+  - code: MS75
+    count: 4
+  MSSSP:
+  - code: MSSSP95
+    count: 2
+  NBT:
+  - code: NBT47008
+    count: 6169
+  - code: NBT47010
+    count: 4285
+  - code: NBT47008II
+    count: 698
+  - code: NBT47010II
+    count: 356
+  - code: NBT47009
+    count: 144
+  - code: NBT47008III
+    count: 112
+  - code: NBT47010III
+    count: 9
+  - code: NBT47008I
+    count: 3
+  - code: NBT4700
+    count: 2
+  - code: NBT47023A
+    count: 2
+  - code: NBT47010I
+    count: 1
+  - code: NBT8163
+    count: 1
+  SHT:
+  - code: SHT3408
+    count: 8210
+  - code: SHT3405
+    count: 3042
+  - code: SHT3406
+    count: 2502
+  - code: SHT3410
+    count: 1125
+  - code: SHT3419
+    count: 505
+  - code: SHT3425
+    count: 412
+  - code: SHT3406B
+    count: 75
+  - code: SHT3426
+    count: 29
+  - code: SHT3408B
+    count: 12
+  - code: SHT3411
+    count: 4
+  - code: SHT3424
+    count: 4
+  - code: SHT3425A
+    count: 3
+  - code: SHT3412
+    count: 1
+  - code: SHT3401
+    count: 1
+  SYT:
+  - code: SYT5037
+    count: 183
+  - code: SYT5257
+    count: 4
+  TB:
+  - code: TB1960003
+    count: 4
+  - code: TB1960004
+    count: 3
+  - code: TB1960006
+    count: 1

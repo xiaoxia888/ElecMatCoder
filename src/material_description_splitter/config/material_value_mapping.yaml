@@ -1,0 +1,510 @@
+meta:
+  source: material_rule_analysis.xlsx
+  note: 按最新材质分析结果生成，三层规则仅用于候选提取，不用于最终拍板
+
+rule_policy:
+  force_model_on_multi_candidates: true
+  clear_result_when_force_model: true
+
+model_only_suffix:
+  CE:
+    - "CE"
+    - "ANTI-H2S"
+    - "ANTI-HIC"
+    - "NACE"
+    - "H2S"
+  ZN:
+    - "镀锌"
+    - "ZN"
+    - "GALV"
+    - "GALVANIZED"
+
+model_only_grade_suffix:
+  I:
+    - "I"
+    - "Gr.I"
+    - "GR.I"
+  II:
+    - "II"
+    - "Gr.II"
+    - "GR.II"
+  III:
+    - "III"
+    - "Gr.III"
+    - "GR.III"
+
+combo_value_mapping:
+  "304/304L":
+    - "F304/304L"
+    - "A182 F304/304L"
+    - "A182 Gr.F304/304L"
+    - "A182-F304/304L"
+    - "A312 TP304/304L"
+    - "A312-TP304/304L"
+    - "A358 GR.304/304L"
+    - "A403 WP304/304L"
+    - "A403-WP304/304L"
+    - "S30408/S30403"
+    - "TP304/304L"
+  "20/PTFE":
+    - "20#/PTFE"
+    - "PTFE/20#"
+    - "20#+PTFE"
+    - "PTFE+20#"
+    - "20+PTFE"
+    - "20衬PTFE"
+    - "20#衬PTFE"
+    - "PTFE+20"
+    - "20/PTFE"
+    - "PTFE/20"
+    - "PTFE Lined 20"
+  "20/EAA":
+    - "20#/EAA"
+    - "EAA/20#"
+    - "20#+EAA"
+    - "EAA+20#"
+    - "20+EAA"
+    - "20衬EAA"
+    - "20#衬EAA"
+    - "EAA+20"
+    - "20/EAA"
+    - "EAA/20"
+  "20(CF415)":
+    - "20(CF415)"
+  "20/PE":
+    - "20/PE"
+  "316/316L":
+    - "316/316L"
+    - "A403 GR.WP 316/316L"
+    - "A182 GR.F316/F316L"
+    - "A312 GR.TP316/316L"
+    - "A312 TP316/TP316L"
+    - "S31608/S31603"
+  "304/PTFE":
+    - "304/PTFE"
+    - "PTFE/304"
+  "304/PP":
+    - "304/PP"
+    - "30408/PP"
+    - "S30408/PP"
+  "PTFE/CS":
+    - "PTFE/CS"
+  "20/304":
+    - "20/304"
+    - "20/S30408"
+  "304L/304":
+    - "304L/304"
+    - "S30403/S30408"
+  "CS/PTFE":
+    - "CS/PTFE"
+  "20/TA2":
+    - "20/TA2"
+  "CS/RPTFE":
+    - "CS/RPTFE"
+  "FRP/PVC":
+    - "FRP/PVC"
+  "FRP/CPVC":
+    - "FRP/CPVC"
+    - "玻璃钢/氯化聚氯乙烯"
+  "304/2200":
+    - "SS304/N02200"
+  "20/衬胶":
+    - "20/衬胶"
+  "304/高硅不锈钢":
+    - "304/高硅不锈钢"
+    - "304衬高硅不锈钢"
+
+strong_value_mapping:
+  "304":
+    - "06Cr19Ni10"
+    - "0Cr18Ni9"
+    - "A182 F304"
+    - "UNS S30400"
+    - "A182 GRADE F304"
+    - "A182 Gr.F304"
+    - "A182 Grade F304"
+    - "A182 F304"
+    - "A240 GRADE 304"
+    - "A240 Gr.304"
+    - "A312 Gr.TP304"
+    - "A312 TP304"
+    - "A312-TP304"
+    - "A358 GR.304"
+    - "A403 Gr.WP304"
+    - "A403 Grade WP304"
+    - "A403 WP304"
+    - "A403-WP304"
+    - "S30408"
+    - "SF304"
+    - "SS304"
+    - "X5CrNi18-10"
+  "316L":
+    - "022Cr17Ni12Mo2"
+    - "022Cr17Ni12Mo2"
+    - "22Cr17Ni12Mo2"
+    - "22Cr17Ni12Mo2"
+    - "A182 F316L"
+    - "A182 GR.F316L"
+    - "A182 GRADE F316L"
+    - "A182-F316L"
+    - "A240 GRADE 316L"
+    - "A312 TP316L"
+    - "A312 GRADE TP316L"
+    - "A358 Gr.316L"
+    - "A358 TP316L"
+    - "A403 GRADE WP316L"
+    - "A403 Gr.WP316L"
+    - "A403 WP316L"
+    - "A403-WP316L"
+    - "AISI 316L"
+    - "S31603"
+    - "SF316L"
+    - "SS316L"
+    - "1.4404"
+    - "316L"
+    - "F316L"
+  "304L":
+    - "00Cr19Ni10"
+    - "022Cr19Ni10"
+    - "A182 F304L"
+    - "A182 GR.F304L"
+    - "A240 304L"
+    - "A312 TP304L"
+    - "A312 Gr.TP304L"
+    - "A358 GR.304L"
+    - "A403 WP304L"
+    - "A403 Gr.WP304L"
+    - "SF304L"
+  "2205":
+    - "2205(A182 F51)"
+    - "A790 (UNS S32205)"
+    - "A790 S32205"
+    - "A790(UNSS32205)"
+    - "A815 GRADE WPS32205"
+    - "A815 WPS32205 (UNS S32205)"
+    - "SF2205"
+  "321":
+    - "06Cr18Ni11Ti"
+    - "0Cr18Ni10Ti"
+    - "A182 F321"
+    - "A182 Gr.F321"
+    - "A312 TP321"
+    - "A403 WP321"
+    - "S32168"
+    - "SF321"
+    - "X6CrNiTi18-10"
+    - "X6CrNiTi18-10(1.4541)"
+    - "F321"
+    - "1.4541"
+    - "S32168"
+  "WPL6":
+    - "A420 Gr.WPL6"
+    - "A420 WPL6"
+    - "A420M WPL6"
+  "LF2":
+    - "A350 Gr.LF2"
+    - "A350 LF2"
+  "WPB":
+    - "A234 GR.WPB"
+    - "A234 WPB"
+    - "A234-WPB"
+  "LF485K2":
+    - "LF485K2"
+  "WPBHDPP":
+    - "WPB+HDPP"
+    - "A234 WPB+HDPP"
+  "12Cr5MoNT":
+    - "12Cr5MoNT"
+  "WP11":
+    - "A234 Gr.WP11"
+    - "A234 WP11"
+  "347H":
+    - "A182 F347H"
+    - "A312 TP347H"
+    - "A403 WP347H"
+  "A333":
+    - "A333 GR.6"
+    - "A333 GR6"
+    - "A333M Gr.6"
+  "304H":
+    - "07Cr19Ni10"
+    - "A182 F304H"
+    - "A312 TP304H"
+    - "A403 WP304H"
+    - "S30409"
+  "F11":
+    - "A182 F11"
+    - "A182 Gr.F11"
+  "P11":
+    - "A335 Gr.P11"
+    - "A335 P11"
+  "12Cr1MoV":
+    - "12Cr1MoV"
+  "API5L":
+    - "API 5L GR.B"
+  "A105":
+    - "A105(C<0.3%)"
+  "2200":
+    - "N02200"
+  "P235GH":
+    - "P235GH"
+    - "P235GH(1.0345)"
+  "2507":
+    - "022Cr25Ni7Mo4N"
+  "A516":
+    - "A516 GR.70"
+    - "A516 Grade 65"
+    - "ASTM A516 GR.70"
+    - "ASTM A516 Grade 65"
+  "12Cr2Mo1":
+    - "12Cr2Mo1"
+  "6600":
+    - "ASTM B167 N06600"
+    - "ASTM B366 WPNCI (UNS N06600)"
+    - "B167 N06600"
+    - "B366 WPNCI (UNS N06600)"
+  "12Cr5Mo":
+    - "12Cr5Mo"
+  "CF8":
+    - "A351 CF8"
+  "316":
+    - "S31608"
+    - "SS316-BA"
+    - "SS316-EP"
+    - "SUS 316"
+    - "F316"
+  "WPHY65":
+    - "A860 GR.WPHY65"
+    - "A860 WPHY65"
+    - "ASTM A860 GR.WPHY65"
+    - "ASTM A860 WPHY65"
+  "316Ti":
+    - "A182 Gr.F316Ti"
+    - "A182Gr.F316Ti"
+    - "ASTM A182 Gr.F316Ti"
+    - "X6CrNiMoTi17-12-2(1.4571)"
+  "WP91":
+    - "A234M WP91"
+    - "ASTM A234M WP91"
+  "F65":
+    - "A694 F65"
+    - "A694F65"
+  "WCB":
+    - "A216 WCB"
+  "A105N":
+    - "A.105N"
+    - "A105N"
+    - "ASTM A105N"
+  "14Cr1Mo":
+    - "14Cr1Mo"
+  "P22":
+    - "A335 P22"
+    - "A335P22"
+    - "ASTM A335 P22"
+  "F22":
+    - "A182 F22 CL3"
+    - "A182 F22-CL3"
+    - "ASTM A182 F22-CL3"
+  "P91":
+    - "A335M P91"
+    - "ASTM A335M P91"
+  "321H":
+    - "A312M TP321H"
+    - "ASTM A312M TP321H"
+    - "SF321H"
+  "P250GH":
+    - "P250GH(1.0460)"
+  "C60":
+    - "A672 C60"
+    - "A672 C60"
+  "CF3M":
+    - "A351 GR. CF3M"
+    - "ASTM A351 GR. CF3M"
+
+  "310S":
+    - "S31008"
+  "F51":
+    - "A182 F51 (UNS S31803)"
+  "12Cr1MoVG":
+    - "12Cr1MoVG"
+  "F91":
+    - "A182M F91"
+    - "ASTM A182M F91"
+  "X65":
+    - "X65 PSL2"
+  "310":
+    - "SF310"
+  "8825":
+    - "ASTM B366 GRADE N08825"
+    - "B366 GRADE N08825"
+  "C65":
+    - "A672-C65"
+  "A53":
+    - "A53GR.B"
+  "P355NL1":
+    - "P355NL1"
+  "A387":
+    - "A387 Gr.11 CL2"
+    - "ASTM A387 Gr.11 CL2"
+  "P9":
+    - "A335 P9"
+
+weak_value_mapping:
+  "304":
+    - "304"
+    - "1.4301"
+    - "30408"
+    - "F304"
+    - "S30408"
+    - "TP304"
+    - "WP304"
+  "20":
+    - "20#"
+
+  "CF415K":
+    - "CF415K"
+  "304L":
+    - "304L"
+    - "S30403"
+    - "WP304L"
+  "WPB":
+    - "A234 WPB"
+    - "A234WPB"
+  "A105":
+    - "A105"
+    - "A105(C≤0.3%)"
+    - "ASTM A105"
+  "Q245R":
+    - "Q245R"
+  "20G":
+    - "20G"
+  "20GL":
+    - "20 GLASS LINED"
+  "Q235B":
+    - "Q235-B"
+    - "Q235B"
+  "321":
+    - "F321"
+    - "1.4541"
+    - "S32168"
+  "3PE":
+    - "3PE"
+  "16Mn":
+    - "16Mn"
+  "15CrMo":
+    - "15CrMo"
+  "15CrMoG":
+    - "15CrMoG"
+  "2205":
+    - "2205"
+    - "S22053"
+    - "S32205"
+    - "F2205"
+  "A105N":
+    - "A105N"
+  "TA2":
+    - "TA2"
+  "Q345E":
+    - "Q345E"
+  "AF12G":
+    - "AF12G"
+  "L245":
+    - "L245"
+    - "L245/B"
+  "16MnD":
+    - "16MnD"
+  "16MnDG":
+    - "16MnDG"
+  "Q345R":
+    - "Q345R"
+  "L245M":
+    - "L245N"
+    - "L245M PSL2"
+  "L245N":
+    - "L245N"
+    - "L245N PSL2"
+  "TA10":
+    - "TA10"
+  "L290N":
+    - "L290N"
+  "15CrMoR":
+    - "15CrMoR"
+  "2201":
+    - "N02201"
+  "310M":
+    - "310M"
+  "A106":
+    - "A106"
+    - "A106 B"
+    - "A106 GR.B"
+    - "A106 GRADE B"
+    - "A106 Gr.B"
+    - "A106-B"
+    - "A106-GR.B"
+    - "A106B"
+    - "A106GR.B"
+    - "A106GRADEB"
+    - "A106Gr.B"
+    - "ASTM A106 GR.B"
+    - "ASTM A106 GRADE B"
+    - "ASTM A106 Gr.B"
+  "PTFE":
+    - "PTFE"
+    - "PTFE Lined"
+  "L245M":
+    - "L245M"
+  "AF14":
+    - "AF14"
+  "FRP":
+    - "FRP"
+  "321H":
+    - "321H"
+  "P11":
+    - "P11"
+  "WP11":
+    - "WP11"
+  "F11":
+    - "F11"
+  "304H":
+    - "304H"
+  "E235":
+    - "E235"
+  "L245R":
+    - "L245R"
+  "347":
+    - "TP347"
+  "347H":
+    - "TP347H"
+
+fallback_value_mapping:
+  "GL":
+    - "搪玻璃"
+  "20":
+    - "20#钢"
+    - "20号钢"
+    - "20钢"
+    - "锻20"
+  "高硅不锈钢":
+    - "高硅不锈钢"
+  "FRP":
+    - "玻璃钢"
+
+# special_req_suffix:
+#   CE:
+#   - "CE"
+#   - "ANTI-H2S"
+#   - "NACE"
+#   ZN:
+#   - "ZN"
+#   - "GALV"
+#   - "GALVANIZED"
+
+# grade_suffix:
+#   II:
+#   - "II"
+#   - "Gr.II"
+#   - "GR.II"
+#   III:
+#   - "III"
+#   - "Gr.III"
+#   - "GR.III"

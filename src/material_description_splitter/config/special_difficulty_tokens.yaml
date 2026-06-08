@@ -1,0 +1,27 @@
+groups:
+  structural_complex:
+    reason: 命中特殊复杂结构描述
+    tokens:
+      - token: 夹套
+      - token: 伴热
+      - token: 双层
+      - token: 内衬
+      - token: 衬里
+      - token: 剖分
+
+  seal_complex:
+    reason: 命中特殊密封/连接描述
+    tokens:
+      - token: 双唇
+      - token: DOUBLE-LIP
+      - token: DOUBLE LIP
+
+  material_special:
+    reason: 命中特殊材质/处理要求
+    tokens:
+      # - token: 抗硫
+      # - token: ANTI-H2S
+      # - token: NACE
+      # - token: 镀锌
+      - token: 衬胶
+      - token: PTFE LINED

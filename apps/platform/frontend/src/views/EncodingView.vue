@@ -26,12 +26,13 @@
       <!-- 编码操作 -->
       <div class="sidebar-section operation-section" v-if="dataList.length > 0">
         <button 
-          class="btn btn-primary" 
+          class="btn"
+          :class="batchActionButtonClass"
           style="width: 100%"
-          :disabled="isEncoding"
-          @click="handleBatchEncode"
+          :disabled="(isEncoding && !activeBatchJobId) || isStopSubmitting"
+          @click="handlePrimaryBatchAction"
         >
-          {{ isEncoding ? '编码中...' : '一键编码' }}
+          {{ batchActionText }}
         </button>
 
         <div class="concurrency-row">
@@ -57,6 +58,30 @@
           <span class="stat">总 <b>{{ Object.keys(encodings).length }}</b></span>
           <span class="stat success">成功 <b>{{ successCount }}</b></span>
           <span class="stat warning">待审 <b>{{ reviewCount }}</b></span>
+        </div>
+      </div>
+
+      <div class="sidebar-section task-section" v-if="runningBatchJobs.length > 0">
+        <div class="section-header">
+          <span class="section-title">运行任务</span>
+        </div>
+        <div class="task-list">
+          <div
+            v-for="job in runningBatchJobs"
+            :key="job.job_id"
+            class="task-item"
+            :class="{ active: activeBatchJobId === job.job_id }"
+            @click="openBatchJob(job.job_id)"
+          >
+            <div class="task-item-main">
+              <span class="task-item-title">任务 {{ shortJobId(job.job_id) }}</span>
+              <span class="task-item-status">{{ taskStatusText(job.status) }}</span>
+            </div>
+            <div class="task-item-sub">
+              <span>{{ job.processed || 0 }}/{{ job.total || 0 }}</span>
+              <span v-if="job.queue_position">排队第 {{ job.queue_position }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -90,10 +115,17 @@
               warning: getItemStatus(item.index) === 'review'
             }"
             :data-index="item.index"
-            @click="currentIndex = item.index"
+            @click="handleSelectItem(item.index)"
           >
             <span class="item-num">#{{ item.index + 1 }}</span>
             <span class="item-text" :title="item.text">{{ item.text }}</span>
+            <span
+              v-if="getItemDifficulty(item.index)"
+              class="item-difficulty"
+              :class="getItemDifficultyClass(item.index)"
+            >
+              {{ getItemDifficulty(item.index) }}
+            </span>
             <span class="item-badge corrected" v-if="getItemStatus(item.index) === 'corrected'">修正</span>
             <span class="item-badge" v-else-if="getItemStatus(item.index) === 'success'">OK</span>
             <span class="item-badge review" v-else-if="getItemStatus(item.index) === 'review'">!</span>
@@ -132,6 +164,10 @@
             </div>
           </div>
           <div class="source-text">{{ currentText }}</div>
+          <div v-if="showProcessedText" class="processed-text-row">
+            <span class="processed-text-label">格式化描述</span>
+            <div class="processed-text">{{ currentProcessedText }}</div>
+          </div>
         </div>
         
         <!-- 编码结果 -->
@@ -160,6 +196,45 @@
           :data-list="dataList"
         />
 
+        <div
+          v-if="showStopConfirmDialog"
+          class="dialog-overlay"
+          @click.self="closeStopConfirmDialog"
+        >
+          <div class="dialog-content stop-dialog">
+            <div class="dialog-header">
+              <span class="dialog-title">停止批量编码</span>
+              <button
+                v-if="!isStopSubmitting"
+                class="dialog-close"
+                @click="closeStopConfirmDialog"
+              >&times;</button>
+            </div>
+            <div class="dialog-body">
+              <div v-if="!isStopSubmitting" class="stop-dialog-text">
+                当前任务 <b>{{ shortJobId(activeBatchJobId) }}</b> 正在{{ activeBatchJobStatus === 'queued' ? '排队' : '运行' }}。
+                确认后将停止该任务。
+              </div>
+              <div v-else class="stop-dialog-loading">
+                <span class="spinner"></span>
+                <span>停止请求已提交，正在等待任务停止…</span>
+              </div>
+            </div>
+            <div class="dialog-footer">
+              <button
+                v-if="!isStopSubmitting"
+                class="btn btn-secondary btn-sm"
+                @click="closeStopConfirmDialog"
+              >取消</button>
+              <button
+                v-if="!isStopSubmitting"
+                class="btn btn-danger btn-sm"
+                @click="confirmCancelBatchJob"
+              >确认停止</button>
+            </div>
+          </div>
+        </div>
+
         <div v-if="showEditDialog" class="dialog-overlay" @click.self="closeEditDialog">
           <div class="dialog-content edit-dialog">
             <div class="dialog-header">
@@ -186,6 +261,35 @@
                 <div class="form-group">
                   <label>修改编码</label>
                   <input class="form-input" v-model="singleEditForm.modifiedCode" />
+                </div>
+              </template>
+
+              <template v-else-if="editDialogMode === 'type'">
+                <div class="dialog-meta-grid">
+                  <div class="form-group">
+                    <label>模型原始结构</label>
+                    <input class="form-input" :value="typeEditForm.modelOriginalContent" readonly />
+                  </div>
+                  <div class="form-group">
+                    <label>原始编码</label>
+                    <input class="form-input form-input-static" :value="typeEditForm.originalCode" readonly tabindex="-1" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>一阶段最终结构</label>
+                  <input class="form-input" :value="typeEditForm.stage1FinalContent" readonly />
+                </div>
+                <div class="form-group">
+                  <label>实际编码输入</label>
+                  <input class="form-input" :value="typeEditForm.encodingInput" readonly />
+                </div>
+                <div class="form-group">
+                  <label>修改内容</label>
+                  <input class="form-input" v-model="typeEditForm.modifiedContent" />
+                </div>
+                <div class="form-group">
+                  <label>修改编码</label>
+                  <input class="form-input" v-model="typeEditForm.modifiedCode" />
                 </div>
               </template>
 
@@ -362,17 +466,31 @@ const currentIndex = ref(-1)
 const isEncoding = ref(false)
 const isEncodingSingle = ref(false)
 const encodeProgress = ref(0)
+const activeBatchJobId = ref('')
+const activeBatchJobStatus = ref('')
+const activeBatchJobMeta = ref(null)
+const runningBatchJobs = ref([])
 const filter = ref('all')
 const isImportCollapsed = ref(true)
 const dataListRef = ref(null)
 const defaultMaxConcurrent = ref(3)
 const maxConcurrent = ref(3)
+const showStopConfirmDialog = ref(false)
+const isStopSubmitting = ref(false)
 const showEditDialog = ref(false)
 const editDialogMode = ref('single')
 const editDialogType = ref('')
 const editDialogIndex = ref(null)
 const singleEditForm = ref({
   originalContent: '',
+  originalCode: '',
+  modifiedContent: '',
+  modifiedCode: ''
+})
+const typeEditForm = ref({
+  modelOriginalContent: '',
+  stage1FinalContent: '',
+  encodingInput: '',
   originalCode: '',
   modifiedContent: '',
   modifiedCode: ''
@@ -400,7 +518,9 @@ const standardEditForm = ref({
   originalCode: ''
 })
 const standardEditItems = ref([])
+let batchJobEventSource = null
 let editItemId = 0
+const BATCH_JOB_KEEP_SECONDS = 60
 
 const codeFieldOrder = ['TYPE', 'ENDS', 'SEAL', 'MANU', 'CONN', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
 const multiValueEditableFields = new Set(['STANDARD'])
@@ -446,9 +566,11 @@ function ensureFieldOriginalSnapshot(field) {
   if (!field || field.original_snapshot) return
   field.original_snapshot = cloneDeep({
     original_value: field.original_value || '',
+    stage1_final_value: field.stage1_final_value || '',
     original_values: field.original_values || [],
     matched_name: field.matched_name || '',
     matched_names: field.matched_names || [],
+    encoding_input: field.encoding_input || '',
     code: field.code || '',
     codes: field.codes || [],
     manual_form: field.manual_form || null,
@@ -490,27 +612,100 @@ function formatStructuredFieldText(value, type) {
     return String(value || '')
   }
 
+  if (type === 'TYPE') {
+    const parts = []
+    const body = String(parsed.BODY || '').trim()
+    const geometry = parsed.GEOMETRY && typeof parsed.GEOMETRY === 'object' ? parsed.GEOMETRY : {}
+    const angle = String(geometry.ANGLE || '').trim()
+    const radius = String(geometry.RADIUS || '').trim()
+    const manu = Array.isArray(parsed.MANU) ? parsed.MANU.map(item => String(item || '').trim()).filter(Boolean) : []
+    const conn = Array.isArray(parsed.CONN) ? parsed.CONN.map(item => String(item || '').trim()).filter(Boolean) : []
+    const seal = Array.isArray(parsed.SEAL) ? parsed.SEAL.map(item => String(item || '').trim()).filter(Boolean) : []
+    const ends = Array.isArray(parsed.ENDS) ? parsed.ENDS.map(item => String(item || '').trim()).filter(Boolean) : []
+    if (angle) parts.push(`ANGLE: ${angle}`)
+    if (body) parts.push(`BODY: ${body}`)
+    if (radius) parts.push(`RADIUS: ${radius}`)
+    if (manu.length) parts.push(`MANU: ${manu.join(' x ')}`)
+    if (conn.length) parts.push(`CONN: ${conn.join(' x ')}`)
+    if (seal.length) parts.push(`SEAL: ${seal.join(' x ')}`)
+    if (ends.length) parts.push(`ENDS: ${ends.join(' x ')}`)
+    return parts.join(' ; ')
+  }
+
   const subtypeOrderMap = {
-    SIZE: ['DN', 'INCH', 'OD'],
+    SIZE: ['DN', 'OD', 'INCH', 'LENGTH'],
     THICKNESS: ['MM', 'INCH', 'SCHEDULE', 'SERIES', 'BWG']
   }
   const order = subtypeOrderMap[type] || []
   const keys = [
     ...order.filter(key => Object.prototype.hasOwnProperty.call(parsed, key)),
-    ...Object.keys(parsed).filter(key => !order.includes(key))
+    ...Object.keys(parsed).filter(key => !order.includes(key) && !String(key).startsWith('_'))
   ]
 
   const parts = keys
     .map(key => {
       const values = Array.isArray(parsed[key]) ? parsed[key] : [parsed[key]]
       const normalized = values
-        .map(item => String(item || '').trim())
+        .map(item => (item && typeof item === 'object') ? '' : String(item || '').trim())
         .filter(Boolean)
       if (!normalized.length) return ''
       return `${key}: ${normalized.join(' x ')}`
     })
     .filter(Boolean)
 
+  return parts.join(' ; ')
+}
+
+function formatTypeSummary(parsed) {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return String(parsed || '')
+  }
+  const parts = []
+  const body = String(parsed.BODY || '').trim()
+  const geometry = parsed.GEOMETRY && typeof parsed.GEOMETRY === 'object' ? parsed.GEOMETRY : {}
+  const angle = String(geometry.ANGLE || '').trim()
+  const radius = String(geometry.RADIUS || '').trim()
+  const manu = Array.isArray(parsed.MANU) ? parsed.MANU.map(item => String(item || '').trim()).filter(Boolean) : []
+  const conn = Array.isArray(parsed.CONN) ? parsed.CONN.map(item => String(item || '').trim()).filter(Boolean) : []
+  const seal = Array.isArray(parsed.SEAL) ? parsed.SEAL.map(item => String(item || '').trim()).filter(Boolean) : []
+  const ends = Array.isArray(parsed.ENDS) ? parsed.ENDS.map(item => String(item || '').trim()).filter(Boolean) : []
+  if (angle && body) {
+    parts.push(`${angle}度${body}`)
+  } else if (body) {
+    parts.push(body)
+  } else if (angle) {
+    parts.push(`${angle}度`)
+  }
+  if (radius) parts.push(radius)
+  if (manu.length) parts.push(manu.join(' x '))
+  if (conn.length) parts.push(conn.join(' x '))
+  if (seal.length) parts.push(seal.join(' x '))
+  if (ends.length) parts.push(ends.join(' x '))
+  return parts.join(';')
+}
+
+function formatTypeStructuredText(value) {
+  const parsed = safeParseJson(value)
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return String(value || '')
+  }
+
+  const parts = []
+  const body = String(parsed.BODY || '').trim()
+  const geometry = parsed.GEOMETRY && typeof parsed.GEOMETRY === 'object' ? parsed.GEOMETRY : {}
+  const angle = String(geometry.ANGLE || '').trim()
+  const radius = String(geometry.RADIUS || '').trim()
+  const manu = Array.isArray(parsed.MANU) ? parsed.MANU.map(item => String(item || '').trim()).filter(Boolean) : []
+  const conn = Array.isArray(parsed.CONN) ? parsed.CONN.map(item => String(item || '').trim()).filter(Boolean) : []
+  const seal = Array.isArray(parsed.SEAL) ? parsed.SEAL.map(item => String(item || '').trim()).filter(Boolean) : []
+  const ends = Array.isArray(parsed.ENDS) ? parsed.ENDS.map(item => String(item || '').trim()).filter(Boolean) : []
+  if (body) parts.push(`BODY: ${body}`)
+  if (angle) parts.push(`ANGLE: ${angle}`)
+  if (radius) parts.push(`RADIUS: ${radius}`)
+  if (manu.length) parts.push(`MANU: ${manu.join(' x ')}`)
+  if (conn.length) parts.push(`CONN: ${conn.join(' x ')}`)
+  if (seal.length) parts.push(`SEAL: ${seal.join(' x ')}`)
+  if (ends.length) parts.push(`ENDS: ${ends.join(' x ')}`)
   return parts.join(' ; ')
 }
 
@@ -530,7 +725,21 @@ function getEditableFieldText(fieldLike, type) {
     const itemText = formatItemFieldText(fieldLike.items)
     if (itemText) return itemText
   }
+  if (type === 'TYPE') {
+    return formatTypeSummary(safeParseJson(fieldLike?.original_value || ''))
+  }
   return formatStructuredFieldText(fieldLike?.original_value || '', type)
+}
+
+function buildTypeEditForm(fieldLike, snapshot) {
+  return {
+    modelOriginalContent: formatTypeStructuredText(snapshot?.original_value || ''),
+    stage1FinalContent: formatTypeStructuredText(snapshot?.stage1_final_value || ''),
+    encodingInput: String(snapshot?.encoding_input || snapshot?.matched_name || '').trim(),
+    originalCode: snapshot?.code || '',
+    modifiedContent: String(fieldLike?.encoding_input || fieldLike?.matched_name || '').trim(),
+    modifiedCode: fieldLike?.code || ''
+  }
 }
 
 function createEmptyStandardEditItem() {
@@ -591,7 +800,7 @@ function buildSizeEditForm(fieldLike) {
     originalCode: fieldLike?.code || '',
     dn: toStructuredInputText(values.DN),
     od: toStructuredInputText(values.OD),
-    inch: toStructuredInputText(values.INCH || values.NPS),
+    inch: toStructuredInputText(values.INCH),
     modifiedCode: fieldLike?.code || ''
   }
 }
@@ -694,10 +903,12 @@ function handleKeydown(e) {
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
   loadBatchConfig()
+  loadRunningBatchJobs()
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
+  closeBatchJobStream()
 })
 
 async function loadBatchConfig() {
@@ -734,8 +945,35 @@ const currentText = computed(() => {
   return dataList.value[currentIndex.value]?.text || ''
 })
 
+const batchActionText = computed(() => {
+  if (isEncoding.value) {
+    if (isStopSubmitting.value) {
+      return '停止中...'
+    }
+    return activeBatchJobId.value ? '■ 停止编码' : '创建任务中...'
+  }
+  return '一键编码'
+})
+
+const batchActionButtonClass = computed(() => {
+  if (isEncoding.value) {
+    return 'btn-danger batch-action-btn is-stopping'
+  }
+  return 'btn-primary batch-action-btn'
+})
+
 const currentEncoding = computed(() => {
   return encodings.value[currentIndex.value]
+})
+
+const currentProcessedText = computed(() => {
+  return currentEncoding.value?.processed_text || ''
+})
+
+const showProcessedText = computed(() => {
+  const processed = currentProcessedText.value
+  const original = currentText.value
+  return !!processed && processed !== original
 })
 
 const successCount = computed(() => {
@@ -763,6 +1001,19 @@ function getItemStatus(index) {
   if (enc.need_review) return 'review'
   if (enc.success) return 'success'
   return 'pending'
+}
+
+function getItemDifficulty(index) {
+  const enc = encodings.value[index]
+  return enc?.second_pass?.final_level || enc?.difficulty_split?.difficulty || ''
+}
+
+function getItemDifficultyClass(index) {
+  const level = getItemDifficulty(index)
+  if (level === '困难') return 'hard'
+  if (level === '二次简单') return 'second-pass-easy'
+  if (level === '简单') return 'second-pass-mid'
+  return 'simple'
 }
 
 function hasManualCorrection(result) {
@@ -803,6 +1054,7 @@ async function encodeCurrentItem(successMsg, failMsg) {
     if (!predictRes.data.success) {
       encodings.value[currentIndex.value] = {
         original_text: text,
+        processed_text: predictRes.data.processed_text || text,
         final_code: '',
         success: false,
         need_review: true,
@@ -812,18 +1064,59 @@ async function encodeCurrentItem(successMsg, failMsg) {
       showToast(failMsg, 'error')
       return
     }
+
+    const routeInfo = predictRes.data.route_info || null
+    if (routeInfo && routeInfo.encoding_enabled === false) {
+      encodings.value[currentIndex.value] = {
+        original_text: text,
+        processed_text: predictRes.data.processed_text || text,
+        final_code: '',
+        success: true,
+        need_review: false,
+        skipped_encoding: true,
+        skip_reason: routeInfo.skip_encoding_reason || '',
+        errors: [],
+        fields: {},
+        route_info: routeInfo,
+        stage1_output: {
+          ...(predictRes.data.model_output || {}),
+          _STRUCTURAL_PROMPT: predictRes.data.structural_prompt_output || null
+        },
+        stage1_raw_response: [
+          predictRes.data.model_raw_response || '',
+          predictRes.data.structural_prompt_raw_response
+            ? `\n\n[STRUCTURAL_PROMPT_RAW]\n${predictRes.data.structural_prompt_raw_response}`
+            : ''
+        ].join('')
+      }
+      showToast(routeInfo.skip_encoding_reason || successMsg, 'success')
+      return
+    }
     
     // 2. 实体编码
     const encodeRes = await axios.post('/api/pipe/encode', {
       entities: predictRes.data.entities,
       extract_confidence: predictRes.data.extract_confidence,
-      text
+      extract_confidence_v2: predictRes.data.extract_confidence_v2,
+      text,
+      project_name: dataList.value[currentIndex.value]?.projectName || ''
     })
 
     encodings.value[currentIndex.value] = {
       ...encodeRes.data,
-      stage1_output: predictRes.data.model_output || {},
-      stage1_raw_response: predictRes.data.model_raw_response || ''
+      processed_text: predictRes.data.processed_text || text,
+      extract_confidence_v2: encodeRes.data.extract_confidence_v2 || predictRes.data.extract_confidence_v2 || {},
+      route_info: predictRes.data.route_info || null,
+      stage1_output: {
+        ...(predictRes.data.model_output || {}),
+        _STRUCTURAL_PROMPT: predictRes.data.structural_prompt_output || null
+      },
+      stage1_raw_response: [
+        predictRes.data.model_raw_response || '',
+        predictRes.data.structural_prompt_raw_response
+          ? `\n\n[STRUCTURAL_PROMPT_RAW]\n${predictRes.data.structural_prompt_raw_response}`
+          : ''
+      ].join('')
     }
     showToast(successMsg, 'success')
     
@@ -839,7 +1132,9 @@ async function encodeCurrentItem(successMsg, failMsg) {
 function handleDataLoaded({ data, column }) {
   dataList.value = data.map((row, index) => ({
     index,
-    text: row[column] || ''
+    text: row[column] || '',
+    projectName: resolveProjectName(row),
+    rawRow: row
   })).filter(item => item.text)
   
   currentIndex.value = -1
@@ -853,98 +1148,310 @@ function handleDataLoaded({ data, column }) {
   }
 }
 
-// 一键编码
-async function handleBatchEncode() {
-  if (dataList.value.length === 0) return
-  
-  isEncoding.value = true
-  encodeProgress.value = 0
-  
-  const total = dataList.value.length
-  let success = 0
-  let review = 0
-  let processed = 0
-  const poolSize = Math.max(1, Math.min(maxConcurrent.value || 1, total))
-  let nextIndex = 0
-  
-  try {
-    const worker = async () => {
-      while (true) {
-        const i = nextIndex++
-        if (i >= total) break
-        const text = dataList.value[i].text
-
-        try {
-          // 1. NER 提取实体
-          const predictRes = await axios.post('/api/pipe/predict', {
-            text,
-            preprocess: true
-          })
-          
-          if (!predictRes.data.success) {
-            encodings.value[i] = {
-              original_text: text,
-              final_code: '',
-              success: false,
-              need_review: true,
-              errors: ['NER识别失败: ' + (predictRes.data.error || '未知错误')],
-              fields: {}
-            }
-            review++
-          } else {
-            // 2. 实体编码
-            const encodeRes = await axios.post('/api/pipe/encode', {
-              entities: predictRes.data.entities,
-              extract_confidence: predictRes.data.extract_confidence,
-              text
-            })
-
-            encodings.value[i] = {
-              ...encodeRes.data,
-              stage1_output: predictRes.data.model_output || {},
-              stage1_raw_response: predictRes.data.model_raw_response || ''
-            }
-            
-            if (encodeRes.data.success && !encodeRes.data.need_review) {
-              success++
-            }
-            if (encodeRes.data.need_review) {
-              review++
-            }
-          }
-        } catch (err) {
-          encodings.value[i] = {
-            original_text: text,
-            final_code: '',
-            success: false,
-            need_review: true,
-            errors: [err.message],
-            fields: {}
-          }
-          review++
-        } finally {
-          processed++
-          encodeProgress.value = Math.round((processed / total) * 100)
-        }
-      }
+function resolveProjectName(row) {
+  const projectKeys = ['项目名称', '子表.项目名称', 'project', 'PROJECT']
+  for (const key of projectKeys) {
+    const value = row?.[key]
+    if (value != null && String(value).trim() !== '') {
+      return String(value).trim()
     }
+  }
+  return ''
+}
 
-    const workers = []
-    for (let w = 0; w < poolSize; w++) {
-      workers.push(worker())
+function buildEncodingEntry(encodeData, predictMeta) {
+  return {
+    ...encodeData,
+    processed_text: encodeData?.processed_text || predictMeta?.processed_text || encodeData?.original_text || '',
+    extract_confidence_v2: encodeData?.extract_confidence_v2 || predictMeta?.extract_confidence_v2 || {},
+    route_info: encodeData?.route_info || predictMeta?.route_info || null,
+    stage1_output: encodeData?.stage1_output || predictMeta?.stage1_output || null,
+    stage1_raw_response: encodeData?.stage1_raw_response || predictMeta?.stage1_raw_response || ''
+  }
+}
+
+function shortJobId(jobId) {
+  const text = String(jobId || '')
+  return text ? text.slice(0, 8) : '—'
+}
+
+function taskStatusText(status) {
+  const value = String(status || '').trim()
+  if (value === 'queued') return '排队中'
+  if (value === 'running') return '运行中'
+  if (value === 'cancelling') return '停止中'
+  if (value === 'finished') return '已完成'
+  if (value === 'cancelled') return '已停止'
+  if (value === 'failed') return '失败'
+  return value || '未知'
+}
+
+function syncRunningBatchJob(job) {
+  if (!job || typeof job !== 'object' || !job.job_id) return
+  const next = { ...job }
+  const index = runningBatchJobs.value.findIndex(item => item.job_id === next.job_id)
+  const isActive = ['queued', 'running', 'cancelling'].includes(String(next.status || ''))
+  if (!isActive) {
+    if (index >= 0) {
+      runningBatchJobs.value.splice(index, 1)
     }
-    await Promise.all(workers)
-    
-    showToast(`编码完成: ${success} 成功, ${review} 待审核`, 'success')
-    
+    return
+  }
+  if (index >= 0) {
+    runningBatchJobs.value.splice(index, 1, next)
+  } else {
+    runningBatchJobs.value.push(next)
+    runningBatchJobs.value.sort((a, b) => Number(a.created_at || 0) - Number(b.created_at || 0))
+  }
+}
+
+function closeBatchJobStream() {
+  if (batchJobEventSource) {
+    batchJobEventSource.close()
+    batchJobEventSource = null
+  }
+}
+
+function clearActiveBatchJob() {
+  activeBatchJobId.value = ''
+  activeBatchJobStatus.value = ''
+  activeBatchJobMeta.value = null
+  closeBatchJobStream()
+}
+
+function applyBatchJobSnapshot(job) {
+  if (!job || typeof job !== 'object') return
+  const items = Array.isArray(job.items) ? job.items : []
+  if (items.length > 0) {
+    dataList.value = items.map((item, idx) => ({
+      index: Number.isFinite(Number(item.index)) ? Number(item.index) : idx,
+      text: item.text || '',
+      projectName: item.project_name || '',
+      rawRow: null
+    })).sort((a, b) => a.index - b.index)
     if (currentIndex.value < 0 && dataList.value.length > 0) {
       currentIndex.value = 0
     }
-    
+  }
+
+  const nextEncodings = {}
+  const results = job.results && typeof job.results === 'object' ? job.results : {}
+  Object.entries(results).forEach(([index, result]) => {
+    const numericIndex = Number(index)
+    if (Number.isFinite(numericIndex)) {
+      nextEncodings[numericIndex] = buildEncodingEntry(result || {}, null)
+    }
+  })
+  encodings.value = nextEncodings
+
+  activeBatchJobId.value = String(job.job_id || '')
+  activeBatchJobStatus.value = String(job.status || '')
+  activeBatchJobMeta.value = { ...job }
+  encodeProgress.value = job.total ? Math.round((Number(job.processed || 0) / Number(job.total || 1)) * 100) : 0
+  isEncoding.value = ['queued', 'running', 'cancelling'].includes(activeBatchJobStatus.value)
+  syncRunningBatchJob(job)
+}
+
+function isBatchJobDetailAvailable(jobId) {
+  if (!jobId || activeBatchJobId.value !== jobId) return false
+  const status = String(activeBatchJobStatus.value || '')
+  if (['queued', 'running', 'cancelling'].includes(status)) {
+    return true
+  }
+  if (!['finished', 'cancelled', 'failed'].includes(status)) {
+    return false
+  }
+  const finishedAt = Number(activeBatchJobMeta.value?.finished_at || 0)
+  if (!finishedAt) {
+    return false
+  }
+  return (Date.now() / 1000) - finishedAt < BATCH_JOB_KEEP_SECONDS
+}
+
+async function loadRunningBatchJobs() {
+  try {
+    const res = await axios.get('/api/pipe/encode/batch/jobs')
+    const jobs = Array.isArray(res.data?.jobs) ? res.data.jobs : []
+    runningBatchJobs.value = jobs
+  } catch (err) {
+    runningBatchJobs.value = []
+  }
+}
+
+function handleBatchJobEvent(event) {
+  if (!event || typeof event !== 'object') return
+  if (event.type === 'snapshot') {
+    const snapshot = event.snapshot || {}
+    syncRunningBatchJob(snapshot)
+    applyBatchJobSnapshot(snapshot)
+    return
+  }
+
+  const snapshot = event.snapshot && typeof event.snapshot === 'object' ? event.snapshot : null
+  const index = Number(event.index)
+  if (Number.isFinite(index) && event.result) {
+    encodings.value[index] = {
+      ...(encodings.value[index] || {}),
+      ...buildEncodingEntry(event.result || {}, null),
+    }
+  }
+  if (snapshot) {
+    activeBatchJobStatus.value = String(snapshot.status || '')
+    encodeProgress.value = snapshot.total ? Math.round((Number(snapshot.processed || 0) / Number(snapshot.total || 1)) * 100) : 0
+    isEncoding.value = ['queued', 'running', 'cancelling'].includes(activeBatchJobStatus.value)
+    syncRunningBatchJob(snapshot)
+  }
+  if (event.type === 'end' || event.type === 'cancelled' || event.type === 'failed') {
+    if (snapshot) {
+      applyBatchJobSnapshot(snapshot)
+    }
+    isEncoding.value = false
+    isStopSubmitting.value = false
+    showStopConfirmDialog.value = false
+    if (event.type === 'cancelled') {
+      showToast('批量编码已停止', 'success')
+    } else if (event.type === 'end') {
+      showToast(`编码完成: ${successCount.value} 成功, ${reviewCount.value} 待审核`, 'success')
+    } else if (event.type === 'failed') {
+      showToast(`批量编码失败: ${event.error || '未知错误'}`, 'error')
+    }
+    closeBatchJobStream()
+  }
+}
+
+function subscribeBatchJob(jobId) {
+  closeBatchJobStream()
+  batchJobEventSource = new EventSource(`/api/pipe/encode/batch/jobs/${jobId}/stream`)
+  batchJobEventSource.onmessage = (messageEvent) => {
+    try {
+      const event = JSON.parse(messageEvent.data)
+      handleBatchJobEvent(event)
+    } catch (err) {
+      console.error('解析批量任务事件失败:', err)
+    }
+  }
+  batchJobEventSource.onerror = () => {
+    if (!activeBatchJobId.value) {
+      closeBatchJobStream()
+    }
+  }
+}
+
+async function openBatchJob(jobId) {
+  if (!jobId) return
+  try {
+    const res = await axios.get(`/api/pipe/encode/batch/jobs/${jobId}`)
+    const job = res.data?.job
+    if (!job) {
+      return
+    }
+    applyBatchJobSnapshot(job)
+    if (['queued', 'running', 'cancelling'].includes(String(job.status || ''))) {
+      subscribeBatchJob(jobId)
+    }
+  } catch (err) {
+    showToast(`加载任务失败: ${err.message || '网络错误'}`, 'error')
+  }
+}
+
+function handleSelectItem(index) {
+  currentIndex.value = index
+  if (activeBatchJobId.value && isBatchJobDetailAvailable(activeBatchJobId.value)) {
+    loadBatchJobItemDetail(activeBatchJobId.value, index)
+  }
+}
+
+async function loadBatchJobItemDetail(jobId, itemIndex) {
+  if (!jobId || !Number.isFinite(Number(itemIndex))) return
+  try {
+    const res = await axios.get(`/api/pipe/encode/batch/jobs/${jobId}/items/${itemIndex}`)
+    const detail = res.data || {}
+    const result = detail.result && typeof detail.result === 'object' ? detail.result : null
+    if (result) {
+      encodings.value[itemIndex] = {
+        ...(encodings.value[itemIndex] || {}),
+        ...buildEncodingEntry(result, null),
+      }
+    }
+  } catch (err) {
+    const statusCode = Number(err?.response?.status || 0)
+    if ((statusCode === 404 || statusCode === 410) && activeBatchJobId.value === jobId) {
+      activeBatchJobId.value = ''
+      activeBatchJobStatus.value = ''
+      activeBatchJobMeta.value = null
+    }
+  }
+}
+
+async function createBatchJob(items) {
+  const res = await axios.post('/api/pipe/encode/batch/jobs', {
+    items,
+    max_concurrent: maxConcurrent.value
+  })
+  return res.data?.job || null
+}
+
+async function handleCancelBatchJob() {
+  showStopConfirmDialog.value = true
+}
+
+function closeStopConfirmDialog() {
+  if (isStopSubmitting.value) return
+  showStopConfirmDialog.value = false
+}
+
+async function confirmCancelBatchJob() {
+  if (!activeBatchJobId.value) return
+  try {
+    isStopSubmitting.value = true
+    const res = await axios.post(`/api/pipe/encode/batch/jobs/${activeBatchJobId.value}/cancel`)
+    const job = res.data?.job
+    activeBatchJobStatus.value = String(job?.status || 'cancelling')
+    if (job) {
+      syncRunningBatchJob(job)
+    }
+  } catch (err) {
+    isStopSubmitting.value = false
+    showToast(`停止失败: ${err.message || '网络错误'}`, 'error')
+  }
+}
+
+function handlePrimaryBatchAction() {
+  if (isEncoding.value) {
+    handleCancelBatchJob()
+    return
+  }
+  handleBatchEncode()
+}
+
+// 一键编码
+async function handleBatchEncode() {
+  if (dataList.value.length === 0) return
+
+  isEncoding.value = true
+  encodeProgress.value = 0
+
+  const batchItems = dataList.value.map((item, index) => ({
+    client_index: index,
+    text: item.text,
+    project_name: item.projectName || '',
+    preprocess: true
+  }))
+
+  try {
+    const job = await createBatchJob(batchItems)
+    if (!job?.job_id) {
+      throw new Error('创建批量任务失败')
+    }
+    applyBatchJobSnapshot(job)
+    subscribeBatchJob(job.job_id)
   } catch (err) {
     showToast(`编码失败: ${err.message}`, 'error')
-  } finally {
     isEncoding.value = false
+  } finally {
+    if (!activeBatchJobId.value) {
+      isEncoding.value = false
+    }
   }
 }
 
@@ -986,12 +1493,17 @@ function handleEditField({ type, index = null }) {
 
   const snapshot = field.original_snapshot || {
     original_value: field.original_value || '',
+    stage1_final_value: field.stage1_final_value || '',
+    encoding_input: field.encoding_input || '',
     code: field.code || '',
     items: cloneDeep(field.items || []),
     manual_form: cloneDeep(field.manual_form || null)
   }
 
-  if (type === 'SIZE') {
+  if (type === 'TYPE') {
+    editDialogMode.value = 'type'
+    typeEditForm.value = buildTypeEditForm(field, snapshot)
+  } else if (type === 'SIZE') {
     editDialogMode.value = 'size'
     sizeEditForm.value = buildSizeEditForm(field)
     sizeEditForm.value.originalContent = getEditableFieldText(snapshot, type)
@@ -1026,6 +1538,14 @@ function closeEditDialog() {
   editDialogMode.value = 'single'
   editDialogType.value = ''
   editDialogIndex.value = null
+  typeEditForm.value = {
+    modelOriginalContent: '',
+    stage1FinalContent: '',
+    encodingInput: '',
+    originalCode: '',
+    modifiedContent: '',
+    modifiedCode: ''
+  }
   singleEditForm.value = {
     originalContent: '',
     originalCode: '',
@@ -1103,6 +1623,15 @@ function confirmEditDialog() {
     field.matched_names = field.matched_name ? [field.matched_name] : []
     field.items = []
     field.manual_form = { type: 'SIZE', values: manualValues }
+    field.similarity = 1
+    field.need_review = false
+    field.manual_override = true
+  } else if (editDialogMode.value === 'type') {
+    field.encoding_input = typeEditForm.value.modifiedContent.trim()
+    field.matched_name = typeEditForm.value.modifiedContent.trim()
+    field.code = typeEditForm.value.modifiedCode.trim()
+    field.codes = field.code ? [field.code] : []
+    field.matched_names = field.matched_name ? [field.matched_name] : []
     field.similarity = 1
     field.need_review = false
     field.manual_override = true
@@ -1246,6 +1775,45 @@ function handleSelectCandidate({ type, index, candidate }) {
   border-bottom: 1px solid var(--border-light);
 }
 
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-item {
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--bg-secondary);
+}
+
+.task-item.active {
+  border-color: var(--primary-color);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.task-item-main,
+.task-item-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.task-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.task-item-status,
+.task-item-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 /* 导入区域可折叠 */
 .import-section.collapsed {
   padding: 8px 16px;
@@ -1274,6 +1842,24 @@ function handleSelectCandidate({ type, index, candidate }) {
 /* 操作区域紧凑 */
 .operation-section {
   padding: 12px 16px;
+}
+
+.batch-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: background-color 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+}
+
+.batch-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.batch-action-btn.is-stopping {
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.16);
 }
 
 .concurrency-row {
@@ -1459,6 +2045,45 @@ function handleSelectCandidate({ type, index, candidate }) {
   color: #fff;
 }
 
+.item-difficulty {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.item-difficulty.simple {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #b7dfbc;
+}
+
+.item-difficulty.hard {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.item-second-pass.second-pass-easy {
+  background: #ecfdf3;
+  color: #027a48;
+  border-color: #abefc6;
+}
+
+.item-second-pass.second-pass-mid {
+  background: #fffaeb;
+  color: #b54708;
+  border-color: #fedf89;
+}
+
+.item-second-pass.second-pass-hard {
+  background: #fef3f2;
+  color: #b42318;
+  border-color: #fecdca;
+}
+
 /* 右侧内容区 */
 .content {
   flex: 1;
@@ -1560,6 +2185,27 @@ function handleSelectCandidate({ type, index, candidate }) {
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  word-break: break-all;
+}
+
+.processed-text-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.processed-text-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.processed-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
   font-family: 'SF Mono', Monaco, 'Courier New', monospace;
   word-break: break-all;
 }
@@ -1694,6 +2340,25 @@ function handleSelectCandidate({ type, index, candidate }) {
   justify-content: flex-end;
   gap: 10px;
   padding: 0 18px 18px;
+}
+
+.stop-dialog {
+  width: min(460px, 100%);
+}
+
+.stop-dialog-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.stop-dialog-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  font-size: 14px;
+  color: var(--text-primary);
 }
 
 .form-group {
@@ -1851,7 +2516,7 @@ function handleSelectCandidate({ type, index, candidate }) {
   cursor: not-allowed;
 }
 
-.btn-danger {
+.btn-xs.btn-danger {
   color: #dc2626;
 }
 </style>

@@ -1,0 +1,290 @@
+# 规范二次分流规则
+#
+# 目标：
+# 1. 已知编码后，先拆出 family / core / suffix
+# 2. 用 core 在描述中定位规范主体附近的位置
+# 3. 再校验 family 前缀是否合规
+# 4. 最后在主体附近小窗口内校验 suffix
+#
+# 这份配置只维护“规则”：
+# - family 前缀如何判断
+# - core 是否允许裸匹配
+# - suffix 长什么样
+# - 组合后缀如何判断
+#
+# 不在这里维护：
+# - 具体规范编码白名单
+# - 具体规范主体 surface 列表
+
+meta:
+  # 普通后缀默认只在主体后短窗口内判断
+  suffix_window_default: 6
+
+  # 组合后缀（例如附录类）允许更大的窗口
+  appendix_window_default: 30
+
+  # 罗马数字系列号统一配置。
+  # 这里列出允许识别的罗马数字后缀，具体写法由 roman_series_template 自动展开。
+  roman_series_suffixes:
+    - I
+    - II
+    - III
+    - IV
+    - V
+    - VI
+    - VII
+    - VIII
+    - IX
+
+
+# family 级规则
+#
+# prefix_patterns:
+#   允许的前缀写法，匹配时忽略大小写、空格和点号差异。
+#
+# core_mode:
+#   core 在正文中的匹配方式。
+#   - direct: core 按原样参与匹配，例如 19326 / 21833.2
+#   - asme_b_compact: 例如 AB1611 -> B16.11, AB165 -> B16.5, AB3610 -> B36.10
+#   - mss_sp_compact: 例如 MS95 -> SP-95 / SP95
+#
+# prefix_required:
+#   是否强制要求描述里必须出现 family 前缀。
+#
+# bare_core_allowed:
+#   是否允许只靠 core 在描述里定位主体。
+#
+# 说明：
+# - 国标/行标 family 一般允许 bare core
+# - 美标压缩编码 family 一般不允许 bare core
+family_rules:
+  GBT:
+    prefix_patterns:
+      - GB/T
+      - GBT
+      - GB
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  HGT:
+    prefix_patterns:
+      - HG/T
+      - HGT
+      - HG
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  NBT:
+    prefix_patterns:
+      - NB/T
+      - NBT
+      - NB
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  SHT:
+    prefix_patterns:
+      - SH/T
+      - SHT
+      - SH
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  JBT:
+    prefix_patterns:
+      - JB/T
+      - JBT
+      - JB
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  YBT:
+    prefix_patterns:
+      - YB/T
+      - YBT
+      - YB
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  DLT:
+    prefix_patterns:
+      - DL/T
+      - DLT
+      - DL
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  SYT:
+    prefix_patterns:
+      - SY/T
+      - SYT
+      - SY
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  CJT:
+    prefix_patterns:
+      - CJ/T
+      - CJT
+      - CJ
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  QBT:
+    prefix_patterns:
+      - QB/T
+      - QBT
+      - QB
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  GJB:
+    prefix_patterns:
+      - GJB
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  TSG:
+    prefix_patterns:
+      - TSG
+    core_mode: direct
+    prefix_required: false
+    bare_core_allowed: true
+
+  AB:
+    prefix_patterns:
+      - ASME B
+      - ASMEB
+      - B
+    core_mode: asme_b_compact
+    prefix_required: true
+    bare_core_allowed: false
+
+  MS:
+    prefix_patterns:
+      - MSS SP
+      - MSSSP
+    core_mode: mss_sp_compact
+    prefix_required: true
+    bare_core_allowed: false
+
+  ASTM:
+    prefix_patterns:
+      - ASTM
+    core_mode: direct
+    prefix_required: true
+    bare_core_allowed: false
+
+  API:
+    prefix_patterns:
+      - API
+    core_mode: direct
+    prefix_required: true
+    bare_core_allowed: false
+
+  DIN:
+    prefix_patterns:
+      - DIN
+    core_mode: direct
+    prefix_required: true
+    bare_core_allowed: false
+
+  EN:
+    prefix_patterns:
+      - EN
+    core_mode: direct
+    prefix_required: true
+    bare_core_allowed: false
+
+
+# 普通后缀规则
+#
+# mode=nearby:
+#   在主体命中位置后的小窗口内判断后缀
+suffix_patterns:
+  # 罗马数字系列号统一模板。
+  # 会按 meta.roman_series_suffixes 展开成 I/II/III/IV/V/VI... 各自的规则。
+  ROMAN_SERIES:
+    mode: nearby
+    window: 6
+    patterns:
+      - "{suffix}"
+      - "({suffix})"
+      - "{unicode}"
+      - "{suffix}系列"
+      - "Series {suffix}"
+      - "Serial {suffix}"
+      - "Sr {suffix}"
+
+  IA:
+    mode: nearby
+    window: 6
+    patterns:
+      - "IA"
+      - "Ia"
+      - "la"
+      - "(Ia)"
+      - "(IA)"
+      - "(Ⅰa)"
+      - "(la)"
+      - "Ia系列"
+      - "Series Ia"
+      - "Serial Ia"
+      - "SerialIA"
+      - "SerialI"
+
+  IB:
+    mode: composite
+
+  A:
+    mode: nearby
+    window: 6
+    patterns:
+      - "A"
+      - "(A)"
+      - "A系列"
+      - "Serial A"
+      - "SerialA"
+
+  B:
+    mode: nearby
+    window: 12
+    patterns:
+      - "B"
+      - "(B)"
+      - "B系列"
+      - "Serial B"
+      - "SerialB"
+      - "附录B"
+      - "Appendix B"
+      - "-B"
+
+  APPENDIX_B:
+    mode: nearby
+    window: 30
+    patterns:
+      - "附录B"
+      - "Appendix B"
+      - "-B"
+
+
+# 组合后缀规则
+#
+# 这类后缀不能靠单一 token 判断，必须拆成多段条件。
+composite_suffix_rules:
+  IB:
+    primary: I
+    appendix: APPENDIX_B
+    primary_window: 12
+    appendix_window: 30
