@@ -1,0 +1,60 @@
+models:
+  pipe:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/pipe
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
+  type:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-8b-base/lora/type
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0  
+  material-standard:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/material-standard
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
+  flange:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/flang
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
+
+  fittings:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/fittings
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
+
+  material:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/material
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
+
+  standard:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/standard
+    device: mps
+    dtype: auto
+    instruction: 你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。
+    max_new_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
