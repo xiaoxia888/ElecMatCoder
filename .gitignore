@@ -1,5 +1,6 @@
 apps/platform/frontend/dist/
 apps/platform/frontend/node_modules/
+apps/trainer/qwen3_fte
 data/
 outputs/
 wheels/
