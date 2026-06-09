@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from .difficulty_levels import DIFF_EASY, DIFF_HARD, difficulty_label
 from .difficulty_splitter import MaterialDifficultySplitter
 from .project_frequency_detector import ProjectFrequencyDetector
 
@@ -42,18 +43,21 @@ def _analyze_one(
     material_code: str = "",
     standard_code: str = "",
 ) -> dict:
-    return splitter.analyze(
+    result = splitter.analyze(
         text,
         type_code=type_code,
         material_code=material_code,
         standard_code=standard_code,
     ).to_dict()
+    result["difficulty"] = DIFF_HARD if result.get("is_difficult") else DIFF_EASY
+    result["difficulty_label"] = difficulty_label(result["difficulty"])
+    return result
 
 
 def _format_pretty(result: dict) -> str:
     lines: list[str] = []
     lines.append(f"文本: {result['text']}")
-    lines.append(f"结论: {'困难' if result['is_difficult'] else '不困难'}")
+    lines.append(f"结论: {result.get('difficulty_label') or difficulty_label(result.get('difficulty')) or ('困难' if result['is_difficult'] else '简单')}")
     if result["reasons"]:
         lines.append(f"原因: {' | '.join(result['reasons'])}")
 
@@ -161,6 +165,7 @@ def _run_batch(
         raise ValueError(f"列 {text_column} 不存在，可用列为: {list(df.columns)}")
 
     results = []
+    difficulty_list = []
     is_difficult_list = []
     reasons_list = []
     feature_name_list = []
@@ -200,6 +205,7 @@ def _run_batch(
         )
         analyzed_results.append(analyzed)
         results.append(json.dumps(analyzed, ensure_ascii=False))
+        difficulty_list.append(analyzed["difficulty"])
         is_difficult_list.append(analyzed["is_difficult"])
         reasons_list.append(" | ".join(analyzed["reasons"]))
         feature_name_list.append(" | ".join(feature["name"] for feature in analyzed["features"] if feature["matched"]))
@@ -251,6 +257,8 @@ def _run_batch(
         )
         if matched and feature is not None:
             analyzed["is_difficult"] = True
+            analyzed["difficulty"] = DIFF_HARD
+            analyzed["difficulty_label"] = difficulty_label(DIFF_HARD)
             if feature.reason:
                 existing_reasons = list(analyzed.get("reasons", []))
                 if feature.reason not in existing_reasons:
@@ -268,6 +276,7 @@ def _run_batch(
             reasons_list[idx] = (
                 f"{existing_reason_text} | {project_reason_text}" if existing_reason_text and project_reason_text else (project_reason_text or existing_reason_text)
             )
+            difficulty_list[idx] = DIFF_HARD
             is_difficult_list[idx] = True
             text = _clean_cell(df.iloc[idx].get(text_column, ""))
             feature_rows = _build_feature_sheet_rows(text, analyzed, idx + 1)
@@ -276,6 +285,7 @@ def _run_batch(
             pretty_summary_list[idx] = _format_pretty(analyzed)
 
     out_df = df.copy()
+    out_df["难度"] = difficulty_list
     out_df["是否困难"] = is_difficult_list
     out_df["命中特征"] = feature_name_list
     out_df["命中数量"] = hit_count_list

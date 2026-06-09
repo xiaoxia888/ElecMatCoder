@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import Any, Dict, Iterable, List
 
 from .difficulty_splitter import MaterialDifficultySplitter
+from .difficulty_levels import DIFF_EASY, DIFF_HARD
 from .models import DifficultyFeature, DifficultyResult
 from .project_frequency_detector import ProjectFrequencyDetector
 
@@ -77,7 +78,7 @@ def build_base_difficulty(
         ),
     )
     return {
-        "difficulty": "困难" if result.is_difficult else "简单",
+        "difficulty": DIFF_HARD if result.is_difficult else DIFF_EASY,
         "reason_text": format_reason_text(result),
         "reasons": list(result.reasons),
         "is_difficult": bool(result.is_difficult),
@@ -158,7 +159,7 @@ def finalize_batch_difficulty(items: Iterable[Dict[str, Any]]) -> List[Dict[str,
 
         final_results.append(
             {
-                "difficulty": "困难" if (bool(base.get("is_difficult")) or project_feature.matched) else "简单",
+                "difficulty": DIFF_HARD if (bool(base.get("is_difficult")) or project_feature.matched) else DIFF_EASY,
                 "reason_text": " | ".join(reasons),
                 "reasons": list(base.get("reasons", [])),
                 "is_difficult": bool(base.get("is_difficult")) or project_feature.matched,

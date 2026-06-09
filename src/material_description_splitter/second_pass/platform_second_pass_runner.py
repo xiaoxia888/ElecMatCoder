@@ -6,6 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from ..difficulty_levels import DIFF_EASY, DIFF_HARD, DIFF_SECOND_EASY, normalize_difficulty_level
 from .material_second_pass_splitter import MaterialSecondPassSplitter
 from .pressure_second_pass_splitter import PressureSecondPassSplitter
 from .size_second_pass_splitter import SizeSecondPassSplitter
@@ -25,7 +26,7 @@ class PlatformSecondPassRunner:
 
     def analyze_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
         text = self._clean(payload.get("text") or payload.get("original_text"))
-        stage1_difficulty = self._clean(payload.get("stage1_difficulty") or payload.get("difficulty"))
+        stage1_difficulty = normalize_difficulty_level(payload.get("stage1_difficulty") if payload.get("stage1_difficulty") is not None else payload.get("difficulty"))
         fields = payload.get("fields") if isinstance(payload.get("fields"), dict) else {}
 
         extracted = {
@@ -51,7 +52,7 @@ class PlatformSecondPassRunner:
         self,
         *,
         text: str,
-        stage1_difficulty: str = "",
+        stage1_difficulty: Any = None,
         size_value: Any = None,
         thickness_value: Any = None,
         pressure_value: Any = None,
@@ -60,18 +61,18 @@ class PlatformSecondPassRunner:
         standard_items: list[dict[str, str]] | None = None,
     ) -> dict[str, Any]:
         clean_text = self._clean(text)
-        clean_difficulty = self._clean(stage1_difficulty)
+        clean_difficulty = normalize_difficulty_level(stage1_difficulty)
         results: dict[str, Any] = {}
         skipped_fields: dict[str, str] = {}
 
-        if clean_difficulty and clean_difficulty != "简单":
+        if clean_difficulty is not None and clean_difficulty != DIFF_EASY:
             for field_name in ("SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "TYPE", "STANDARD"):
                 if self._field_provided(field_name, size_value, thickness_value, pressure_value, material_code, type_code, standard_items):
                     skipped_fields[field_name] = f"一阶段非简单: {clean_difficulty}"
             return {
                 "text": clean_text,
                 "stage1_difficulty": clean_difficulty,
-                "final_level": "困难",
+                "final_level": DIFF_HARD,
                 "results": results,
                 "skipped_fields": skipped_fields,
             }
@@ -267,7 +268,7 @@ class PlatformSecondPassRunner:
     @classmethod
     def _build_final_level(
         cls,
-        stage1_difficulty: str,
+        stage1_difficulty: int | None,
         results: dict[str, Any],
         *,
         size_value: Any,
@@ -276,16 +277,16 @@ class PlatformSecondPassRunner:
         material_code: str,
         type_code: str,
         standard_items: list[dict[str, str]] | None,
-    ) -> str:
-        if stage1_difficulty and stage1_difficulty != "简单":
-            return "困难"
+    ) -> int:
+        if stage1_difficulty is not None and stage1_difficulty != DIFF_EASY:
+            return DIFF_HARD
         material_result = results.get("MATERIAL") if isinstance(results, dict) else None
         material_reason = cls._clean(material_result.get("reason")) if isinstance(material_result, dict) else ""
         if material_reason.startswith("文本命中后缀表达，但编码缺少后缀"):
-            return "困难"
+            return DIFF_HARD
         provided_results = [payload for payload in results.values() if isinstance(payload, dict)]
         if not provided_results:
-            return "简单" if stage1_difficulty == "简单" else "困难"
+            return DIFF_EASY if stage1_difficulty == DIFF_EASY else DIFF_HARD
         if not cls._is_second_easy_eligible(
             size_value=size_value,
             thickness_value=thickness_value,
@@ -294,8 +295,8 @@ class PlatformSecondPassRunner:
             type_code=type_code,
             standard_items=standard_items,
         ):
-            return "简单"
+            return DIFF_EASY
         all_passed = all(bool(payload.get("passed")) for payload in provided_results)
-        if stage1_difficulty == "简单" and all_passed:
-            return "二次简单"
-        return "简单"
+        if stage1_difficulty == DIFF_EASY and all_passed:
+            return DIFF_SECOND_EASY
+        return DIFF_EASY

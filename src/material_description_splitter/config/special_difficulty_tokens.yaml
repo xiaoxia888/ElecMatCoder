@@ -3,11 +3,13 @@ groups:
     reason: 命中特殊复杂结构描述
     tokens:
       - token: 夹套
+      - token: jacket
       - token: 伴热
       - token: 双层
       - token: 内衬
       - token: 衬里
       - token: 剖分
+      - token: 剖切
 
   seal_complex:
     reason: 命中特殊密封/连接描述

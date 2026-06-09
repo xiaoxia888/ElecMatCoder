@@ -133,11 +133,11 @@ class SizeSurfaceMatcher:
         payload = self._strip_head_label(text, "INCH")
         payload_upper = payload.upper()
         labeled_as_inch = bool(re.match(r'(?i)^\s*INCH\s*:', str(text or "")))
-        if not re.search(r'[\"″]', payload_upper) and not labeled_as_inch:
+        if not re.search(r'[\"″]|\bIN(?:CH)?\b', payload_upper) and not labeled_as_inch:
             return []
 
         composite_pattern = re.compile(
-            rf'({INCH_TOKEN_RE}\s*"?\s*[xX×*]\s*{INCH_TOKEN_RE}\s*"?)',
+            rf'({INCH_TOKEN_RE}\s*(?:["″]|\bIN(?:CH)?\b)?\s*[xX×*]\s*{INCH_TOKEN_RE}\s*(?:["″]|\bIN(?:CH)?\b)?)',
             re.IGNORECASE,
         )
         for match in composite_pattern.finditer(payload):
@@ -237,7 +237,7 @@ class SizeSurfaceMatcher:
             payload = self._strip_head_label(text, "INCH")
             if re.search(rf'(?i){INCH_TOKEN_RE}\s*"?\s*[xX×*]\s*{INCH_TOKEN_RE}\s*"?', payload):
                 return items
-        for match in re.finditer(rf'({INCH_TOKEN_RE})\s*[\"″]', text):
+        for match in re.finditer(rf'({INCH_TOKEN_RE})\s*(?:[\"″]|\bIN(?:CH)?\b)', text, re.IGNORECASE):
             value = self._normalize_inch_value(match.group(1))
             raw = match.group(0).strip()
             items.append(
@@ -432,7 +432,7 @@ class SizeSurfaceMatcher:
             patterns.append(
                 (
                     raw,
-                    re.compile(rf'{TOKEN_HEAD}({re.escape(variant)}\s*[\"″]){TOKEN_TAIL}', re.IGNORECASE),
+                    re.compile(rf'{TOKEN_HEAD}({re.escape(variant)}\s*(?:[\"″]|\bIN(?:CH)?\b)){TOKEN_TAIL}', re.IGNORECASE),
                 )
             )
         return patterns
@@ -446,12 +446,12 @@ class SizeSurfaceMatcher:
         alias = left if is_left else right
         if is_left:
             pattern = re.compile(
-                rf'{TOKEN_HEAD}(({left_alt}))\s*[\"″]?\s*{X_SEP}\s*(?:{right_alt})\s*[\"″]?{TOKEN_TAIL}',
+                rf'{TOKEN_HEAD}(({left_alt}))\s*(?:[\"″]|\bIN(?:CH)?\b)?\s*{X_SEP}\s*(?:{right_alt})\s*(?:[\"″]|\bIN(?:CH)?\b)?{TOKEN_TAIL}',
                 re.IGNORECASE,
             )
         else:
             pattern = re.compile(
-                rf'{TOKEN_HEAD}(?:{left_alt})\s*[\"″]?\s*{X_SEP}\s*(({right_alt}))\s*[\"″]?{TOKEN_TAIL}',
+                rf'{TOKEN_HEAD}(?:{left_alt})\s*(?:[\"″]|\bIN(?:CH)?\b)?\s*{X_SEP}\s*(({right_alt}))\s*(?:[\"″]|\bIN(?:CH)?\b)?{TOKEN_TAIL}',
                 re.IGNORECASE,
             )
         return [(alias, pattern)]
@@ -472,7 +472,7 @@ class SizeSurfaceMatcher:
     def _compile_single_inch_pattern(value: str) -> re.Pattern[str]:
         variants = SizeSurfaceMatcher._inch_value_variants(value)
         body = "|".join(re.escape(v) for v in variants)
-        return re.compile(rf'{TOKEN_HEAD}(({body})\s*[\"″]){TOKEN_TAIL}', re.IGNORECASE)
+        return re.compile(rf'{TOKEN_HEAD}(({body})\s*(?:[\"″]|\bIN(?:CH)?\b)){TOKEN_TAIL}', re.IGNORECASE)
 
     @staticmethod
     def _compile_inch_composite_pattern(values: list[str]) -> re.Pattern[str]:

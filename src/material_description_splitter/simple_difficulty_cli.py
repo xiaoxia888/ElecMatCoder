@@ -17,6 +17,7 @@ matplotlib.use("Agg")
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from .difficulty_levels import DIFF_EASY, DIFF_HARD, difficulty_label, normalize_difficulty_level
 from .difficulty_splitter import MaterialDifficultySplitter
 from .models import DifficultyResult
 from .project_frequency_detector import ProjectFrequencyDetector
@@ -124,7 +125,7 @@ def _save_accuracy_chart(df: pd.DataFrame, chart_path: Path) -> None:
         axis=1,
     )
 
-    order = ["简单", "困难"]
+    order = [DIFF_EASY, DIFF_HARD]
     summary[DIFFICULTY_COLUMN] = pd.Categorical(summary[DIFFICULTY_COLUMN], categories=order, ordered=True)
     summary = summary.sort_values(DIFFICULTY_COLUMN)
 
@@ -132,7 +133,7 @@ def _save_accuracy_chart(df: pd.DataFrame, chart_path: Path) -> None:
     plt.rcParams["axes.unicode_minus"] = False
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    labels = summary[DIFFICULTY_COLUMN].astype(str).tolist()
+    labels = [difficulty_label(value) for value in summary[DIFFICULTY_COLUMN].tolist()]
     rates = (summary["正确率"] * 100).tolist()
     bars = ax.bar(labels, rates, color=["#4CAF50", "#FF9800"][: len(labels)])
     ax.set_ylim(0, 100)
@@ -166,7 +167,7 @@ def _build_reason_summary(df: pd.DataFrame) -> pd.DataFrame:
     if valid_df.empty:
         return pd.DataFrame(columns=["原因", "涉及条数", "占困难样本比例(%)"])
 
-    difficult_df = valid_df[valid_df[DIFFICULTY_COLUMN] == "困难"].copy()
+    difficult_df = valid_df[valid_df[DIFFICULTY_COLUMN] == DIFF_HARD].copy()
     if difficult_df.empty:
         return pd.DataFrame(columns=["原因", "涉及条数", "占困难样本比例(%)"])
 
@@ -216,25 +217,25 @@ def _build_project_summary(df: pd.DataFrame) -> pd.DataFrame:
         .unstack(fill_value=0)
         .reset_index()
     )
-    if "简单" not in summary.columns:
-        summary["简单"] = 0
-    if "困难" not in summary.columns:
-        summary["困难"] = 0
+    if DIFF_EASY not in summary.columns:
+        summary[DIFF_EASY] = 0
+    if DIFF_HARD not in summary.columns:
+        summary[DIFF_HARD] = 0
 
-    summary["总数"] = summary["简单"] + summary["困难"]
+    summary["总数"] = summary[DIFF_EASY] + summary[DIFF_HARD]
     summary["简单占比(%)"] = summary.apply(
-        lambda row: round(row["简单"] / row["总数"] * 100, 2) if row["总数"] else 0.0,
+        lambda row: round(row[DIFF_EASY] / row["总数"] * 100, 2) if row["总数"] else 0.0,
         axis=1,
     )
     summary["困难占比(%)"] = summary.apply(
-        lambda row: round(row["困难"] / row["总数"] * 100, 2) if row["总数"] else 0.0,
+        lambda row: round(row[DIFF_HARD] / row["总数"] * 100, 2) if row["总数"] else 0.0,
         axis=1,
     )
     summary = summary.rename(
         columns={
             PROJECT_COLUMN: "项目名称",
-            "简单": "简单数",
-            "困难": "困难数",
+            DIFF_EASY: "简单数",
+            DIFF_HARD: "困难数",
         }
     )
     return summary.sort_values(["总数", "项目名称"], ascending=[False, True]).reset_index(drop=True)
@@ -279,14 +280,14 @@ def _build_project_accuracy_summary(df: pd.DataFrame) -> pd.DataFrame:
             "困难正确率(%)": 0.0,
         }
         for _, row in group.iterrows():
-            difficulty = str(row[DIFFICULTY_COLUMN])
+            difficulty = normalize_difficulty_level(row[DIFFICULTY_COLUMN])
             total = int(row["count"])
             correct = int(row["sum"])
-            if difficulty == "简单":
+            if difficulty == DIFF_EASY:
                 metrics["简单总数"] = total
                 metrics["简单正确数"] = correct
                 metrics["简单正确率(%)"] = round(correct / total * 100, 2) if total else 0.0
-            elif difficulty == "困难":
+            elif difficulty == DIFF_HARD:
                 metrics["困难总数"] = total
                 metrics["困难正确数"] = correct
                 metrics["困难正确率(%)"] = round(correct / total * 100, 2) if total else 0.0
@@ -511,7 +512,7 @@ def run_batch(input_file: str, output_file: str | None = None) -> tuple[Path, li
                 parts.append("；".join(hit_notes))
             elif project_feature.reason:
                 parts.append(project_feature.reason)
-        difficulties.append("困难" if (result.is_difficult or (project_feature and project_feature.matched)) else "简单")
+        difficulties.append(DIFF_HARD if (result.is_difficult or (project_feature and project_feature.matched)) else DIFF_EASY)
         reasons.append(" | ".join(parts))
 
     out_df = df.copy()

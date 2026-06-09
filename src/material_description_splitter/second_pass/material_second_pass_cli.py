@@ -16,6 +16,7 @@ matplotlib.use("Agg")
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from ..difficulty_levels import DIFF_EASY, DIFF_HARD, DIFF_SECOND_EASY, difficulty_label, normalize_difficulty_level
 from .material_second_pass_splitter import MaterialSecondPassSplitter
 from .pressure_second_pass_splitter import PressureSecondPassSplitter
 from .size_second_pass_splitter import SizeSecondPassSplitter
@@ -271,10 +272,10 @@ def _build_processed_only(detail_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _build_final_second_pass_level(detail_df: pd.DataFrame) -> list[str]:
-    levels: list[str] = []
+    levels: list[int | str] = []
     for _, row in detail_df.iterrows():
         text = _clean_cell(row.get(TEXT_COLUMN, ""))
-        difficulty = _clean_cell(row.get(DIFFICULTY_COLUMN, ""))
+        difficulty = normalize_difficulty_level(row.get(DIFFICULTY_COLUMN, ""))
         size_result = _clean_cell(row.get(SIZE_RESULT_COLUMN, ""))
         thickness_result = _clean_cell(row.get(THICKNESS_RESULT_COLUMN, ""))
         pressure_result = _clean_cell(row.get(PRESSURE_RESULT_COLUMN, ""))
@@ -287,8 +288,8 @@ def _build_final_second_pass_level(detail_df: pd.DataFrame) -> list[str]:
         if not text:
             levels.append("")
             continue
-        if difficulty and difficulty != "简单":
-            levels.append("困难")
+        if difficulty is not None and difficulty != DIFF_EASY:
+            levels.append(DIFF_HARD)
             continue
         standard_value = _clean_cell(row.get(STANDARD_RESULT_COLUMN, "")) or _clean_cell(row.get(STANDARD_CODE_COLUMN, ""))
         required_presence_ok = bool(
@@ -299,7 +300,7 @@ def _build_final_second_pass_level(detail_df: pd.DataFrame) -> list[str]:
         )
         thickness_or_pressure_present = bool(thickness_result or pressure_result)
         if not (required_presence_ok and thickness_or_pressure_present):
-            levels.append("简单")
+            levels.append(DIFF_EASY)
             continue
         checks = []
         if size_result:
@@ -315,9 +316,9 @@ def _build_final_second_pass_level(detail_df: pd.DataFrame) -> list[str]:
         if standard_result:
             checks.append(standard_result == "通过")
         if checks and all(checks):
-            levels.append("二次简单")
+            levels.append(DIFF_SECOND_EASY)
         else:
-            levels.append("简单")
+            levels.append(DIFF_EASY)
     return levels
 
 
@@ -341,7 +342,7 @@ def _save_final_accuracy_chart(df: pd.DataFrame, chart_path: Path) -> None:
         lambda row: float(row["正确数"]) / float(row["总数"]) if row["总数"] else 0.0,
         axis=1,
     )
-    order = ["二次简单", "简单", "困难"]
+    order = [DIFF_SECOND_EASY, DIFF_EASY, DIFF_HARD]
     summary[FINAL_SECOND_PASS_LEVEL_COLUMN] = pd.Categorical(
         summary[FINAL_SECOND_PASS_LEVEL_COLUMN], categories=order, ordered=True
     )
@@ -351,7 +352,7 @@ def _save_final_accuracy_chart(df: pd.DataFrame, chart_path: Path) -> None:
     plt.rcParams["axes.unicode_minus"] = False
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    labels = summary[FINAL_SECOND_PASS_LEVEL_COLUMN].astype(str).tolist()
+    labels = [difficulty_label(value) for value in summary[FINAL_SECOND_PASS_LEVEL_COLUMN].tolist()]
     rates = (summary["正确率"] * 100).tolist()
     bars = ax.bar(labels, rates, color=["#2563EB", "#4CAF50", "#FF9800"][: len(labels)])
     ax.set_ylim(0, 100)
@@ -389,14 +390,14 @@ def _build_final_project_summary(df: pd.DataFrame) -> pd.DataFrame:
         .unstack(fill_value=0)
         .reset_index()
     )
-    for col in ["二次简单", "简单", "困难"]:
+    for col in [DIFF_SECOND_EASY, DIFF_EASY, DIFF_HARD]:
         if col not in summary.columns:
             summary[col] = 0
-    summary["总数"] = summary["二次简单"] + summary["简单"] + summary["困难"]
-    summary["二次简单占比(%)"] = summary.apply(lambda row: round(row["二次简单"] / row["总数"] * 100, 2) if row["总数"] else 0.0, axis=1)
-    summary["简单占比(%)"] = summary.apply(lambda row: round(row["简单"] / row["总数"] * 100, 2) if row["总数"] else 0.0, axis=1)
-    summary["困难占比(%)"] = summary.apply(lambda row: round(row["困难"] / row["总数"] * 100, 2) if row["总数"] else 0.0, axis=1)
-    summary = summary.rename(columns={PROJECT_COLUMN: "项目名称", "二次简单": "二次简单数", "简单": "简单数", "困难": "困难数"})
+    summary["总数"] = summary[DIFF_SECOND_EASY] + summary[DIFF_EASY] + summary[DIFF_HARD]
+    summary["二次简单占比(%)"] = summary.apply(lambda row: round(row[DIFF_SECOND_EASY] / row["总数"] * 100, 2) if row["总数"] else 0.0, axis=1)
+    summary["简单占比(%)"] = summary.apply(lambda row: round(row[DIFF_EASY] / row["总数"] * 100, 2) if row["总数"] else 0.0, axis=1)
+    summary["困难占比(%)"] = summary.apply(lambda row: round(row[DIFF_HARD] / row["总数"] * 100, 2) if row["总数"] else 0.0, axis=1)
+    summary = summary.rename(columns={PROJECT_COLUMN: "项目名称", DIFF_SECOND_EASY: "二次简单数", DIFF_EASY: "简单数", DIFF_HARD: "困难数"})
     return summary.sort_values(["总数", "项目名称"], ascending=[False, True]).reset_index(drop=True)
 
 
@@ -426,18 +427,18 @@ def _build_final_project_accuracy_summary(df: pd.DataFrame) -> pd.DataFrame:
             "困难总数": 0, "困难正确数": 0, "困难正确率(%)": 0.0,
         }
         for _, row in group.iterrows():
-            level = str(row[FINAL_SECOND_PASS_LEVEL_COLUMN])
+            level = normalize_difficulty_level(row[FINAL_SECOND_PASS_LEVEL_COLUMN])
             total = int(row["count"])
             correct = int(row["sum"])
-            if level == "二次简单":
+            if level == DIFF_SECOND_EASY:
                 metrics["二次简单总数"] = total
                 metrics["二次简单正确数"] = correct
                 metrics["二次简单正确率(%)"] = round(correct / total * 100, 2) if total else 0.0
-            elif level == "简单":
+            elif level == DIFF_EASY:
                 metrics["简单总数"] = total
                 metrics["简单正确数"] = correct
                 metrics["简单正确率(%)"] = round(correct / total * 100, 2) if total else 0.0
-            elif level == "困难":
+            elif level == DIFF_HARD:
                 metrics["困难总数"] = total
                 metrics["困难正确数"] = correct
                 metrics["困难正确率(%)"] = round(correct / total * 100, 2) if total else 0.0
@@ -867,7 +868,7 @@ def run(input_file: str, output_file: str | None) -> tuple[Path, list[Path]]:
         material_code = _clean_cell(row.get(MATERIAL_CODE_COLUMN, ""))
         type_code = _clean_cell(row.get(TYPE_CODE_COLUMN, ""))
         standard_code = _clean_cell(row.get(STANDARD_RESULT_COLUMN, "")) or _clean_cell(row.get(STANDARD_CODE_COLUMN, ""))
-        difficulty = _clean_cell(row.get(DIFFICULTY_COLUMN, "")) if has_difficulty else ""
+        difficulty = normalize_difficulty_level(row.get(DIFFICULTY_COLUMN, "")) if has_difficulty else None
 
         if not text:
             size_second_pass_values.append("")
@@ -917,7 +918,7 @@ def run(input_file: str, output_file: str | None) -> tuple[Path, list[Path]]:
             standard_skip_reasons.append("原始描述为空")
             continue
 
-        if has_difficulty and difficulty and difficulty != "简单":
+        if has_difficulty and difficulty is not None and difficulty != DIFF_EASY:
             size_second_pass_values.append("")
             size_second_pass_reasons.append("")
             size_anchored_hit_texts.append("")
