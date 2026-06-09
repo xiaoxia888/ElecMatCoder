@@ -1,0 +1,450 @@
+{
+  "直管": {
+    "直管": [
+      "PIPE",
+      "Pipe",
+      "钢管",
+      "钢管(内表面抛光)",
+      "管子",
+      "管子(定尺)",
+      "TUBE",
+      "短管",
+      "钢板卷管",
+      "螺旋焊接钢管",
+      "管道",
+      "Tubing",
+      "钛管",
+      "仪表管",
+      "搪玻璃管",
+      "钢管"
+    ],
+    "衬里钢管": [
+      "衬里钢管",
+      "钢衬PE管道"
+    ],
+    "钢衬四氟管道": [
+      "钢衬四氟管道"
+    ],
+    "法兰管": [
+      "FLANGED PIPE",
+      "Flanged Pipe",
+      "法兰管"
+    ],
+    "夹套钢管": [
+      "夹套钢管",
+      "夹套管",
+      "JACKETED PIPE",
+      "Jacketed Pipe"
+    ]
+  },
+  "法兰": {
+    "法兰": [
+      "法兰",
+      "FLANGE",
+      "Flange",
+      "FLG"
+    ],
+    "对焊法兰": [
+      "对焊法兰"
+    ],
+    "螺纹法兰": [
+      "螺纹法兰",
+      "THREADED FLANGE",
+      "THREADFLANGE",
+      "Screwed Flange",
+      "Flange Threaded"
+    ],
+    "承插焊法兰": [
+      "承插焊法兰",
+      "SOCKET WELD FLANGE",
+      "SOCKET FLANGE",
+      "Socket Welding Flange"
+    ],
+    "平焊法兰": [
+      "平焊法兰"
+    ],
+    "带颈对焊法兰": [
+      "带颈对焊法兰",
+      "WN FLANGE",
+      "FLANGE WN",
+      "WELD NECK FLANGE",
+      "WELDNECK FLANGE",
+      "Weld Neck Flange",
+      "Weldneck Flange",
+      "Flange Welding Neck",
+      "带颈对焊钢制管法兰"
+    ],
+    "带颈平焊法兰": [
+      "带颈平焊法兰",
+      "SO FLANGE",
+      "FLANGE SO",
+      "SLIP ON FLANGE",
+      "Flange Slip On"
+    ],
+    "板式平焊法兰": [
+      "板式平焊法兰",
+      "PAD FLANGE",
+      "PadFlange",
+      "Pad Flange"
+    ],
+    "法兰盖": [
+      "法兰盖",
+      "法兰盖 BL"
+    ],
+    "盲法兰": [
+      "盲法兰",
+      "BF",
+      "BLIND FLANGE",
+      "Blind Flange",
+      "Blank Flange",
+      "Flange Blind",
+      "BLINDFLANGE",
+      "BL Flange",
+      "BLIND",
+      "FLANGE BL",
+      "FLANGE BLD",
+      "BLDFLANGE",
+      "FLG BLIND",
+      "盲板"
+    ],
+    "8字盲板": [
+      "8字盲板",
+      "八字盲板",
+      "PADDLE BLIND",
+      "Paddle Blind",
+      "SPECTACLE BLIND",
+      "SPECTACLE BLANK",
+      "Spectacle Blind",
+      "Spectacle blank",
+      "SPECTACLEBLIND",
+      "SPECTACLEBLANK",
+      "FIGURE8",
+      "FIGURE 8",
+      "FIGURE-8",
+      "Figure 8",
+      "Figure-8",
+      "FIGURE 8 BLANK",
+      "FIGURE-8 BLANKS",
+      "FIGURE8 BLANK",
+      "Figure 8 Blanks",
+      "Figure-8 Blanks",
+      "SpectacleBlind",
+      "paddle blind"
+    ],
+    "夹套法兰": [
+      "夹套法兰",
+      "Jacketed Flange;Double-lip",
+      "Jacked Flange;Double-lip",
+      "平焊夹套法兰",
+      "REDUCING FLANGE;JACKET",
+      "CON REDUCER;JACKET"
+    ],
+    "夹套盲法兰": [
+      "夹套盲法兰",
+      "BFJ"
+    ],
+    "异径法兰": [
+      "REDUCING FLANGE"
+    ],
+    "松套法兰": [
+      "松套法兰",
+      "活套法兰",
+      "LAP JOINT FLANGE",
+      "FLANGE LAPPED",
+      "Flange Lapped",
+      "环松套法兰"
+    ],
+    "孔板对焊法兰": [
+      "Orifice Flange Welding Neck",
+      "Orifice Flange Welding Neck Type"
+    ],
+    "衬里法兰": [
+      "衬里法兰"
+    ],
+    "插板": [
+      "阀门插板",
+      "插板",
+      "插板+垫环",
+      "插板和垫环",
+      "插板&垫环",
+      "BLANK+SPACER",
+      "BLANK & SPACER",
+      "SPACER & BLANKS"
+    ],
+    "带颈平焊夹套法兰": [
+      "带颈平焊夹套法兰",
+      "夹套带颈平焊法兰",
+      "JSO",
+      "JSOF",
+      "夹套平焊法兰"
+    ],
+    "带颈对焊夹套法兰": [
+      "带颈对焊夹套法兰",
+      "夹套带颈对焊法兰",
+      "JWN",
+      "夹套对焊法兰"
+    ]
+  },
+  "弯头": {
+    "弯头": [
+      "弯头",
+      "ELBOW",
+      "Elbow",
+      "THREADED ELBOW",
+      "螺纹弯头",
+      "ELL",
+      "弯头;ELL",
+      "短半径弯头",
+      "PIPE BEND",
+      "弯头(纵向剖分成对包装)",
+      "弯头;特殊夹套",
+      "弯头;夹套"
+    ]
+  },
+  "三通": {
+    "三通": [
+      "三通",
+      "TEE",
+      "Tee",
+      "INSTRUMENT TEE"
+    ],
+    "等径三通": [
+      "等径三通",
+      "TEE STRAIGHT",
+      "STRAIGHT TEE",
+      "Equal Tee",
+      "EQUAL TEE",
+      "TEE STRAIGHT",
+      "螺纹三通",
+      "THREADED TEE"
+    ],
+    "异径三通": [
+      "异径三通",
+      "TEE REDUCED",
+      "RED TEE",
+      "REDUCING TEE",
+      "Reducing Tee",
+      "RED.TEE",
+      "Red. Tee",
+      "RED. TEE",
+      "REDUCER TEE"
+    ],
+    "异径三通(纵向剖分成对包装)": [
+      "异径三通(纵向剖分成对包装)"
+    ],
+    "斜三通": [
+      "斜三通",
+      "Lateral",
+      "lateral",
+      "LATERAL",
+      "Lateral Tee",
+      "45Deg Lateral"
+    ],
+    "异径斜三通": [
+      "异径斜三通"
+    ]
+  },
+  "变径件": {
+    "异径管": [
+      "异径管",
+      "REDUCER",
+      "大小头"
+    ],
+    "同心异径管": [
+      "同心异径管",
+      "同心大小头",
+      "CONCENTRIC REDUCER",
+      "CON. REDUCER",
+      "CONC. REDUCER",
+      "CON.REDUCER",
+      "Concentric reducer",
+      "CON REDUCER",
+      "REDUCER CON."
+    ],
+    "偏心异径管": [
+      "偏心异径管",
+      "偏心大小头",
+      "Reducer ECC.",
+      "REDUCER(RE)",
+      "ECCENTRIC REDUCER",
+      "REDUCER ECC",
+      "ECC. REDUCER",
+      "ECC.REDUCER",
+      "Eccentric reducer",
+      "ECC REDUCER",
+      "Eccentric Reducer"
+    ],
+    "偏心异径接头":[
+
+    ],
+    "同心异径接头":[
+
+    ],
+    "同心异径管接头": [
+      "Concentric Reducer Coupling",
+      "Reducer Coupling CON. "
+    ],
+    "异径短节": [
+      "异径短节"
+    ],
+    "同心异径短节": [
+      "同心异径短节",
+      "SWAGE NIPPLE",
+      "Swage Nipple",
+      "CON SWAGE NIPPLE",
+      "CONCENTRIC SWAGE",
+      "CONCENTRIC SWAGED NIPPLE",
+      "CON. SWAGE"
+    ],
+    "偏心异径短节": [
+      "偏心异径短节",
+      "ECC SWAGE NIPPLE",
+      "ECC. SWAGE NIPPLE",
+      "ECCENTRIC SWAGE NIPPLE"
+    ]
+  },
+  "支管台": {
+    "支管台": [
+      "支管台",
+      "焊接支管台",
+      "短管支管台",
+      "支管座",
+      "管接台",
+      "OLET",
+      "Olet",
+      "WELDOLET",
+      "Weldolet",
+      "LIGHT WEIGHT BW OLET",
+      "HEAVY WEIGHT BW OLET",
+      "支管台 WELDING OUTLET",
+      "对焊管接台",
+      "对焊支管座"
+    ],
+    "承插焊支管台": [
+      "SOCKOLET",
+      "SOCKET OLET",
+      "承插焊支管台",
+      "承插支管台",
+      "承插焊管接台",
+      "承插焊支管座"
+    ],
+    "螺纹支管台": [
+      "THREDOLET",
+      "THREAD OLET",
+      "丝扣支管台",
+      "螺纹管接台"
+    ],
+    "弯头支管台": [
+      "ELBOLET",
+      "对焊弯头支管台",
+      "对焊支管台 OLET-90"
+    ],
+    "斜支管台": [
+      "LATROLET"
+    ],
+    "短节支管台": [
+      "NIPOLET",
+      "NIPPOLET"
+    ],
+    "管接头": [
+      "管接头"
+    ],
+    "加强管接头": [
+      "加强管接头"
+    ],
+    "短管接头": [
+      "短管接头"
+    ],
+    "异径管接头": [
+      "异径管接头",
+      "异径接头"
+    ],
+    "半管接头": [
+      "半管接头",
+      "半管接头 HC",
+      "半管接头 HALF CPLG",
+      "HALF COUPLING",
+      "HALF CPLG",
+      "Half Coupling"
+    ]
+  },
+  "管帽": {
+    "管帽": [
+      "管帽",
+      "CAP",
+      "Cap",
+      "PIPE CAP"
+    ],
+    "封头": [
+      "封头"
+    ],
+    "堵头": [
+      "堵头"
+    ]
+  },
+  "其他管件": {
+    "管箍": [
+      "COUPLING",
+      "管箍",
+      "同径管箍"
+    ],
+    "单口管箍": [
+      "单承口管箍",
+      "坡口单口管箍",
+      "单头管箍"
+    ],
+    "双口管箍": [
+      "双头管箍",
+      "双管箍",
+      "等径双口管箍"
+    ],
+    "异径双口管箍": [
+      "同心异径双口管箍",
+      "异径双头管箍",
+      "双螺口异径管箍",
+      "REDUCING COUPLING",
+      "CONCENTRIC REDUCING COUPLING",
+      "Reducing coupling"
+    ],
+    "活接头": [
+      "UNION",
+      "活接头"
+    ],
+    "管塞": [
+      "PLUG",
+      "ROUND HEAD PLUG",
+      "管塞"
+    ],
+    "六角头管塞": [
+      "HEX HEAD PLUG",
+      "六角头管塞"
+    ],
+    "短节": [
+      "NIPPLE",
+      "PIPE NIPPLE",
+      "Pipe Nipple",
+      "短节",
+      "螺纹短节",
+      "短型单头螺纹短节",
+      "长型单头螺纹短节",
+      "NIP 短节",
+      "特殊管件短节"
+    ],
+    "翻边短节": [
+      "翻边短节"
+    ],
+    "补强板开口焊": [
+      "补强板开口焊"
+    ],
+    "不补强板开口焊": [
+      "不补强板开口焊"
+    ],
+    "加强管嘴": [
+      "加强管嘴"
+    ],
+    "快速接头": [
+      "快速接头",
+      "QUICK RELEASE COUPLING"
+    ]
+  }
+}
