@@ -1,0 +1,19 @@
+workers:
+  - name: "type_worker"
+    registry: "apps/mlx_service/type.worker.yaml"
+    host: "0.0.0.0"
+    port: 8201
+    max_loaded_models: 1
+    idle_timeout_seconds: 1800
+
+  - name: "material_worker"
+    registry: "apps/mlx_service/material.worker.yaml"
+    host: "0.0.0.0"
+    port: 8202
+    max_loaded_models: 1
+    idle_timeout_seconds: 1800
+
+gateway:
+  registry: "apps/mlx_service/gateway.example.yaml"
+  host: "0.0.0.0"
+  port: 8200
