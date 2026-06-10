@@ -54,12 +54,21 @@ class RegexExtractor:
         """编译正则表达式模式"""
         self.patterns: Dict[str, List[Tuple[str, re.Pattern]]] = {}
         self.aliases: Dict[str, Dict[str, str]] = {}  # 别名转换映射
-        
-        # 分隔符：空格、分号、逗号、连字符、斜杠、括号等
-        # 边界：字符串开头结尾
-        # 注意：需要包含中文标点符号（全角逗号、分号、冒号、括号等）
-        boundary = r'(?:^|[\s;,\-/\(\)\[\]:：|，、。（）+])'
-        boundary_end = r'(?:$|[\s;,\-/\(\)\[\]:：|，、。（）+])'
+
+        def _has_cjk(text: str) -> bool:
+            return bool(re.search(r'[\u4e00-\u9fff]', text))
+
+        def _wrap_with_default_boundary(token_pattern: str, *, contains_cjk: bool) -> str:
+            if contains_cjk:
+                # 中文词默认只要求两侧不是中文，数字和符号允许贴边。
+                return rf'(?<![\u4e00-\u9fff])({token_pattern})(?![\u4e00-\u9fff])'
+            # 英文/缩写默认只要求两侧不是英文，数字和符号允许贴边。
+            return rf'(?<![A-Za-z])({token_pattern})(?![A-Za-z])'
+
+        def _wrap_with_strict_boundary(token_pattern: str) -> str:
+            boundary = r'(?:^|[\s;,\-/\(\)\[\]:：|，、。（）+])'
+            boundary_end = r'(?:$|[\s;,\-/\(\)\[\]:：|，、。（）+])'
+            return rf'{boundary}({token_pattern}){boundary_end}'
         
         for label, config in self.extraction_keywords.items():
             if not config:
@@ -72,21 +81,30 @@ class RegexExtractor:
             # 2. 新格式：字典 {keywords: [...], patterns: [...], aliases: {...}}
             
             if isinstance(config, dict):
-                # 新格式：处理 keywords（带边界）
-                keywords = config.get('keywords', [])
-                for keyword in keywords:
-                    pattern = re.compile(
-                        f'{boundary}({re.escape(keyword)}){boundary_end}',
-                        re.IGNORECASE
-                    )
-                    self.patterns[label].append((keyword, pattern))
+                def _append_keywords(keywords: List[str], *, strict: bool) -> None:
+                    for keyword in keywords:
+                        contains_cjk = _has_cjk(keyword)
+                        wrapped = (
+                            _wrap_with_strict_boundary(re.escape(keyword))
+                            if strict
+                            else _wrap_with_default_boundary(re.escape(keyword), contains_cjk=contains_cjk)
+                        )
+                        pattern = re.compile(wrapped, re.IGNORECASE)
+                        self.patterns[label].append((keyword, pattern))
+
+                # 新格式：处理强边界 / 松边界关键词。
+                # 兼容旧配置：keywords 等价于 keywords_loose。
+                _append_keywords(config.get('keywords_strict', []), strict=True)
+                _append_keywords(config.get('keywords_loose', []), strict=False)
+                _append_keywords(config.get('keywords', []), strict=False)
                 
                 # 新格式：处理 patterns（自定义正则模式，带边界）
                 custom_patterns = config.get('patterns', [])
                 for pattern_str in custom_patterns:
                     try:
+                        contains_cjk = _has_cjk(pattern_str)
                         full_pattern = re.compile(
-                            f'{boundary}({pattern_str}){boundary_end}',
+                            _wrap_with_default_boundary(pattern_str, contains_cjk=contains_cjk),
                             re.IGNORECASE
                         )
                         self.patterns[label].append((pattern_str, full_pattern))
@@ -110,8 +128,9 @@ class RegexExtractor:
                 # 旧格式：直接是关键词列表
                 keywords = config
                 for keyword in keywords:
+                    contains_cjk = _has_cjk(keyword)
                     pattern = re.compile(
-                        f'{boundary}({re.escape(keyword)}){boundary_end}',
+                        _wrap_with_default_boundary(re.escape(keyword), contains_cjk=contains_cjk),
                         re.IGNORECASE
                     )
                     self.patterns[label].append((keyword, pattern))
@@ -143,6 +162,33 @@ class RegexExtractor:
         # 其他格式（TYPE I, Series I, type-1等）保持原样
         # StandardProcessor._convert_grade 会进一步处理它们
         return value
+
+    @staticmethod
+    def _normalize_radius_code(value: str) -> str:
+        """
+        将半径提取值统一规范到编码值。
+
+        示例：
+        - R=1.5D -> 1.5D
+        - R 1.5D -> 1.5D
+        - R1.5D -> 1.5D
+        - 1.5D -> 1.5D
+        - LR -> LR
+        - SR -> SR
+        """
+        text = str(value or '').strip().upper()
+        if not text:
+            return ""
+
+        compact = re.sub(r'\s+', '', text)
+        if compact in {"LR", "SR"}:
+            return compact
+
+        m = re.match(r'^R=?(.+)$', compact)
+        if m:
+            compact = m.group(1).strip()
+
+        return compact
     
     def extract(self, text: str, exclude_ranges: List[Tuple[int, int]] = None) -> List[ExtractionResult]:
         """
@@ -191,6 +237,8 @@ class RegexExtractor:
                         # STANDARD_GRADE 保持原样，不做标准化
                         # 因为它会拼接到 STANDARD 后面，由 StandardProcessor 统一处理
                         normalized = matched_value
+                    elif label == 'RADIUS':
+                        normalized = self._normalize_radius_code(matched_value)
                     else:
                         # 其他标签：应用别名转换（如 承插焊 -> SW）
                         value_upper = matched_value.upper()

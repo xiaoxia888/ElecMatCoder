@@ -31,6 +31,12 @@ fields:
           - id: seal_keywords
             canonical_from_match: true
             pattern: "(?<![A-Z0-9])(FF|RTJ|RJ|FLRJ)(?![A-Z0-9])"
+          - id: seal_double_lip_en
+            canonical: "DOUBLE-LIP"
+            pattern: "(?<![A-Z0-9])(DOUBLE[-\\s]?LIP)(?![A-Z0-9])"
+          - id: seal_double_lip_zh
+            canonical: "DOUBLE-LIP"
+            pattern: "双唇"
       CONN:
         rules:
           - id: conn_keywords

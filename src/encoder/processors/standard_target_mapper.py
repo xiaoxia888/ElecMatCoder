@@ -58,6 +58,9 @@ _ROMAN_REPLACEMENTS = {
 class StandardTargetMapper:
     """将标准信息映射为壁厚/外径换算所需的目标标准。"""
 
+    def __init__(self, target_standards: Sequence[str] | None = None):
+        self.target_standards = tuple(target_standards or TARGET_STANDARDS)
+
     def map_to_target(self, standards: Any) -> str:
         """
         将标准信息映射到目标标准。

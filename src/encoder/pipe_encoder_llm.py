@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 from pathlib import Path
 
 from .pipe_encoder import PipeEncoderBase, FieldEncoding
+from .processors import get_type_encoder, get_material_encoder
 from ..llm_ner.predictor import Qwen3Predictor
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,9 @@ class LlmPipeEncoder(PipeEncoderBase):
 
     def __init__(self):
         super().__init__()
+        self.type_encoder = get_type_encoder()
+        self.material_encoder = get_material_encoder()
+        self._last_type_encode_meta: Dict[str, Any] = {}
 
         encoding_config = self.platform_config.get('encoding', {})
         llm_config = encoding_config.get('llm', {})
@@ -43,6 +47,14 @@ class LlmPipeEncoder(PipeEncoderBase):
             )
         logger.info(f"编码方法: LLM ({backend})")
         self.backend = backend
+
+    def _make_encode_meta(self, source: str, confidence: float, reason: str, evidence: Dict[str, Any] | None = None):
+        return self._build_processor_encode_confidence(
+            source=source,
+            confidence=confidence,
+            reason=reason,
+            evidence=evidence or {},
+        )
 
     def _score_from_model_conf(self, model_conf: float) -> float:
         """将模型 token 级概率映射到字段置信度分数。"""
@@ -170,39 +182,120 @@ class LlmPipeEncoder(PipeEncoderBase):
     def _should_use_type_combined(self) -> bool:
         return bool(self.llm_encoder)
 
-    def _encode_type_value(self, merged_value: str):
-        code, similarity, _ = self._encode_with_llm_meta('TYPE', merged_value)
+    def _encode_type_value(self, merged_value: str, type_value: Dict[str, Any] | None = None):
+        self._last_type_encode_meta = {}
+        if type_value:
+            type_result = self.type_encoder.encode(type_value)
+            if type_result.resolved and type_result.code:
+                logger.info(
+                    "[TYPE编码器] %s -> %s, strategy=%s, key=%s",
+                    type_value,
+                    type_result.code,
+                    type_result.strategy,
+                    type_result.matched_key,
+                )
+                self._last_type_encode_meta = self._make_encode_meta(
+                    source='type_mapping',
+                    confidence=0.98,
+                    reason='type_mapping_resolved',
+                    evidence={
+                        'strategy': str(type_result.strategy or ''),
+                        'matched_key': str(type_result.matched_key or ''),
+                        'body_present': bool((type_value or {}).get('BODY')),
+                    },
+                )
+                return type_result.code, 0.995
+            logger.info(
+                "[TYPE编码器] unresolved, fallback to LLM. merged='%s', type_value=%s",
+                merged_value,
+                type_value,
+            )
+
+        code, similarity, used_model_conf = self._encode_with_llm_meta('TYPE', merged_value)
+        self._last_type_encode_meta = self._make_encode_meta(
+            source='llm_fallback',
+            confidence=similarity if code else 0.0,
+            reason='type_mapping_unresolved_llm_used' if code else 'type_mapping_unresolved_llm_failed',
+            evidence={
+                'code_present': bool(code),
+                'used_model_confidence': bool(used_model_conf),
+                'merged_value_present': bool(merged_value),
+            },
+        )
         confidence = similarity if code else 0.0
         return code, confidence
 
-    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> FieldEncoding:
-        merged, size_need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
-        display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
-        length_prefix = ""
-        size_body = merged
-        if merged:
-            m = re.match(r'^(L\d+(?:\.\d+)?)(.*)$', merged, re.IGNORECASE)
-            if m:
-                length_prefix = m.group(1).upper()
-                size_body = m.group(2)
+    def _process_material_item_structured(self, item: Dict[str, Any]) -> Dict[str, Any] | None:
+        material_result = self.material_encoder.encode(item)
+        if material_result.resolved and material_result.code:
+            logger.info(
+                "[MATERIAL编码器] %s -> %s, strategy=%s, base=%s, suffixes=%s",
+                item,
+                material_result.code,
+                material_result.strategy,
+                material_result.matched_code,
+                material_result.matched_suffixes,
+            )
+            original = self._flatten_material_item_for_stage2(item)
+            matched_parts = [material_result.value, *material_result.special_req]
+            return {
+                'original': original,
+                'matched': ' '.join([p for p in matched_parts if p]).strip() or original,
+                'code': material_result.code,
+                'similarity': 0.995,
+                'encode_meta': self._make_encode_meta(
+                    source='material_mapping',
+                    confidence=0.98,
+                    reason='material_mapping_resolved',
+                    evidence={
+                        'strategy': str(material_result.strategy or ''),
+                        'base_code': str(material_result.matched_code or ''),
+                        'suffix_count': len(material_result.matched_suffixes or []),
+                    },
+                ),
+                'is_exact': True,
+                'need_review': False,
+                'candidates': [],
+            }
+        logger.info(
+            "[MATERIAL编码器] unresolved, fallback to LLM. item=%s, reason=%s",
+            item,
+            material_result.reason,
+        )
+        return None
 
-        code, sim, _ = self._encode_with_llm_meta('SIZE', size_body) if size_body else ("", 0.0, False)
-        final_code = f"{length_prefix}{code or size_body}" if (length_prefix or code or size_body) else ""
+    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> FieldEncoding:
+        display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
+        merged, size_need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
+        normalized_merged = merged
+        final_code = merged
+        sim = 1.0 if final_code else 0.0
+
         return FieldEncoding(
             field_type='SIZE',
             original_value=' | '.join(display_values),
             original_values=display_values,
-            matched_name=merged, matched_names=[merged],
+            matched_name=normalized_merged, matched_names=[normalized_merged] if normalized_merged else [],
+            encoding_input=normalized_merged,
+            encode_confidence_v2=self._make_encode_meta(
+                source='size_processor',
+                confidence=0.96 if final_code and not size_need_review else (0.72 if final_code else 0.0),
+                reason='size_processor_resolved' if final_code else 'size_processor_failed',
+                evidence={
+                    'item_count': len(display_values),
+                    'code_present': bool(final_code),
+                    'need_review': bool(size_need_review),
+                },
+            ),
             code=final_code, codes=[final_code] if final_code else [],
-            similarity=sim if final_code else 0.0, is_exact_match=True, need_review=size_need_review or bool(size_body) and not bool(code),
+            similarity=sim if final_code else 0.0,
+            is_exact_match=True,
+            need_review=size_need_review,
             candidates=[], display='', items=[]
         )
 
     def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
-        normalized = self.thickness_processor.process(value, original_text=original_text)
-        if not normalized:
-            return ""
-        return self._encode_with_llm('THICKNESS', normalized) or normalized
+        return self.thickness_processor.process(value, original_text=original_text)
 
     @staticmethod
     def _split_thickness_parts(normalized: str) -> List[str]:
@@ -250,45 +343,72 @@ class LlmPipeEncoder(PipeEncoderBase):
                     'original': value, 'matched': '', 'code': '',
                     'similarity': 0.0, 'is_exact': True, 'need_review': True, 'candidates': []
                 }
-            # 组合壁厚（如 16MMXS60）拆开分别编码再拼回
-            parts = self._split_thickness_parts(normalized)
-            if len(parts) > 1:
-                encoded_parts = []
-                any_fallback = False
-                part_sims = []
-                for p in parts:
-                    enc, part_sim, _ = self._encode_with_llm_meta(field_type, p)
-                    if enc:
-                        encoded_parts.append(enc)
-                        part_sims.append(part_sim)
-                    else:
-                        encoded_parts.append(p)
-                        any_fallback = True
-                code = 'X'.join(encoded_parts)
-                similarity = min(part_sims) if part_sims else 0.0
-                if any_fallback:
-                    similarity = min(similarity or 1.0, self.NORMALIZED_FALLBACK_SIMILARITY)
-            else:
-                encoded, model_sim, _ = self._encode_with_llm_meta(field_type, normalized)
-                if encoded:
-                    code = encoded
-                    similarity = model_sim
-                else:
-                    code = normalized
-                    similarity = self.NORMALIZED_FALLBACK_SIMILARITY
             return {
-                'original': value, 'matched': normalized, 'code': code,
-                'similarity': similarity if code else 0.0,
+                'original': value, 'matched': normalized, 'code': normalized,
+                'similarity': 1.0 if normalized else 0.0,
+                'encode_meta': self._make_encode_meta(
+                    source='thickness_processor',
+                    confidence=0.96 if normalized else 0.0,
+                    reason='thickness_processor_resolved' if normalized else 'thickness_processor_failed',
+                    evidence={'code_present': bool(normalized)},
+                ),
                 'is_exact': True,
-                'need_review': not code,
+                'need_review': False,
                 'candidates': []
             }
 
-        if field_type in ('SIZE', 'PRESSURE', 'MATERIAL', 'TYPE'):
-            code, sim, _ = self._encode_with_llm_meta(field_type, value)
+        if field_type == 'PRESSURE':
+            normalized = self._process_pressure(value)
+            if not normalized:
+                return {
+                    'original': value, 'matched': '', 'code': '',
+                    'similarity': 0.0, 'is_exact': True, 'need_review': True, 'candidates': []
+                }
+            return {
+                'original': value, 'matched': normalized, 'code': normalized,
+                'similarity': 1.0,
+                'encode_meta': self._make_encode_meta(
+                    source='pressure_processor',
+                    confidence=0.96,
+                    reason='pressure_processor_resolved',
+                    evidence={'code_present': bool(normalized)},
+                ),
+                'is_exact': True,
+                'need_review': False,
+                'candidates': []
+            }
+
+        if field_type == 'SIZE':
+            normalized = self.size_processor.process(value)
+            return {
+                'original': value, 'matched': normalized, 'code': normalized,
+                'similarity': 1.0 if normalized else 0.0,
+                'encode_meta': self._make_encode_meta(
+                    source='size_processor',
+                    confidence=0.96 if normalized else 0.0,
+                    reason='size_processor_resolved' if normalized else 'size_processor_failed',
+                    evidence={'code_present': bool(normalized)},
+                ),
+                'is_exact': True,
+                'need_review': not normalized,
+                'candidates': []
+            }
+
+        if field_type in ('MATERIAL', 'TYPE'):
+            code, sim, used_model_conf = self._encode_with_llm_meta(field_type, value)
             return {
                 'original': value, 'matched': value, 'code': code,
                 'similarity': sim if code else 0.0,
+                'encode_meta': self._make_encode_meta(
+                    source='llm_fallback',
+                    confidence=sim if code else 0.0,
+                    reason='llm_fallback_used' if code else 'llm_fallback_failed',
+                    evidence={
+                        'field_type': field_type,
+                        'code_present': bool(code),
+                        'used_model_confidence': bool(used_model_conf),
+                    },
+                ),
                 'is_exact': True,
                 'need_review': not code,
                 'candidates': []
@@ -310,7 +430,12 @@ class LlmPipeEncoder(PipeEncoderBase):
         return {'original': value, 'matched': value, 'code': value,
                 'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': []}
 
-    def _process_standard_multi(self, values: List[str], modifier_map: Dict[int, Dict[str, List[str]]] = None) -> FieldEncoding:
+    def _process_standard_multi(
+        self,
+        values: List[str],
+        modifier_map: Dict[int, Dict[str, List[str]]] = None,
+        original_text: str = "",
+    ) -> FieldEncoding:
         if not values:
             return FieldEncoding(field_type='STANDARD')
 
@@ -330,86 +455,141 @@ class LlmPipeEncoder(PipeEncoderBase):
                     merged_standards[idx] = f"{merged_standards[idx]} {' '.join(suffix_parts)}"
 
         expanded = sp._expand_slash_standards(merged_standards)
-
-        production_items = []
-        manufacturing_items = []
-        unknown_items = []
+        resolved_items = []
 
         for std in expanded:
             formatted = sp._format_standard(std)
             category = sp._classify_standard(formatted)
 
-            encoded, item_similarity, _ = self._encode_with_llm_meta('STANDARD', formatted)
-            if not encoded:
-                encoded = sp._encode_standard(formatted)
-                item_similarity = self.RULE_FALLBACK_SIMILARITY
-                logger.warning(f"[STANDARD] LLM编码失败，回退规则: '{std}' -> '{encoded}'")
-
-            item = (std, formatted, encoded, item_similarity)
-            if category == 'production':
-                production_items.append(item)
-            elif category == 'manufacturing':
-                manufacturing_items.append(item)
+            encoded = sp._encode_standard(formatted)
+            if encoded:
+                item_similarity = 1.0
+                logger.info(
+                    "[STANDARD编码器] '%s' -> '%s', strategy=standard_processor",
+                    formatted,
+                    encoded,
+                )
+                encode_meta = self._make_encode_meta(
+                    source='standard_processor',
+                    confidence=0.98,
+                    reason='standard_processor_resolved',
+                    evidence={
+                        'formatted_present': bool(formatted),
+                        'category': category,
+                    },
+                )
             else:
-                unknown_items.append(item)
+                encoded, item_similarity, used_model_conf = self._encode_with_llm_meta('STANDARD', formatted)
+                if encoded:
+                    logger.info(
+                        "[STANDARD编码器] unresolved, fallback to LLM: '%s' -> '%s'",
+                        formatted,
+                        encoded,
+                    )
+                    encode_meta = self._make_encode_meta(
+                        source='llm_fallback',
+                        confidence=item_similarity,
+                        reason='standard_processor_unresolved_llm_used',
+                        evidence={
+                            'formatted_present': bool(formatted),
+                            'category': category,
+                            'used_model_confidence': bool(used_model_conf),
+                        },
+                    )
+                else:
+                    logger.warning(
+                        "[STANDARD编码器] unresolved and LLM failed: '%s'",
+                        formatted,
+                    )
+                    encode_meta = self._make_encode_meta(
+                        source='llm_fallback',
+                        confidence=0.0,
+                        reason='standard_processor_unresolved_llm_failed',
+                        evidence={
+                            'formatted_present': bool(formatted),
+                            'category': category,
+                        },
+                    )
 
-        production_items = sp._sort_items(production_items)
-        manufacturing_items = sp._sort_items(manufacturing_items)
-        unknown_items = sp._sort_items(unknown_items)
+            resolved_items.append({
+                'original': std,
+                'matched': formatted,
+                'code': encoded,
+                'category_key': category,
+                'similarity': item_similarity,
+                'encode_meta': encode_meta,
+            })
+
+        detail = sp.process_standards_with_detail(merged_standards, original_text=original_text)
+        ordered_detail_items = detail.get('ordered_items', []) or []
+        detail_index = {}
+        for item in ordered_detail_items:
+            key = (item.get('original', ''), item.get('encoded', ''))
+            detail_index.setdefault(key, []).append(item)
 
         items = []
-        all_encoded = []
+        resolved_index = {}
+        resolved_by_original = {}
+        for item in resolved_items:
+            key = (item.get('original', ''), item.get('code', ''))
+            resolved_index.setdefault(key, []).append(item)
+            resolved_by_original.setdefault(item.get('original', ''), []).append(item)
 
-        for item_list, category_label in [
-            (production_items, '生产'),
-            (manufacturing_items, '制造'),
-            (unknown_items, ''),
-        ]:
-            for std, formatted, encoded, item_similarity in item_list:
-                structured = sp.parse_standard_structure(std)
-                code_parts = sp._split_code_and_grade(encoded)
-                items.append({
-                    'original': std,
-                    'matched': formatted,
-                    'code': encoded,
-                    'base_code': code_parts['base'],
-                    'grade': structured['grade'] or code_parts['grade'],
-                    'standard_subject': structured['subject'],
-                    'standard_grade': structured['grade'],
-                    'standard_method': structured['method'],
-                    'standard_appendix': structured['appendix'],
-                    'similarity': item_similarity, 'is_exact': True, 'need_review': False,
-                    'candidates': [], 'category': category_label
-                })
-                if encoded:
-                    all_encoded.append(encoded)
-
-        unique_encoded = []
-        seen = set()
-        for e in all_encoded:
-            if e not in seen:
-                seen.add(e)
-                unique_encoded.append(e)
-
+        for detail_item in ordered_detail_items:
+            key = (detail_item.get('original', ''), detail_item.get('encoded', ''))
+            resolved_item = (resolved_index.get(key) or resolved_by_original.get(detail_item.get('original', ''), []) or [{}]).pop(0)
+            code = detail_item.get('encoded', '') or resolved_item.get('code', '')
+            code_parts = sp._split_code_and_grade(code)
+            items.append({
+                'original': detail_item.get('original', ''),
+                'matched': resolved_item.get('matched', detail_item.get('formatted', '')),
+                'code': code,
+                'base_code': detail_item.get('base_code', '') or code_parts.get('base', ''),
+                'grade': detail_item.get('grade', '') or code_parts.get('grade', ''),
+                'standard_subject': detail_item.get('standard_subject', ''),
+                'standard_grade': detail_item.get('standard_grade', ''),
+                'standard_method': detail_item.get('standard_method', ''),
+                'standard_appendix': detail_item.get('standard_appendix', ''),
+                'similarity': resolved_item.get('similarity', 1.0), 'is_exact': True, 'need_review': False,
+                'candidates': [], 'category': sp.CATEGORY_LABELS.get(detail_item.get('category', 'unknown'), ''), 'encode_meta': resolved_item.get('encode_meta')
+            })
         original_display = ' | '.join([item['original'] for item in items])
-        display_parts = []
+        chosen_by_base = {}
+        base_order = []
         for item in items:
-            if item['code']:
-                if item['category']:
-                    display_parts.append(f"{item['code']}({item['category']})")
+            code = item.get('code', '')
+            base_code = item.get('base_code', '')
+            if not code or not base_code:
+                continue
+            if base_code not in chosen_by_base:
+                chosen_by_base[base_code] = item
+                base_order.append(base_code)
+            elif item.get('grade') and not chosen_by_base[base_code].get('grade'):
+                chosen_by_base[base_code] = item
+        final_code = ''.join(chosen_by_base[base].get('code', '') for base in base_order)
+        display_text = detail.get('display', '无')
+        if not display_text or display_text == '无':
+            display_parts = []
+            for base in base_order:
+                item = chosen_by_base[base]
+                if item.get('category'):
+                    display_parts.append(f"{item.get('code', '')}({item.get('category', '')})")
                 else:
-                    display_parts.append(item['code'])
+                    display_parts.append(item.get('code', ''))
+            display_text = ' '.join(display_parts) if display_parts else '无'
 
         return FieldEncoding(
             field_type='STANDARD',
             original_value=original_display,
             original_values=values,
-            matched_name=' '.join(display_parts) if display_parts else '',
+            matched_name=display_text if display_text != '无' else '',
             matched_names=[item['code'] for item in items],
-            code=''.join(unique_encoded),
+            encoding_input=display_text if display_text != '无' else '',
+            encode_confidence_v2=self._aggregate_item_encode_confidence(items, fallback_source='standard_processor'),
+            code=final_code,
             codes=[item['code'] for item in items],
             similarity=min((item['similarity'] for item in items), default=1.0), is_exact_match=True, need_review=False,
             candidates=[],
-            display=' '.join(display_parts) if display_parts else '无',
+            display=display_text,
             items=items
         )

@@ -11,12 +11,15 @@ from __future__ import annotations
 import json
 import logging
 import math
+import copy
 import re
 import time
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
+import yaml
 
 from .prompts import (
     get_stage1_decisions_only_prompt,
@@ -40,6 +43,49 @@ TYPE_CLASS_MAP = {
 }
 
 
+@lru_cache(maxsize=1)
+def _load_encoder_config() -> Dict[str, Any]:
+    path = Path(__file__).resolve().parents[1] / "encoder" / "config" / "encoder_config.yaml"
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        return data if isinstance(data, dict) else {}
+    except Exception as e:
+        logger.warning("[Qwen3预测器] 加载 encoder_config 失败: %s", e)
+        return {}
+
+
+@lru_cache(maxsize=1)
+def _load_material_special_req_supplement_map() -> Dict[str, List[str]]:
+    cfg = _load_encoder_config()
+    raw = (
+        (cfg.get("material_special_req_supplement") or {}).get("suffix_aliases") or {}
+    )
+    if not isinstance(raw, dict):
+        return {}
+    result: Dict[str, List[str]] = {}
+    for suffix, aliases in raw.items():
+        suffix_text = str(suffix or "").strip().upper()
+        if not suffix_text or not isinstance(aliases, list):
+            continue
+        clean_aliases = [str(alias or "").strip() for alias in aliases if str(alias or "").strip()]
+        if clean_aliases:
+            result[suffix_text] = clean_aliases
+    return result
+
+
+@lru_cache(maxsize=1)
+def _load_material_special_req_reverse_map() -> Dict[str, str]:
+    reverse: Dict[str, str] = {}
+    for suffix, aliases in _load_material_special_req_supplement_map().items():
+        reverse[suffix.upper()] = suffix.upper()
+        for alias in aliases:
+            reverse[str(alias).strip().upper()] = suffix.upper()
+    return reverse
+
+
 class Qwen3Predictor:
     """Qwen3 一阶段语义解析预测器。"""
 
@@ -47,6 +93,8 @@ class Qwen3Predictor:
 
     SEMANTIC_TO_FIELD = {
         "TYPE_BODY": "TYPE",
+        "TYPE_ANGLE": "TYPE",
+        "TYPE_RADIUS": "TYPE",
         "TYPE_MANU": "TYPE",
         "TYPE_CONN": "TYPE",
         "TYPE_ENDS": "TYPE",
@@ -98,6 +146,7 @@ class Qwen3Predictor:
         ollama_temperature: float = 0.1,
         ollama_top_p: float = 0.9,
         ollama_logprobs_enabled: bool = True,
+        type_value_whitelist: Optional[Dict[str, List[str]]] = None,
     ):
         self.backend = backend
         self.model = None
@@ -107,6 +156,12 @@ class Qwen3Predictor:
         self.ollama_temperature = float(ollama_temperature)
         self.ollama_top_p = float(ollama_top_p)
         self.ollama_logprobs_enabled = bool(ollama_logprobs_enabled)
+        self.type_value_whitelist = {
+            str(k).strip().upper(): {
+                str(v).strip().upper() for v in (values or []) if str(v).strip()
+            }
+            for k, values in (type_value_whitelist or {}).items()
+        }
         self.stage1_system_prompt = (
             get_stage1_decisions_only_prompt()
             if self.output_mode == "decisions_only"
@@ -179,6 +234,8 @@ class Qwen3Predictor:
         decisions = extracted.get("decisions")
         if not isinstance(decisions, dict):
             raise RuntimeError("语义解析模型输出缺少 decisions 对象")
+        self._apply_type_value_whitelist(decisions)
+        self._apply_material_special_req_supplement(text, decisions)
 
         default_conf = float(model_conf)
         tokens = self._build_tokens(text, extracted, default_confidence=default_conf)
@@ -195,6 +252,116 @@ class Qwen3Predictor:
             "extract_confidence": extract_confidence,
             "model_raw_response": extracted.get("_raw", ""),
         }
+
+    def _apply_type_value_whitelist(self, decisions: Dict[str, Any]) -> None:
+        if not self.type_value_whitelist:
+            return
+        type_dict = decisions.get("TYPE")
+        if not isinstance(type_dict, dict):
+            return
+
+        for subtype, allowed in self.type_value_whitelist.items():
+            if not allowed:
+                continue
+            raw_value = type_dict.get(subtype)
+            if raw_value in (None, "", []):
+                continue
+            values = raw_value if isinstance(raw_value, list) else [raw_value]
+            filtered = [
+                str(v).strip()
+                for v in values
+                if str(v).strip() and str(v).strip().upper() in allowed
+            ]
+            type_dict[subtype] = filtered
+
+    def _apply_material_special_req_supplement(self, text: str, decisions: Dict[str, Any]) -> None:
+        supplement_cfg = _load_encoder_config().get("material_special_req_supplement") or {}
+        if not supplement_cfg.get("enabled", False):
+            return
+
+        material_value = decisions.get("MATERIAL")
+        if material_value in (None, "", [], {}):
+            return
+
+        suffix_aliases = _load_material_special_req_supplement_map()
+        if not suffix_aliases:
+            return
+
+        matched_suffixes: List[str] = []
+        upper_text = str(text or "").upper()
+        for suffix, aliases in suffix_aliases.items():
+            for alias in aliases:
+                alias_upper = alias.upper()
+                if self._contains_material_special_req_alias(upper_text, alias_upper):
+                    matched_suffixes.append(suffix)
+                    break
+        if not matched_suffixes:
+            return
+
+        if isinstance(material_value, list):
+            for item in material_value:
+                if not isinstance(item, dict):
+                    continue
+                self._supplement_material_item_special_req(item, matched_suffixes)
+            return
+
+        if isinstance(material_value, dict):
+            if "VALUE" in material_value or "ROLE" in material_value:
+                self._supplement_material_item_special_req(material_value, matched_suffixes)
+                return
+            items = material_value.get("ITEMS")
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, dict):
+                        self._supplement_material_item_special_req(item, matched_suffixes, value_key="EXEC_STANDARD")
+
+    @staticmethod
+    def _contains_material_special_req_alias(upper_text: str, alias_upper: str) -> bool:
+        if not upper_text or not alias_upper:
+            return False
+        if any("\u4e00" <= ch <= "\u9fff" for ch in alias_upper):
+            return alias_upper in upper_text
+        pattern = re.compile(rf'(?<![A-Z0-9]){re.escape(alias_upper)}(?![A-Z0-9])', re.IGNORECASE)
+        return bool(pattern.search(upper_text))
+
+    @staticmethod
+    def _normalize_special_req_values(value: Any) -> List[str]:
+        if isinstance(value, list):
+            return [str(v).strip().upper() for v in value if str(v).strip()]
+        if value in (None, "", []):
+            return []
+        return [str(value).strip().upper()]
+
+    def _supplement_material_item_special_req(
+        self,
+        item: Dict[str, Any],
+        matched_suffixes: List[str],
+        *,
+        value_key: str = "VALUE",
+    ) -> None:
+        value = str(item.get(value_key) or "").strip()
+        if not value:
+            return
+
+        reverse_map = _load_material_special_req_reverse_map()
+        current_raw = self._normalize_special_req_values(item.get("SPECIAL_REQ"))
+        current: List[str] = []
+        seen_current = set()
+        for req in current_raw:
+            canonical = reverse_map.get(req.upper(), req.upper())
+            if canonical and canonical not in seen_current:
+                current.append(canonical)
+                seen_current.add(canonical)
+        existing = set(current)
+        value_upper = value.upper()
+        for suffix in matched_suffixes:
+            if value_upper.endswith(suffix):
+                continue
+            if suffix in existing:
+                continue
+            current.append(suffix)
+            existing.add(suffix)
+        item["SPECIAL_REQ"] = current
 
     def encode(self, entities: Dict[str, Any]) -> Dict[str, Any]:
         codes, _ = self.encode_with_confidence(entities)
@@ -237,6 +404,37 @@ class Qwen3Predictor:
             confidences[field] = conf_list
 
         return codes, confidences
+
+    def _merge_type_geometry_into_body(self, extracted: Dict[str, Any]) -> Dict[str, Any]:
+        decisions = extracted.get("decisions")
+        if not isinstance(decisions, dict):
+            return extracted
+
+        type_dict = decisions.get("TYPE")
+        if not isinstance(type_dict, dict):
+            return extracted
+
+        geometry = type_dict.get("GEOMETRY")
+        if not isinstance(geometry, dict):
+            return extracted
+
+        body = str(type_dict.get("BODY") or "").strip()
+        angle = str(geometry.get("ANGLE") or "").strip()
+        radius = str(geometry.get("RADIUS") or "").strip()
+
+        parts: List[str] = []
+        if angle:
+            parts.append(angle)
+        if body:
+            parts.append(body)
+        if radius:
+            parts.append(radius)
+
+        if parts:
+            type_dict["BODY"] = ";".join(parts)
+
+        type_dict.pop("GEOMETRY", None)
+        return extracted
 
     def _extract(self, text: str) -> dict:
         return self._call_model(self.stage1_system_prompt, text)
@@ -300,13 +498,19 @@ class Qwen3Predictor:
     def _call_transformers(self, system_prompt: str, user_content: str) -> dict:
         import torch
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ]
-
-        input_text = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        input_text = (
+            f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
+            f"<|im_start|>user\n{user_content}<|im_end|>\n"
+            f"<|im_start|>assistant\n"
+        )
         inputs = self.tokenizer(input_text, return_tensors="pt").to(self.device)
+        generation_config = copy.deepcopy(self.model.generation_config)
+        for attr in ("temperature", "top_p", "top_k"):
+            if hasattr(generation_config, attr):
+                try:
+                    setattr(generation_config, attr, None)
+                except Exception:
+                    pass
 
         with torch.no_grad():
             outputs = self.model.generate(
@@ -317,6 +521,7 @@ class Qwen3Predictor:
                 repetition_penalty=1.05,
                 pad_token_id=self.tokenizer.pad_token_id,
                 eos_token_id=self.tokenizer.eos_token_id,
+                generation_config=generation_config,
                 return_dict_in_generate=True,
                 output_scores=True,
             )
@@ -509,35 +714,85 @@ class Qwen3Predictor:
                 })
                 continue
 
-            if field == "MATERIAL" and isinstance(values, dict):
-                relation = values.get("RELATION")
-                if relation:
-                    entities.append({
-                        "type": field,
-                        "subtype": "RELATION",
-                        "value": str(relation).strip(),
-                        "confidence": default_confidence,
-                    })
-                items = values.get("ITEMS")
-                if isinstance(items, list):
-                    for item in items:
-                        if not isinstance(item, dict):
-                            continue
-                        for subtype in ("EXEC_STANDARD", "GRADE", "SPECIAL_REQ"):
-                            subvalues = item.get(subtype)
-                            if subvalues in (None, "", []):
-                                continue
-                            if not isinstance(subvalues, list):
-                                subvalues = [subvalues]
-                            for value in subvalues:
-                                if value in (None, ""):
-                                    continue
+            if field == "MATERIAL":
+                # 新结构: [{"ROLE":"MAIN","VALUE":"...","SPECIAL_REQ":[...]}]
+                if isinstance(values, list):
+                    for idx, item in enumerate(values):
+                        if isinstance(item, dict):
+                            role = item.get("ROLE")
+                            if role not in (None, ""):
                                 entities.append({
                                     "type": field,
-                                    "subtype": subtype,
-                                    "value": str(value).strip(),
+                                    "subtype": "ROLE",
+                                    "value": str(role).strip(),
+                                    "bind_to_index": idx,
                                     "confidence": default_confidence,
                                 })
+                            value = item.get("VALUE")
+                            if value not in (None, ""):
+                                entities.append({
+                                    "type": field,
+                                    "subtype": "VALUE",
+                                    "value": str(value).strip(),
+                                    "bind_to_index": idx,
+                                    "confidence": default_confidence,
+                                })
+                            special_req = item.get("SPECIAL_REQ")
+                            if special_req not in (None, "", []):
+                                if not isinstance(special_req, list):
+                                    special_req = [special_req]
+                                for value in special_req:
+                                    if value in (None, ""):
+                                        continue
+                                    entities.append({
+                                        "type": field,
+                                        "subtype": "SPECIAL_REQ",
+                                        "value": str(value).strip(),
+                                        "bind_to_index": idx,
+                                        "confidence": default_confidence,
+                                    })
+                        else:
+                            item_text = str(item).strip()
+                            if item_text:
+                                entities.append({
+                                    "type": field,
+                                    "subtype": "VALUE",
+                                    "value": item_text,
+                                    "bind_to_index": idx,
+                                    "confidence": default_confidence,
+                                })
+                    continue
+
+                # 旧结构兼容: {"RELATION":"...","ITEMS":[...]}
+                if isinstance(values, dict):
+                    relation = values.get("RELATION")
+                    if relation:
+                        entities.append({
+                            "type": field,
+                            "subtype": "RELATION",
+                            "value": str(relation).strip(),
+                            "confidence": default_confidence,
+                        })
+                    items = values.get("ITEMS")
+                    if isinstance(items, list):
+                        for item in items:
+                            if not isinstance(item, dict):
+                                continue
+                            for subtype in ("EXEC_STANDARD", "GRADE", "SPECIAL_REQ"):
+                                subvalues = item.get(subtype)
+                                if subvalues in (None, "", []):
+                                    continue
+                                if not isinstance(subvalues, list):
+                                    subvalues = [subvalues]
+                                for value in subvalues:
+                                    if value in (None, ""):
+                                        continue
+                                    entities.append({
+                                        "type": field,
+                                        "subtype": subtype,
+                                        "value": str(value).strip(),
+                                        "confidence": default_confidence,
+                                    })
                 continue
 
             if field == "STANDARD" and isinstance(values, list):

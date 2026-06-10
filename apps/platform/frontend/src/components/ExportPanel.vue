@@ -46,6 +46,7 @@
 
 <script setup>
 import { computed, inject } from 'vue'
+import { getDifficultyLabel } from '../utils/difficulty'
 
 const props = defineProps({
   annotations: { type: Object, default: () => ({}) },
@@ -132,8 +133,8 @@ function exportEncodingCSV() {
       enc.need_review ? '是' : '否',
       enc.confidence ? (enc.confidence * 100).toFixed(2) + '%' : '',
       enc.min_similarity ? (enc.min_similarity * 100).toFixed(2) + '%' : '',
-      enc.difficulty_split?.difficulty || '',
-      enc.second_pass?.final_level || '',
+      getDifficultyLabel(enc.difficulty_split?.difficulty),
+      getDifficultyLabel(enc.second_pass?.final_level),
       fields.TYPE?.code || '',
       fields.MANU?.code || '',
       fields.CONN?.code || '',

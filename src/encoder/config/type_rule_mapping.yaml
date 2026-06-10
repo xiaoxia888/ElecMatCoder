@@ -1,0 +1,196 @@
+# TYPE 规则编码表
+# 放基础码和可复用碎片码。
+
+body_codes:
+  直管: P
+  衬里管: P
+  衬里复合管: P
+  法兰管: FP
+
+  法兰: F
+  带颈对焊法兰: F
+  对焊法兰: F
+  衬里法兰: F
+  带颈平焊法兰: FSO
+  带径平焊法兰: FSO
+  板式平焊法兰: FPL
+  承插焊法兰: FS
+  盲法兰: BF
+  法兰盖: BF
+  8字盲板: 8BF
+  插板: SB
+  松套法兰: LF
+  异径法兰: RF
+  孔板对焊法兰: ORF
+  带颈对焊夹套法兰: FJ
+  带颈平焊夹套法兰: FSOJ
+  夹套盲法兰: BFJ
+
+  三通: T
+  等径三通: T
+  剖分等径三通: TP
+  剖切等径三通: TP
+  剖切同径三通: TP
+  剖分异径三通: RTP
+  剖切异径三通: RTP
+  异径三通: RT
+  半壳等径三通: HT
+  等径三通(纵向剖分成对包装): TP
+  异径三通(纵向剖分成对包装): RTP
+  Y型三通: YT
+  Y型等径三通: YT
+  Y型异径三通: YRT
+  仪表三通: IT
+
+  同心异径管: RC
+  同心异径短管: RC
+  偏心异径管: RE
+  同心异径短节: RC
+  偏心异径短节: RE
+  同心异径管接头: RC
+  偏心异径管接头: RE
+  夹套同心异径管: RCJ
+
+  支管台: O
+  对焊支管台: O
+  承插焊支管台: OS
+  螺纹支管台: OT
+  加强管嘴: O
+  加强管接头: O
+
+  管帽: CAP
+  管塞: PL
+  管接头: C
+  半管接头: HC
+  活接头: QR
+  短节: N
+  单头短节: N
+  双头短节: DN
+  翻边短节: SE
+  管箍: CP
+  单口管箍: CP
+  双口管箍: DCP
+  双头管箍: DCP
+  同心双口管箍: DCP
+  同心异径双口管箍: RDCP
+  异径双口管箍: RDCP
+  异径双头管箍: RDCP
+  等径四通: 4T
+  异径四通: R4T
+  剖切等径四通: 4TP
+  补强板开口焊: ORP
+  金属软管: MH
+  波纹金属软管: CMH
+  夹套等径三通: TJ
+  夹套异径三通: RTJ
+  夹套剖分等径三通: TJP
+
+geometry_body_codes:
+  弯头: EL
+  异径弯头: ELR
+  夹套弯头: JEL
+  斜三通: LT
+  异径斜三通: RLT
+  Y型三通: YT
+  Y型等径三通: YT
+  Y型异径三通: YRT
+  Y型斜三通: YLT
+  Y型等径斜三通: YLT
+  Y型异径斜三通: YRLT
+  斜支管台: LO
+
+angle_codes:
+  "45": "45"
+  "90": "90"
+  "120": "120"
+  "135": "135"
+  "136": "136"
+  "55": "55"
+  "59": "59"
+  "30": "30"
+  "31": "31"
+  "35": "35"
+  "41.47": "41.47"
+  "78.94": "78.94"
+
+radius_codes:
+  LR: ""
+  1.5D: ""
+  2D: "2D"
+  2.5D: "2.5D"
+  3D: "3D"
+  4D: "4D"
+  5D: "5D"
+  6D: "6D"
+
+seal_codes:
+  RJ: RJ
+  RF: ""
+  FF: FF
+  RTJ: RJ
+  MFM: MFM
+  LM: LM
+  MF: MF
+  FM: FM
+  M: M
+  LF: LF
+  FLRJ: RJ
+
+conn_codes:
+  SO: SO
+  THD: T
+  NPT: N
+  MTE: MT
+  FTE: FT
+  MNPT: MN
+  FNPT: FN
+  SCRN: N
+  SW: S
+
+body_implicit_conn:
+  带颈平焊法兰:
+    - SO
+  板式平焊法兰:
+    - SO
+  带颈平焊夹套法兰:
+    - SO
+  承插焊法兰:
+    - SW
+  承插焊支管台:
+    - SW
+
+manu_codes:
+  WELDED: W
+  SAW: W
+  SAWH: W
+  SAWL: W
+  DSAW: W
+  DSAWL: W
+  DSAWH: W
+  ERW: W
+  HFW: W
+  EFW: W
+  SMLS: ""
+
+manu_priority:
+  - SMLS
+  - DSAWH
+  - DSAWL
+  - DSAW
+  - SAWH
+  - SAWL
+  - SAW
+  - ERW
+  - HFW
+  - EFW
+  - WELDED
+
+conn_priority:
+  - MNPT
+  - FNPT
+  - MTE
+  - FTE
+  - NPT
+  - THD
+  - SO
+  - SW

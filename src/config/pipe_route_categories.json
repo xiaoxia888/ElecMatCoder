@@ -1,0 +1,348 @@
+{
+  "version": "v1",
+  "categories": [
+    {
+      "name": "直管",
+      "definition": "以管子、钢管、管道、法兰管、衬里复合管、夹套管为主体的直管类材料，后续需要编码。",
+      "strong_keywords": [
+        "PIPE",
+        "Pipe",
+        "TUBE",
+        "Tube",
+        "管子",
+        "钢管",
+        "管道",
+        "法兰管",
+        "FLANGED PIPE",
+        "Flanged Pipe",
+        "衬里钢管",
+        "涂塑复合钢管",
+        "钢衬四氟管道",
+        "夹套钢管",
+        "夹套管",
+        "JACKETED PIPE",
+        "Jacketed Pipe"
+      ],
+      "keywords": [
+        "PIPE",
+        "Pipe",
+        "TUBE",
+        "Tube",
+        "管子",
+        "钢管",
+        "管道",
+        "法兰管",
+        "FLANGED PIPE",
+        "Flanged Pipe",
+        "衬里钢管",
+        "涂塑复合钢管",
+        "钢衬四氟管道",
+        "夹套钢管",
+        "夹套管",
+        "JACKETED PIPE",
+        "Jacketed Pipe",
+        "搪玻璃管",
+        "Tubing",
+        "仪表管",
+        "钛管"
+      ],
+      "examples": [
+        "PIPE ASTM A312 TP304 SMLS SCH40S DN50",
+        "涂塑复合钢管DN300 PN10bar 20外加强级PE内EP CJ/T120",
+        "FLANGED PIPE 20 GB/T8163 SMLS"
+      ]
+    },
+    {
+      "name": "法兰",
+      "definition": "以法兰为主体的法兰类材料，包括盲法兰、法兰盖、八字盲板、松套法兰等，后续需要编码。",
+      "strong_keywords": [
+        "FLANGE",
+        "Flange",
+        "法兰",
+        "WN FLANGE",
+        "SO FLANGE",
+        "THREADED FLANGE",
+        "SOCKET WELD FLANGE",
+        "BLIND FLANGE",
+        "盲法兰",
+        "法兰盖",
+        "8字盲板",
+        "八字盲板",
+        "SPECTACLE BLIND",
+        "SPECTACLE BLANK",
+        "FIGURE 8",
+        "FIGURE-8",
+        "LAP JOINT FLANGE"
+      ],
+      "keywords": [
+        "FLANGE",
+        "Flange",
+        "法兰",
+        "WN FLANGE",
+        "SO FLANGE",
+        "THREADED FLANGE",
+        "SOCKET WELD FLANGE",
+        "BLIND FLANGE",
+        "盲法兰",
+        "法兰盖",
+        "8字盲板",
+        "八字盲板",
+        "SPECTACLE BLIND",
+        "SPECTACLE BLANK",
+        "FIGURE 8",
+        "FIGURE-8",
+        "LAP JOINT FLANGE",
+        "松套法兰",
+        "夹套法兰",
+        "孔板对焊法兰"
+      ],
+      "examples": [
+        "带颈对焊法兰 HG/T20592 RF DN50 PN16",
+        "BLIND FLANGE ASTM A182 F316L CL150 RF DN80",
+        "八字盲板 DN200 RF"
+      ]
+    },
+    {
+      "name": "管件",
+      "definition": "以弯头、三通、变径件、支管台、管帽、管箍、短节、活接头等为主体的管件类材料，后续需要编码。",
+      "strong_keywords": [
+        "RTS",
+        "YTS",
+        "ELBOW",
+        "TEE",
+        "REDUCER",
+        "OLET",
+        "CAP",
+        "COUPLING",
+        "UNION",
+        "NIPPLE",
+        "弯头",
+        "三通",
+        "异径管",
+        "大小头",
+        "支管台",
+        "管帽",
+        "管箍",
+        "活接头",
+        "短节",
+        "金属软管",
+        "翻边短节"
+      ],
+      "keywords": [
+        "RTS",
+        "YTS",
+        "ELBOW",
+        "TEE",
+        "REDUCER",
+        "OLET",
+        "CAP",
+        "COUPLING",
+        "UNION",
+        "NIPPLE",
+        "弯头",
+        "三通",
+        "斜三通",
+        "异径三通",
+        "异径管",
+        "大小头",
+        "支管台",
+        "管帽",
+        "管箍",
+        "活接头",
+        "短节",
+        "金属软管",
+        "翻边短节",
+        "半管接头",
+        "快速接头",
+        "管塞",
+        "堵头"
+      ],
+      "examples": [
+        "90 DEGREE ELBOW BW A234 WPB SCH40",
+        "REDUCING TEE ASTM A403 WP304 DN100X80",
+        "WELDOLET A105 CL3000"
+      ]
+    },
+    {
+      "name": "阀门",
+      "definition": "以阀门为主体的材料描述，只分类，不参与当前管道编码。",
+      "strong_keywords": [
+        "VALVE",
+        "Valve",
+        "阀门",
+        "BALL VALVE",
+        "GATE VALVE",
+        "GLOBE VALVE",
+        "CHECK VALVE",
+        "BUTTERFLY VALVE",
+        "BALL",
+        "GATE",
+        "GLOBE",
+        "CHECK",
+        "BUTTERFLY",
+        "蝶阀",
+        "球阀",
+        "闸阀",
+        "截止阀",
+        "止回阀",
+        "疏水阀"
+      ],
+      "keywords": [
+        "VALVE",
+        "Valve",
+        "阀门",
+        "球阀",
+        "闸阀",
+        "截止阀",
+        "止回阀",
+        "蝶阀",
+        "旋塞阀",
+        "根阀",
+        "疏水阀"
+      ],
+      "examples": [
+        "BALL VALVE RF CL150 A216 WCB",
+        "温控疏水阀 DN25",
+        "蝶阀 DN300 PN16"
+      ]
+    },
+    {
+      "name": "螺栓",
+      "definition": "以螺栓、螺母、螺柱等紧固件为主体的材料描述，只分类，不参与当前管道编码。",
+      "strong_keywords": [
+        "BOLT",
+        "BOLT",
+        "NUT",
+        "STUD",
+        "螺栓",
+        "螺母",
+        "螺柱",
+        "全螺纹螺柱",
+        "连续螺纹螺柱"
+      ],
+      "keywords": [
+        "BOLT",
+        "NUT",
+        "STUD",
+        "螺栓",
+        "螺母",
+        "螺柱",
+        "全螺纹螺柱",
+        "连续螺纹螺柱"
+      ],
+      "examples": [
+        "BOLT ASTM A193 B7",
+        "全螺纹螺柱&2个重型六角头螺母",
+        "六角头螺栓"
+      ]
+    },
+    {
+      "name": "垫片",
+      "definition": "以垫片、垫圈、金属环垫、缠绕垫等密封件为主体的材料描述，只分类，不参与当前管道编码。",
+      "strong_keywords": [
+        "GASKET",
+        "Gasket",
+        "垫片",
+        "垫圈",
+        "缠绕垫",
+        "SPIRAL WOUND GASKET",
+        "RING JOINT GASKET",
+        "金属环垫",
+        "平垫片"
+      ],
+      "keywords": [
+        "GASKET",
+        "Gasket",
+        "垫片",
+        "垫圈",
+        "缠绕垫",
+        "金属环垫",
+        "平垫片",
+        "八角垫"
+      ],
+      "examples": [
+        "SPIRAL WOUND GASKET 304/GRAPHITE",
+        "非金属平垫片 RF DN80",
+        "金属环垫 R45"
+      ]
+    },
+    {
+      "name": "仪表",
+      "definition": "以压力表、温度计、流量计等仪表件为主体的材料描述，只分类，不参与当前管道编码。",
+      "strong_keywords": [
+        "FLOWMETER",
+        "流量计",
+        "压力表",
+        "温度计",
+        "仪表",
+        "GAUGE",
+        "PRESSURE GAUGE",
+        "THERMOMETER",
+        "LEVEL GAUGE"
+      ],
+      "keywords": [
+        "FLOWMETER",
+        "流量计",
+        "压力表",
+        "温度计",
+        "仪表",
+        "PRESSURE GAUGE",
+        "THERMOMETER",
+        "LEVEL GAUGE",
+        "液位计"
+      ],
+      "examples": [
+        "FLOWMETER DN50",
+        "仪表温度计",
+        "压力表 0~1.6MPa"
+      ]
+    },
+    {
+      "name": "特殊件",
+      "definition": "以过滤器、阻火器、视镜、孔板、消防件等特殊件为主体的材料描述，只分类，不参与当前管道编码。",
+      "strong_keywords": [
+        "STRAINER",
+        "T-Type Strainer",
+        "Y-Type Strainer",
+        "BASKET TYPESTRAINER",
+        "CONE TYPE STRAINER",
+        "T-型过滤器",
+        "Y-型过滤器",
+        "篮式过滤器",
+        "锥形过滤器",
+        "过滤器",
+        "阻火器",
+        "视镜",
+        "孔板",
+        "孔板流量",
+        "室内消火栓",
+        "FIRE HYDRANT"
+      ],
+      "keywords": [
+        "STRAINER",
+        "T-TypeStrainer",
+        "Y-TypeStrainer",
+        "BASKETTYPESTRAINER",
+        "CONETYPESTRAINER",
+        "T-型过滤器",
+        "Y-型过滤器",
+        "篮式过滤器",
+        "锥形过滤器",
+        "过滤器",
+        "阻火器",
+        "视镜",
+        "孔板",
+        "限流孔板",
+        "孔板流量",
+        "室内消火栓",
+        "FIRE HYDRANT",
+        "SIGHT GLASS"
+      ],
+      "examples": [
+        "Y-Type Strainer CL150 RF",
+        "阻火器 DN80",
+        "视镜 PN16"
+      ]
+    }
+  ]
+}

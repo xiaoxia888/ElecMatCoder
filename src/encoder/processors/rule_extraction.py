@@ -76,6 +76,7 @@ def _is_valid_single_residual_integer(text: str) -> bool:
 _ANGLE_CN_SUFFIX_RE = re.compile(r"^\s*(?:°|度)")
 _ANGLE_EN_SUFFIX_RE = re.compile(r"^\s*DEG(?:REE)?S?\b", re.IGNORECASE)
 _ANGLE_PREFIX_RE = re.compile(r"(?:角度|度数)\s*$", re.IGNORECASE)
+_LEADING_NOISE_RE = re.compile(r"^[\s,，;；、()\[\]{}:：\-_/]+$")
 
 
 def _is_angle_residual_context(source: str, span: tuple[int, int]) -> bool:
@@ -86,6 +87,16 @@ def _is_angle_residual_context(source: str, span: tuple[int, int]) -> bool:
         or _ANGLE_EN_SUFFIX_RE.match(right)
         or _ANGLE_PREFIX_RE.search(left)
     )
+
+
+def _is_leading_angle_integer(source: str, span: tuple[int, int], text: str) -> bool:
+    raw = str(text or "").strip()
+    if raw not in {"45", "90"}:
+        return False
+    left = str(source or "")[:span[0]]
+    if not left:
+        return True
+    return bool(_LEADING_NOISE_RE.fullmatch(left))
 
 
 def _should_ignore_unresolved_match(
@@ -101,6 +112,8 @@ def _should_ignore_unresolved_match(
     # 3. 排除常见裸材质 20
     if pattern_index == 3:
         if span is not None and source and _is_angle_residual_context(source, span):
+            return True
+        if span is not None and source and _is_leading_angle_integer(source, span, text):
             return True
         return not _is_valid_single_residual_integer(text)
     return False

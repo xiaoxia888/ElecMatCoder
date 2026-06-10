@@ -38,7 +38,7 @@ class LegacyPipeEncoder(PipeEncoderBase):
                 and self.seq2seq_encoder
                 and self.seq2seq_encoder.is_available())
 
-    def _encode_type_value(self, merged_value: str):
+    def _encode_type_value(self, merged_value: str, type_value: Dict[str, Any] | None = None):
         result = self.seq2seq_encoder.encode(merged_value)
         logger.info(f"[Seq2Seq] TYPE (combined): '{merged_value}' -> code='{result.code}', conf={result.confidence:.2f}")
         return result.code, result.confidence
@@ -75,13 +75,13 @@ class LegacyPipeEncoder(PipeEncoderBase):
                     'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': [],
                     'display': detail['display']}
 
-        if field_type in self.passthrough_fields:
-            if field_type == 'THICKNESS':
-                processed = self._process_thickness(value)
-            elif field_type == 'PRESSURE':
-                processed = self._process_pressure(value)
-            else:
-                processed = value.strip().upper()
+        if field_type == 'THICKNESS':
+            processed = self._process_thickness(value)
+            return {'original': value, 'matched': processed, 'code': processed,
+                    'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': []}
+
+        if field_type == 'PRESSURE':
+            processed = self._process_pressure(value)
             return {'original': value, 'matched': processed, 'code': processed,
                     'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': []}
 
@@ -130,48 +130,28 @@ class LegacyPipeEncoder(PipeEncoderBase):
         return {'original': value, 'matched': value, 'code': value,
                 'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': []}
 
-    def _process_standard_multi(self, values: List[str], modifier_map: Dict[int, Dict[str, List[str]]] = None) -> FieldEncoding:
+    def _process_standard_multi(
+        self,
+        values: List[str],
+        modifier_map: Dict[int, Dict[str, List[str]]] = None,
+        original_text: str = "",
+    ) -> FieldEncoding:
         if not values:
             return FieldEncoding(field_type='STANDARD')
 
-        detail = self.standard_processor.process_with_modifiers(values, modifier_map)
+        detail = self.standard_processor.process_with_modifiers(values, modifier_map, original_text=original_text)
         items = []
 
-        for std, encoded in zip(detail.get('production', []), detail.get('production_encoded', [])):
-            structured = self.standard_processor.parse_standard_structure(std)
-            code_parts = self.standard_processor._split_code_and_grade(encoded)
-            items.append({'original': std, 'matched': encoded, 'code': encoded,
-                          'base_code': code_parts['base'], 'grade': structured['grade'] or code_parts['grade'],
-                          'standard_subject': structured['subject'],
-                          'standard_grade': structured['grade'],
-                          'standard_method': structured['method'],
-                          'standard_appendix': structured['appendix'],
+        for item in detail.get('ordered_items', []) or []:
+            items.append({'original': item.get('original', ''), 'matched': item.get('encoded', ''), 'code': item.get('encoded', ''),
+                          'base_code': item.get('base_code', ''), 'grade': item.get('grade', ''),
+                          'standard_subject': item.get('standard_subject', ''),
+                          'standard_grade': item.get('standard_grade', ''),
+                          'standard_method': item.get('standard_method', ''),
+                          'standard_appendix': item.get('standard_appendix', ''),
                           'similarity': 1.0,
-                          'is_exact': True, 'need_review': False, 'candidates': [], 'category': '生产'})
-
-        for std, encoded in zip(detail.get('manufacturing', []), detail.get('manufacturing_encoded', [])):
-            structured = self.standard_processor.parse_standard_structure(std)
-            code_parts = self.standard_processor._split_code_and_grade(encoded)
-            items.append({'original': std, 'matched': encoded, 'code': encoded,
-                          'base_code': code_parts['base'], 'grade': structured['grade'] or code_parts['grade'],
-                          'standard_subject': structured['subject'],
-                          'standard_grade': structured['grade'],
-                          'standard_method': structured['method'],
-                          'standard_appendix': structured['appendix'],
-                          'similarity': 1.0,
-                          'is_exact': True, 'need_review': False, 'candidates': [], 'category': '制造'})
-
-        for std, encoded in zip(detail.get('unknown', []), detail.get('unknown_encoded', [])):
-            structured = self.standard_processor.parse_standard_structure(std)
-            code_parts = self.standard_processor._split_code_and_grade(encoded)
-            items.append({'original': std, 'matched': encoded, 'code': encoded,
-                          'base_code': code_parts['base'], 'grade': structured['grade'] or code_parts['grade'],
-                          'standard_subject': structured['subject'],
-                          'standard_grade': structured['grade'],
-                          'standard_method': structured['method'],
-                          'standard_appendix': structured['appendix'],
-                          'similarity': 1.0,
-                          'is_exact': True, 'need_review': False, 'candidates': [], 'category': ''})
+                          'is_exact': True, 'need_review': False, 'candidates': [],
+                          'category': self.standard_processor.CATEGORY_LABELS.get(item.get('category', 'unknown'), '')})
 
         original_display = ' | '.join([item['original'] for item in items])
         return FieldEncoding(

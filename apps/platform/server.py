@@ -2454,7 +2454,7 @@ def _attach_second_pass(result_dict: Dict[str, Any]) -> Dict[str, Any]:
     difficulty_info = result_dict.get("difficulty_split") if isinstance(result_dict.get("difficulty_split"), dict) else {}
     payload = {
         "text": result_dict.get("original_text", "") or "",
-        "stage1_difficulty": str(difficulty_info.get("difficulty", "") or "").strip(),
+        "stage1_difficulty": difficulty_info.get("difficulty"),
         "fields": result_dict.get("fields", {}) if isinstance(result_dict.get("fields"), dict) else {},
     }
     try:
@@ -2462,7 +2462,7 @@ def _attach_second_pass(result_dict: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as exc:
         logger.exception("二次校验执行失败: %s", exc)
         result_dict["second_pass"] = {
-            "final_level": "",
+            "final_level": None,
             "results": {},
             "skipped_fields": {},
             "error": str(exc),

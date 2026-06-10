@@ -784,7 +784,7 @@ class ThicknessProcessor:
         #
         # 同时保持硬边界：
         # - 不允许从 B16.9S-40S 里截出 9S
-        # - 不把 Mnf Std / MFR STD / MFRS STD 当壁厚
+        # - 不把 Mnf Std / MFR STD / MFRS STD / ENR STD 当壁厚
         weak_schedule_alpha_pattern = re.compile(
             r'(?i)(?<![A-Za-z0-9.])(?:XXS|XS|STD)(?![A-Za-z0-9])'
         )
@@ -798,7 +798,7 @@ class ThicknessProcessor:
                 continue
             raw_token = m.group(0)
             prefix = normalized[max(0, m.start() - 8):m.start()]
-            if raw_token.upper() == 'STD' and re.search(r'(?i)(?:MNF|MFRS?|MFR)\s*$', prefix):
+            if raw_token.upper() == 'STD' and re.search(r'(?i)(?:MNF|MFRS?|MFR|ENR)\s*$', prefix):
                 continue
             if _mark_invalid_if_needed(schedule_raw=raw_token):
                 continue

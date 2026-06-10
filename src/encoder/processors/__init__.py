@@ -16,6 +16,10 @@ from .size_processor import SizeProcessor, get_size_processor
 from .thickness_table_processor import ThicknessTableProcessor, get_thickness_table_processor, convert_thickness_to_mm
 from .regex_extractor import RegexExtractor, get_regex_extractor
 from .standard_target_mapper import StandardTargetMapper, get_standard_target_mapper, map_standard_to_target
+from .type_encoder import TypeEncoder, TypeEncodingResult, get_type_encoder
+from .material_encoder import MaterialEncoder, MaterialEncodingResult, get_material_encoder
+from .rule_audit import build_rule_audit_excel
+from .rule_extraction import RuleExtractionResult, extract_size_and_thickness_by_rules
 
 __all__ = [
     'StandardProcessor',
@@ -34,4 +38,13 @@ __all__ = [
     'StandardTargetMapper',
     'get_standard_target_mapper',
     'map_standard_to_target',
+    'TypeEncoder',
+    'TypeEncodingResult',
+    'get_type_encoder',
+    'MaterialEncoder',
+    'MaterialEncodingResult',
+    'get_material_encoder',
+    'build_rule_audit_excel',
+    'RuleExtractionResult',
+    'extract_size_and_thickness_by_rules',
 ]

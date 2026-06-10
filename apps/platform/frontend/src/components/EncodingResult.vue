@@ -237,7 +237,14 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { buildDifficultyReason } from '../utils/difficulty'
+import {
+  DIFF_HARD,
+  DIFF_SECOND_EASY,
+  buildDifficultyReason,
+  getDifficultyLabel,
+  hasDifficultyLevel,
+  normalizeDifficultyLevel
+} from '../utils/difficulty'
 
 const props = defineProps({
   result: {
@@ -300,22 +307,26 @@ const totalConfidenceText = computed(() => {
 const difficultySplit = computed(() => props.result?.difficulty_split || null)
 const secondPass = computed(() => props.result?.second_pass || null)
 
-const hasDifficultySplit = computed(() => !!difficultySplit.value?.difficulty)
-const hasSecondPass = computed(() => !!secondPass.value?.final_level)
+const difficultyLevel = computed(() => normalizeDifficultyLevel(difficultySplit.value?.difficulty))
+const secondPassLevel = computed(() => normalizeDifficultyLevel(secondPass.value?.final_level))
+
+const hasDifficultySplit = computed(() => hasDifficultyLevel(difficultySplit.value?.difficulty))
+const hasSecondPass = computed(() => hasDifficultyLevel(secondPass.value?.final_level))
 
 const difficultyValueClass = computed(() => {
-  return difficultySplit.value?.difficulty === '困难' ? 'route-value-danger' : 'route-value-success'
+  return difficultyLevel.value === DIFF_HARD ? 'route-value-danger' : 'route-value-success'
 })
 
 const secondPassValueClass = computed(() => {
-  const level = secondPass.value?.final_level
-  if (level === '困难') return 'route-value-danger'
-  if (level === '二次简单') return 'route-value-success'
+  const level = secondPassLevel.value
+  if (level === DIFF_HARD) return 'route-value-danger'
+  if (level === DIFF_SECOND_EASY) return 'route-value-success'
   return 'route-value-warning'
 })
 
 const displayDifficultyText = computed(() => {
-  return secondPass.value?.final_level || difficultySplit.value?.difficulty || '—'
+  const raw = hasSecondPass.value ? secondPass.value?.final_level : difficultySplit.value?.difficulty
+  return getDifficultyLabel(raw) || '—'
 })
 
 const displayDifficultyClass = computed(() => {

@@ -1,0 +1,277 @@
+# ============================================================
+# 置信度配置
+# ============================================================
+#
+# 这份文件只管理“置信度/审查/一致性验证”相关参数。
+# 不放字段顺序、正则抽取、尺寸处理、规范处理等纯业务编码规则，
+# 目的是把“怎么编码”和“如何评估结果可信度”拆开。
+#
+# 当前已接入代码的部分：
+# 1. field_verification    字段验证、证据规则、白名单降分规则
+# 2. review_rules          二阶段编码后的审查规则与总置信度参数
+#
+# 约定：
+# - enabled=false 表示该规则组整体关闭
+# - penalty/cap/threshold 数值越小通常越严格，越大越宽松
+# - 这里的规则以“降分/触发审查”为主，不会直接丢弃字段值
+
+# ============================================================
+# 一、字段验证 / 证据规则
+# ============================================================
+#
+# 作用：
+# - 检查一阶段结果是否能在原文找到直接证据
+# - 如果找不到，不删除字段，只降低该字段或其归属字段的相似度
+#
+# 典型用途：
+# - 原文没有 DN，却提取出 SIZE.DN
+# - 原文没有 GALV/镀锌/ZN，却提取出材质特殊要求
+# - 原文没有 WELD/SMLS 等工艺证据，却提取出 TYPE.MANU
+field_verification:
+  enabled: true
+
+  # 这些字段仍然走“正则独立命中验证”
+  #
+  # 含义：
+  # - 如果提取出的值不能被 RegexExtractor 从原文独立匹配到
+  # - 则对该字段做统一惩罚
+  #
+  # 注意：
+  # - TYPE 组合字段中的子项（如 SEAL/MANU/CONN）未通过时，
+  #   惩罚会映射到 TYPE 主字段上
+  verify_fields:
+    - SEAL
+    - MANU
+    - CONN
+
+  # 正则验证不通过时的统一惩罚系数
+  #
+  # 例如：
+  # - 原字段相似度 0.80
+  # - 惩罚系数 0.50
+  # - 惩罚后变为 0.40
+  unverified_penalty: 0.5
+
+  # ------------------------------------------------------------
+  # 证据规则：只检查“有没有原文依据”，不做结构污染判断
+  # ------------------------------------------------------------
+  evidence_rules:
+
+    # SIZE.DN 证据规则
+    #
+    # 含义：
+    # - 只要结果里提取出了 SIZE.DN
+    # - 原文里就必须出现 DN 锚点
+    #
+    # 这条规则专门防：
+    # - 26.7 SCH80 -> 模型脑补出 DN25
+    size_dn_requires_anchor:
+      enabled: true
+      dn_anchor_pattern: '(?i)\bDN\s*\d'
+
+    # MATERIAL.SPECIAL_REQ 证据规则
+    #
+    # 含义：
+    # - 如果材质特殊要求存在
+    # - 原文里必须找到对应证据别名
+    #
+    # 示例：
+    # - SPECIAL_REQ=ZN，需要原文有 GALV / 镀锌 / ZN
+    material_special_req_requires_text:
+      enabled: true
+      aliases:
+        CE:
+          - CE
+          - ANTI-H2S
+          - NACE
+        ZN:
+          - GALV
+          - 镀锌
+          - ZN
+
+    # TYPE.MANU 证据规则
+    #
+    # 含义：
+    # - 如果工艺字段存在
+    # - 原文里必须找到对应工艺证据
+    #
+    # 示例：
+    # - MANU=WELD，需要原文有 WELD / WELDED / 焊接
+    # - MANU=SMLS，需要原文有 SMLS / SEAMLESS / 无缝
+    type_manu_requires_text:
+      enabled: true
+      aliases:
+        WELD:
+          - WELD
+          - WELDED
+          - 焊接
+        SMLS:
+          - SMLS
+          - SEAMLESS
+          - 无缝
+        ERW:
+          - ERW
+        DSAW:
+          - DSAW
+        SAWL:
+          - SAWL
+        SAWH:
+          - SAWH
+        LSAW:
+          - LSAW
+        EFW:
+          - EFW
+
+  # ------------------------------------------------------------
+  # 白名单规则
+  # ------------------------------------------------------------
+  #
+  # 设计原则：
+  # - 只对白名单本来就相对封闭的字段使用
+  # - 不对白名单外的值直接判错，只做降分
+  # - 不适合 BODY / MATERIAL.VALUE / STANDARD.BODY 这类开放字段
+  whitelist_rules:
+    type_subfields:
+      enabled: true
+
+      # SEAL 密封面白名单
+      #
+      # 适用于封闭集合字段。
+      # 如果出现不在列表中的值，不直接删除，后续只做降分。
+      SEAL:
+        - FF
+        - RF
+        - RTJ
+        - RJ
+        - FLRJ
+        - DOUBLE-LIP
+        - DOUBLE LIP
+        - Double-lip
+        - 双唇
+
+      # MANU 工艺白名单
+      MANU:
+        - ERW
+        - DSAW
+        - SAWL
+        - SAWH
+        - LSAW
+        - EFW
+        - SMLS
+        - WELD
+        - WELDED
+
+      # CONN 连接方式白名单
+      #
+      # 注意：
+      # - ENDS 已不再作为当前模型的正式输出字段
+      # - 端部相关值已并入 CONN，因此这里只保留 CONN 白名单
+      CONN:
+        - SO
+        - SW
+        - THD
+        - NPT
+        - FNPT
+        - MNPT
+        - NPTF
+        - NPTM
+        - FTE
+        - MTE
+
+
+# ============================================================
+# 二、审查规则 / 总置信度参数
+# ============================================================
+#
+# 作用：
+# - 统一管理二阶段字段置信度融合
+# - 管理硬规则命中后的审查逻辑
+# - 管理最终总置信度的权重与校准参数
+review_rules:
+  enabled: true
+
+  # 两阶段字段分融合权重
+  #
+  # 当前公式：
+  #   C_field = C_extract ^ extract_weight * C_encode ^ encode_weight
+  #
+  # 含义：
+  # - extract_weight 越大，越依赖一阶段提取置信度
+  # - encode_weight 越大，越依赖二阶段编码置信度
+  extract_weight: 0.55
+  encode_weight: 0.45
+
+  # 最终是否待审的基础阈值
+  #
+  # 当前逻辑：
+  # - 命中硬规则 -> 待审
+  # - 或最终总置信度 < review_threshold -> 待审
+  review_threshold: 0.80
+
+  # 硬规则命中后是否强制待审
+  hard_rule_force_review: true
+
+  # 置信度温度缩放
+  #
+  # 用途：
+  # - 只影响评分展示与审查阈值判断
+  # - 不影响最终编码结果本身
+  calibration:
+    enabled: true
+    temperature: 1.8
+
+  # 壁厚分段单位混用
+  #
+  # 示例：
+  # - 20MMX30S
+  # 这类通常意味着字段边界或规格理解存在风险
+  mixed_thickness_units:
+    enabled: true
+    similarity_cap: 0.65
+    warning: "壁厚分段单位混用（mm 与 Sch/S 系列），建议人工审查。"
+
+  # 多材质并存
+  #
+  # 示例：
+  # - 复合材质
+  # - 组合材质
+  multi_material:
+    enabled: true
+    similarity_cap: 0.75
+    warning: "识别到多个材质值，建议人工确认主材质/组合材质编码。"
+
+  # 规范未识别类别
+  #
+  # 示例：
+  # - 标准本体识别到了，但无法判断是生产/制造等类别
+  unknown_standard_category:
+    enabled: true
+    similarity_cap: 0.70
+    warning: "部分规范未识别到类型（生产/制造），建议人工审查。"
+
+  # 尺寸/壁厚过度分段
+  #
+  # 示例：
+  # - 一条尺寸被切成 3 段以上
+  # - 一条壁厚被切成 3 段以上
+  over_segmented_size_or_thickness:
+    enabled: true
+    max_segments: 2
+    size_similarity_cap: 0.68
+    thickness_similarity_cap: 0.68
+    size_warning: "尺寸编码结果分段超过2段，建议人工审查。"
+    thickness_warning: "壁厚编码结果分段超过2段，建议人工审查。"
+
+  # 最终总置信度字段权重
+  #
+  # 用于整体 confidence 聚合时的字段权重。
+  # 权重越高，说明该字段对最终总置信度影响越大。
+  confidence_weights:
+    TYPE: 0.22
+    SIZE: 0.20
+    THICKNESS: 0.18
+    MATERIAL: 0.16
+    STANDARD: 0.16
+    MANU: 0.04
+    CONN: 0.03
+    SEAL: 0.01

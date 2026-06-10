@@ -75,10 +75,26 @@ class TextPreprocessor:
         # 4. 标准化常见乘号（不改变 slash 语义）
         text = self.normalize_multiplication(text)
 
-        # 5. 保守分隔符标准化（只处理安全分隔符）
+        # 5. 收紧小数点两侧数字间的误空格：12. 70 -> 12.70, 12 .70 -> 12.70
+        text = self.normalize_decimal_spacing(text)
+
+        # 6. 统一外径前缀写法
+        text = self.normalize_diameter_prefix(text)
+
+        # 7. 保守分隔符标准化（只处理安全分隔符）
         text = self.normalize_safe_separators(text)
 
-        # 6. 空白压缩
+        # 8. 窄范围规格归一化（只修规则层高频脏写法）
+        text = self.normalize_pipe_spec_tokens(text)
+
+        # 9. 结构字段局部 OCR/录入纠错（只在强锚点局部片段中生效）
+        text = self.normalize_structural_ocr_tokens(text)
+
+        # 10. OCR 纠偏后再次收紧小数点两侧空格：
+        # 例如 S-3. Omm -> S-3. 0mm -> S-3.0mm
+        text = self.normalize_decimal_spacing(text)
+
+        # 11. 空白压缩
         text = self.normalize_whitespace(text)
 
         return text
@@ -111,7 +127,40 @@ class TextPreprocessor:
     @staticmethod
     def normalize_multiplication(text: str) -> str:
         """统一乘号写法，便于后续尺寸/壁厚识别。"""
-        return text.replace('×', 'X').replace('*', 'X')
+        # 不把 '×' 强转成 'X'。
+        # 在管道场景里，`DN15×XS` 若被改成 `DN15XXS`，会直接把原文语义改坏。
+        # 结构提示词和规则层本身都支持 `×`，所以这里只把 `*` 归一到 `×`。
+        return text.replace('*', '×')
+
+    @staticmethod
+    def normalize_decimal_spacing(text: str) -> str:
+        """
+        收紧小数点左右被误插入的空格。
+
+        仅处理明确满足“点号左右都是数字”的情况：
+        - 12. 70 -> 12.70
+        - 12 .70 -> 12.70
+        - 12 . 70 -> 12.70
+        """
+        if not text:
+            return ""
+        return re.sub(r'(?<=\d)\s*\.\s*(?=\d)', '.', text)
+
+    @staticmethod
+    def normalize_diameter_prefix(text: str) -> str:
+        """
+        统一外径前缀写法到 `Φ`。
+
+        目标：
+        - φ / Φ / Ф / ф / Ø / ø 统一成 `Φ`
+
+        说明：
+        - 这里只处理明显是“直径前缀字符”的变体，不动 `D/OD`
+        - 放在公共预处理里，供尺寸/壁厚/测试入口统一复用
+        """
+        if not text:
+            return ""
+        return re.sub(r"[ΦφФфØø]", "Φ", text)
 
     def normalize_safe_separators(self, text: str) -> str:
         """
@@ -125,6 +174,222 @@ class TextPreprocessor:
         text = re.sub(r'\s*;\s*', ';', text)
         text = re.sub(r';{2,}', ';', text)
         return text.strip(';')
+
+    @staticmethod
+    def normalize_pipe_spec_tokens(text: str) -> str:
+        """
+        针对管道编码高频脏写法做最小范围归一化。
+
+        只修 token 内部空格，不改普通分隔空格：
+        - SCH10 S -> SCH10S
+        - SCH 10 S -> SCH10S
+        - S-10 S -> S-10S
+        - SCH10 SXSCH10S -> SCH10SXSCH10S
+        """
+        if not text:
+            return ""
+
+        sch_end_guard = r'(?=$|[;,/()xX×*]|\s+(?![0-9.]))'
+
+        # 先只修 SCH 字母自身被空格打断的情况：S C H40 / SC H 40 -> SCH40
+        text = re.sub(
+            rf'(?i)(?:(?<=^)|(?<=[;,\s/xX×]))S\s*C\s*H',
+            'SCH',
+            text,
+        )
+
+        # 只有在存在尾部 S 时，才允许把 SCH 与尾部 S 之间“只由空格和数字组成”的片段压紧：
+        # SCH 4 0 S -> SCH40S
+        text = re.sub(
+            rf'(?i)(?:(?<=^)|(?<=[;,\s/xX×]))SCH\s*(([0-9]\s*)+)S{sch_end_guard}',
+            lambda m: f"SCH{re.sub(r'\s+', '', m.group(1) or '')}S",
+            text,
+        )
+
+        # SCH 字母归一后，允许收紧 SCH 与纯数字之间的空格：SCH 40 -> SCH40
+        text = re.sub(
+            rf'(?i)(?:(?<=^)|(?<=[;,\s/xX×]))SCH\s*([0-9]+)(S?){sch_end_guard}',
+            lambda m: f"SCH{m.group(1)}{(m.group(2) or '').upper()}",
+            text,
+        )
+
+        # SCH 体系：SCH10 S / SCH 10 S / SCH40 S -> SCH10S / SCH40S
+        text = re.sub(
+            rf'(?i)(?:(?<=^)|(?<=[;,\s/xX×]))SCH\s*([0-9]+)\s*S{sch_end_guard}',
+            lambda m: f"SCH{m.group(1)}S",
+            text,
+        )
+        text = re.sub(
+            rf'(?i)\bSCH\s*([0-9]+){sch_end_guard}',
+            lambda m: f"SCH{m.group(1)}",
+            text,
+        )
+
+        # S- 体系：S-10 S -> S-10S
+        text = re.sub(
+            rf'(?i)(?:(?<=^)|(?<=[;,\s/xX×]))S-\s*([0-9]+)\s*S{sch_end_guard}',
+            lambda m: f"S-{m.group(1)}S",
+            text,
+        )
+
+        # 紧凑 x 组合里残留空格：SCH10S X SCH10 S -> SCH10SX SCH10S
+        text = re.sub(r'(?i)\b(SCH[0-9]+S?)\s+([xX×])\s+(SCH[0-9]+S?)\b', r'\1\2\3', text)
+        text = re.sub(r'(?i)\b(S-[0-9]+S?)\s+([xX×])\s+(SCH[0-9]+S?)\b', r'\1\2\3', text)
+        text = re.sub(r'(?i)\b(SCH[0-9]+S?)\s+([xX×])\s+(S-[0-9]+S?)\b', r'\1\2\3', text)
+
+        return text
+
+    @staticmethod
+    def normalize_structural_ocr_tokens(text: str) -> str:
+        """
+        只在强结构片段里修正常见 OCR/录入错误：
+        - l / I -> 1
+        - O / o -> 0
+
+        不做全文替换，避免打坏材质、标准号、普通单词。
+        当前仅覆盖：
+        - DN 规格片段
+        - OD/φ/Φ/Ф/D 规格片段
+        - THK/T= 壁厚片段
+        - L= 长度片段
+        - SCH / S- schedule 片段
+        """
+        if not text:
+            return ""
+
+        light_delimiters = set(" .,/xX×*-")
+        confusion_map = {
+            "O": "0",
+            "o": "0",
+            "I": "1",
+            "i": "1",
+            "l": "1",
+        }
+
+        def nearest_effective_is_digit(segment: str, idx: int) -> bool:
+            left = idx - 1
+            while left >= 0 and segment[left] in light_delimiters:
+                left -= 1
+            if left >= 0 and segment[left].isdigit():
+                return True
+
+            right = idx + 1
+            while right < len(segment) and segment[right] in light_delimiters:
+                right += 1
+            if right < len(segment) and segment[right].isdigit():
+                return True
+
+            return False
+
+        def normalize_numeric_confusions(segment: str) -> str:
+            chars = list(segment)
+            for idx, ch in enumerate(chars):
+                repl = confusion_map.get(ch)
+                if repl is None:
+                    continue
+                if nearest_effective_is_digit(segment, idx):
+                    chars[idx] = repl
+            return "".join(chars)
+
+        def apply(pattern: str, src: str) -> str:
+            return re.sub(pattern, lambda m: normalize_numeric_confusions(m.group(0)), src)
+
+        def apply_od_like(src: str) -> str:
+            pattern = r"(?i)(?:\bOD|[ΦφФD])\s*[0-9OIol]+(?:\.[0-9OIol]+)?(?:\s*[xX×*]\s*(?:[ΦφФD]\s*)?[0-9OIol]+(?:\.[0-9OIol]+)?){0,2}"
+
+            def repl(match: re.Match[str]) -> str:
+                segment = match.group(0)
+                prefix_match = re.match(r"(?i)(OD|[ΦφФD])", segment)
+                if not prefix_match:
+                    return normalize_numeric_confusions(segment)
+                prefix = prefix_match.group(0)
+                rest = segment[len(prefix) :]
+                return prefix + normalize_numeric_confusions(rest)
+
+            return re.sub(pattern, repl, src)
+
+        def apply_pressure_like(src: str) -> str:
+            patterns = (
+                r"(?i)\bPN\s*[0-9OIoli]+(?:\.[0-9OIoli]+)?\b",
+                r"(?i)\bCL\s*\.?\s*[0-9OIoli]+\b",
+                r"(?i)\bCLASS\s*\.?\s*[0-9OIoli]+\b",
+                r"(?i)\b[0-9OIoli]+\s*(?:LB|LBS)\b",
+                r"(?i)\b[0-9OIoli]+#(?![A-Za-z0-9])",
+            )
+
+            def repl(match: re.Match[str]) -> str:
+                segment = match.group(0)
+                prefix_match = re.match(r"(?i)(PN|CL|CLASS)", segment)
+                if prefix_match:
+                    prefix = prefix_match.group(0)
+                    rest = segment[len(prefix) :]
+                    return prefix + normalize_numeric_confusions(rest)
+
+                suffix_match = re.search(r"(?i)(LB|LBS|#)$", segment)
+                if suffix_match:
+                    suffix = suffix_match.group(0)
+                    rest = segment[: -len(suffix)]
+                    return normalize_numeric_confusions(rest) + suffix
+
+                return normalize_numeric_confusions(segment)
+
+            for pattern in patterns:
+                src = re.sub(pattern, repl, src)
+            return src
+
+        # DN 尺寸：DN150xl5、DN25O、DN1OO、DN150xDN5O
+        text = apply(
+            r"(?i)\bDN\s*[0-9OIol]+(?:\s*[xX×*/-]\s*(?:DN\s*)?[0-9OIol]+){0,2}",
+            text,
+        )
+
+        # 显式 OD/φ/D 尺寸：φ1O8x4.O、OD1O8x4.O、D6O.3x3.91
+        text = apply_od_like(text)
+
+        # 显式壁厚：THK=4. Omm、T=1O.5mm
+        text = apply(
+            r"(?i)\b(?:THK|T)\s*=\s*[0-9OIol.\s]+(?:MM|毫米)\b",
+            text,
+        )
+
+        # 长度：L=1OOOmm
+        text = apply(
+            r"(?i)\bL\s*=\s*[0-9OIol.\s]+(?:MM|毫米)\b",
+            text,
+        )
+
+        # S 数值型壁厚：S-3. Omm、S=3. O、S3. Omm、S3mm
+        # 这里不做全文放宽，只覆盖：
+        # 1) 显式带符号：S- / S= / S:
+        # 2) 无符号但带小数点
+        # 3) 无符号但显式带 mm/毫米
+        text = apply(
+            r"(?i)\bS\s*[-:=：]\s*[0-9OIol]+(?:\s*\.\s*[0-9OIol]+)?\s*(?:MM|毫米)?\b",
+            text,
+        )
+        text = apply(
+            r"(?i)\bS\s*[0-9OIol]+\s*\.\s*[0-9OIol]+\s*(?:MM|毫米)?\b",
+            text,
+        )
+        text = apply(
+            r"(?i)\bS\s*[0-9OIol]+\s*(?:MM|毫米)\b",
+            text,
+        )
+
+        # Schedule：SCH3O、SCH1OS、S-1OS
+        text = apply(
+            r"(?i)\bSCH\s*[0-9OIol]+\s*S?\b",
+            text,
+        )
+        text = apply(
+            r"(?i)\bS-\s*[0-9OIol]+\s*S?\b",
+            text,
+        )
+
+        # 磅级：PNi6、CL3OO、Class3OO0、15OLB、15O#
+        text = apply_pressure_like(text)
+
+        return text
 
     @staticmethod
     def normalize_whitespace(text: str) -> str:

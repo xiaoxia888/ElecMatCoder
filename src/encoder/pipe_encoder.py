@@ -54,9 +54,15 @@ class FieldEncoding:
     """单个字段的编码结果"""
     field_type: str = ""
     original_value: Any = ""
+    stage1_final_value: Any = ""
+    stage1_confidence: Optional[float] = None
+    stage2_confidence: Optional[float] = None
+    field_confidence: Optional[float] = None
     original_values: List[str] = field(default_factory=list)
     matched_name: str = ""
     matched_names: List[str] = field(default_factory=list)
+    encoding_input: Any = ""
+    encode_confidence_v2: Dict[str, Any] = field(default_factory=dict)
     code: str = ""
     codes: List[str] = field(default_factory=list)
     similarity: float = 1.0
@@ -86,6 +92,7 @@ class PipeEncodingResult:
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
     thickness_conversion_notes: List[str] = field(default_factory=list)
+    extract_confidence_v2: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> dict:
         result = {
@@ -101,6 +108,7 @@ class PipeEncodingResult:
             'errors': self.errors,
             'warnings': self.warnings,
             'thickness_conversion_notes': self.thickness_conversion_notes,
+            'extract_confidence_v2': self.extract_confidence_v2,
             'fields': {k: v.to_dict() for k, v in self.fields.items()}
         }
         return result
@@ -154,6 +162,9 @@ class PipeEncoderBase:
         
         config_path = Path(__file__).parent / "config" / "encoder_config.yaml"
         self.config = self._load_config(config_path)
+
+        confidence_config_path = Path(__file__).parent.parent / "config" / "confidence_config.yaml"
+        self.confidence_config = self._load_config(confidence_config_path)
         
         platform_config_path = Path(__file__).parent.parent / "config" / "platform_config.yaml"
         self.platform_config = self._load_config(platform_config_path)
@@ -170,8 +181,11 @@ class PipeEncoderBase:
         
         self.semantic_match_fields = set(self.config.get('semantic_match_fields', ['TYPE', 'MATERIAL']))
         self.exact_match_fields = set(self.config.get('exact_match_fields', ['MANU', 'CONN']))
-        self.passthrough_fields = set(self.config.get('passthrough_fields', ['THICKNESS', 'PRESSURE']))
-        self.review_rules_config = self.config.get('review_rules', {}) or {}
+        self.review_rules_config = (
+            self.confidence_config.get('review_rules')
+            or self.config.get('review_rules')
+            or {}
+        )
         self.extract_conf_weight = float(self.review_rules_config.get('extract_weight', 0.55))
         self.encode_conf_weight = float(self.review_rules_config.get('encode_weight', 0.45))
         self.review_threshold = float(self.review_rules_config.get('review_threshold', 0.80))
@@ -179,10 +193,16 @@ class PipeEncoderBase:
         calibration_cfg = self.review_rules_config.get('calibration', {}) or {}
         self.conf_calibration_enabled = bool(calibration_cfg.get('enabled', False))
         self.conf_temperature = float(calibration_cfg.get('temperature', 1.8))
-        verification_cfg = self.config.get('field_verification', {}) or {}
+        verification_cfg = (
+            self.confidence_config.get('field_verification')
+            or self.config.get('field_verification')
+            or {}
+        )
         self.verification_enabled = bool(verification_cfg.get('enabled', False))
         self.verify_fields = set(verification_cfg.get('verify_fields', []))
         self.unverified_penalty = float(verification_cfg.get('unverified_penalty', 0.5))
+        self.evidence_rules_cfg = verification_cfg.get('evidence_rules', {}) or {}
+        self.whitelist_rules_cfg = verification_cfg.get('whitelist_rules', {}) or {}
     
     def _load_config(self, config_path: Path) -> dict:
         try:
@@ -197,7 +217,7 @@ class PipeEncoderBase:
     def _should_use_type_combined(self) -> bool:
         raise NotImplementedError
 
-    def _encode_type_value(self, merged_value: str):
+    def _encode_type_value(self, merged_value: str, type_value: Optional[Dict[str, Any]] = None):
         """编码合并后的 TYPE 值，返回 (code, confidence)"""
         raise NotImplementedError
 
@@ -210,16 +230,24 @@ class PipeEncoderBase:
     def _process_single_value(self, field_type: str, value: str) -> dict:
         raise NotImplementedError
 
-    def _process_standard_multi(self, values: List[str], modifier_map: Dict[int, Dict[str, List[str]]] = None) -> FieldEncoding:
+    def _process_standard_multi(
+        self,
+        values: List[str],
+        modifier_map: Dict[int, Dict[str, List[str]]] = None,
+        original_text: str = "",
+    ) -> FieldEncoding:
         raise NotImplementedError
+
+    def _process_material_item_structured(self, item: Dict[str, Any]) -> Optional[dict]:
+        return None
 
     # ──────────────────── 公共方法 ────────────────────
 
     def _preprocess_tee_reducing(self, entities: Dict, original_text: str) -> Dict:
         """
-        三通异径预处理
+        三通/管箍异径预处理
         
-        如果 TYPE 包含"三通"或"tee"，且原始描述不包含"变径"或"异径"，
+        如果 TYPE 包含三通/tee/管箍，且原始描述不包含"变径"或"异径"，
         则基于 SIZE 的最终编码结果判断是否异径：
         - 编码后若为多段且数值不相同（如 200X150），判定为异径
         - 编码后若收敛为单段（如 DN200 与 8" 收敛为 200），不判定异径
@@ -227,7 +255,11 @@ class PipeEncoderBase:
         type_value = entities.get('TYPE', '')
         type_text = self._get_type_body_text(entities)
         
-        if '三通' not in type_text and 'tee' not in type_text:
+        if (
+            '三通' not in type_text
+            and 'tee' not in type_text
+            and '管箍' not in type_text
+        ):
             return entities
         
         text_lower = (original_text or '').lower()
@@ -238,16 +270,42 @@ class PipeEncoderBase:
         if self._is_reducing_size_by_encoded(size_value):
             if isinstance(type_value, dict):
                 body = str(type_value.get('BODY') or '').strip()
-                if body and not body.startswith('异径'):
-                    type_value['BODY'] = '异径' + body
+                replaced = self._insert_reducing_before_body(body)
+                if replaced and replaced != body:
+                    type_value['BODY'] = replaced
                 entities['TYPE'] = type_value
             elif isinstance(type_value, list):
-                entities['TYPE'] = ['异径' + type_value[0]] + type_value[1:]
+                first = str(type_value[0] or '').strip() if type_value else ''
+                replaced = self._insert_reducing_before_body(first)
+                entities['TYPE'] = [replaced or first] + type_value[1:]
             else:
-                entities['TYPE'] = '异径' + (type_value or '')
-            logger.info(f"[三通异径] 检测到三通异径，TYPE: {type_value} -> {entities['TYPE']}")
+                raw = str(type_value or '').strip()
+                replaced = self._insert_reducing_before_body(raw)
+                entities['TYPE'] = replaced or raw
+            logger.info(f"[异径补充] 检测到尺寸不等，TYPE: {type_value} -> {entities['TYPE']}")
         
         return entities
+
+    @staticmethod
+    def _insert_reducing_before_body(body: str) -> str:
+        text = str(body or '').strip()
+        if not text or '异径' in text:
+            return text
+        if '单头管箍' in text:
+            return text.replace('单头管箍', '异径单头管箍', 1)
+        if '单口管箍' in text:
+            return text.replace('单口管箍', '异径单口管箍', 1)
+        if '双头管箍' in text:
+            return text.replace('双头管箍', '异径双头管箍', 1)
+        if '双口管箍' in text:
+            return text.replace('双口管箍', '异径双口管箍', 1)
+        if '管箍' in text:
+            return text.replace('管箍', '异径管箍', 1)
+        if '斜三通' in text:
+            return text.replace('斜三通', '异径斜三通', 1)
+        if '三通' in text:
+            return text.replace('三通', '异径三通', 1)
+        return text
     
     def _is_reducing_size(self, sizes: List[str]) -> bool:
         """判断尺寸数组是否为异径"""
@@ -334,6 +392,34 @@ class PipeEncoderBase:
             return value_upper in [kw.upper() for kw in field_config]
         
         return False
+
+    def _get_regex_alias_code(self, label: str, raw_value: Any) -> str:
+        """读取 regex_extraction.aliases 中对原始值的编码映射。"""
+        text = str(raw_value or '').strip()
+        if not text:
+            return ""
+        regex_cfg = self.config.get('regex_extraction', {}) or {}
+        field_cfg = regex_cfg.get(label, {}) or {}
+        if not isinstance(field_cfg, dict):
+            return ""
+        aliases = field_cfg.get('aliases', {}) or {}
+        value_upper = text.upper()
+        for alias_key, alias_code in aliases.items():
+            if value_upper == str(alias_key).strip().upper():
+                return str(alias_code or '').strip()
+        return ""
+
+    def _normalize_regex_display_value(self, label: str, raw_value: Any, code_value: Any) -> str:
+        """
+        对命中 aliases 的规则提取值，显示层也统一为映射后的编码。
+        例如：承插/插焊/承插焊 -> SW
+        """
+        raw_text = str(raw_value or '').strip()
+        code_text = str(code_value or '').strip()
+        alias_code = self._get_regex_alias_code(label, raw_text)
+        if alias_code and code_text and alias_code.upper() == code_text.upper():
+            return code_text
+        return raw_text
     
     def _process_thickness(self, value: str) -> str:
         if not value:
@@ -362,6 +448,10 @@ class PipeEncoderBase:
             return copy.deepcopy(value)
         except Exception:
             return value
+
+    @staticmethod
+    def _get_dict(value: Any) -> Dict[str, Any]:
+        return value if isinstance(value, dict) else {}
 
     @staticmethod
     def _ensure_type_dict(type_value: Any, create: bool = False) -> Optional[Dict[str, Any]]:
@@ -405,23 +495,34 @@ class PipeEncoderBase:
         if overwrite or not type_dict.get(label):
             type_dict[label] = value
 
-    def _append_radius_to_type_body(self, entities: Dict[str, Any], display_value: str, code_value: str):
-        token = (code_value or display_value or '').strip()
-        if not token:
+    def _get_nested_type_geometry_value(self, entities: Dict[str, Any], label: str) -> Any:
+        type_dict = self._ensure_type_dict(entities.get('TYPE'))
+        if type_dict is None:
+            return None
+        geometry = self._get_dict(type_dict.get('GEOMETRY'))
+        if geometry.get(label):
+            return geometry.get(label)
+        return None
+
+    def _set_nested_type_geometry_value(self, entities: Dict[str, Any], label: str, value: Any, overwrite: bool = False):
+        if value in (None, "", []):
             return
         type_dict = self._ensure_type_dict(entities.get('TYPE'), create=True)
         if entities.get('TYPE') is not type_dict:
             entities['TYPE'] = type_dict
-        body = str(type_dict.get('BODY') or '').strip()
-        type_text = body.lower()
-        included_keywords = self.config.get('type_included_keywords', {})
-        keywords = included_keywords.get(token.upper(), [])
-        is_included = any(kw in type_text for kw in keywords)
-        if not is_included and token.lower() in type_text:
-            is_included = True
-        if is_included:
+        geometry = self._get_dict(type_dict.get('GEOMETRY'))
+        if type_dict.get('GEOMETRY') is not geometry:
+            type_dict['GEOMETRY'] = geometry
+        if overwrite or not geometry.get(label):
+            geometry[label] = value
+
+    def _set_radius_to_type_geometry(self, entities: Dict[str, Any], display_value: str, code_value: str):
+        token = (code_value or display_value or '').strip()
+        if not token:
             return
-        type_dict['BODY'] = f"{body};{token}" if body else token
+        if self._get_nested_type_geometry_value(entities, 'RADIUS'):
+            return
+        self._set_nested_type_geometry_value(entities, 'RADIUS', token)
 
     def _flatten_type_value_for_stage2(self, value: Any) -> str:
         type_dict = self._ensure_type_dict(value)
@@ -439,8 +540,16 @@ class PipeEncoderBase:
         elif body:
             parts.extend([p.strip() for p in str(body).split(';') if p.strip()])
 
-        for key in ('ENDS', 'SEAL', 'MANU', 'CONN'):
-            raw = type_dict.get(key)
+        for key in ('SEAL', 'MANU', 'CONN'):
+            if key == 'CONN':
+                raw_sources = []
+                for source_key in ('CONN', 'ENDS'):
+                    source_raw = type_dict.get(source_key)
+                    if source_raw:
+                        raw_sources.extend(source_raw if isinstance(source_raw, list) else [source_raw])
+                raw = raw_sources
+            else:
+                raw = type_dict.get(key)
             if not raw:
                 continue
             values = raw if isinstance(raw, list) else [raw]
@@ -455,37 +564,199 @@ class PipeEncoderBase:
                 deduped.append(part)
         return ';'.join(deduped)
 
+    def _build_type_encoding_input(
+        self,
+        entities: Dict[str, Any],
+        regex_value_code_map: Dict[str, Dict]
+    ) -> Dict[str, Any]:
+        type_dict = self._ensure_type_dict(entities.get('TYPE')) or {}
+        geometry = self._get_dict(type_dict.get('GEOMETRY'))
+
+        body_value = type_dict.get('BODY')
+        if isinstance(body_value, list):
+            body = next((str(v).strip() for v in body_value if str(v).strip()), '')
+        else:
+            body = str(body_value or '').strip()
+
+        angle = str(geometry.get('ANGLE') or '').strip()
+
+        radius = str(geometry.get('RADIUS') or '').strip()
+        if not radius:
+            radius_info = regex_value_code_map.get('RADIUS', {}) or {}
+            radius = str(radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS') or '').strip()
+
+        def _collect_values(field: str) -> List[str]:
+            values: List[str] = []
+            source_fields = [field]
+            if field == 'CONN':
+                source_fields.append('ENDS')
+
+            for source_field in source_fields:
+                raw_type_value = type_dict.get(source_field)
+                raw_entity_value = entities.get(source_field)
+                raw_value = raw_type_value if raw_type_value not in (None, '', []) else raw_entity_value
+
+                if raw_value:
+                    candidates = raw_value if isinstance(raw_value, list) else [raw_value]
+                    for item in candidates:
+                        item_text = str(item).strip()
+                        if item_text and item_text not in values:
+                            values.append(item_text)
+
+                info = regex_value_code_map.get(source_field, {}) or {}
+                code_value = str(info.get('code') or '').strip()
+                if code_value and code_value not in values:
+                    values.insert(0, code_value)
+            return values
+        raw_structured = {
+            'BODY': body,
+            'GEOMETRY': {
+                'ANGLE': angle,
+                'RADIUS': radius,
+            },
+            'SEAL': _collect_values('SEAL'),
+            'CONN': _collect_values('CONN'),
+            'MANU': _collect_values('MANU'),
+        }
+        return self._filter_type_encoding_input(raw_structured)
+
+    def _get_type_included_text(self, type_input: Dict[str, Any]) -> str:
+        body = str(type_input.get('BODY') or '').strip()
+        geometry = self._get_dict(type_input.get('GEOMETRY'))
+        angle = str(geometry.get('ANGLE') or '').strip()
+        radius = str(geometry.get('RADIUS') or '').strip()
+        return ' '.join([body, angle, radius]).strip().lower()
+
+    def _is_type_component_included(self, type_text: str, code_value: str, display_value: str) -> bool:
+        if not type_text:
+            return False
+        included_keywords = self.config.get('type_included_keywords', {})
+        code_upper = str(code_value or '').strip().upper()
+        display_text = str(display_value or '').strip().lower()
+        keywords = included_keywords.get(code_upper, [])
+        if any(str(kw).lower() in type_text for kw in keywords):
+            return True
+        if display_text and display_text in type_text:
+            return True
+        return False
+
+    def _filter_type_component_list(self, type_text: str, values: List[str]) -> List[str]:
+        filtered: List[str] = []
+        for item in values:
+            item_text = str(item or '').strip()
+            if not item_text:
+                continue
+            if self._is_type_component_included(type_text, item_text, item_text):
+                logger.debug(f"[TYPE结构化过滤] 跳过组件 '{item_text}'，已包含在 TYPE 中")
+                continue
+            if item_text not in filtered:
+                filtered.append(item_text)
+        return filtered
+
+    def _filter_type_encoding_input(self, type_input: Dict[str, Any]) -> Dict[str, Any]:
+        geometry = self._get_dict(type_input.get('GEOMETRY'))
+        filtered_input = {
+            'BODY': str(type_input.get('BODY') or '').strip(),
+            'GEOMETRY': {
+                'ANGLE': str(geometry.get('ANGLE') or '').strip(),
+                'RADIUS': str(geometry.get('RADIUS') or '').strip(),
+            },
+            'SEAL': list(type_input.get('SEAL') or []),
+            'CONN': list(type_input.get('CONN') or []),
+            'MANU': list(type_input.get('MANU') or []),
+        }
+        type_text = self._get_type_included_text(filtered_input)
+        for field in ('SEAL', 'CONN', 'MANU'):
+            filtered_input[field] = self._filter_type_component_list(type_text, filtered_input[field])
+        return filtered_input
+
+    @staticmethod
+    def _format_type_body_for_fallback(body: str, angle: str) -> str:
+        body_text = str(body or '').strip()
+        angle_text = str(angle or '').strip()
+        if angle_text and body_text:
+            return f"{angle_text}度{body_text}"
+        return body_text or angle_text
+
+    @staticmethod
+    def _build_processor_encode_confidence(
+        source: str,
+        confidence: float,
+        reason: str,
+        evidence: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        return {
+            'source': source,
+            'confidence': max(0.0, min(1.0, float(confidence))),
+            'reason': reason,
+            'evidence': evidence or {},
+        }
+
+    def _aggregate_item_encode_confidence(
+        self,
+        item_results: List[Dict[str, Any]],
+        fallback_source: str = 'unknown',
+    ) -> Dict[str, Any]:
+        if not item_results:
+            return self._build_processor_encode_confidence(
+                source=fallback_source,
+                confidence=0.0,
+                reason='no_item_results',
+                evidence={'item_count': 0},
+            )
+
+        metas = [r.get('encode_meta') for r in item_results if isinstance(r.get('encode_meta'), dict)]
+        if not metas:
+            return self._build_processor_encode_confidence(
+                source=fallback_source,
+                confidence=min((float(r.get('similarity', 0.0)) for r in item_results), default=0.0),
+                reason='fallback_from_similarity',
+                evidence={'item_count': len(item_results)},
+            )
+
+        sources = [str(meta.get('source') or fallback_source) for meta in metas]
+        unique_sources = []
+        for source in sources:
+            if source not in unique_sources:
+                unique_sources.append(source)
+
+        if len(unique_sources) == 1:
+            source_name = unique_sources[0]
+        else:
+            source_name = 'mixed'
+
+        llm_count = sum(1 for source in sources if source == 'llm_fallback')
+        mapping_count = sum(1 for source in sources if source.endswith('_mapping'))
+        processor_count = sum(1 for source in sources if source.endswith('_processor'))
+
+        return self._build_processor_encode_confidence(
+            source=source_name,
+            confidence=min((float(meta.get('confidence', 0.0)) for meta in metas), default=0.0),
+            reason='multi_item_aggregated',
+            evidence={
+                'item_count': len(item_results),
+                'source_count': len(unique_sources),
+                'mapping_item_count': mapping_count,
+                'processor_item_count': processor_count,
+                'llm_item_count': llm_count,
+            },
+        )
+
     @staticmethod
     def _flatten_material_value_for_stage2(value: Any) -> str:
-        if not isinstance(value, dict):
-            return str(value or '').strip()
+        parts = [
+            PipeEncoder._flatten_material_item_for_stage2(item)
+            for item in PipeEncoder._normalize_material_entries(value)
+        ]
+        return ' | '.join([part for part in parts if part]).strip()
 
-        items = value.get('ITEMS')
-        if not isinstance(items, list) or not items:
-            return ""
-
-        parts: List[str] = []
-        for item in items:
-            if not isinstance(item, dict):
-                item_text = str(item).strip()
-                if item_text:
-                    parts.append(item_text)
-                continue
-
-            exec_standard = str(item.get('EXEC_STANDARD') or '').strip()
-            grade_code = str(item.get('GRADE') or '').strip()
-            special_req = item.get('SPECIAL_REQ') or []
-            special_parts = []
-            if isinstance(special_req, list):
-                special_parts = [str(v).strip() for v in special_req if str(v).strip()]
-            elif special_req:
-                special_parts = [str(special_req).strip()]
-
-            item_parts = [p for p in [exec_standard, grade_code, *special_parts] if p]
-            if item_parts:
-                parts.append(' '.join(item_parts))
-
-        return ' '.join(parts).strip()
+    @staticmethod
+    def _normalize_material_special_req(value: Any) -> List[str]:
+        if isinstance(value, list):
+            return [str(v).strip() for v in value if str(v).strip()]
+        if value in (None, "", []):
+            return []
+        return [str(value).strip()]
 
     @staticmethod
     def _normalize_material_relation(value: Any) -> str:
@@ -504,28 +775,107 @@ class PipeEncoderBase:
         if not isinstance(item, dict):
             return str(item).strip()
 
+        # 新结构: {"ROLE": "...", "VALUE": "...", "SPECIAL_REQ": [...]}
+        if 'VALUE' in item or 'ROLE' in item:
+            base_value = str(item.get('VALUE') or '').strip()
+            special_parts = PipeEncoder._normalize_material_special_req(item.get('SPECIAL_REQ'))
+            item_parts = [p for p in [base_value, *special_parts] if p]
+            return ' '.join(item_parts).strip()
+
+        # 旧结构: {"EXEC_STANDARD": "...", "GRADE": "...", "SPECIAL_REQ": [...]}
         exec_standard = str(item.get('EXEC_STANDARD') or '').strip()
         grade_code = str(item.get('GRADE') or '').strip()
-        special_req = item.get('SPECIAL_REQ') or []
-        if isinstance(special_req, list):
-            special_parts = [str(v).strip() for v in special_req if str(v).strip()]
-        elif special_req:
-            special_parts = [str(special_req).strip()]
-        else:
-            special_parts = []
+        special_parts = PipeEncoder._normalize_material_special_req(item.get('SPECIAL_REQ'))
 
         item_parts = [p for p in [exec_standard, grade_code, *special_parts] if p]
         return ' '.join(item_parts).strip()
 
-    def _process_material_structured(self, value: Dict[str, Any]) -> FieldEncoding:
-        relation = self._normalize_material_relation(value.get('RELATION'))
-        raw_items = value.get('ITEMS')
-        item_texts: List[str] = []
-        if isinstance(raw_items, list):
-            for item in raw_items:
-                item_text = self._flatten_material_item_for_stage2(item)
-                if item_text:
-                    item_texts.append(item_text)
+    @staticmethod
+    def _normalize_material_entries(value: Any) -> List[Dict[str, Any]]:
+        entries: List[Dict[str, Any]] = []
+
+        if value in (None, "", []):
+            return entries
+
+        if isinstance(value, list):
+            for item in value:
+                if isinstance(item, dict):
+                    role = str(item.get('ROLE') or 'MAIN').strip() or 'MAIN'
+                    item_value = str(item.get('VALUE') or '').strip()
+                    special_req = PipeEncoder._normalize_material_special_req(item.get('SPECIAL_REQ'))
+                    if item_value or special_req:
+                        entries.append({
+                            'ROLE': role,
+                            'VALUE': item_value,
+                            'SPECIAL_REQ': special_req,
+                        })
+                else:
+                    item_text = str(item).strip()
+                    if item_text:
+                        entries.append({
+                            'ROLE': 'MAIN',
+                            'VALUE': item_text,
+                            'SPECIAL_REQ': [],
+                        })
+            return entries
+
+        if isinstance(value, dict):
+            # 新结构单项兜底
+            if 'VALUE' in value or 'ROLE' in value:
+                role = str(value.get('ROLE') or 'MAIN').strip() or 'MAIN'
+                item_value = str(value.get('VALUE') or '').strip()
+                special_req = PipeEncoder._normalize_material_special_req(value.get('SPECIAL_REQ'))
+                if item_value or special_req:
+                    entries.append({
+                        'ROLE': role,
+                        'VALUE': item_value,
+                        'SPECIAL_REQ': special_req,
+                    })
+                return entries
+
+            # 旧结构兼容
+            items = value.get('ITEMS')
+            if isinstance(items, list):
+                for item in items:
+                    item_text = PipeEncoder._flatten_material_item_for_stage2(item)
+                    special_req = []
+                    if isinstance(item, dict):
+                        special_req = PipeEncoder._normalize_material_special_req(item.get('SPECIAL_REQ'))
+                        item_text = ' '.join([
+                            p for p in [
+                                str(item.get('EXEC_STANDARD') or '').strip(),
+                                str(item.get('GRADE') or '').strip(),
+                            ] if p
+                        ]).strip()
+                    if item_text or special_req:
+                        entries.append({
+                            'ROLE': 'MAIN',
+                            'VALUE': item_text,
+                            'SPECIAL_REQ': special_req,
+                        })
+                return entries
+
+        scalar_text = str(value).strip()
+        if scalar_text:
+            entries.append({
+                'ROLE': 'MAIN',
+                'VALUE': scalar_text,
+                'SPECIAL_REQ': [],
+            })
+        return entries
+
+    def _process_material_structured(self, value: Any) -> FieldEncoding:
+        relation = ""
+        is_legacy_material = isinstance(value, dict) and isinstance(value.get('ITEMS'), list)
+        if is_legacy_material:
+            relation = self._normalize_material_relation(value.get('RELATION'))
+
+        entries = self._normalize_material_entries(value)
+        item_texts = [
+            self._flatten_material_item_for_stage2(item)
+            for item in entries
+            if self._flatten_material_item_for_stage2(item)
+        ]
 
         if not item_texts:
             flattened = self._flatten_material_value_for_stage2(value)
@@ -533,11 +883,16 @@ class PipeEncoderBase:
                 return FieldEncoding(field_type='MATERIAL')
             return self._process_field_multi('MATERIAL', [flattened])
 
-        item_results = [self._process_single_value('MATERIAL', item_text) for item_text in item_texts]
+        item_results = []
+        for entry, item_text in zip(entries, item_texts):
+            item_result = self._process_material_item_structured(entry)
+            if item_result is None:
+                item_result = self._process_single_value('MATERIAL', item_text)
+            item_results.append(item_result)
         separator = '/' if relation == 'alternative' else ''
 
         items = []
-        for item_text, item_result in zip(item_texts, item_results):
+        for entry, item_text, item_result in zip(entries, item_texts, item_results):
             items.append({
                 'original': item_result['original'] or item_text,
                 'matched': item_result['matched'] or item_text,
@@ -548,18 +903,26 @@ class PipeEncoderBase:
                 'candidates': item_result.get('candidates', []),
                 'category': '',
                 'relation': relation,
+                'role': str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN',
             })
 
         original_values = [str(r['original'] or t) for r, t in zip(item_results, item_texts)]
         matched_names = [str(r['matched'] or t) for r, t in zip(item_results, item_texts)]
 
         unique_codes: List[str] = []
-        seen = set()
-        for item_result in item_results:
-            code = str(item_result.get('code') or '').strip()
-            if code and code not in seen:
-                unique_codes.append(code)
-                seen.add(code)
+        if is_legacy_material:
+            seen = set()
+            for item_result in item_results:
+                code = str(item_result.get('code') or '').strip()
+                if code and code not in seen:
+                    unique_codes.append(code)
+                    seen.add(code)
+        else:
+            unique_codes = [
+                str(item_result.get('code') or '').strip()
+                for item_result in item_results
+                if str(item_result.get('code') or '').strip()
+            ]
 
         min_similarity = min((r['similarity'] for r in item_results), default=1.0)
         any_need_review = any(r['need_review'] for r in item_results)
@@ -577,13 +940,18 @@ class PipeEncoderBase:
             original_values=original_values,
             matched_name=' | '.join(matched_names),
             matched_names=matched_names,
+            encoding_input=' | '.join(matched_names),
+            encode_confidence_v2=self._aggregate_item_encode_confidence(item_results, fallback_source='material_mapping'),
             code=separator.join(unique_codes),
             codes=unique_codes,
             similarity=min_similarity,
             is_exact_match=all_exact,
             need_review=any_need_review,
             candidates=candidates,
-            display=relation,
+            display=relation or ' | '.join([
+                str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN'
+                for entry in entries
+            ]),
             items=items
         )
 
@@ -597,6 +965,76 @@ class PipeEncoderBase:
         if field_type == 'STANDARD':
             return self._flatten_standard_value_for_stage2(value)
         return value
+
+    @staticmethod
+    def _extract_explicit_thickness_mm_values(value: Any) -> List[float]:
+        """仅提取显式 MM 壁厚，用于 SIZE 的 OD→DN 消歧，不处理 SCH/XS/STD。"""
+        result: List[float] = []
+
+        def _append_num(raw: Any):
+            if raw in (None, ""):
+                return
+            if isinstance(raw, (int, float)):
+                result.append(float(raw))
+                return
+            text = str(raw).strip().upper()
+            if not text:
+                return
+            # 仅接受显式 mm 或结构化 MM 字段中的纯数字
+            m = re.search(r'(\d+(?:\.\d+)?)\s*MM\b', text)
+            if m:
+                try:
+                    result.append(float(m.group(1)))
+                except (ValueError, TypeError):
+                    pass
+                return
+            if re.fullmatch(r'\d+(?:\.\d+)?', text):
+                try:
+                    result.append(float(text))
+                except (ValueError, TypeError):
+                    pass
+
+        if isinstance(value, list):
+            for item in value:
+                result.extend(PipeEncoderBase._extract_explicit_thickness_mm_values(item))
+            return result
+
+        if isinstance(value, dict):
+            for item in value.get('_ITEMS') or []:
+                if not isinstance(item, dict):
+                    continue
+                if str(item.get('type', '')).strip().upper() != 'MM':
+                    continue
+                _append_num(item.get('value'))
+            for item in value.get('MM') or []:
+                raw = item.get('value') if isinstance(item, dict) else item
+                _append_num(raw)
+            return result
+
+        _append_num(value)
+        return result
+
+    def _attach_thickness_mm_context_to_size(self, size_value: Any, thickness_value: Any) -> Any:
+        """将显式 MM 壁厚作为临时上下文挂到 SIZE 结构上，供尺寸处理器消歧同 OD 多候选行。"""
+        mm_values = self._extract_explicit_thickness_mm_values(thickness_value)
+        if not mm_values:
+            return size_value
+
+        cloned = self._clone_response_value(size_value)
+        if isinstance(cloned, dict):
+            cloned['_THICKNESS_MM_CONTEXT'] = list(mm_values)
+            return cloned
+        if isinstance(cloned, list):
+            updated = []
+            for item in cloned:
+                if isinstance(item, dict):
+                    entry = self._clone_response_value(item)
+                    entry['_THICKNESS_MM_CONTEXT'] = list(mm_values)
+                    updated.append(entry)
+                else:
+                    updated.append(item)
+            return updated
+        return cloned
 
     @staticmethod
     def _flatten_standard_value_for_stage2(value: Any) -> Any:
@@ -714,8 +1152,8 @@ class PipeEncoderBase:
                 size_field.original_value or size_field.original_values,
                 original_text=result.original_text,
             )
-            if length_prefix and size_code_for_dn.upper().startswith(length_prefix.upper()):
-                size_code_for_dn = size_code_for_dn[len(length_prefix):]
+            if length_prefix and size_code_for_dn.upper().endswith(length_prefix.upper()):
+                size_code_for_dn = size_code_for_dn[:-len(length_prefix)]
             dn_values = size_code_for_dn
         thickness_values = thk_field.code
 
@@ -762,7 +1200,7 @@ class PipeEncoderBase:
             if part not in deduped_parts:
                 deduped_parts.append(part)
 
-        final_code = deduped_parts[0] if len(set(formatted_parts)) == 1 else 'X'.join(formatted_parts)
+        final_code = deduped_parts[0] if len(deduped_parts) == 1 else 'X'.join(deduped_parts)
         thk_field.code = final_code
         thk_field.codes = [final_code]
         thk_field.matched_name = final_code
@@ -838,30 +1276,34 @@ class PipeEncoderBase:
         result: PipeEncodingResult,
         field_verified: Dict[str, tuple],
     ):
-        """对未通过原文验证的字段做置信度惩罚。"""
+        """对未通过原文验证的字段打提示并标记待审，不直接改写二阶段相似度。"""
         if not field_verified:
             return
-        for field, (passed, llm_value) in field_verified.items():
+        for field, payload in field_verified.items():
+            if len(payload) >= 3:
+                passed, llm_value, reason = payload[0], payload[1], payload[2]
+            else:
+                passed, llm_value = payload[0], payload[1]
+                reason = "未在原文中被正则独立匹配到"
             if passed:
                 continue
 
             target_field = field
+            if '.' in field:
+                target_field = field.split('.', 1)[0]
             if field not in result.fields and field in self.TYPE_COMBINED_FIELDS:
                 target_field = 'TYPE'
 
             if target_field not in result.fields:
                 continue
 
-            fe = result.fields[target_field]
-            old_sim = fe.similarity
-            fe.similarity = round(old_sim * self.unverified_penalty, 4)
             self._mark_field_review(
                 result, target_field,
-                f"{field}='{llm_value}' 未在原文中被正则独立匹配到，建议人工审查。",
+                f"{field}='{llm_value}' {reason}，建议人工审查。",
             )
             logger.info(
-                f"[字段验证惩罚] {field}(→{target_field}): "
-                f"置信度 {old_sim:.4f} → {fe.similarity:.4f} (×{self.unverified_penalty})"
+                f"[字段验证标记] {field}(→{target_field}): "
+                f"命中验证问题，已标记待审"
             )
 
     def _apply_review_rules(self, result: PipeEncodingResult):
@@ -988,7 +1430,7 @@ class PipeEncoderBase:
                     )
 
     def _compute_result_confidence(self, result: PipeEncodingResult) -> float:
-        """计算整条编码置信度（字段加权几何平均）。"""
+        """计算整条编码置信度（按字段最终执行度做加权几何平均）。"""
         if not result.fields:
             return 0.0
 
@@ -1012,12 +1454,19 @@ class PipeEncoderBase:
             w = float(merged_weights.get(ft, 0.0))
             if w <= 0:
                 continue
-            s = max(1e-6, min(1.0, float(field.similarity)))
+            raw_conf = field.field_confidence if field.field_confidence is not None else field.similarity
+            s = max(1e-6, min(1.0, float(raw_conf)))
             selected.append((w, s))
             total_w += w
 
         if not selected:
-            sims = [max(1e-6, min(1.0, float(f.similarity))) for f in result.fields.values()]
+            sims = [
+                max(
+                    1e-6,
+                    min(1.0, float(f.field_confidence if f.field_confidence is not None else f.similarity))
+                )
+                for f in result.fields.values()
+            ]
             if not sims:
                 return 0.0
             p = 1.0
@@ -1053,8 +1502,88 @@ class PipeEncoderBase:
         any_field_need_review = any(field.need_review for field in result.fields.values())
         result.need_review = bool(any_field_need_review or result.confidence < self.review_threshold)
 
-    def _get_field_extract_confidence(self, field_type: str, extract_confidence: Optional[Dict[str, Any]]) -> Optional[float]:
-        """读取字段抽取置信度（支持标量或列表）。"""
+    def _map_validation_target_field(self, field: str) -> str:
+        """将验证失败项映射到字段级置信度所属字段。"""
+        target_field = field
+        if '.' in field:
+            target_field = field.split('.', 1)[0]
+        if field not in self.FIELD_ORDER and field in self.TYPE_COMBINED_FIELDS:
+            target_field = 'TYPE'
+        return target_field
+
+    def _apply_field_verification_to_stage1_confidence(
+        self,
+        extract_confidence_v2: Optional[Dict[str, Any]],
+        field_verified: Dict[str, tuple],
+    ) -> Dict[str, Any]:
+        """将字段验证失败回写到一阶段置信度，而不是直接修改二阶段编码分。"""
+        adjusted = self._clone_response_value(extract_confidence_v2) if isinstance(extract_confidence_v2, dict) else {}
+        if not field_verified:
+            return adjusted
+
+        issues_by_field: Dict[str, List[str]] = {}
+        for field, payload in field_verified.items():
+            if not payload or payload[0]:
+                continue
+            llm_value = payload[1] if len(payload) >= 2 else ""
+            reason = payload[2] if len(payload) >= 3 else "未在原文中被正则独立匹配到"
+            target_field = self._map_validation_target_field(field)
+            issue_text = f"{field}='{llm_value}' {reason}"
+            issues_by_field.setdefault(target_field, []).append(issue_text)
+
+        for field_type, issues in issues_by_field.items():
+            item = adjusted.get(field_type)
+            if not isinstance(item, dict):
+                item = {
+                    "source": "validation_adjusted",
+                    "confidence": 0.0,
+                    "reason": "field_missing",
+                    "evidence": {},
+                }
+                adjusted[field_type] = item
+
+            old_conf = 0.0
+            try:
+                old_conf = max(0.0, min(1.0, float(item.get("confidence", 0.0))))
+            except Exception:
+                old_conf = 0.0
+
+            penalty_factor = self.unverified_penalty ** len(issues)
+            new_conf = round(old_conf * penalty_factor, 4)
+            item["confidence"] = new_conf
+
+            evidence = item.get("evidence")
+            if not isinstance(evidence, dict):
+                evidence = {}
+                item["evidence"] = evidence
+
+            evidence["base_confidence"] = round(old_conf, 4)
+            evidence["validation_issue_count"] = len(issues)
+            evidence["validation_penalty_factor"] = round(penalty_factor, 4)
+            evidence["validation_reasons"] = "；".join(issues)
+            logger.info(
+                f"[一阶段置信度惩罚] {field_type}: "
+                f"基础分 {old_conf:.4f} → {new_conf:.4f} (×{round(penalty_factor, 4)})"
+            )
+
+        return adjusted
+
+    def _get_field_extract_confidence(
+        self,
+        field_type: str,
+        extract_confidence: Optional[Dict[str, Any]],
+        extract_confidence_v2: Optional[Dict[str, Any]] = None,
+    ) -> Optional[float]:
+        """读取字段一阶段置信度，优先使用结构化 V2，再回退旧标量。"""
+        if extract_confidence_v2 and isinstance(extract_confidence_v2, dict):
+            raw_v2 = extract_confidence_v2.get(field_type)
+            if isinstance(raw_v2, dict):
+                value = raw_v2.get("confidence")
+                if value is not None:
+                    try:
+                        return max(0.0, min(1.0, float(value)))
+                    except Exception:
+                        pass
         if not extract_confidence:
             return None
         raw = extract_confidence.get(field_type)
@@ -1094,6 +1623,44 @@ class PipeEncoderBase:
             a, b = a / s, b / s
         return float((x ** a) * (e ** b))
 
+    @staticmethod
+    def _get_field_stage2_confidence(field_result: FieldEncoding) -> Optional[float]:
+        """读取字段二阶段编码置信度，优先取结构化 V2，再回退当前相似度。"""
+        meta = getattr(field_result, 'encode_confidence_v2', {}) or {}
+        if isinstance(meta, dict):
+            value = meta.get("confidence")
+            if value is not None:
+                try:
+                    return max(0.0, min(1.0, float(value)))
+                except Exception:
+                    pass
+        try:
+            return max(0.0, min(1.0, float(field_result.similarity)))
+        except Exception:
+            return None
+
+    def _set_field_confidence_triplet(
+        self,
+        field_result: FieldEncoding,
+        stage1_confidence: Optional[float],
+        stage2_confidence: Optional[float],
+    ):
+        """回填字段级三层执行度：一阶段、二阶段、字段最终。"""
+        field_result.stage1_confidence = stage1_confidence
+        field_result.stage2_confidence = stage2_confidence
+        try:
+            field_result.field_confidence = max(0.0, min(1.0, float(field_result.similarity)))
+        except Exception:
+            field_result.field_confidence = None
+
+    def _refresh_field_confidence_snapshot(self, result: PipeEncodingResult):
+        """在所有审查/封顶规则执行后，同步字段最终执行度。"""
+        for field in result.fields.values():
+            try:
+                field.field_confidence = max(0.0, min(1.0, float(field.similarity)))
+            except Exception:
+                field.field_confidence = None
+
     # ──────────────────── TYPE 组合处理（公共逻辑） ────────────────────
 
     def _process_type_combined(
@@ -1106,14 +1673,33 @@ class PipeEncoderBase:
         type_dict = self._ensure_type_dict(entities.get('TYPE'))
 
         if type_dict is not None:
+            geometry = self._get_dict(type_dict.get('GEOMETRY'))
+            angle_value = str(geometry.get('ANGLE') or '').strip()
             body_value = type_dict.get('BODY')
             body_values = body_value if isinstance(body_value, list) else [body_value]
             for v in body_values:
                 if v and str(v).strip():
-                    collected_values.append(('TYPE', str(v).strip(), str(v).strip()))
+                    body_text = str(v).strip()
+                    fallback_text = self._format_type_body_for_fallback(body_text, angle_value)
+                    collected_values.append(('TYPE', fallback_text, fallback_text))
 
-            for f in ('ENDS', 'SEAL', 'MANU', 'CONN'):
-                raw_value = type_dict.get(f) or entities.get(f)
+            radius_value = str(geometry.get('RADIUS') or '').strip()
+            if not radius_value:
+                radius_info = regex_value_code_map.get('RADIUS', {}) or {}
+                radius_value = str(radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS') or '').strip()
+            if radius_value:
+                collected_values.append(('RADIUS', radius_value, radius_value))
+
+            for f in ('SEAL', 'MANU', 'CONN'):
+                if f == 'CONN':
+                    raw_sources = []
+                    for source_key in ('CONN', 'ENDS'):
+                        source_value = type_dict.get(source_key) or entities.get(source_key)
+                        if source_value:
+                            raw_sources.extend(source_value if isinstance(source_value, list) else [source_value])
+                    raw_value = raw_sources
+                else:
+                    raw_value = type_dict.get(f) or entities.get(f)
                 if not raw_value:
                     continue
                 values_to_check = raw_value if isinstance(raw_value, list) else [raw_value]
@@ -1153,9 +1739,7 @@ class PipeEncoderBase:
         
         type_values = [display for f, display, code in collected_values if f == 'TYPE']
         type_text = ' '.join(type_values).lower() if type_values else ''
-        
-        included_keywords = self.config.get('type_included_keywords', {})
-        
+
         filtered_codes = []
         filtered_displays = []
         for f, display, code in collected_values:
@@ -1163,11 +1747,7 @@ class PipeEncoderBase:
                 filtered_codes.append(code)
                 filtered_displays.append(display)
             else:
-                code_upper = code.upper()
-                keywords = included_keywords.get(code_upper, [])
-                is_included = any(kw in type_text for kw in keywords)
-                if not is_included and display.strip():
-                    is_included = display.strip().lower() in type_text
+                is_included = self._is_type_component_included(type_text, code, display)
                 if not is_included:
                     filtered_codes.append(code)
                     filtered_displays.append(display)
@@ -1183,14 +1763,18 @@ class PipeEncoderBase:
         logger.info(f"[TYPE合并] 合并字段: {[f'{f}={d}({c})' for f, d, c in collected_values]}")
         logger.info(f"[TYPE合并] 编码用: '{merged_value}', 显示用: '{original_parts}'")
         
-        code, confidence = self._encode_type_value(merged_value)
+        type_encoding_input = self._build_type_encoding_input(entities, regex_value_code_map)
+        code, confidence = self._encode_type_value(merged_value, type_encoding_input)
         
         return FieldEncoding(
             field_type='TYPE',
             original_value=original_parts,
+            stage1_final_value='',
             original_values=filtered_displays,
             matched_name=merged_value,
             matched_names=[merged_value],
+            encoding_input=self._clone_response_value(type_encoding_input),
+            encode_confidence_v2=getattr(self, '_last_type_encode_meta', {}) or {},
             code=code,
             codes=[code] if code else [],
             similarity=confidence,
@@ -1206,7 +1790,7 @@ class PipeEncoderBase:
         if not values:
             return FieldEncoding(field_type=field_type)
 
-        if field_type == 'MATERIAL' and len(values) == 1 and isinstance(values[0], dict):
+        if field_type == 'MATERIAL' and len(values) == 1 and isinstance(values[0], (dict, list)):
             return self._process_material_structured(values[0])
         
         if field_type == 'SIZE':
@@ -1237,6 +1821,17 @@ class PipeEncoderBase:
                 original_value=' | '.join(original_values),
                 original_values=original_values,
                 matched_name=processed, matched_names=[processed],
+                encoding_input=processed,
+                encode_confidence_v2=self._build_processor_encode_confidence(
+                    source='thickness_processor',
+                    confidence=0.96 if processed else 0.0,
+                    reason='thickness_processor_resolved' if processed else 'thickness_processor_failed',
+                    evidence={
+                        'value_present': bool(original_values),
+                        'item_count': len(original_values),
+                        'code_present': bool(processed),
+                    },
+                ),
                 code=processed, codes=[processed] if processed else [],
                 similarity=1.0, is_exact_match=True, need_review=False,
                 candidates=[], display='', items=[]
@@ -1263,6 +1858,17 @@ class PipeEncoderBase:
                 original_value=' | '.join(values),
                 original_values=list(values),
                 matched_name=processed, matched_names=[processed],
+                encoding_input=processed,
+                encode_confidence_v2=self._build_processor_encode_confidence(
+                    source='thickness_processor',
+                    confidence=0.96 if processed else 0.0,
+                    reason='thickness_processor_resolved' if processed else 'thickness_processor_failed',
+                    evidence={
+                        'value_present': bool(values),
+                        'item_count': len(values),
+                        'code_present': bool(processed),
+                    },
+                ),
                 code=processed, codes=[processed] if processed else [],
                 similarity=1.0, is_exact_match=True, need_review=False,
                 candidates=[], display='', items=[]
@@ -1312,6 +1918,8 @@ class PipeEncoderBase:
             original_values=original_values,
             matched_name=' | '.join(matched_names),
             matched_names=matched_names,
+            encoding_input=' | '.join(matched_names),
+            encode_confidence_v2=self._aggregate_item_encode_confidence(results, fallback_source=f'{field_type.lower()}_processor'),
             code=''.join(unique_codes),
             codes=unique_codes,
             similarity=min_similarity,
@@ -1366,12 +1974,22 @@ class PipeEncoderBase:
         """将规则补提结果回填到实体。"""
         for label, info in other_extractions.items():
             if label == 'RADIUS':
-                self._append_radius_to_type_body(entities, info['value'], info['code'])
+                self._set_radius_to_type_geometry(entities, info['value'], info['code'])
                 regex_value_code_map[label] = info
             elif label in ('MANU', 'CONN', 'ENDS', 'SEAL'):
-                if not self._get_nested_type_value(entities, label):
-                    self._set_nested_type_value(entities, label, info['value'])
-                regex_value_code_map[label] = info
+                display_value = self._normalize_regex_display_value(
+                    label,
+                    info.get('value', ''),
+                    info.get('code', ''),
+                )
+                if display_value and display_value != str(info.get('value', '') or '').strip():
+                    self._set_nested_type_value(entities, label, display_value, overwrite=True)
+                elif not self._get_nested_type_value(entities, label):
+                    self._set_nested_type_value(entities, label, display_value or info.get('value'))
+                regex_value_code_map[label] = {
+                    'value': display_value or info.get('value', ''),
+                    'code': info.get('code', ''),
+                }
             elif label not in entities or not entities[label]:
                 entities[label] = info['value']
                 regex_value_code_map[label] = info
@@ -1390,7 +2008,7 @@ class PipeEncoderBase:
         粘连情况（如 GB/T4237WELDED）会因缺少边界而匹配不到，判定为"未验证通过"。
         """
         verified: Dict[str, tuple] = {}
-        if not self.verification_enabled or not self.verify_fields or not original_text:
+        if not self.verification_enabled or not original_text:
             return verified
 
         regex_results = self.regex_extractor.extract(original_text, exclude_ranges=[])
@@ -1401,19 +2019,151 @@ class PipeEncoderBase:
             regex_found[extraction.label].add(extraction.value.upper())
             regex_found[extraction.label].add(extraction.code.upper())
 
+        def _normalize_verification_values(value: Any) -> List[str]:
+            if value in (None, "", []):
+                return []
+            if isinstance(value, list):
+                normalized: List[str] = []
+                for item in value:
+                    normalized.extend(_normalize_verification_values(item))
+                return normalized
+            text = str(value).strip()
+            return [text] if text else []
+
+        def _record_failure(field: str, values: List[str], reason: str) -> None:
+            if not values:
+                return
+            joined = ' | '.join(values)
+            existing = verified.get(field)
+            if existing and not existing[0]:
+                old_values = [v.strip() for v in str(existing[1]).split('|') if v.strip()]
+                merged_values: List[str] = []
+                for value in [*old_values, *values]:
+                    if value not in merged_values:
+                        merged_values.append(value)
+                old_reason = str(existing[2]) if len(existing) >= 3 else ""
+                merged_reason = old_reason
+                if reason and reason not in old_reason:
+                    merged_reason = f"{old_reason}；{reason}" if old_reason else reason
+                verified[field] = (False, ' | '.join(merged_values), merged_reason)
+                return
+            verified[field] = (False, joined, reason)
+
+        material_special_req_aliases = {
+            str(key).strip().upper(): [
+                str(alias).strip() for alias in aliases or [] if str(alias).strip()
+            ]
+            for key, aliases in (
+                (self.evidence_rules_cfg.get('material_special_req_requires_text') or {}).get('aliases', {}) or {}
+            ).items()
+        }
+        type_manu_aliases = {
+            str(key).strip().upper(): [
+                str(alias).strip() for alias in aliases or [] if str(alias).strip()
+            ]
+            for key, aliases in (
+                (self.evidence_rules_cfg.get('type_manu_requires_text') or {}).get('aliases', {}) or {}
+            ).items()
+        }
+
+        def _text_contains_any_alias(aliases: List[str]) -> bool:
+            text = original_text or ""
+            text_upper = text.upper()
+            for alias in aliases:
+                alias_upper = alias.upper()
+                if re.search(r'[A-Z0-9#/\-"]', alias_upper):
+                    if alias_upper in text_upper:
+                        return True
+                else:
+                    if alias and alias in text:
+                        return True
+            return False
+
         for field in self.verify_fields:
+            if field == 'MANU' and (self.evidence_rules_cfg.get('type_manu_requires_text') or {}).get('enabled', False):
+                continue
             field_value = self._get_nested_type_value(entities, field)
             if not field_value:
                 continue
-            llm_value = str(field_value).strip()
-            if not llm_value:
+
+            candidate_values = _normalize_verification_values(field_value)
+            if not candidate_values:
                 continue
-            found = llm_value.upper() in regex_found.get(field, set())
-            verified[field] = (found, llm_value)
+
+            found_values = regex_found.get(field, set())
+            missing_values = [value for value in candidate_values if value.upper() not in found_values]
+            found = len(missing_values) == 0
+            llm_value = ' | '.join(candidate_values)
+            verified_value = ' | '.join(missing_values) if missing_values else llm_value
+            verified[field] = (found, verified_value, "")
             if not found:
-                logger.info(f"[字段验证] {field}='{llm_value}' 未被正则从原文独立匹配到，置信度将惩罚")
+                logger.info(
+                    f"[字段验证] {field}='{verified_value}' 未被正则从原文独立匹配到，置信度将惩罚"
+                )
             else:
                 logger.debug(f"[字段验证] {field}='{llm_value}' 原文正则验证通过")
+
+        size_dn_rule = self.evidence_rules_cfg.get('size_dn_requires_anchor') or {}
+        if size_dn_rule.get('enabled', False):
+            size_dict = entities.get('SIZE') if isinstance(entities.get('SIZE'), dict) else {}
+            dn_values = _normalize_verification_values(size_dict.get('DN')) if size_dict else []
+            if dn_values:
+                dn_anchor_pattern = size_dn_rule.get('dn_anchor_pattern', r'(?i)\bDN\s*\d')
+                if not re.search(dn_anchor_pattern, original_text or ''):
+                    verified_value = ' | '.join(dn_values)
+                    _record_failure('SIZE.DN', dn_values, '原文缺少 DN 锚点')
+                    logger.info(
+                        f"[字段验证] SIZE.DN='{verified_value}' 原文缺少 DN 锚点，置信度将惩罚"
+                    )
+
+        material_req_rule = self.evidence_rules_cfg.get('material_special_req_requires_text') or {}
+        if material_req_rule.get('enabled', False):
+            missing_special_req: List[str] = []
+            for entry in self._normalize_material_entries(entities.get('MATERIAL')):
+                for req in self._normalize_material_special_req(entry.get('SPECIAL_REQ')):
+                    aliases = material_special_req_aliases.get(req.upper(), [req])
+                    if not _text_contains_any_alias(aliases):
+                        missing_special_req.append(req)
+            if missing_special_req:
+                verified_value = ' | '.join(missing_special_req)
+                _record_failure('MATERIAL.SPECIAL_REQ', missing_special_req, '原文缺少特殊要求证据')
+                logger.info(
+                    f"[字段验证] MATERIAL.SPECIAL_REQ='{verified_value}' 原文缺少特殊要求证据，置信度将惩罚"
+                )
+
+        manu_rule = self.evidence_rules_cfg.get('type_manu_requires_text') or {}
+        if manu_rule.get('enabled', False):
+            manu_values = _normalize_verification_values(self._get_nested_type_value(entities, 'MANU'))
+            if manu_values:
+                missing_manu: List[str] = []
+                for manu in manu_values:
+                    aliases = type_manu_aliases.get(manu.upper(), [manu])
+                    if not _text_contains_any_alias(aliases):
+                        missing_manu.append(manu)
+                if missing_manu:
+                    verified_value = ' | '.join(missing_manu)
+                    _record_failure('MANU', missing_manu, '原文缺少工艺证据')
+                    logger.info(
+                        f"[字段验证] MANU='{verified_value}' 原文缺少工艺证据，置信度将惩罚"
+                    )
+
+        type_whitelist_rule = self.whitelist_rules_cfg.get('type_subfields') or {}
+        if type_whitelist_rule.get('enabled', False):
+            for subtype in ('SEAL', 'MANU', 'CONN'):
+                allowed_raw = type_whitelist_rule.get(subtype) or []
+                allowed = {str(item).strip().upper() for item in allowed_raw if str(item).strip()}
+                if not allowed:
+                    continue
+                values = _normalize_verification_values(self._get_nested_type_value(entities, subtype))
+                if not values:
+                    continue
+                invalid = [value for value in values if value.upper() not in allowed]
+                if not invalid:
+                    continue
+                _record_failure(subtype, invalid, '不在白名单中')
+                logger.info(
+                    f"[字段验证] {subtype}='{ ' | '.join(invalid) }' 不在白名单中，置信度将惩罚"
+                )
         return verified
 
     def _augment_entities_from_text(
@@ -1533,7 +2283,9 @@ class PipeEncoderBase:
         self,
         entities: Dict[str, Any],
         raw_entities_snapshot: Dict[str, Any],
+        stage1_final_snapshot: Dict[str, Any],
         extract_confidence: Optional[Dict[str, Any]],
+        extract_confidence_v2: Optional[Dict[str, Any]],
         regex_value_code_map: Dict[str, Dict],
         result: PipeEncodingResult,
         type_combined_processed: bool,
@@ -1545,18 +2297,29 @@ class PipeEncoderBase:
                 continue
 
             raw_value = entities.get(field_type, None)
-            if field_type == 'MATERIAL' and isinstance(raw_value, dict):
+            if field_type == 'MATERIAL' and isinstance(raw_value, (dict, list)):
                 field_result = self._process_material_structured(raw_value)
 
-                field_extract_conf = self._get_field_extract_confidence(field_type, extract_confidence)
+                field_extract_conf = self._get_field_extract_confidence(
+                    field_type,
+                    extract_confidence,
+                    extract_confidence_v2,
+                )
                 field_result.similarity = self._blend_extract_and_encode_conf(
                     field_extract_conf,
                     field_result.similarity
                 )
                 field_result.similarity = self._temperature_scale_confidence(field_result.similarity)
+                self._set_field_confidence_triplet(
+                    field_result,
+                    field_extract_conf,
+                    self._get_field_stage2_confidence(field_result),
+                )
 
                 if field_type in raw_entities_snapshot:
                     field_result.original_value = self._clone_response_value(raw_entities_snapshot.get(field_type))
+                if field_type in stage1_final_snapshot:
+                    field_result.stage1_final_value = self._clone_response_value(stage1_final_snapshot.get(field_type))
 
                 result.fields[field_type] = field_result
 
@@ -1567,6 +2330,12 @@ class PipeEncoderBase:
                 if field_result.similarity < result.min_similarity:
                     result.min_similarity = field_result.similarity
                 continue
+
+            if field_type == 'SIZE':
+                raw_value = self._attach_thickness_mm_context_to_size(
+                    raw_value,
+                    entities.get('THICKNESS'),
+                )
 
             raw_value = self._normalize_field_value_for_stage2(field_type, raw_value)
             if not raw_value:
@@ -1592,6 +2361,15 @@ class PipeEncoderBase:
                     original_values=[info['value']],
                     matched_name=info['value'],
                     matched_names=[info['value']],
+                    encode_confidence_v2={
+                        'source': 'regex_direct',
+                        'confidence': 0.98,
+                        'reason': 'regex_direct_match',
+                        'evidence': {
+                            'value_present': bool(info.get('value')),
+                            'code_present': bool(info.get('code')),
+                        }
+                    },
                     code=info['code'],
                     codes=[info['code']],
                     similarity=1.0,
@@ -1600,19 +2378,30 @@ class PipeEncoderBase:
                 )
             elif field_type == 'STANDARD':
                 modifier_map = entities.get('_STANDARD_MODIFIER_MAP', {})
-                field_result = self._process_standard_multi(values, modifier_map)
+                field_result = self._process_standard_multi(values, modifier_map, original_text=original_text)
             else:
                 field_result = self._process_field_multi(field_type, values, original_text=original_text)
 
-            field_extract_conf = self._get_field_extract_confidence(field_type, extract_confidence)
+            field_extract_conf = self._get_field_extract_confidence(
+                field_type,
+                extract_confidence,
+                extract_confidence_v2,
+            )
             field_result.similarity = self._blend_extract_and_encode_conf(
                 field_extract_conf,
                 field_result.similarity
             )
             field_result.similarity = self._temperature_scale_confidence(field_result.similarity)
+            self._set_field_confidence_triplet(
+                field_result,
+                field_extract_conf,
+                self._get_field_stage2_confidence(field_result),
+            )
 
             if field_type in raw_entities_snapshot:
                 field_result.original_value = self._clone_response_value(raw_entities_snapshot.get(field_type))
+            if field_type in stage1_final_snapshot:
+                field_result.stage1_final_value = self._clone_response_value(stage1_final_snapshot.get(field_type))
 
             result.fields[field_type] = field_result
 
@@ -1790,6 +2579,7 @@ class PipeEncoderBase:
         entities: Dict[str, str],
         original_text: str = "",
         extract_confidence: Optional[Dict[str, Any]] = None,
+        extract_confidence_v2: Optional[Dict[str, Any]] = None,
     ) -> PipeEncodingResult:
         """
         编码材料实体
@@ -1813,35 +2603,54 @@ class PipeEncoderBase:
         
         self._fix_size_thickness_split(entities)
         self._augment_entities_from_text(entities, original_text, regex_value_code_map)
+        self._normalize_standard_body_grade_suffix(entities)
         entities['_STANDARD_MODIFIER_MAP'] = self._build_standard_modifier_map(entities, original_text)
         
         entities = self._preprocess_tee_reducing(entities, original_text)
+        stage1_final_snapshot = self._clone_response_value(entities) if isinstance(entities, dict) else {}
+        field_verified = self._validate_fields_against_text(entities, original_text)
+        adjusted_extract_confidence_v2 = self._apply_field_verification_to_stage1_confidence(
+            extract_confidence_v2,
+            field_verified,
+        )
+        result.extract_confidence_v2 = self._clone_response_value(adjusted_extract_confidence_v2)
         
         type_combined_processed = False
         if self._should_use_type_combined():
             type_combined_result = self._process_type_combined(entities, regex_value_code_map)
             if type_combined_result.code:
-                type_extract_conf = self._get_field_extract_confidence('TYPE', extract_confidence)
+                type_extract_conf = self._get_field_extract_confidence(
+                    'TYPE',
+                    extract_confidence,
+                    adjusted_extract_confidence_v2,
+                )
                 type_combined_result.similarity = self._blend_extract_and_encode_conf(
                     type_extract_conf,
                     type_combined_result.similarity
                 )
                 type_combined_result.similarity = self._temperature_scale_confidence(type_combined_result.similarity)
+                self._set_field_confidence_triplet(
+                    type_combined_result,
+                    type_extract_conf,
+                    self._get_field_stage2_confidence(type_combined_result),
+                )
                 if 'TYPE' in raw_entities_snapshot:
                     type_combined_result.original_value = self._clone_response_value(raw_entities_snapshot.get('TYPE'))
+                if 'TYPE' in stage1_final_snapshot:
+                    type_combined_result.stage1_final_value = self._clone_response_value(stage1_final_snapshot.get('TYPE'))
                 result.fields['TYPE'] = type_combined_result
                 type_combined_processed = True
                 if type_combined_result.need_review and 'TYPE' not in result.review_fields:
                     result.review_fields.append('TYPE')
                 if type_combined_result.similarity < result.min_similarity:
                     result.min_similarity = type_combined_result.similarity
-        
-        field_verified = self._validate_fields_against_text(entities, original_text)
 
         self._encode_fields(
             entities,
             raw_entities_snapshot,
+            stage1_final_snapshot,
             extract_confidence,
+            adjusted_extract_confidence_v2,
             regex_value_code_map,
             result,
             type_combined_processed,
@@ -1852,6 +2661,7 @@ class PipeEncoderBase:
 
         self._apply_field_verification_penalty(result, field_verified)
         self._apply_review_rules(result)
+        self._refresh_field_confidence_snapshot(result)
         
         self._assemble_code(result)
         result.success = bool(result.final_code)
@@ -1859,6 +2669,21 @@ class PipeEncoderBase:
         result.confidence = round(self._temperature_scale_confidence(raw_conf), 4)
         self._finalize_review_decision(result)
         return result
+
+    @staticmethod
+    def _normalize_standard_body_grade_suffix(entities: Dict[str, Any]) -> None:
+        """窄归一：仅将 STANDARD.BODY 末尾 IA 规范化为 Ia，不拆字段。"""
+        standards = entities.get('STANDARD')
+        if not isinstance(standards, list):
+            return
+        for item in standards:
+            if not isinstance(item, dict):
+                continue
+            body = str(item.get('BODY') or '').strip()
+            if not body:
+                continue
+            if re.search(r'\dIA$', body):
+                item['BODY'] = re.sub(r'IA$', 'Ia', body)
 
     # ──────────────────── 从分词结果编码 ────────────────────
 

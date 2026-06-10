@@ -51,7 +51,7 @@ import { inject, ref } from 'vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import axios from 'axios'
-import { buildDifficultyReason, getDisplayDifficultyLevel } from '../utils/difficulty'
+import { buildDifficultyReason, getDifficultyLabel, getDisplayDifficultyLevel } from '../utils/difficulty'
 
 const props = defineProps({
   encodings: { type: Object, default: () => ({}) },
@@ -385,7 +385,7 @@ function exportCSV() {
       enc.need_review ? '是' : '否',
       formatPercent(enc.confidence),
       formatPercent(enc.min_similarity),
-      csvCell(difficulty.difficulty || ''),
+      csvCell(getDifficultyLabel(difficulty.difficulty)),
       csvCell(buildDifficultyReason(enc)),
       csvCell(getDisplayDifficultyLevel(enc)),
       csvCell(buildTypeRaw(fields, true)),
@@ -446,7 +446,7 @@ function exportExcel() {
       enc.need_review ? '是' : '否',
       formatPercent(enc.confidence),
       formatPercent(enc.min_similarity),
-      difficulty.difficulty || '',
+      getDifficultyLabel(difficulty.difficulty),
       buildDifficultyReason(enc),
       getDisplayDifficultyLevel(enc),
       buildTypeRaw(fields, true),

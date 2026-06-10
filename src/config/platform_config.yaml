@@ -54,16 +54,120 @@ ner:
   
   # Qwen3-4B 微调模型配置（推荐）
   qwen3:
-    backend: "ollama"                   # ollama / transformers
-    model_name: "qwen3-4b-q8-one"            # ollama 后端时使用的模型名
+    adapter: "structured_llamafactory"  # structured_llamafactory / legacy
+    backend: "hf_lazy_service"                   # ollama / transformers / hf_lazy_service
+    model_name: "type"            # ollama 后端时使用的模型名
     ollama_url: "http://localhost:11434" # ollama 服务地址
-    model_path: "models/qwen3_pipe"     # transformers 后端时使用的模型路径
+    service_url: "http://127.0.0.1:8200" # hf_lazy_service 后端时使用的服务地址
+    model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/outputs/qwen3/contract_llm"     # transformers 后端时使用的模型路径
     device: "auto"                      # transformers 后端设备: auto / cpu / cuda / mps
-    output_mode: "full"       # full / decisions_only；调试用 full，正式推荐 decisions_only
-    num_predict: 1024                   # 一阶段最大生成 token 数；结构复杂或输出被截断时调大
-    temperature: 0.1                   # 生成随机性；越低越稳定。结构化抽取建议 0~0.2，正式环境推荐 0 或 0.1
+    output_mode: "full"       # legacy 适配器使用；structured_llamafactory 可忽略
+    num_predict: 512                   # 一阶段最大生成 token 数；结构复杂或输出被截断时调大
+    temperature: 0.1                  # 生成随机性；越低越稳定。结构化抽取建议 0~0.2，正式环境推荐 0 或 0.1
     top_p: 0.9                         # nucleus sampling 截断阈值；仅在 temperature > 0 ，top_p 的值越高，生成的文本越多样、越有创意；值越低，生成的文本越确定、越保守。
     logprobs_enabled: true             # 是否向 Ollama 请求 logprobs 计算置信度；关闭后通常更快，但抽取置信度会退化为 1.0
+    stage1:
+      # 阶段一逻辑：
+      # 1. 大模型提示词先做类别路由
+      # 2. TYPE 根据路由结果走不同专项模型
+      # 3. SIZE / THICKNESS / PRESSURE 走结构提示词
+      # 4. MATERIAL 走共享材质模型
+      # 5. STANDARD 走共享规范模型
+      # 2/3/4/5 在后端并行执行
+      router:
+        enabled: false #是否开启分类模型，TYPE 走默认模型
+        backend: "hybrid"   # rules / openai_compatible / hybrid
+        base_url: "http://192.168.31.201:8085/v1"
+        api_key: "ollama-local"
+        api: "chat_completions"  # openai-completions / chat_completions
+        model_name: "MiniMax-M2.5-Q5_K_M-00001-of-00005.gguf"
+        timeout: 60
+        temperature: 0.0
+        max_tokens: 256
+        direct_threshold: 0.9
+        review_threshold: 0.7
+        rules_direct_threshold: 0.92
+        fallback_category: "特殊件"
+        category_schema_path: "src/config/pipe_route_categories.json"
+        encodable_categories: ["直管", "法兰", "管件"]
+      type_models:
+        # 仅 TYPE 使用分类专项模型；未配置覆盖项时默认复用 qwen3 主模型。
+        直管: 
+          # model_name: "contract-llm-pipe:q4"
+          backend: "hf_lazy_service"
+          service_url: "http://127.0.0.1:8200"
+          model_name: "type"
+          # backend: "transformers"
+          # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/pipe"
+          # device: "mps"
+          # temperature: 0.1
+        法兰: 
+          # model_name: "contract-llm-flang:q4"
+          backend: "hf_lazy_service"
+          service_url: "http://127.0.0.1:8200"
+          model_name: "type"
+          # backend: "transformers"
+          # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/flang"
+          # device: "mps"
+          # temperature: 0.1
+        管件: 
+          # model_name: "contract-llm-fittings:q4"
+          backend: "hf_lazy_service"
+          service_url: "http://127.0.0.1:8200"
+          model_name: "type"
+
+          # backend: "transformers"
+          # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/fittings"
+          # device: "mps"
+          # temperature: 0.1
+
+      material_model: 
+        # model_name: "contract-llm-material:q4"   # 共享材质模型；为空时复用 qwen3 主模型。
+        backend: "hf_lazy_service"
+        service_url: "http://127.0.0.1:8200"
+        model_name: "material-standard"
+        # ollama_url: "http://117.50.186.20:11434"
+        # backend: "transformers"
+        # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/material"
+        # device: "mps"
+        # temperature: 0.1
+
+      standard_model: 
+        # model_name: "contract-llm-standard:q4"   # 共享规范模型；为空时复用 qwen3 主模型。
+        backend: "hf_lazy_service"
+        service_url: "http://127.0.0.1:8200"
+        # service_url: "http://117.50.190.24:8100"
+        model_name: "material-standard"
+        # ollama_url: "http://117.50.186.20:11434"
+        # backend: "transformers"
+        # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/standard"
+        # device: "mps"
+        # temperature: 0.1
+
+      structural_prompt:
+        enabled: true
+        backend: "openai_compatible"         # ollama / openai_compatible
+        model_name: "MiniMax-M2.5-Q5_K_M-00001-of-00005.gguf"
+        base_url: "http://192.168.31.201:8085/v1"
+        api_key: "ollama-local"
+        
+        # model_name: "MiniMax-M2.5"
+        # base_url: "https://api.minimaxi.com/v1"
+        # api_key: "sk-api-TteHVi8mOEK2jkt7zcZbPlLmgupDF57J67_uBNft-7-Tx2kayyWpu-83oZbRbMilctzD8YT_HwPspXJsQuAyG60yjWsCEhXdvethB_8P4vOe51MZ_7NBfRo"
+        # reasoning_split: true
+
+        # backend: "ollama"
+        # model_name: "qwen3-4b-0407"
+        # ollama_url: "http://localhost:11434"
+        
+        thickness_prompt_version: "v3"       # v1=现有分层提示词；v2=旧版原子厚度提示词；v3=新版三段提示词（size/thickness/pressure 一起切换）
+        api: "chat_completions"              # openai_compatible 可选: chat_completions / openai-completions
+        timeout: 60
+        temperature: 0.0
+        max_tokens: 768
+        max_workers: 1
+      structural_rules:
+        enabled: true # 是否开启尺寸壁厚磅级规则器
   
   # GlobalPointer NER 模型配置
   globalpointer:
@@ -81,20 +185,20 @@ encoding:
 
   # LLM 编码配置（method=llm 时生效）
   llm:  
-    model_name: "qwen3-4b-q8-0327"
+    model_name: "qwen3-4b-q8-coder"
     backend: "ollama"             # ollama / transformers
     ollama_url: "http://localhost:11434"
     model_path: "models/qwen3_pipe"  # transformers 后端时使用
 
   # 以下为 legacy 模式配置（method=legacy 时生效）
-  type_encoding: "seq2seq"      # 种类编码方式: semantic / seq2seq
-  material_encoding: "seq2seq"  # 材质编码方式: semantic / seq2seq
+  # type_encoding: "seq2seq"      # 种类编码方式: semantic / seq2seq
+  # material_encoding: "seq2seq"  # 材质编码方式: semantic / seq2seq
   
   # Seq2Seq 模型配置
-  seq2seq:
-    model_path: "models/seq2seq"
-    device: "auto"  # auto / cpu / cuda / mps
-    max_length: 32
+  # seq2seq:
+  #   model_path: "models/seq2seq"
+  #   device: "auto"  # auto / cpu / cuda / mps
+  #   max_length: 32
 
 # ==================== 语义匹配配置 ====================
 semantic_matching:

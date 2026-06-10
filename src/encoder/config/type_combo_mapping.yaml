@@ -1,0 +1,161 @@
+# TYPE 组合编码表
+# 仅保留歧义项、特殊项、或不适合通用规则生成的组合。
+# key 顺序固定：BODY;ANGLE;RADIUS;SEAL;CONN;MANU
+
+FN:
+  - 螺纹法兰;NPT
+  - 螺纹法兰;NPT;RF
+  - 螺纹法兰;FF;NPT
+  - 螺纹法兰;LF;NPT
+  - 螺纹法兰;LM;NPT
+  - 螺纹法兰;MFM;NPT
+  - 螺纹法兰;RJ;NPT
+  - 螺纹法兰;RTJ;NPT
+
+T:
+  - 三通;90
+  - 等径三通;90
+
+RT:
+  - 异径三通;90
+
+TS:
+  - 三通;90;SW
+  - 等径三通;90;SW
+TW:
+  - 三通;90;WELDED
+  - 等径三通;90;WELDED
+
+RTW:
+  - 异径三通;90;WELDED
+
+RTS:
+  - 异径三通;90;SW
+
+YT:
+  - Y型三通
+  - Y型等径三通
+  - Y型三通;SMLS
+  - Y型等径三通;SMLS
+
+YLT:
+  - Y型三通;45
+  - Y型斜三通;45
+  - Y型斜三通
+  - Y型等径斜三通
+  - Y型三通;45;SMLS
+  - Y型等径三通;SMLS
+  - Y型斜三通;45;SMLS
+  - Y型斜三通;SMLS
+  - Y型等径斜三通;SMLS
+
+YRT:
+  - Y型异径三通
+  - 异径Y型三通
+  - Y型异径三通;SMLS
+  - 异径Y型三通;SMLS
+ 
+
+YRLT:
+  - Y型异径三通;45
+  - Y型异径斜三通;45
+  - 异径Y型三通;45
+  - 异径Y型斜三通;45
+  - Y型异径斜三通
+  - 异径Y型斜三通
+  - Y型异径三通;45;SMLS
+  - Y型异径斜三通;45;SMLS
+  - 异径Y型三通;45;SMLS
+  - 异径Y型斜三通;45;SMLS
+  - Y型异径斜三通;SMLS
+  - 异径Y型斜三通;SMLS
+
+FFN:
+  - 螺纹法兰;FNPT
+
+45ES:
+  - 弯头;45;SR
+  - 弯头;45;1D
+
+90ES:
+  - 弯头;90;SR
+  - 弯头;90;1D
+
+45ESS:
+  - 弯头;45;SR;SW
+  - 弯头;45;1D;SW
+
+90ESS:
+  - 弯头;90;SR;SW
+  - 弯头;90;1D;SW
+
+45ESW:
+  - 弯头;45;SR;WELDED
+  - 弯头;45;1D;WELDED
+
+90ESW:
+  - 弯头;90;SR;WELDED
+  - 弯头;90;1D;WELDED
+
+45ELFN:
+  - 弯头;45;FNPT
+  - 弯头;45;LR;FNPT
+  - 弯头;45;1.5D;FNPT
+
+90ELFN:
+  - 弯头;90;FNPT
+  - 弯头;90;LR;FNPT
+  - 弯头;90;1.5D;FNPT
+
+45ELN:
+  - 弯头;45;NPT
+  - 弯头;45;LR;NPT
+  - 弯头;45;1.5D;NPT
+
+90ELN:
+  - 弯头;90;NPT
+  - 弯头;90;LR;NPT
+  - 弯头;90;1.5D;NPT
+
+45ELFT:
+  - 弯头;45;FTE
+  - 弯头;45;LR;FTE
+  - 弯头;45;1.5D;FTE
+
+90ELFT:
+  - 弯头;90;FTE
+  - 弯头;90;LR;FTE
+  - 弯头;90;1.5D;FTE
+
+45HCS:
+  - 半管接头;45;SW
+
+45LO:
+  - 支管台;45
+45LOS:
+  - 支管台;45;SW
+OFN:
+  - 螺纹支管台;FNPT
+
+OFT:
+  - 螺纹支管台;FTE
+
+DCPFN:
+  - 双头管箍;FNPT
+
+DCPN:
+  - 双头管箍;NPT
+
+DCPFT:
+  - 双头管箍;FTE
+
+RDCPN:
+  - 异径双头管箍;NPT
+
+RDCPFN:
+  - 同心异径双口管箍;FNPT
+  - 异径双口管箍;FNPT
+
+RDCPFT:
+  - 同心异径双口管箍;FTE
+  - 异径双口管箍;FTE

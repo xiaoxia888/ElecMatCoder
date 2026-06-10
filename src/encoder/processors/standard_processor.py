@@ -10,6 +10,46 @@ from typing import List, Dict, Tuple, Optional
 
 class StandardProcessor:
     MODIFIER_ORDER = ["STANDARD_GRADE", "STANDARD_APPENDIX", "STANDARD_METHOD"]
+    CATEGORY_ORDER = {
+        "production": 0,
+        "manufacturing": 1,
+        "product": 2,
+        "construction": 3,
+    }
+    CATEGORY_LABELS = {
+        "production": "生产",
+        "manufacturing": "制造",
+        "product": "产品",
+        "construction": "建造",
+        "unknown": "",
+    }
+    PREFIX_ALIASES = {
+        "GBT": "GB",
+        "GB": "GB",
+        "HGT": "HG",
+        "HG": "HG",
+        "SHT": "SH",
+        "SH": "SH",
+        "NBT": "NB",
+        "NB": "NB",
+        "SYT": "SY",
+        "SY": "SY",
+        "ASME": "AB",
+        "AB": "AB",
+        "MSSSP": "MS",
+        "MSS": "MS",
+        "MS": "MS",
+        "API": "API",
+        "ENISO": "EN",
+        "ENI": "EN",
+        "EN": "EN",
+        "DIN": "DIN",
+        "ISO": "ISO",
+        "BS": "BS",
+        "JIS": "JIS",
+        "JBT": "JB",
+        "JB": "JB",
+    }
 
     def __init__(self, config_path: str = None):
         # 配置文件路径（processors 文件夹的上级目录下的 config）
@@ -33,8 +73,9 @@ class StandardProcessor:
         self.prefix_priority = self.config.get('prefix_priority', {})
         self.code_conversion = self.config.get('code_conversion', {})
         self.standards = self.config.get('standards', {})
+        self.reverse_code_prefixes = self._build_reverse_code_prefixes()
     
-    def process_standards(self, standards: List[str]) -> str:
+    def process_standards(self, standards: List[str], original_text: str = "") -> str:
         """
         处理标准数组，返回编码后的字符串
         
@@ -46,37 +87,7 @@ class StandardProcessor:
         """
         if not standards:
             return ""
-        
-        # 0. 先展开斜杠分隔的复合规范（如 ASME B36.19/B36.10 → ASME B36.19, ASME B36.10）
-        expanded_standards = self._expand_slash_standards(standards)
-        
-        # 1. 格式化每个标准
-        formatted = [self._format_standard(s) for s in expanded_standards]
-        
-        # 2. 分类并编码
-        production = []
-        manufacturing = []
-        unknown = []
-        for std in formatted:
-            encoded = self._encode_standard(std)
-            category = self._classify_standard(std)
-            if category == 'production':
-                production.append(encoded)
-            elif category == 'manufacturing':
-                manufacturing.append(encoded)
-            else:
-                unknown.append(encoded)
-        
-        # 3. 分别排序（在编码后排序，格式统一）
-        production = self._sort_encoded(production)
-        manufacturing = self._sort_encoded(manufacturing)
-        unknown = self._sort_encoded(unknown)
-        
-        # 4. 顺序：生产标准 > 制造标准 > 未知
-        all_encoded = production + manufacturing + unknown
-        
-        # 5. 拼接返回
-        return ''.join(all_encoded)
+        return self.process_standards_with_detail(standards, original_text=original_text).get('encoded', '')
     
     def _expand_slash_standards(self, standards: List[str]) -> List[str]:
         """
@@ -392,7 +403,7 @@ class StandardProcessor:
     
     def _classify_standard(self, standard: str) -> str:
         """
-        分类标准为生产标准或制造标准
+        分类标准为生产/制造/产品/建造标准
         通过模糊匹配，忽略前缀，要求输入包含配置中的核心标准号
         
         例如：
@@ -413,7 +424,7 @@ class StandardProcessor:
                     ignorable_prefixes.add(ignorable)
         
         # 已知的标准体系前缀（用于从配置键中剥离）
-        system_prefixes = ['ASME', 'MSS', 'GBT', 'HGT', 'SHT', 'NBT', 'SYT', 'JBT', 'API', 'EN', 'ISO', 'BS']
+        system_prefixes = ['AB', 'ASME', 'MS', 'MSS', 'GBT', 'HGT', 'SHT', 'NBT', 'SYT', 'JBT', 'API', 'EN', 'DIN', 'ISO', 'BS', 'JIS']
         
         # 提取标准的标准化key (去除空格、斜杠等，只保留字母和数字)
         normalized = re.sub(r'[^A-Z0-9]', '', standard.upper())
@@ -497,6 +508,137 @@ class StandardProcessor:
             return (priority, encoded.upper())
         
         return sorted(encoded_list, key=sort_key)
+
+    @staticmethod
+    def _normalized_find(text: str, fragment: str) -> int:
+        source = re.sub(r'[^A-Z0-9]', '', str(text or '').upper())
+        target = re.sub(r'[^A-Z0-9]', '', str(fragment or '').upper())
+        if not source or not target:
+            return -1
+        return source.find(target)
+
+    @staticmethod
+    def _normalize_search_key(text: str) -> str:
+        return re.sub(r'[^A-Z0-9]', '', str(text or '').upper())
+
+    def _build_reverse_code_prefixes(self) -> Dict[str, List[str]]:
+        reverse: Dict[str, List[str]] = {}
+        for old, new in (self.code_conversion or {}).items():
+            old_key = self._normalize_search_key(old)
+            new_key = self._normalize_search_key(new)
+            if not old_key or not new_key:
+                continue
+            reverse.setdefault(new_key, [])
+            if old_key not in reverse[new_key]:
+                reverse[new_key].append(old_key)
+        return reverse
+
+    @staticmethod
+    def _strip_code_suffix(code: str) -> str:
+        normalized = StandardProcessor._normalize_search_key(code)
+        if not normalized:
+            return ''
+        return re.sub(r'(?<=\d)(?:I{1,3}|IV|V|VI{0,3}|[A-Z])$', '', normalized)
+
+    @staticmethod
+    def _split_code_head_body(code: str) -> Tuple[str, str]:
+        normalized = StandardProcessor._normalize_search_key(code)
+        match = re.match(r'^([A-Z]+)(.+)$', normalized)
+        if not match:
+            return '', normalized
+        return match.group(1), match.group(2)
+
+    def _build_subject_search_forms(self, item: Dict[str, str]) -> List[str]:
+        code = self._strip_code_suffix(item.get('base_code', '') or item.get('encoded', ''))
+        if not code:
+            return []
+
+        head, body = self._split_code_head_body(code)
+        if not body:
+            return [code]
+
+        tiers: List[List[str]] = [[], [], []]
+
+        def add_to_tier(idx: int, value: str, min_digits_for_pure: int = 4) -> None:
+            compact = self._normalize_search_key(value)
+            if not compact:
+                return
+            if compact.isdigit() and len(compact) < min_digits_for_pure:
+                return
+            if compact not in tiers[idx]:
+                tiers[idx].append(compact)
+
+        # Tier 0: 完整编码主体 / 扩展前缀主体
+        add_to_tier(0, code)
+        for expanded in self.reverse_code_prefixes.get(head, []):
+            add_to_tier(0, expanded + body)
+
+        # Tier 1: 弱前缀主体（去掉 /T、或取扩展前缀尾部核心字母）
+        if head.endswith('T') and len(head) > 1:
+            add_to_tier(1, head[:-1] + body)
+
+        for expanded in self.reverse_code_prefixes.get(head, []):
+            if expanded.endswith('T') and len(expanded) > 1:
+                add_to_tier(1, expanded[:-1] + body)
+            for suffix_len in (3, 2, 1):
+                if len(expanded) > suffix_len:
+                    add_to_tier(1, expanded[-suffix_len:] + body)
+
+        # Tier 2: 纯主体编号兜底
+        add_to_tier(2, body)
+
+        forms: List[str] = []
+        for tier in tiers:
+            forms.extend(tier)
+        return forms
+
+    def _find_original_position(self, original_text: str, item: Dict[str, str], fallback_index: int) -> int:
+        source = self._normalize_search_key(original_text)
+        if not source:
+            return 10**9 + fallback_index
+
+        search_forms = self._build_subject_search_forms(item)
+        if not search_forms:
+            search_forms = [
+                self._normalize_search_key(item.get('original', '')),
+                self._normalize_search_key(item.get('formatted', '')),
+                self._normalize_search_key(item.get('encoded', '')),
+                self._normalize_search_key(item.get('base_code', '')),
+            ]
+
+        for candidate in search_forms:
+            if not candidate:
+                continue
+            pos = source.find(candidate)
+            if pos >= 0:
+                return pos
+        return 10**9 + fallback_index
+
+    def _extract_sort_family(self, item: Dict[str, str]) -> str:
+        for candidate in (item.get('formatted', ''), item.get('original', ''), item.get('encoded', '')):
+            upper = str(candidate or '').upper()
+            for prefix in sorted(self.PREFIX_ALIASES.keys(), key=len, reverse=True):
+                if upper.startswith(prefix):
+                    return self.PREFIX_ALIASES[prefix]
+        return 'ZZZ'
+
+    @staticmethod
+    def _extract_numeric_parts(text: str) -> Tuple[int, ...]:
+        numbers = re.findall(r'\d+', str(text or ''))
+        if not numbers:
+            return (10**9,)
+        return tuple(int(n) for n in numbers)
+
+    def _sort_item_key(self, item: Dict[str, str]) -> Tuple[int, int, Tuple[int, ...], str]:
+        family = self._extract_sort_family(item)
+        priority = self.prefix_priority.get(family, 999)
+        number_key = self._extract_numeric_parts(item.get('formatted', '') or item.get('original', '') or item.get('encoded', ''))
+        return (
+            self.CATEGORY_ORDER.get(item.get('category', 'unknown'), 999),
+            priority,
+            number_key,
+            str(item.get('encoded', '')).upper(),
+        )
     
     def _encode_standard(self, standard: str) -> str:
         """
@@ -517,8 +659,13 @@ class StandardProcessor:
             rest = result[len(prefix_match.group(1)):]
             result = prefix + rest
         
-        # 2. 先去除空格（为了正确匹配转换规则）
-        result = result.replace(' ', '')
+        # 2. 先做基础标准化（为了让 code_conversion 能命中带空格/连字符/斜杠的等价写法）
+        # 例如：
+        # - MSS-SP97 / MSS SP-97 -> MSSSP97
+        # - ANSI B16.9 -> ANSIB169
+        # - GB/T 12459 -> GBT12459
+        for char in self.remove_chars:
+            result = result.replace(char, '')
         
         # 3. 罗马数字转换（全角→普通字母）
         roman_map = {
@@ -532,18 +679,16 @@ class StandardProcessor:
         
         # 4. 应用代码转换规则（忽略大小写匹配）
         for old, new in self.code_conversion.items():
-            old_normalized = old.replace(' ', '')
+            old_normalized = old
+            for char in self.remove_chars:
+                old_normalized = old_normalized.replace(char, '')
             # 使用正则忽略大小写匹配
             pattern = re.compile(re.escape(old_normalized), re.IGNORECASE)
             # 只替换匹配到的部分，但保留后续内容
             match = pattern.search(result)
             if match:
                 result = result[:match.start()] + new + result[match.end():]
-        
-        # 5. 去除配置的特殊字符
-        for char in self.remove_chars:
-            result = result.replace(char, '')
-        
+
         return result
     
     def _split_code_and_grade(self, encoded: str) -> Dict[str, str]:
@@ -649,7 +794,7 @@ class StandardProcessor:
         info = self.get_standard_info(value.strip())
         return info['encoded']
     
-    def process_multi(self, values: List[str]) -> str:
+    def process_multi(self, values: List[str], original_text: str = "") -> str:
         """
         处理多个规范值并排序
         
@@ -659,9 +804,9 @@ class StandardProcessor:
         Returns:
             排序后拼接的编码
         """
-        return self.process_standards(values)
+        return self.process_standards(values, original_text=original_text)
     
-    def process_multi_with_detail(self, values: List[str]) -> Dict:
+    def process_multi_with_detail(self, values: List[str], original_text: str = "") -> Dict:
         """
         处理多个规范值并返回带分类详情的结果
         
@@ -671,9 +816,9 @@ class StandardProcessor:
         Returns:
             带分类详情的字典
         """
-        return self.process_standards_with_detail(values)
+        return self.process_standards_with_detail(values, original_text=original_text)
     
-    def process_standards_with_detail(self, standards: List[str]) -> Dict:
+    def process_standards_with_detail(self, standards: List[str], original_text: str = "") -> Dict:
         """
         处理标准数组，返回带分类详情的结果
         
@@ -697,99 +842,116 @@ class StandardProcessor:
                 'encoded': '',
                 'production': [],
                 'manufacturing': [],
+                'product': [],
+                'construction': [],
                 'unknown': [],
                 'production_encoded': [],
                 'manufacturing_encoded': [],
+                'product_encoded': [],
+                'construction_encoded': [],
                 'unknown_encoded': [],
-                'display': '无'
+                'display': '无',
+                'ordered_items': [],
             }
-        
-        # 0. 先展开斜杠分隔的复合规范（如 ASME B36.19/B36.10 → ASME B36.19, ASME B36.10）
+
         expanded_standards = self._expand_slash_standards(standards)
-        
-        # 分类处理
-        production_items = []  # [(原始, 格式化, 编码), ...]
-        manufacturing_items = []
-        unknown_items = []
-        
-        for std in expanded_standards:
+
+        raw_items: List[Dict[str, str]] = []
+        for idx, std in enumerate(expanded_standards):
             formatted = self._format_standard(std)
             category = self._classify_standard(formatted)
             encoded = self._encode_standard(formatted)
             code_parts = self._split_code_and_grade(encoded)
-            
-            # item: (原始, 格式化, 完整编码, 基础编码, 等级)
-            item = (std, formatted, encoded, code_parts['base'], code_parts['grade'])
-            if category == 'production':
-                production_items.append(item)
-            elif category == 'manufacturing':
-                manufacturing_items.append(item)
-            else:
-                unknown_items.append(item)
-        
-        # 分别排序
-        production_items = self._sort_items(production_items)
-        manufacturing_items = self._sort_items(manufacturing_items)
-        unknown_items = self._sort_items(unknown_items)
-        
-        # 组装结果
-        production_encoded = [item[2] for item in production_items]
-        manufacturing_encoded = [item[2] for item in manufacturing_items]
-        unknown_encoded = [item[2] for item in unknown_items]
-        
-        # 生成显示字符串：编码(生产/制造/无)，按基础编码去重
-        # 如果同一基础编码有多个版本（有等级/无等级），优先保留有等级的
+            structured = self.parse_standard_structure(std)
+            raw_items.append({
+                'original': std,
+                'formatted': formatted,
+                'encoded': encoded,
+                'base_code': code_parts['base'],
+                'grade': structured['grade'] or code_parts['grade'],
+                'standard_subject': structured['subject'],
+                'standard_grade': structured['grade'],
+                'standard_method': structured['method'],
+                'standard_appendix': structured['appendix'],
+                'category': category,
+                'original_index': idx,
+            })
+
+        should_sort = len(raw_items) >= 2 and all(item['category'] in self.CATEGORY_ORDER for item in raw_items)
+        if should_sort:
+            ordered_items = sorted(raw_items, key=self._sort_item_key)
+        elif original_text:
+            ordered_items = sorted(
+                raw_items,
+                key=lambda item: self._find_original_position(original_text, item, item['original_index'])
+            )
+        else:
+            ordered_items = sorted(raw_items, key=lambda item: item['original_index'])
+
+        grouped = {
+            'production': [],
+            'manufacturing': [],
+            'product': [],
+            'construction': [],
+            'unknown': [],
+        }
+        grouped_encoded = {
+            'production': [],
+            'manufacturing': [],
+            'product': [],
+            'construction': [],
+            'unknown': [],
+        }
+
+        for item in ordered_items:
+            category = item['category'] if item['category'] in grouped else 'unknown'
+            grouped[category].append(item['original'])
+            grouped_encoded[category].append(item['encoded'])
+
         display_parts = []
-        seen_base_codes = {}  # base_code -> (full_code, category, has_grade)
-        
-        all_items = (
-            [(item, '生产') for item in production_items] +
-            [(item, '制造') for item in manufacturing_items] +
-            [(item, '') for item in unknown_items]
-        )
-        
-        for item, category_label in all_items:
-            full_code = item[2]
-            base_code = item[3]
-            grade = item[4]
-            
+        seen_base_codes = {}
+        base_order: List[str] = []
+
+        for item in ordered_items:
+            full_code = item['encoded']
+            base_code = item['base_code']
+            grade = item['grade']
+            category_label = self.CATEGORY_LABELS.get(item['category'], '')
+
             if not full_code:
                 continue
-            
+
             if base_code not in seen_base_codes:
-                # 第一次见到这个基础编码
                 seen_base_codes[base_code] = (full_code, category_label, bool(grade))
+                base_order.append(base_code)
             else:
-                # 已有这个基础编码，判断是否替换
-                existing_code, existing_category, existing_has_grade = seen_base_codes[base_code]
+                _, _, existing_has_grade = seen_base_codes[base_code]
                 if grade and not existing_has_grade:
-                    # 新的有等级，旧的没有，替换
                     seen_base_codes[base_code] = (full_code, category_label, True)
-        
-        # 按原始顺序生成显示部分
-        added_bases = set()
-        for item, category_label in all_items:
-            base_code = item[3]
-            if base_code and base_code not in added_bases and base_code in seen_base_codes:
-                full_code, cat_label, _ = seen_base_codes[base_code]
-                if cat_label:
-                    display_parts.append(f"{full_code}({cat_label})")
-                else:
-                    display_parts.append(f"{full_code}")
-                added_bases.add(base_code)
-        
-        # 最终编码：按基础编码去重，优先保留有等级的版本
-        unique_encoded = [info[0] for info in seen_base_codes.values()]
-        
+
+        unique_encoded = []
+        for base_code in base_order:
+            full_code, cat_label, _ = seen_base_codes[base_code]
+            unique_encoded.append(full_code)
+            if cat_label:
+                display_parts.append(f"{full_code}({cat_label})")
+            else:
+                display_parts.append(full_code)
+
         return {
             'encoded': ''.join(unique_encoded),
-            'production': [item[0] for item in production_items],
-            'manufacturing': [item[0] for item in manufacturing_items],
-            'unknown': [item[0] for item in unknown_items],
-            'production_encoded': production_encoded,
-            'manufacturing_encoded': manufacturing_encoded,
-            'unknown_encoded': unknown_encoded,
-            'display': ' '.join(display_parts) if display_parts else '无'
+            'production': grouped['production'],
+            'manufacturing': grouped['manufacturing'],
+            'product': grouped['product'],
+            'construction': grouped['construction'],
+            'unknown': grouped['unknown'],
+            'production_encoded': grouped_encoded['production'],
+            'manufacturing_encoded': grouped_encoded['manufacturing'],
+            'product_encoded': grouped_encoded['product'],
+            'construction_encoded': grouped_encoded['construction'],
+            'unknown_encoded': grouped_encoded['unknown'],
+            'display': ' '.join(display_parts) if display_parts else '无',
+            'ordered_items': ordered_items,
         }
     
     def _sort_items(self, items: List[Tuple[str, str, str]]) -> List[Tuple[str, str, str]]:
@@ -908,14 +1070,15 @@ class StandardProcessor:
     def process_with_modifiers(
         self,
         standards: List[str],
-        modifier_map: Dict[int, Dict[str, List[str]]] = None
+        modifier_map: Dict[int, Dict[str, List[str]]] = None,
+        original_text: str = "",
     ) -> Dict:
         """
         处理规范列表，并按固定顺序拼接修饰项：
         STANDARD_GRADE + STANDARD_APPENDIX + STANDARD_METHOD
         """
         if not standards:
-            return self.process_standards_with_detail([])
+            return self.process_standards_with_detail([], original_text=original_text)
 
         merged_standards = list(standards)
         modifier_map = modifier_map or {}
@@ -954,9 +1117,9 @@ class StandardProcessor:
             if suffix_parts:
                 merged_standards[idx] = f"{std} {' '.join(suffix_parts)}"
 
-        return self.process_standards_with_detail(merged_standards)
+        return self.process_standards_with_detail(merged_standards, original_text=original_text)
     
-    def process_with_grades(self, standards: List[str], grade_map: Dict[int, str] = None) -> Dict:
+    def process_with_grades(self, standards: List[str], grade_map: Dict[int, str] = None, original_text: str = "") -> Dict:
         """
         处理规范列表，支持单独的等级映射
         
@@ -970,7 +1133,7 @@ class StandardProcessor:
         modifier_map = {}
         for idx, grade_value in (grade_map or {}).items():
             modifier_map[idx] = {"STANDARD_GRADE": [grade_value]}
-        return self.process_with_modifiers(standards, modifier_map)
+        return self.process_with_modifiers(standards, modifier_map, original_text=original_text)
 
 
 # 单例

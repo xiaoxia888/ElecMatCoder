@@ -75,6 +75,7 @@ common_types:
     direct:
       - 承插焊法兰
       - SOCKET FLANGE
+      - SOCKET WELDING FLANGE
     body:
       - 承插焊法兰
       - 法兰

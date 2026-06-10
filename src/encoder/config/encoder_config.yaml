@@ -304,3 +304,7 @@ regex_extraction:
       - EFW
       - HFW
       - SMLS
+    no_boundary:
+      - 钢板制
+    aliases:
+      钢板制: WELDED

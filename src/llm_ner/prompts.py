@@ -14,39 +14,19 @@ from __future__ import annotations
 
 
 STAGE1_SEMANTIC_PARSER_PROMPT = (
-    "你是一个管道材料语义解析助手。"
-    "从材料描述中提取语义解析结果，并严格输出 JSON。\n"
-    "输出结构固定为："
-    "{\"mentions\":[{\"id\":\"m1\",\"text\":\"\",\"type\":\"\"}],"
-    "\"semantics\":[{\"mention_id\":\"m1\",\"semantic_tag\":\"\"}],"
-    "\"decisions\":{...}}。\n"
-    "要求："
-    "1. mentions 必须尽量保留原文证据片段，优先保留连续原文片段；"
-    "2. semantics 用于标记 mention 在当前上下文中的语义角色；"
-    "3. decisions 用于给出最终结构化决策结果，可以做轻度规范化与结构化拆分；"
-    "4. 不要输出解释文字，不要输出 markdown，不要补充原文中不存在的信息；"
-    "5. 只输出合法 JSON。"
+    "你是一个工业管道材料结构化信息提取助手。"
+    "请从材料描述中提取结构化信息，并严格输出 JSON。"
+    "输出包含 mentions、semantics、decisions。"
+    "其中 TYPE 结构包含 BODY、GEOMETRY(ANGLE/RADIUS)、MANU、CONN、SEAL、ENDS。"
+    "不要输出解释文字，不要输出 markdown，不要补充原文中不存在的信息，只输出合法 JSON。"
 )
 
 STAGE1_DECISIONS_ONLY_PROMPT = (
-    "你是一个管道材料语义解析助手。"
-    "从材料描述中提取最终结构化决策结果，并严格输出 JSON。\n"
-    "输出结构固定为："
-    "{\"decisions\":{"
-    "\"TYPE\":{\"BODY\":\"\",\"CONN\":\"\",\"ENDS\":\"\",\"SEAL\":\"\",\"MANU\":\"\"},"
-    "\"SIZE\":{\"DN\":[],\"OD\":[],\"INCH\":[],\"LENGTH\":[]},"
-    "\"PRESSURE\":\"\","
-    "\"THICKNESS\":{\"MM\":[],\"INCH\":[],\"SCHEDULE\":[],\"SERIES\":[],\"BWG\":[]},"
-    "\"MATERIAL\":{\"RELATION\":\"single|alternative|composite\",\"ITEMS\":[{\"EXEC_STANDARD\":\"\",\"GRADE\":\"\",\"SPECIAL_REQ\":[]}]},"
-    "\"STANDARD\":[{\"BODY\":\"\",\"GRADE\":\"\",\"APPENDIX\":\"\",\"METHOD\":\"\"}]"
-    "}}。\n"
-    "要求："
-    "1. 只输出 decisions 对象，不输出 mentions，不输出 semantics；"
-    "2. decisions 必须严格保持上述结构：TYPE/SIZE/THICKNESS/MATERIAL 为对象，STANDARD 为对象数组；"
-    "3. decisions 用于给出最终结构化决策结果，可以做轻度规范化与结构化拆分；"
-    "4. 未识别到的子字段可省略，但不要改变已识别字段的数据类型；"
-    "5. 不要输出解释文字，不要输出 markdown，不要补充原文中不存在的信息；"
-    "6. 只输出合法 JSON。"
+    "你是一个工业管道材料结构化信息提取助手。"
+    "请从材料描述中提取最终结构化决策结果，并严格输出 JSON。"
+    "只输出 decisions。"
+    "其中 TYPE 结构包含 BODY、GEOMETRY(ANGLE/RADIUS)、MANU、CONN、SEAL、ENDS。"
+    "不要输出解释文字，不要输出 markdown，不要补充原文中不存在的信息，只输出合法 JSON。"
 )
 
 

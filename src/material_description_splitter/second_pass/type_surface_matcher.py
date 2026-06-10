@@ -144,7 +144,9 @@ class TypeSurfaceMatcher:
     def _compile_alias_pattern(alias: str) -> re.Pattern[str]:
         normalized = TypeSurfaceMatcher._normalize_alias_key(alias)
         escaped = FLEX_GAP_PATTERN.join(
-            re.escape(ch) for ch in alias.upper() if ch not in IGNORED_IN_ALIAS
+            TypeSurfaceMatcher._compile_alias_char(ch)
+            for ch in alias.upper()
+            if ch not in IGNORED_IN_ALIAS
         )
         if any("\u4e00" <= ch <= "\u9fff" for ch in alias):
             pattern = rf"({escaped})"
@@ -161,9 +163,17 @@ class TypeSurfaceMatcher:
         if any("\u4e00" <= ch <= "\u9fff" for ch in alias):
             return None
         escaped = FLEX_GAP_PATTERN.join(
-            re.escape(ch) for ch in alias.upper() if ch not in IGNORED_IN_ALIAS
+            TypeSurfaceMatcher._compile_alias_char(ch)
+            for ch in alias.upper()
+            if ch not in IGNORED_IN_ALIAS
         )
         return re.compile(rf"^\s*({escaped})", re.IGNORECASE)
+
+    @staticmethod
+    def _compile_alias_char(ch: str) -> str:
+        if ch in {"O", "0"}:
+            return r"[O0]"
+        return re.escape(ch)
 
     @staticmethod
     def _compile_angle_pattern(alias: str) -> re.Pattern[str]:

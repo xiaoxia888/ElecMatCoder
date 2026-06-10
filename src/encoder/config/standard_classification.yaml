@@ -1,6 +1,8 @@
 # 标准分类配置文件
 # 生产标准 (production) - 材料/产品本身的生产规范
 # 制造标准 (manufacturing) - 加工/制造工艺的规范
+# 产品标准 (product) - 产品/部件标准
+# 建造标准 (construction) - 建造、施工及验收相关标准
 
 # 前缀优先级排序 (数字越小优先级越高)
 prefix_priority:
@@ -9,17 +11,20 @@ prefix_priority:
   SH: 3
   NB: 4
   SY: 5
-  ASME: 6
-  MSS: 7
+  AB: 6
+  MS: 7
   API: 8
   EN: 9
-  ISO: 10
-  BS: 11
-  JB: 12
+  DIN: 10
+  ISO: 11
+  BS: 12
+  JIS: 13
+  JB: 14
 
 # 标准代码转换规则 (匹配时会去除空格，忽略大小写)
 code_conversion:
   "ASMEB": "AB"
+  "ANSIB": "AB"
   "MSSSP": "MS"
   "GB/T": "GBT"
   "HG/T": "HGT"
@@ -49,6 +54,7 @@ standards:
   GBT2205: manufacturing
   GBT3087: manufacturing
   GBT3091: production
+  GBT3426: manufacturing
   GBT3733: manufacturing
   GBT3747: manufacturing
   GBT4237: production
@@ -56,8 +62,10 @@ standards:
   GBT5310: production
   GBT6479: production
   GBT8163: manufacturing
+  GBT8136: manufacturing
   GBT9711: production
   GBT9948: production
+  GBT9684: production
   GBT12228: production
   GBT12234: manufacturing
   GBT12235: manufacturing
@@ -110,6 +118,7 @@ standards:
   SHT3419: manufacturing
   SHT3424: manufacturing
   SHT3425: manufacturing
+  SHT3426: manufacturing
   
   # ===== NBT 系列 =====
   NBT47008: manufacturing
@@ -118,28 +127,28 @@ standards:
   # ===== SYT 系列 =====
   SYT5037: manufacturing
   
-  # ===== ASME 系列 (ASMEB169 = ASME B16.9) =====
-  ASMEB11: manufacturing
-  ASMEB163: manufacturing
-  ASMEB165: manufacturing
-  ASMEB169: manufacturing
-  ASMEB1610: manufacturing
-  ASMEB1611: manufacturing
-  ASMEB1619: manufacturing
-  ASMEB1620: manufacturing
-  ASMEB1634: manufacturing
-  ASMEB1647: manufacturing
-  ASMEB1648: manufacturing
-  ASMEB1822: manufacturing
-  ASMEB18312: manufacturing
-  ASMEB313: manufacturing
-  ASMEB3610: manufacturing
-  ASMEB3619: manufacturing
+  # ===== ASME 系列 (AB169 = ASME B16.9) =====
+  AB11: manufacturing
+  AB163: manufacturing
+  AB165: manufacturing
+  AB169: manufacturing
+  AB1610: manufacturing
+  AB1611: manufacturing
+  AB1619: manufacturing
+  AB1620: manufacturing
+  AB1634: manufacturing
+  AB1647: manufacturing
+  AB1648: manufacturing
+  AB1822: manufacturing
+  AB18312: manufacturing
+  AB313: manufacturing
+  AB3610: manufacturing
+  AB3619: manufacturing
   
   # ===== MSS 系列 =====
-  MSSSP83: manufacturing
-  MSSSP95: manufacturing
-  MSSSP97: manufacturing
+  MS83: manufacturing
+  MS95: manufacturing
+  MS97: manufacturing
   
   # ===== API 系列 =====
   API594: manufacturing
@@ -152,7 +161,7 @@ standards:
   EN10253: manufacturing
   EN10305: manufacturing
   EN10921: manufacturing
-  ENISO1127: manufacturing
+  ENI1127: manufacturing
   
   # ===== ISO 系列 =====
   ISO17292: manufacturing
@@ -164,3 +173,57 @@ standards:
   # ===== JBT 系列 =====
   JBT7746: manufacturing
   JBT8937: manufacturing
+
+  # ===== 补充标准简写 =====
+  GBT12459I: production
+  GBT12459II: production
+  HGT20553IA: manufacturing
+  GBT12459IA: production
+  HGT20592B: manufacturing
+  HGT20553II: manufacturing
+  GBT19326II: manufacturing
+  GBT4334C: manufacturing
+  HGT20592A: manufacturing
+  HGT20538II: manufacturing
+  GBT19326IA: manufacturing
+  GBT19326I: manufacturing
+  GBT309: manufacturing
+  EN102534: manufacturing
+  AB1647A: manufacturing
+  SHT3407B: manufacturing
+  AB1647B: manufacturing
+  AB318: construction
+  NBT47009: manufacturing
+  AB1620A: manufacturing
+  GBT21833.2: production
+  GBT713.2: manufacturing
+  HG20202: construction
+  AB1201: manufacturing
+  GBT18984: manufacturing
+  GBT13663.3: manufacturing
+  GBT18742.2: product
+  GBT40317: manufacturing
+  GBT3621: product
+  GBT27684: product
+  GBT3624: product
+  GBT3274: manufacturing
+  ANM1: construction
+  GBT700: production
+  CJT120: product
+  GBT8162: product
+  GBT13793: production
+  GBT24511: production
+  CJT124: product
+  GBT26500: production
+  HGT26133: product
+  CJT192: product
+  HGT3731: product
+  AB1625: manufacturing
+  AA139: manufacturing
+  ASB165: product
+  JISB2312: production
+  JISG3459: production
+  JISB2220: product
+  GBT2965: product
+  GBT12772: product
+  GBT9439: product

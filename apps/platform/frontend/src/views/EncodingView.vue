@@ -456,6 +456,7 @@ import axios from 'axios'
 import DataImport from '../components/DataImport.vue'
 import EncodingResult from '../components/EncodingResult.vue'
 import EncodingExport from '../components/EncodingExport.vue'
+import { DIFF_EASY, DIFF_HARD, DIFF_SECOND_EASY, getDifficultyLabel, normalizeDifficultyLevel } from '../utils/difficulty'
 
 const showToast = inject('showToast')
 
@@ -1003,16 +1004,21 @@ function getItemStatus(index) {
   return 'pending'
 }
 
-function getItemDifficulty(index) {
+function getItemDifficultyLevel(index) {
   const enc = encodings.value[index]
-  return enc?.second_pass?.final_level || enc?.difficulty_split?.difficulty || ''
+  const raw = enc?.second_pass?.final_level ?? enc?.difficulty_split?.difficulty
+  return normalizeDifficultyLevel(raw)
+}
+
+function getItemDifficulty(index) {
+  return getDifficultyLabel(getItemDifficultyLevel(index))
 }
 
 function getItemDifficultyClass(index) {
-  const level = getItemDifficulty(index)
-  if (level === '困难') return 'hard'
-  if (level === '二次简单') return 'second-pass-easy'
-  if (level === '简单') return 'second-pass-mid'
+  const level = getItemDifficultyLevel(index)
+  if (level === DIFF_HARD) return 'hard'
+  if (level === DIFF_SECOND_EASY) return 'second-pass-easy'
+  if (level === DIFF_EASY) return 'second-pass-mid'
   return 'simple'
 }
 

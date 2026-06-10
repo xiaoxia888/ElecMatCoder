@@ -1,6 +1,6 @@
 models:
   material-standard:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-material-standardV2-mlx
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-material-standard-0609-mlx
     instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
     max_tokens: 512
     temperature: 0.0

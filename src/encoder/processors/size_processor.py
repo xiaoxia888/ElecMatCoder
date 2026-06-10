@@ -384,6 +384,29 @@ class SizeProcessor:
             return str(int(value))
         return f"{value:.6f}".rstrip("0").rstrip(".")
 
+    def _normalize_length_value(self, raw_value: Any, unit: str = "") -> str:
+        """
+        长度归一：
+        1. 无单位：按毫米默认值直接保留，不做换算
+        2. MM/毫米：直接保留
+        3. CM/厘米：转毫米
+        4. M/米：转毫米
+        """
+        text = self._normalize_number_text(raw_value)
+        try:
+            value = float(text)
+        except Exception:
+            return str(raw_value).strip()
+
+        unit_u = str(unit or "").strip().upper()
+        if unit_u in ("", "MM", "毫米"):
+            return self._normalize_number_text(value)
+        if unit_u in ("CM", "厘米"):
+            return self._normalize_number_text(value * 10)
+        if unit_u in ("M", "米"):
+            return self._normalize_number_text(value * 1000)
+        return self._normalize_number_text(value)
+
     @staticmethod
     def _mixed_fraction_to_decimal(token: str) -> str:
         """
@@ -496,16 +519,16 @@ class SizeProcessor:
             s = str(text or "").strip().upper()
             if not s:
                 return ""
-            m = re.search(r'(?:L|LEN|LENGTH)\s*=?\s*(\d+(?:\.\d+)?)(?:\s*(?:MM|CM|M))?', s)
+            m = re.search(r'(?:L|LEN|LENGTH)\s*=?\s*(\d+(?:\.\d+)?)(?:\s*(MM|CM|M|毫米|厘米|米))?', s)
             if m:
-                return f"L{self._normalize_number_text(m.group(1))}"
+                return f"L{self._normalize_length_value(m.group(1), m.group(2) or '')}"
 
             # 结构化 SIZE.LENGTH 常常只有纯长度值，如 `1000mm` / `1000`
             # 这类值在字段层面已经被识别为 LENGTH，可直接转成编码片段。
-            m = re.fullmatch(r'(\d+(?:\.\d+)?)(?:\s*(?:MM|CM|M))?', s)
+            m = re.fullmatch(r'(\d+(?:\.\d+)?)(?:\s*(MM|CM|M|毫米|厘米|米))?', s)
             if not m:
                 return ""
-            return f"L{self._normalize_number_text(m.group(1))}"
+            return f"L{self._normalize_length_value(m.group(1), m.group(2) or '')}"
 
         if isinstance(value, dict):
             items = self._ensure_list(value.get("LENGTH"))
@@ -736,14 +759,15 @@ class SizeProcessor:
                 values = self._sort_sizes([float(dn1), float(dn2)])
                 return SizeResult(values=values, original=value, format_type='dn')
 
-        # 单值英制（有 NPS 前缀，或包含英寸引号）
+        # 单值英制（有 NPS 前缀，或包含英寸引号 / in / inch）
         has_inch_quote = any(ch in normalized_value for ch in ['"'])
+        has_inch_word = bool(re.search(r'(?i)\bIN(?:CH)?\b', normalized_value))
         imperial_single = re.search(
             r'(?<![A-Za-z0-9])(?:NPS\s*)?(\d+(?:\s*[-\s]\s*\d+/\d+|\s*/\s*\d+|\.\d+)?)\s*["]?(?![A-Za-z0-9/])',
             normalized_value,
             re.IGNORECASE
         )
-        if imperial_single and (has_inch_quote or re.search(r'(?i)\bNPS\b', normalized_value)):
+        if imperial_single and (has_inch_quote or has_inch_word or re.search(r'(?i)\bNPS\b', normalized_value)):
             dn = self._nps_to_dn(imperial_single.group(1))
             if dn is not None:
                 return SizeResult(values=[float(dn)], original=value, format_type='dn')
@@ -1123,11 +1147,11 @@ class SizeProcessor:
             mm_length_candidates.append(self._normalize_number_text(m.group(1)))
             consumed_length_spans.append(span)
             _record(m.group(0), span)
-        for m in re.finditer(r'(?i)\bLENGTH\s*[:=]?\s*(\d+(?:\.\d+)?)(?:\s*(?:MM|CM|M))?\b', normalized):
+        for m in re.finditer(r'(?i)\bLENGTH\s*[:=]?\s*(\d+(?:\.\d+)?)(?:\s*(MM|CM|M|毫米|厘米|米))?\b', normalized):
             span = (m.start(), m.end())
             if _overlaps_consumed_length(span):
                 continue
-            generic_length_candidates.append(self._normalize_number_text(m.group(1)))
+            generic_length_candidates.append(self._normalize_length_value(m.group(1), m.group(2) or ''))
             consumed_length_spans.append(span)
             _record(m.group(0), span)
         for m in re.finditer(r'(?i)\bCUT\s*[-]?\s*TO\s*(\d+(?:\.\d+)?)\b', normalized):
@@ -1144,11 +1168,11 @@ class SizeProcessor:
             mm_length_candidates.append(self._normalize_number_text(m.group(1)))
             consumed_length_spans.append(span)
             _record(m.group(0), span)
-        for m in re.finditer(r'(?i)(?<![A-Z0-9])L\s*=\s*(\d+(?:\.\d+)?)\s*(CM|M)?\b', normalized):
+        for m in re.finditer(r'(?i)(?<![A-Z0-9])L\s*=\s*(\d+(?:\.\d+)?)\s*(CM|M|米)?\b', normalized):
             span = (m.start(), m.end())
             if _overlaps_consumed_length(span):
                 continue
-            value = self._normalize_number_text(m.group(1))
+            value = self._normalize_length_value(m.group(1), m.group(2) or '')
             generic_length_candidates.append(value)
             consumed_length_spans.append(span)
             _record(m.group(0), span)
@@ -1209,47 +1233,51 @@ class SizeProcessor:
             _add_ordered_item("DN", dn_value, span)
             _record(m.group(0), span)
 
-        d_pair_pattern = re.compile(
-            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
-        )
+        has_explicit_dn_anchor = bool(dn_values)
+
         consumed_d_spans: List[Tuple[int, int]] = []
-        for m in d_pair_pattern.finditer(normalized):
-            first, second = m.group(1), m.group(2)
-            span = (m.start(), m.end())
-            if _is_astm_d_context(m.start()):
-                continue
-            if self._is_common_dn_integer(first) and self._is_common_dn_integer(second):
-                first_value = self._normalize_number_text(first)
-                second_value = self._normalize_number_text(second)
-                _add_unique(dn_values, first_value)
-                _add_unique(dn_values, second_value)
-                _add_ordered_item("DN", first_value, m.span(1))
-                _add_ordered_item("DN", second_value, m.span(2))
-                consumed_d_spans.append(span)
-                _record(m.group(0), span)
+        if not has_explicit_dn_anchor:
+            d_pair_pattern = re.compile(
+                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+            )
+            for m in d_pair_pattern.finditer(normalized):
+                first, second = m.group(1), m.group(2)
+                span = (m.start(), m.end())
+                if _is_astm_d_context(m.start()):
+                    continue
+                if self._is_common_dn_integer(first) and self._is_common_dn_integer(second):
+                    first_value = self._normalize_number_text(first)
+                    second_value = self._normalize_number_text(second)
+                    _add_unique(dn_values, first_value)
+                    _add_unique(dn_values, second_value)
+                    _add_ordered_item("DN", first_value, m.span(1))
+                    _add_ordered_item("DN", second_value, m.span(2))
+                    consumed_d_spans.append(span)
+                    _record(m.group(0), span)
 
         # D数字x数字 / D数字xD数字：
         # 若前两段都在 common DN 表中，则默认 D 表示 DN，而不是 OD。
-        d_dn_pair_pattern = re.compile(
-            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\b'
-        )
         consumed_d_dn_pair_spans: List[Tuple[int, int]] = []
-        for m in d_dn_pair_pattern.finditer(normalized):
-            first, second = m.group(1), m.group(2)
-            span = (m.start(), m.end())
-            if _is_astm_d_context(m.start()):
-                continue
-            if _overlaps_spans(span, consumed_d_spans):
-                continue
-            if self._is_common_dn_integer(first) and self._is_common_dn_integer(second):
-                first_value = self._normalize_number_text(first)
-                second_value = self._normalize_number_text(second)
-                _add_unique(dn_values, first_value)
-                _add_unique(dn_values, second_value)
-                _add_ordered_item("DN", first_value, m.span(1))
-                _add_ordered_item("DN", second_value, m.span(2))
-                consumed_d_dn_pair_spans.append(span)
-                _record(m.group(0), span)
+        if not has_explicit_dn_anchor:
+            d_dn_pair_pattern = re.compile(
+                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\b'
+            )
+            for m in d_dn_pair_pattern.finditer(normalized):
+                first, second = m.group(1), m.group(2)
+                span = (m.start(), m.end())
+                if _is_astm_d_context(m.start()):
+                    continue
+                if _overlaps_spans(span, consumed_d_spans):
+                    continue
+                if self._is_common_dn_integer(first) and self._is_common_dn_integer(second):
+                    first_value = self._normalize_number_text(first)
+                    second_value = self._normalize_number_text(second)
+                    _add_unique(dn_values, first_value)
+                    _add_unique(dn_values, second_value)
+                    _add_ordered_item("DN", first_value, m.span(1))
+                    _add_ordered_item("DN", second_value, m.span(2))
+                    consumed_d_dn_pair_spans.append(span)
+                    _record(m.group(0), span)
 
         # 结构族：ΦA×B/T1×T2 或 ΦA×ΦB/T1×T2
         # 前两段按双外径处理，后两段交给壁厚规则。
@@ -1314,24 +1342,25 @@ class SizeProcessor:
             consumed_od_spans.append(span)
             _record(m.group(0), span)
 
-        d_od_pair_pattern = re.compile(
-            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
-        )
-        for m in d_od_pair_pattern.finditer(normalized):
-            span = (m.start(), m.end())
-            if _is_astm_d_context(m.start()):
-                continue
-            if _overlaps_spans(span, consumed_d_spans):
-                continue
-            if _overlaps_spans(span, consumed_d_dn_pair_spans):
-                continue
-            if _overlaps_spans(span, consumed_od_spans):
-                continue
-            od_value = self._normalize_number_text(m.group(1))
-            _add_unique(od_values, od_value)
-            _add_ordered_item("OD", od_value, span)
-            consumed_od_spans.append(span)
-            _record(m.group(0), span)
+        if not has_explicit_dn_anchor:
+            d_od_pair_pattern = re.compile(
+                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
+            )
+            for m in d_od_pair_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _is_astm_d_context(m.start()):
+                    continue
+                if _overlaps_spans(span, consumed_d_spans):
+                    continue
+                if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                    continue
+                if _overlaps_spans(span, consumed_od_spans):
+                    continue
+                od_value = self._normalize_number_text(m.group(1))
+                _add_unique(od_values, od_value)
+                _add_ordered_item("OD", od_value, span)
+                consumed_od_spans.append(span)
+                _record(m.group(0), span)
 
         od_pair_pattern = re.compile(
             r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
@@ -1354,24 +1383,25 @@ class SizeProcessor:
             consumed_od_spans.append(span)
             _record(m.group(0), span)
 
-        d_od_schedule_pattern = re.compile(
-            r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
-        )
-        for m in d_od_schedule_pattern.finditer(normalized):
-            span = (m.start(), m.end())
-            if _is_astm_d_context(m.start()):
-                continue
-            if _overlaps_spans(span, consumed_d_spans):
-                continue
-            if _overlaps_spans(span, consumed_d_dn_pair_spans):
-                continue
-            if _overlaps_spans(span, consumed_od_spans):
-                continue
-            od_value = self._normalize_number_text(m.group(1))
-            _add_unique(od_values, od_value)
-            _add_ordered_item("OD", od_value, span)
-            consumed_od_spans.append(span)
-            _record(m.group(0), span)
+        if not has_explicit_dn_anchor:
+            d_od_schedule_pattern = re.compile(
+                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
+            )
+            for m in d_od_schedule_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _is_astm_d_context(m.start()):
+                    continue
+                if _overlaps_spans(span, consumed_d_spans):
+                    continue
+                if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                    continue
+                if _overlaps_spans(span, consumed_od_spans):
+                    continue
+                od_value = self._normalize_number_text(m.group(1))
+                _add_unique(od_values, od_value)
+                _add_ordered_item("OD", od_value, span)
+                consumed_od_spans.append(span)
+                _record(m.group(0), span)
 
         od_schedule_pattern = re.compile(
             r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
@@ -1392,29 +1422,30 @@ class SizeProcessor:
             consumed_od_spans.append(span)
             _record(m.group(0), span)
 
-        d_single_pattern = re.compile(r'(?i)\bD\s*(\d+(?:\.\d+)?)\b')
         consumed_d_single_spans: List[Tuple[int, int]] = []
-        for m in d_single_pattern.finditer(normalized):
-            span = (m.start(), m.end())
-            if _is_astm_d_context(m.start()):
-                continue
-            if _overlaps_spans(span, consumed_d_spans):
-                continue
-            if _overlaps_spans(span, consumed_d_dn_pair_spans):
-                continue
-            if _overlaps_spans(span, consumed_od_spans):
-                continue
-            value = m.group(1)
-            if self._is_common_dn_integer(value):
-                dn_value = self._normalize_number_text(value)
-                _add_unique(dn_values, dn_value)
-                _add_ordered_item("DN", dn_value, span)
-            else:
-                od_value = self._normalize_number_text(value)
-                _add_unique(od_values, od_value)
-                _add_ordered_item("OD", od_value, span)
-            consumed_d_single_spans.append(span)
-            _record(m.group(0), span)
+        if not has_explicit_dn_anchor:
+            d_single_pattern = re.compile(r'(?i)\bD\s*(\d+(?:\.\d+)?)\b')
+            for m in d_single_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _is_astm_d_context(m.start()):
+                    continue
+                if _overlaps_spans(span, consumed_d_spans):
+                    continue
+                if _overlaps_spans(span, consumed_d_dn_pair_spans):
+                    continue
+                if _overlaps_spans(span, consumed_od_spans):
+                    continue
+                value = m.group(1)
+                if self._is_common_dn_integer(value):
+                    dn_value = self._normalize_number_text(value)
+                    _add_unique(dn_values, dn_value)
+                    _add_ordered_item("DN", dn_value, span)
+                else:
+                    od_value = self._normalize_number_text(value)
+                    _add_unique(od_values, od_value)
+                    _add_ordered_item("OD", od_value, span)
+                consumed_d_single_spans.append(span)
+                _record(m.group(0), span)
 
         od_single_pattern = re.compile(r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\b')
         for m in od_single_pattern.finditer(normalized):
@@ -1438,9 +1469,10 @@ class SizeProcessor:
 
         inch_pair_pattern = re.compile(
             r'(?<![A-Za-z0-9])'
-            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:")?\s*[xX×*]\s*'
-            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*"'
+            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:["”″]|\bIN(?:CH)?\b)?\s*[xX×*]\s*'
+            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:["”″]|\bIN(?:CH)?\b)'
             r'(?![A-Za-z0-9])'
+            , re.IGNORECASE
         )
         consumed_inch_spans: List[Tuple[int, int]] = []
         for m in inch_pair_pattern.finditer(normalized):
@@ -1492,6 +1524,20 @@ class SizeProcessor:
             span = (m.start(), m.end())
             if m.start() > 0 and normalized[m.start() - 1] in {'/', '-', '.'}:
                 continue
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_inch_spans):
+                continue
+            prefix = normalized[max(0, m.start() - 16):m.start()]
+            if re.search(r'(?i)NPS\s*\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?\s*$', prefix):
+                continue
+            inch_value = self._normalize_nps_token(m.group(1))
+            _add_unique(inch_values, inch_value)
+            _add_ordered_item("INCH", inch_value, span)
+            consumed_inch_spans.append(span)
+            _record(m.group(0), span)
+
+        inch_word_pattern = re.compile(rf'(?i)(?<![A-Za-z0-9./-]){imperial_token}\s*(?:INCH|IN)\b')
+        for m in inch_word_pattern.finditer(normalized):
+            span = (m.start(), m.end())
             if any(start <= span[0] and span[1] <= end for start, end in consumed_inch_spans):
                 continue
             prefix = normalized[max(0, m.start() - 16):m.start()]
