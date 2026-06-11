@@ -1041,16 +1041,48 @@ class ThicknessProcessor:
             _add_ordered("MM", self._normalize_number(block["thickness"]), value, span)
             _record(block["raw"], span)
 
-        dn_decimal_pattern = re.compile(r'(?i)\bDN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+\.\d+)\b')
-        for m in dn_decimal_pattern.finditer(normalized):
+        dn_decimal_patterns = (
+            re.compile(r'(?i)\bDN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+\.\d+)\b'),
+            re.compile(r'(?i)\bDN\s*\d+(?:\.\d+)?\s*-\s*(\d+\.\d+)\b'),
+        )
+        for pattern in dn_decimal_patterns:
+            for m in pattern.finditer(normalized):
+                second_value_span = m.span(1)
+                if _overlaps_blocked(second_value_span):
+                    continue
+                value = f"{self._normalize_number(m.group(1))}MM"
+                if value not in mm_parts:
+                    _add_unique(mm_parts, value)
+                    _add_ordered("MM", self._normalize_number(m.group(1)), value, second_value_span)
+                    _record(m.group(0), (m.start(), m.end()))
+
+        # 最后一级兜底：
+        # 当前面所有壁厚规则都完全没有命中时，才允许把单个“小数 mm”视为壁厚。
+        # 约束：
+        # 1. 必须带 mm / 毫米单位
+        # 2. 必须是小数，整数 mm 不使用这条兜底
+        # 3. 数值必须满足 1 < value < 20，避免把大尺寸或无关数值误判成壁厚
+        if schedule_parts or mm_parts:
+            return
+        decimal_mm_fallback_pattern = re.compile(
+            r'(?i)(?<![A-Za-z0-9])(\d+\.\d+)\s*(MM|毫米)\b'
+        )
+        for m in decimal_mm_fallback_pattern.finditer(normalized):
             span = (m.start(), m.end())
-            if _overlaps_blocked(span):
+            value_span = m.span(1)
+            if _overlaps_blocked(value_span):
+                continue
+            try:
+                numeric_value = float(m.group(1))
+            except ValueError:
+                continue
+            if not (1 < numeric_value < 20):
                 continue
             value = f"{self._normalize_number(m.group(1))}MM"
-            if value not in mm_parts:
-                _add_unique(mm_parts, value)
-                _add_ordered("MM", self._normalize_number(m.group(1)), value, span)
-                _record(m.group(0), span)
+            _add_unique(mm_parts, value)
+            _add_ordered("MM", self._normalize_number(m.group(1)), value, value_span)
+            _record(m.group(0), span)
+            break
 
     def _apply_size_context_thickness_rules(
         self,

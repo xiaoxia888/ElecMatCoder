@@ -8,7 +8,7 @@ import logging
 from typing import Dict, List, Any
 from pathlib import Path
 
-from .pipe_encoder import PipeEncoderBase, FieldEncoding
+from .pipe_encoder import PipeEncoderBase, EncodedFieldResult
 from .seq2seq_encoder import get_seq2seq_encoder
 
 logger = logging.getLogger(__name__)
@@ -43,17 +43,15 @@ class LegacyPipeEncoder(PipeEncoderBase):
         logger.info(f"[Seq2Seq] TYPE (combined): '{merged_value}' -> code='{result.code}', conf={result.confidence:.2f}")
         return result.code, result.confidence
 
-    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> FieldEncoding:
+    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> EncodedFieldResult:
         merged, need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
         display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
-        return FieldEncoding(
+        return EncodedFieldResult(
             field_type='SIZE',
-            original_value=' | '.join(display_values),
-            original_values=display_values,
-            matched_name=merged, matched_names=[merged],
+            stage2_input=self._clone_response_value(values[0] if len(values) == 1 else values),
             code=merged, codes=[merged] if merged else [],
             similarity=1.0, is_exact_match=True, need_review=need_review,
-            candidates=[], display='', items=[]
+            candidates=[]
         )
 
     def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
@@ -89,7 +87,7 @@ class LegacyPipeEncoder(PipeEncoderBase):
             match_result = self.matcher.match(field_type, value, use_semantic=False)
             return {
                 'original': value,
-                'matched': match_result.matched_name,
+                'matched': match_result.matched_value,
                 'code': match_result.code,
                 'similarity': match_result.similarity if match_result.code else 1.0,
                 'is_exact': match_result.is_exact_match,
@@ -118,7 +116,7 @@ class LegacyPipeEncoder(PipeEncoderBase):
                 match_result = self.matcher.semantic_match(field_type, value)
                 return {
                     'original': value,
-                    'matched': match_result.matched_name,
+                    'matched': match_result.matched_value,
                     'code': match_result.code,
                     'similarity': match_result.similarity,
                     'is_exact': match_result.is_exact_match,
@@ -135,14 +133,19 @@ class LegacyPipeEncoder(PipeEncoderBase):
         values: List[str],
         modifier_map: Dict[int, Dict[str, List[str]]] = None,
         original_text: str = "",
-    ) -> FieldEncoding:
+    ) -> EncodedFieldResult:
         if not values:
-            return FieldEncoding(field_type='STANDARD')
+            return EncodedFieldResult(field_type='STANDARD')
 
         detail = self.standard_processor.process_with_modifiers(values, modifier_map, original_text=original_text)
         items = []
+        category_by_original = {}
 
         for item in detail.get('ordered_items', []) or []:
+            original_key = str(item.get('original', '') or '').strip()
+            category_key = str(item.get('category', '') or '').strip()
+            if original_key and original_key not in category_by_original:
+                category_by_original[original_key] = self.standard_processor.CATEGORY_LABELS.get(category_key, '')
             items.append({'original': item.get('original', ''), 'matched': item.get('encoded', ''), 'code': item.get('encoded', ''),
                           'base_code': item.get('base_code', ''), 'grade': item.get('grade', ''),
                           'standard_subject': item.get('standard_subject', ''),
@@ -153,14 +156,23 @@ class LegacyPipeEncoder(PipeEncoderBase):
                           'is_exact': True, 'need_review': False, 'candidates': [],
                           'category': self.standard_processor.CATEGORY_LABELS.get(item.get('category', 'unknown'), '')})
 
-        original_display = ' | '.join([item['original'] for item in items])
-        return FieldEncoding(
+        stage2_standard_inputs = []
+        for idx, body in enumerate(values):
+            body_text = str(body or '').strip()
+            modifier_info = modifier_map.get(idx, {}) if isinstance(modifier_map, dict) else {}
+            stage2_standard_inputs.append({
+                'BODY': body_text,
+                'GRADE': ' '.join(str(v).strip() for v in (modifier_info.get('STANDARD_GRADE') or []) if str(v).strip()),
+                'APPENDIX': ' '.join(str(v).strip() for v in (modifier_info.get('STANDARD_APPENDIX') or []) if str(v).strip()),
+                'METHOD': ' '.join(str(v).strip() for v in (modifier_info.get('STANDARD_METHOD') or []) if str(v).strip()),
+                'CATEGORY': category_by_original.get(body_text, ''),
+            })
+
+        return EncodedFieldResult(
             field_type='STANDARD',
-            original_value=original_display, original_values=values,
-            matched_name=detail.get('display', ''),
-            matched_names=[item['code'] for item in items],
+            stage2_input=stage2_standard_inputs,
             code=detail.get('encoded', ''),
             codes=[item['code'] for item in items],
             similarity=1.0, is_exact_match=True, need_review=False,
-            candidates=[], display=detail.get('display', ''), items=items
+            candidates=[], detail_items=items
         )

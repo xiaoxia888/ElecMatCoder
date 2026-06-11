@@ -107,17 +107,17 @@ async function importToH3yun() {
         description: enc.original_text || '',
         code: enc.final_code || '',
         type_raw: buildTypeRaw(fields),
-        type_code: fields.TYPE?.code || '',
-        size_raw: valueToText(fields.SIZE?.original_value),
-        size_code: fields.SIZE?.code || '',
-        thickness_raw: valueToText(fields.THICKNESS?.original_value),
-        thickness_code: fields.THICKNESS?.code || '',
-        pressure_raw: valueToText(fields.PRESSURE?.original_value),
-        pressure_code: fields.PRESSURE?.code || '',
+        type_code: getFieldView(fields.TYPE).stage2_code || '',
+        size_raw: valueToText(getFieldView(fields.SIZE).stage1_value),
+        size_code: getFieldView(fields.SIZE).stage2_code || '',
+        thickness_raw: valueToText(getFieldView(fields.THICKNESS).stage1_value),
+        thickness_code: getFieldView(fields.THICKNESS).stage2_code || '',
+        pressure_raw: valueToText(getFieldView(fields.PRESSURE).stage1_value),
+        pressure_code: getFieldView(fields.PRESSURE).stage2_code || '',
         material_raw: buildMaterialRaw(fields),
-        material_code: fields.MATERIAL?.code || '',
+        material_code: getFieldView(fields.MATERIAL).stage2_code || '',
         standard_raw: buildStandardRaw(fields),
-        standard_code: fields.STANDARD?.code || ''
+        standard_code: getFieldView(fields.STANDARD).stage2_code || ''
       }
     })
     
@@ -144,24 +144,20 @@ async function importToH3yun() {
 function getFieldView(field, useOriginal = false) {
   if (!field) {
     return {
-      original_value: '',
-      original_values: [],
-      code: '',
-      codes: [],
+      stage1_value: '',
+      stage2_code: '',
       items: []
     }
   }
   const source = useOriginal && field.original_snapshot ? field.original_snapshot : field
+  const stage1Value = source?.stage1_raw?.value ?? source?.stage1_value ?? ''
+  const stage2Code = source?.stage2_output?.code || source?.stage2_code || ''
   return {
-    original_value: source.original_value || '',
-    original_values: Array.isArray(source.original_values)
-      ? source.original_values
-      : (source.original_values != null ? [source.original_values] : []),
-    code: source.code || '',
-    codes: Array.isArray(source.codes)
-      ? source.codes
-      : (source.codes != null ? [source.codes] : []),
-    items: Array.isArray(source.items) ? source.items : []
+    stage1_value: stage1Value,
+    stage1_values: Array.isArray(stage1Value) ? stage1Value : (stage1Value ? [stage1Value] : []),
+    stage2_code: stage2Code,
+    codes: stage2Code ? [stage2Code] : [],
+    items: []
   }
 }
 
@@ -193,117 +189,49 @@ function csvCell(value) {
 
 /**
  * 构建 TYPE_RAW：种类 + 附属属性（ENDS, SEAL, MANU, CONN 等）拼接
- * 从 original_values 数组中获取所有值，空格拼接
+ * 从 stage1_values 数组中获取所有值，空格拼接
  * 种类、壁厚、尺寸、磅级不会出现多个，直接拼接
  */
 function buildTypeRaw(fields, useOriginal = false) {
   const typeField = getFieldView(fields.TYPE, useOriginal)
-  if (!typeField.original_value && typeField.original_values.length === 0) return ''
+  if (!typeField.stage1_value && typeField.stage1_values.length === 0) return ''
   
-  // original_values 已经包含了 TYPE 及其附属属性（ENDS, SEAL, MANU, CONN）
+  // stage1_values 已经包含了 TYPE 及其附属属性（ENDS, SEAL, MANU, CONN）
   // 用空格拼接，不用 |
-  if (typeField.original_values && typeField.original_values.length > 0) {
-    return typeField.original_values
+  if (typeField.stage1_values && typeField.stage1_values.length > 0) {
+    return typeField.stage1_values
       .map(v => valueToText(v))
       .filter(Boolean)
       .join(' ')
   }
-  // original_value 可能带 |，替换为空格
-  return valueToText(typeField.original_value).replace(/\s*\|\s*/g, ' ')
+  // stage1_value 可能带 |，替换为空格
+  return valueToText(typeField.stage1_value).replace(/\s*\|\s*/g, ' ')
 }
 
 /**
- * 构建 MATERIAL_RAW：多个材质用｜隔开，编码重复的去重
+ * 构建 MATERIAL_RAW：按一阶段原始结构拼接材质显示文本
  */
 function buildMaterialRaw(fields, useOriginal = false) {
   const materialField = getFieldView(fields.MATERIAL, useOriginal)
-  if (!materialField.original_value && materialField.original_values.length === 0 && materialField.items.length === 0) return ''
-  
-  // 如果有 items，从 items 中获取并按编码去重
-  if (materialField.items && materialField.items.length > 0) {
-    const seenCodes = new Set()
-    const uniqueOriginals = []
-    
-    for (const item of materialField.items) {
-      const code = item.code || ''
-      const original = item.original || ''
-      if (code && !seenCodes.has(code)) {
-        seenCodes.add(code)
-        uniqueOriginals.push(original)
-      }
-    }
-    return uniqueOriginals.join('｜')
-  }
-  
-  // 否则使用 original_values 并按 codes 去重
-  if (materialField.original_values && materialField.codes) {
-    const seenCodes = new Set()
-    const uniqueOriginals = []
-    
-    for (let i = 0; i < materialField.original_values.length; i++) {
-      const code = materialField.codes[i] || ''
-      const original = valueToText(materialField.original_values[i] || '')
-      if (code && !seenCodes.has(code)) {
-        seenCodes.add(code)
-        uniqueOriginals.push(original)
-      }
-    }
-    return uniqueOriginals.join('｜')
-  }
-  
-  return valueToText(materialField.original_value)
+  if (!materialField.stage1_value && materialField.stage1_values.length === 0) return ''
+  return valueToText(materialField.stage1_value)
 }
 
 /**
- * 构建 STANDARD_RAW：规范 + 规范等级，多个用｜隔开
- * 按 base_code 去重：如果两个规范的 base_code 相同，保留带等级的那个
- * 例如：NB/T47010 和 NB/T47010 type A 的 base_code 都是 NBT47010，保留后者
+ * 构建 STANDARD_RAW：使用一阶段结构值按顺序拼接规范主体。
  */
 function buildStandardRaw(fields, useOriginal = false) {
   const standardField = getFieldView(fields.STANDARD, useOriginal)
-  if (!standardField.original_value && standardField.original_values.length === 0 && standardField.items.length === 0) return ''
-  
-  // 从 items 中获取规范和等级信息
-  if (standardField.items && standardField.items.length > 0) {
-    // 按 base_code 去重，保留带等级的版本
-    const baseCodeMap = new Map() // base_code -> { original, hasGrade }
-    
-    for (const item of standardField.items) {
-      const baseCode = item.base_code || item.code || ''
-      const original = item.original || ''
-      const grade = item.grade || ''
-      const hasGrade = !!grade
-      
-      if (!baseCode) continue
-      
-      // 如果该 base_code 还没有记录，或者当前项有等级而之前的没有，则更新
-      if (!baseCodeMap.has(baseCode) || (hasGrade && !baseCodeMap.get(baseCode).hasGrade)) {
-        baseCodeMap.set(baseCode, { original, hasGrade })
-      }
-    }
-    
-    // 收集去重后的规范
-    const uniqueStandards = Array.from(baseCodeMap.values()).map(v => v.original)
-    return uniqueStandards.join('｜')
+  if (Array.isArray(standardField.stage1_value)) {
+    return standardField.stage1_value
+      .map(item => {
+        if (!item || typeof item !== 'object') return ''
+        return valueToText(item.BODY || '')
+      })
+      .filter(Boolean)
+      .join('｜')
   }
-  
-  // 否则使用 original_values 并按 codes 去重
-  if (standardField.original_values && standardField.codes) {
-    const seenCodes = new Set()
-    const uniqueOriginals = []
-    
-    for (let i = 0; i < standardField.original_values.length; i++) {
-      const code = standardField.codes[i] || ''
-      const original = valueToText(standardField.original_values[i] || '')
-      if (code && !seenCodes.has(code)) {
-        seenCodes.add(code)
-        uniqueOriginals.push(original)
-      }
-    }
-    return uniqueOriginals.join('｜')
-  }
-  
-  return valueToText(standardField.original_value)
+  return valueToText(standardField.stage1_value)
 }
 
 function formatPercent(value) {
@@ -389,29 +317,29 @@ function exportCSV() {
       csvCell(buildDifficultyReason(enc)),
       csvCell(getDisplayDifficultyLevel(enc)),
       csvCell(buildTypeRaw(fields, true)),
-      getFieldView(fields.TYPE, true).code || '',
+      getFieldView(fields.TYPE, true).stage2_code || '',
       csvCell(buildTypeRaw(fields)),
-      fields.TYPE?.code || '',
-      csvCell(buildStructuredRaw('SIZE', getFieldView(fields.SIZE, true).original_value || '')),
-      getFieldView(fields.SIZE, true).code || '',
-      csvCell(buildStructuredRaw('SIZE', fields.SIZE?.original_value || '')),
-      fields.SIZE?.code || '',
-      csvCell(buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS, true).original_value || '')),
-      getFieldView(fields.THICKNESS, true).code || '',
-      csvCell(buildStructuredRaw('THICKNESS', fields.THICKNESS?.original_value || '')),
-      fields.THICKNESS?.code || '',
-      csvCell(buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE, true).original_value || '')),
-      getFieldView(fields.PRESSURE, true).code || '',
-      csvCell(buildStructuredRaw('PRESSURE', fields.PRESSURE?.original_value || '')),
-      fields.PRESSURE?.code || '',
+      getFieldView(fields.TYPE).stage2_code || '',
+      csvCell(buildStructuredRaw('SIZE', getFieldView(fields.SIZE, true).stage1_value || '')),
+      getFieldView(fields.SIZE, true).stage2_code || '',
+      csvCell(buildStructuredRaw('SIZE', getFieldView(fields.SIZE).stage1_value || '')),
+      getFieldView(fields.SIZE).stage2_code || '',
+      csvCell(buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS, true).stage1_value || '')),
+      getFieldView(fields.THICKNESS, true).stage2_code || '',
+      csvCell(buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS).stage1_value || '')),
+      getFieldView(fields.THICKNESS).stage2_code || '',
+      csvCell(buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE, true).stage1_value || '')),
+      getFieldView(fields.PRESSURE, true).stage2_code || '',
+      csvCell(buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE).stage1_value || '')),
+      getFieldView(fields.PRESSURE).stage2_code || '',
       csvCell(buildMaterialRaw(fields, true)),
-      getFieldView(fields.MATERIAL, true).code || '',
+      getFieldView(fields.MATERIAL, true).stage2_code || '',
       csvCell(buildMaterialRaw(fields)),
-      fields.MATERIAL?.code || '',
+      getFieldView(fields.MATERIAL).stage2_code || '',
       csvCell(buildStandardRaw(fields, true)),
-      getFieldView(fields.STANDARD, true).code || '',
+      getFieldView(fields.STANDARD, true).stage2_code || '',
       csvCell(buildStandardRaw(fields)),
-      fields.STANDARD?.code || ''
+      getFieldView(fields.STANDARD).stage2_code || ''
     ]
     csv += row.join(',') + '\n'
   })
@@ -450,29 +378,29 @@ function exportExcel() {
       buildDifficultyReason(enc),
       getDisplayDifficultyLevel(enc),
       buildTypeRaw(fields, true),
-      getFieldView(fields.TYPE, true).code || '',
+      getFieldView(fields.TYPE, true).stage2_code || '',
       buildTypeRaw(fields),
-      fields.TYPE?.code || '',
-      buildStructuredRaw('SIZE', getFieldView(fields.SIZE, true).original_value || ''),
-      getFieldView(fields.SIZE, true).code || '',
-      buildStructuredRaw('SIZE', fields.SIZE?.original_value || ''),
-      fields.SIZE?.code || '',
-      buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS, true).original_value || ''),
-      getFieldView(fields.THICKNESS, true).code || '',
-      buildStructuredRaw('THICKNESS', fields.THICKNESS?.original_value || ''),
-      fields.THICKNESS?.code || '',
-      buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE, true).original_value || ''),
-      getFieldView(fields.PRESSURE, true).code || '',
-      buildStructuredRaw('PRESSURE', fields.PRESSURE?.original_value || ''),
-      fields.PRESSURE?.code || '',
+      getFieldView(fields.TYPE).stage2_code || '',
+      buildStructuredRaw('SIZE', getFieldView(fields.SIZE, true).stage1_value || ''),
+      getFieldView(fields.SIZE, true).stage2_code || '',
+      buildStructuredRaw('SIZE', getFieldView(fields.SIZE).stage1_value || ''),
+      getFieldView(fields.SIZE).stage2_code || '',
+      buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS, true).stage1_value || ''),
+      getFieldView(fields.THICKNESS, true).stage2_code || '',
+      buildStructuredRaw('THICKNESS', getFieldView(fields.THICKNESS).stage1_value || ''),
+      getFieldView(fields.THICKNESS).stage2_code || '',
+      buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE, true).stage1_value || ''),
+      getFieldView(fields.PRESSURE, true).stage2_code || '',
+      buildStructuredRaw('PRESSURE', getFieldView(fields.PRESSURE).stage1_value || ''),
+      getFieldView(fields.PRESSURE).stage2_code || '',
       buildMaterialRaw(fields, true),
-      getFieldView(fields.MATERIAL, true).code || '',
+      getFieldView(fields.MATERIAL, true).stage2_code || '',
       buildMaterialRaw(fields),
-      fields.MATERIAL?.code || '',
+      getFieldView(fields.MATERIAL).stage2_code || '',
       buildStandardRaw(fields, true),
-      getFieldView(fields.STANDARD, true).code || '',
+      getFieldView(fields.STANDARD, true).stage2_code || '',
       buildStandardRaw(fields),
-      fields.STANDARD?.code || ''
+      getFieldView(fields.STANDARD).stage2_code || ''
     ])
   })
   
@@ -674,10 +602,7 @@ function normalizeStage1Output(output) {
 }
 
 function buildStage1Output(enc) {
-  const container = enc?.stage1_output || {}
-  const source = (container && typeof container === 'object' && container.decisions && typeof container.decisions === 'object')
-    ? container.decisions
-    : container
+  const source = enc?.stage1?.decisions || {}
   return normalizeStage1Output(source)
 }
 

@@ -29,6 +29,9 @@ import copy
 
 # 导入配置模块
 from src.config import get_platform_config, get_tokenizer_config, get_semantic_config, get_ner_config
+from src.domain.pipeline import (
+    Stage1DecisionNormalizer,
+)
 
 # 导入分词模块
 from src.tokenizer_utils.llm_tokenizer import LLMTokenizer
@@ -174,19 +177,13 @@ def _build_batch_item_trace_base(
     text: str,
     processed_text: str,
     route_info: Dict[str, Any],
-    stage1_output: Dict[str, Any],
-    stage1_raw_response: str,
-    structural_prompt_output: Any,
-    structural_prompt_raw_response: str,
+    stage1: Dict[str, Any],
 ) -> Dict[str, Any]:
     return {
         "original_text": text,
         "processed_text": processed_text,
         "route_info": copy.deepcopy(route_info),
-        "stage1_output": copy.deepcopy(stage1_output),
-        "stage1_raw_response": stage1_raw_response,
-        "structural_prompt_output": copy.deepcopy(structural_prompt_output),
-        "structural_prompt_raw_response": structural_prompt_raw_response,
+        "stage1": copy.deepcopy(stage1),
         "difficulty_stage1_before_project": None,
         "second_pass_before_project": None,
         "difficulty_stage1_after_project": None,
@@ -204,8 +201,8 @@ def _build_batch_item_trace_summary(
     converted = converted or {}
     trace = trace or {}
     route_info = trace.get("route_info") or converted.get("route_info") or {}
-    stage1_output = trace.get("stage1_output") or converted.get("stage1_output") or {}
-    extract_confidence_v2 = converted.get("extract_confidence_v2") or {}
+    stage1_decisions = ((trace.get("stage1") or {}).get("decisions") if isinstance(trace.get("stage1"), dict) else None) or ((converted.get("stage1") or {}).get("decisions") if isinstance(converted.get("stage1"), dict) else {}) or {}
+    fields = converted.get("fields") if isinstance(converted.get("fields"), dict) else {}
 
     def _source_label(source: str) -> str:
         source = str(source or "").strip()
@@ -218,9 +215,10 @@ def _build_batch_item_trace_summary(
         return source or "未知"
 
     def _field_source(field: str) -> str:
-        info = extract_confidence_v2.get(field)
-        if isinstance(info, dict):
-            return str(info.get("source", "") or "")
+        field_obj = fields.get(field) if isinstance(fields, dict) else None
+        stage1_raw = field_obj.get("stage1_raw") if isinstance(field_obj, dict) else None
+        if isinstance(stage1_raw, dict):
+            return str(stage1_raw.get("source", "") or "")
         return ""
 
     def _stringify_stage1_value(field: str, value: Any) -> str:
@@ -276,12 +274,12 @@ def _build_batch_item_trace_summary(
             "reason": route_info.get("reason", ""),
         },
         "stage1": {
-            "type": _stage1_field("TYPE", stage1_output.get("TYPE")),
-            "size": _stage1_field("SIZE", stage1_output.get("SIZE")),
-            "thickness": _stage1_field("THICKNESS", stage1_output.get("THICKNESS")),
-            "pressure": _stage1_field("PRESSURE", stage1_output.get("PRESSURE")),
-            "material": _stage1_field("MATERIAL", stage1_output.get("MATERIAL")),
-            "standard": _stage1_field("STANDARD", stage1_output.get("STANDARD")),
+            "type": _stage1_field("TYPE", stage1_decisions.get("TYPE")),
+            "size": _stage1_field("SIZE", stage1_decisions.get("SIZE")),
+            "thickness": _stage1_field("THICKNESS", stage1_decisions.get("THICKNESS")),
+            "pressure": _stage1_field("PRESSURE", stage1_decisions.get("PRESSURE")),
+            "material": _stage1_field("MATERIAL", stage1_decisions.get("MATERIAL")),
+            "standard": _stage1_field("STANDARD", stage1_decisions.get("STANDARD")),
         },
         "split": {
             "difficulty_before_project": (trace.get("difficulty_stage1_before_project") or {}).get("difficulty", ""),
@@ -372,70 +370,57 @@ async def _run_batch_job(job_id: str) -> None:
 
         async with semaphore:
             predict_result = await asyncio.to_thread(predictor.predict, processed_text)
-        if predict_result.get("structural_prompt_output") is None:
-            _apply_structural_prompt_override(predict_result, processed_text)
+        _apply_structural_prompt_override(predict_result, processed_text)
 
         route_info = _decorate_predict_route_info(predict_result.get("route_info"))
-        stage1_output = dict(predict_result.get("model_output", {}) or {})
-        stage1_output["_STRUCTURAL_PROMPT"] = predict_result.get("structural_prompt_output")
-        stage1_raw_response = "".join([
-            predict_result.get("model_raw_response", "") or "",
-            f"\n\n[STRUCTURAL_PROMPT_RAW]\n{predict_result.get('structural_prompt_raw_response')}"
-            if predict_result.get("structural_prompt_raw_response")
-            else "",
-        ])
+        stage1_snapshot = Stage1DecisionNormalizer.build_snapshot(predict_result)
+        stage1 = stage1_snapshot.to_dict()
         trace = _build_batch_item_trace_base(
             text=text,
             processed_text=processed_text,
             route_info=route_info,
-            stage1_output=stage1_output,
-            stage1_raw_response=stage1_raw_response,
-            structural_prompt_output=predict_result.get("structural_prompt_output"),
-            structural_prompt_raw_response=predict_result.get("structural_prompt_raw_response", ""),
+            stage1=stage1,
         )
 
         if route_info.get("encoding_enabled") is False:
-            converted: Dict[str, Any] = {
-                "original_text": text,
-                "processed_text": processed_text,
-                "final_code": "",
-                "success": True,
-                "need_review": False,
-                "skipped_encoding": True,
-                "skip_reason": route_info.get("skip_encoding_reason", "") or "",
-                "errors": [],
-                "fields": {},
-                "route_info": route_info,
-                "stage1_output": stage1_output,
-                "stage1_raw_response": stage1_raw_response,
-                "structural_prompt_output": predict_result.get("structural_prompt_output"),
-                "structural_prompt_raw_response": predict_result.get("structural_prompt_raw_response", ""),
-            }
+            converted = EncodeResultPayload(
+                original_text=text,
+                processed_text=processed_text,
+                final_code="",
+                success=True,
+                need_review=False,
+                confidence=0.0,
+                fields={},
+                route_info=route_info,
+                errors=[],
+                warnings=[],
+                skipped_encoding=True,
+                skip_reason=route_info.get("skip_encoding_reason", "") or "",
+            ).to_dict()
+            converted["stage1"] = stage1
+            converted["difficulty_split"] = None
+            converted["second_pass"] = None
             trace["status"] = "skipped"
             trace["skip_reason"] = converted.get("skip_reason", "")
             return converted, trace
 
-        entities = _build_pipe_entities_for_encode(predict_result)
         extract_confidence = predict_result.get("extract_confidence", {}) or {}
-        extract_confidence_v2 = predict_result.get("extract_confidence_v2", {}) or {}
+        extract_confidence_v2 = stage1_snapshot.field_meta
 
         async with semaphore:
             result = await asyncio.to_thread(
                 encoder.encode,
-                entities,
+                stage1_snapshot.decisions,
                 text,
                 extract_confidence,
                 extract_confidence_v2,
+                stage1_snapshot.raw_values,
             )
 
         converted = _convert_pipe_result(result)
         converted["processed_text"] = processed_text
-        converted["extract_confidence_v2"] = converted.get("extract_confidence_v2") or extract_confidence_v2
         converted["route_info"] = route_info
-        converted["stage1_output"] = stage1_output
-        converted["stage1_raw_response"] = stage1_raw_response
-        converted["structural_prompt_output"] = predict_result.get("structural_prompt_output")
-        converted["structural_prompt_raw_response"] = predict_result.get("structural_prompt_raw_response", "")
+        converted["stage1"] = stage1
         converted = _attach_base_difficulty(converted, str(item.get("project_name", "") or "").strip())
         converted = _attach_second_pass(converted)
         trace["status"] = "processed"
@@ -498,10 +483,7 @@ async def _run_batch_job(job_id: str) -> None:
                     "original_text": item.get("text", ""),
                     "processed_text": "",
                     "route_info": None,
-                    "stage1_output": None,
-                    "stage1_raw_response": "",
-                    "structural_prompt_output": None,
-                    "structural_prompt_raw_response": "",
+                    "stage1": None,
                     "difficulty_stage1_before_project": None,
                     "second_pass_before_project": None,
                     "difficulty_stage1_after_project": None,
@@ -1100,7 +1082,7 @@ def _apply_structural_prompt_override(result: Dict[str, Any], text: str) -> Opti
     以统一结构字段决策结果为准，避免微调模型按训练分布补 SCH/CL 等不存在的值。
     """
     structural = _extract_structural_prompt_fields(text)
-    return _merge_structural_prompt_output(result, structural)
+    return _merge_structural_stage1_fields(result, structural)
 
 
 def _extract_structural_prompt_fields(text: str) -> Optional[Dict[str, Any]]:
@@ -1115,10 +1097,11 @@ def _extract_structural_prompt_fields(text: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def _merge_structural_prompt_output(
+def _merge_structural_stage1_fields(
     result: Dict[str, Any],
     structural: Optional[Dict[str, Any]],
 ) -> Optional[Dict[str, Any]]:
+    """将结构字段决策直接并入一阶段 decisions，不再对外保留旧调试块。"""
     if not structural:
         return None
 
@@ -1137,14 +1120,6 @@ def _merge_structural_prompt_output(
     }
     structural_status = copy.deepcopy(structural.get("_status", {}) or {})
     structural_errors = copy.deepcopy(structural.get("_errors", {}) or {})
-    model_output["_STRUCTURAL_PROMPT"] = structural_visible
-    model_output["_STRUCTURAL_PROMPT_RAW"] = structural.get("_raw", "")
-    model_output["_STRUCTURAL_PROMPT_STATUS"] = structural_status
-    model_output["_STRUCTURAL_PROMPT_ERRORS"] = structural_errors
-    result["structural_prompt_output"] = structural_visible
-    result["structural_prompt_raw_response"] = structural.get("_raw", "")
-    result["structural_prompt_status"] = structural_status
-    result["structural_prompt_errors"] = structural_errors
 
     logger.info(
         "[结构字段覆盖] source=%s SIZE=%s THICKNESS=%s PRESSURE=%s",
@@ -1256,12 +1231,10 @@ class TokenInfo(BaseModel):
 
 
 class PipeEncodeRequest(BaseModel):
-    """管道材料编码请求"""
-    entities: Dict[str, Any] = Field(..., description="NER识别结果")
-    text: str = Field("", description="原始描述")
+    """管道材料单次完整编码请求"""
+    text: str = Field(..., description="原始描述")
+    preprocess: bool = Field(True, description="是否预处理")
     project_name: str = Field("", description="项目名称，可选")
-    extract_confidence: Optional[Dict[str, Any]] = Field(None, description="第一阶段抽取置信度（按字段）")
-    extract_confidence_v2: Optional[Dict[str, Any]] = Field(None, description="第一阶段抽取置信度V2（结构化）")
 
 
 class PipeEncodeFromTokensRequest(BaseModel):
@@ -1313,74 +1286,64 @@ class H3yunImportRequest(BaseModel):
     encode_date: str = Field(..., description="编码日期时间，格式：YYYY-MM-DD HH:MM")
 
 
-def _serialize_pipe_entity_for_encode(entity: Dict[str, Any]) -> Any:
-    """保留 STANDARD_* 修饰项的 bind_to_index / 位置信息，其他字段保持原样值。"""
-    value = entity.get("value") or entity.get("text", "")
-    payload: Dict[str, Any] = {"value": value}
-
-    for key in ("bind_to_index", "start", "end", "subtype"):
-        if entity.get(key) is not None:
-            payload[key] = entity.get(key)
-
-    if len(payload) == 1:
-        return value
-    return payload
-
-
-def _append_pipe_entity(entities: Dict[str, Any], field: str, val: Any):
-    """
-    聚合 predictor 输出的实体。
-
-    - 普通字段: 保持旧的 string / list 形式
-    - 带 subtype 的结构化字段（如 SIZE/THICKNESS）: 还原为嵌套对象
-    """
-    if isinstance(val, dict) and val.get("subtype") is not None:
-        subtype = str(val["subtype"])
-        value = val.get("value")
-        if value in (None, ""):
-            return
-        field_obj = entities.get(field)
-        if not isinstance(field_obj, dict):
-            field_obj = {}
-            entities[field] = field_obj
-        bucket = field_obj.get(subtype)
-        if not isinstance(bucket, list):
-            bucket = []
-            field_obj[subtype] = bucket
-        bucket.append(value)
-        return
-
-    if field in entities:
-        prev = entities[field]
-        entities[field] = [prev, val] if not isinstance(prev, list) else prev + [val]
-    else:
-        entities[field] = val
-
-
-def _build_pipe_entities_for_encode(result: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    优先使用语义解析器输出中的 decisions 作为编码输入。
-    若不存在结构化输出，则回退到旧的打平聚合逻辑。
-    """
-    model_output = result.get("model_output")
-    if isinstance(model_output, dict):
-        decisions = model_output.get("decisions")
-        if isinstance(decisions, dict) and decisions:
-            return copy.deepcopy(decisions)
-        structured = {
-            k: copy.deepcopy(v)
-            for k, v in model_output.items()
-            if not str(k).startswith("_") and k != "model_raw_response"
+def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool = True) -> Dict[str, Any]:
+    """单次/批量共用的完整编码流程：预处理 -> 一阶段抽取 -> 二阶段编码 -> 分流。"""
+    if not text or not str(text).strip():
+        return {
+            "original_text": text or "",
+            "processed_text": text or "",
+            "final_code": "",
+            "success": False,
+            "need_review": True,
+            "confidence": 0.0,
+            "fields": {},
+            "errors": ["文本为空"],
+            "warnings": [],
         }
-        if structured:
-            return structured
 
-    entities: Dict[str, Any] = {}
-    for e in result.get("entities", []):
-        field = e["type"]
-        val = _serialize_pipe_entity_for_encode(e)
-        _append_pipe_entity(entities, field, val)
-    return entities
+    processed_text = _preprocessor.process(text) if preprocess else text
+    predictor = get_ner_predictor()
+    encoder = get_pipe_encoder()
+
+    predict_result = predictor.predict(processed_text)
+    _apply_structural_prompt_override(predict_result, processed_text)
+
+    route_info = _decorate_predict_route_info(predict_result.get("route_info"))
+    stage1 = Stage1DecisionNormalizer.build_snapshot(predict_result)
+    stage1_decisions = stage1.decisions
+    stage1_meta = stage1.field_meta
+
+    if route_info.get("encoding_enabled") is False:
+        payload = EncodeResultPayload(
+            original_text=text,
+            processed_text=processed_text,
+            final_code="",
+            success=True,
+            need_review=False,
+            confidence=0.0,
+            fields={},
+            route_info=route_info,
+            errors=[],
+            warnings=[],
+            skipped_encoding=True,
+            skip_reason=route_info.get("skip_encoding_reason", "") or "",
+        ).to_dict()
+        payload["stage1"] = stage1.to_dict()
+        payload["difficulty_split"] = None
+        payload["second_pass"] = None
+        return payload
+
+    result = encoder.encode(
+        stage1_decisions,
+        text,
+        predict_result.get("extract_confidence", {}) or {},
+        stage1_meta,
+        stage1.raw_values,
+    )
+    converted = _convert_pipe_result(result, processed_text=processed_text, route_info=route_info)
+    converted["stage1"] = stage1.to_dict()
+    converted = _attach_base_difficulty(converted, str(project_name or "").strip())
+    return _attach_second_pass(converted)
 
 
 def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
@@ -1631,7 +1594,7 @@ class PipeBatchRouteRequest(BaseModel):
 
 @app.post("/api/pipe/predict")
 async def pipe_predict(request: PipePredictRequest):
-    """管道材料NER预测（直接返回JSON实体，供编码平台使用）"""
+    """只返回一阶段统一结构，不再暴露旧的中间调试字段。"""
     text = request.text
     if not text or not text.strip():
         return {"success": False, "error": "文本为空"}
@@ -1643,24 +1606,14 @@ async def pipe_predict(request: PipePredictRequest):
     try:
         predictor = get_ner_predictor()
         result = await asyncio.to_thread(predictor.predict, processed_text)
-        if result.get("structural_prompt_output") is None:
-            _apply_structural_prompt_override(result, processed_text)
-        entities = _build_pipe_entities_for_encode(result)
-        extract_confidence = result.get("extract_confidence", {}) or {}
-        extract_confidence_v2 = result.get("extract_confidence_v2", {}) or {}
+        _apply_structural_prompt_override(result, processed_text)
+        stage1 = Stage1DecisionNormalizer.build_snapshot(result).to_dict()
 
         return {
             "success": True,
             "original_text": text,
             "processed_text": processed_text,
-            "entities": entities,
-            "extract_confidence": extract_confidence,
-            "extract_confidence_v2": extract_confidence_v2,
-            "type_class": result.get("type_class"),
-            "model_output": result.get("model_output", {}),
-            "model_raw_response": result.get("model_raw_response", ""),
-            "structural_prompt_output": result.get("structural_prompt_output"),
-            "structural_prompt_raw_response": result.get("structural_prompt_raw_response", ""),
+            "stage1": stage1,
             "route_info": result.get("route_info"),
         }
     except Exception as e:
@@ -1670,7 +1623,7 @@ async def pipe_predict(request: PipePredictRequest):
 
 @app.post("/api/pipe/predict/batch")
 async def pipe_batch_predict(request: PipeBatchPredictRequest):
-    """批量管道材料NER预测"""
+    """批量返回一阶段统一结构，不再暴露旧的中间调试字段。"""
     predictor = get_ner_predictor()
     semaphore = asyncio.Semaphore(get_batch_max_concurrent())
 
@@ -1682,24 +1635,14 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
         try:
             async with semaphore:
                 result = await asyncio.to_thread(predictor.predict, processed_text)
-            if result.get("structural_prompt_output") is None:
-                _apply_structural_prompt_override(result, processed_text)
-            entities = _build_pipe_entities_for_encode(result)
-            extract_confidence = result.get("extract_confidence", {}) or {}
-            extract_confidence_v2 = result.get("extract_confidence_v2", {}) or {}
+            _apply_structural_prompt_override(result, processed_text)
+            stage1 = Stage1DecisionNormalizer.build_snapshot(result).to_dict()
 
             return {
                 "success": True,
                 "original_text": text,
                 "processed_text": processed_text,
-                "entities": entities,
-                "extract_confidence": extract_confidence,
-                "extract_confidence_v2": extract_confidence_v2,
-                "type_class": result.get("type_class"),
-                "model_output": result.get("model_output", {}),
-                "model_raw_response": result.get("model_raw_response", ""),
-                "structural_prompt_output": result.get("structural_prompt_output"),
-                "structural_prompt_raw_response": result.get("structural_prompt_raw_response", ""),
+                "stage1": stage1,
                 "route_info": result.get("route_info"),
             }
         except Exception as e:
@@ -1782,17 +1725,12 @@ async def pipe_batch_route(request: PipeBatchRouteRequest):
 
 @app.post("/api/pipe/encode")
 def pipe_encode(request: PipeEncodeRequest):
-    """管道材料编码（基于实体）"""
-    encoder = get_pipe_encoder()
-    result = encoder.encode(
-        request.entities,
+    """管道材料单次完整编码。"""
+    return _run_pipe_encode_flow(
         request.text,
-        request.extract_confidence,
-        request.extract_confidence_v2,
+        project_name=request.project_name,
+        preprocess=request.preprocess,
     )
-    converted = _convert_pipe_result(result)
-    converted = _attach_base_difficulty(converted, request.project_name)
-    return _attach_second_pass(converted)
 
 
 @app.post("/api/pipe/encode/tokens")
@@ -1815,32 +1753,26 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
     async def process_item(item: Dict[str, Any]):
         async with semaphore:
             if 'tokens' in item:
-                return await asyncio.to_thread(
+                result = await asyncio.to_thread(
                     encoder.encode_from_tokens,
                     item['tokens'],
                     item.get('text', '')
                 )
+                converted = _convert_pipe_result(result, processed_text=item.get('text', '') or '')
+                converted = _attach_base_difficulty(converted, str(item.get("project_name", "") or "").strip())
+                return _attach_second_pass(converted)
             return await asyncio.to_thread(
-                encoder.encode,
-                item.get('entities', {}),
+                _run_pipe_encode_flow,
                 item.get('text', ''),
-                item.get('extract_confidence')
+                project_name=str(item.get('project_name', '') or '').strip(),
+                preprocess=bool(item.get('preprocess', True)),
             )
 
     results = await asyncio.gather(*(process_item(item) for item in request.items))
-    
     total = len(results)
-    success_count = sum(1 for r in results if r.success)
-    review_count = sum(1 for r in results if r.need_review)
-    
-    converted_results = []
-    for item, result in zip(request.items, results):
-        converted_results.append(
-            _attach_base_difficulty(
-                _convert_pipe_result(result),
-                str(item.get("project_name", "") or "").strip(),
-            )
-        )
+    success_count = sum(1 for r in results if isinstance(r, dict) and r.get("success"))
+    review_count = sum(1 for r in results if isinstance(r, dict) and r.get("need_review"))
+    converted_results = list(results)
 
     finalized = finalize_batch_difficulty(
         [
@@ -2365,72 +2297,34 @@ async def get_h3yun_reason_categories(request: ReasonCategoryRequest):
         logger.error(f"获取原因分类失败: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-# ============================================================
-# 辅助函数
-# ============================================================
-
-def _convert_pipe_result(result) -> dict:
-    """转换管道材料编码结果为响应格式"""
-    fields = {}
-    for field_type, field_data in result.fields.items():
-        fields[field_type] = {
-            "field_type": field_data.field_type,
-            "original_value": field_data.original_value,
-            "stage1_final_value": getattr(field_data, "stage1_final_value", ""),
-            "stage1_confidence": getattr(field_data, "stage1_confidence", None),
-            "stage2_confidence": getattr(field_data, "stage2_confidence", None),
-            "field_confidence": getattr(field_data, "field_confidence", None),
-            "matched_name": field_data.matched_name,
-            "encoding_input": getattr(field_data, "encoding_input", ""),
-            "encode_confidence_v2": getattr(field_data, "encode_confidence_v2", {}) or {},
-            "code": field_data.code,
-            "similarity": round(field_data.similarity, 4),
-            "is_exact_match": field_data.is_exact_match,
-            "need_review": field_data.need_review,
-            "candidates": field_data.candidates,
-            "display": field_data.display or "",  # 分类显示信息
-            "items": field_data.items or []  # 多值分行显示
-        }
-    
-    return {
-        "original_text": result.original_text,
-        "final_code": result.final_code,
-        "success": result.success,
-        "need_review": result.need_review,
-        "hard_rule_hit": getattr(result, "hard_rule_hit", False),
-        "confidence": round(getattr(result, "confidence", 0.0), 4),
-        "min_similarity": round(result.min_similarity, 4),
-        "review_fields": result.review_fields,
-        "missing_fields": result.missing_fields,
-        "errors": result.errors,
-        "warnings": result.warnings,
-        "thickness_conversion_notes": getattr(result, "thickness_conversion_notes", []),
-        "extract_confidence_v2": getattr(result, "extract_confidence_v2", {}) or {},
-        "fields": fields
-    }
+def _convert_pipe_result(result, *, processed_text: str = "", route_info: Optional[Dict[str, Any]] = None) -> dict:
+    """委托编码器结果对象输出统一三层 schema。"""
+    return result.to_payload_dict(processed_text=processed_text, route_info=route_info)
 
 
 def _extract_code_from_field(result_dict: Dict[str, Any], field: str) -> str:
     fields = result_dict.get("fields", {}) if isinstance(result_dict, dict) else {}
     field_data = fields.get(field, {}) if isinstance(fields, dict) else {}
-    return str(field_data.get("code", "") or "").strip()
+    stage2_output = field_data.get("stage2_output", {}) if isinstance(field_data, dict) else {}
+    return str(stage2_output.get("code", "") or "").strip()
 
 
 def _extract_standard_codes_from_field(result_dict: Dict[str, Any]) -> List[str]:
     fields = result_dict.get("fields", {}) if isinstance(result_dict, dict) else {}
     field_data = fields.get("STANDARD", {}) if isinstance(fields, dict) else {}
-    items = field_data.get("items", []) if isinstance(field_data, dict) else []
+    stage2_input = field_data.get("stage2_input", {}) if isinstance(field_data, dict) else {}
+    value = stage2_input.get("value") if isinstance(stage2_input, dict) else None
     codes: list[str] = []
-    for item in items:
+    for item in value if isinstance(value, list) else []:
         if not isinstance(item, dict):
             continue
-        code = str(item.get("code", "") or "").strip()
+        code = str(item.get("BODY", "") or item.get("code", "") or "").strip()
         if code:
             codes.append(code)
     if codes:
         return codes
-    fallback = str(field_data.get("code", "") or "").strip() if isinstance(field_data, dict) else ""
+    stage2_output = field_data.get("stage2_output", {}) if isinstance(field_data, dict) else {}
+    fallback = str(stage2_output.get("code", "") or "").strip() if isinstance(stage2_output, dict) else ""
     return [fallback] if fallback else []
 
 

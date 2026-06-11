@@ -9,7 +9,7 @@ import re
 from typing import Any, Dict, List
 from pathlib import Path
 
-from .pipe_encoder import PipeEncoderBase, FieldEncoding
+from .pipe_encoder import PipeEncoderBase, EncodedFieldResult
 from .processors import get_type_encoder, get_material_encoder
 from ..llm_ner.predictor import Qwen3Predictor
 
@@ -264,19 +264,16 @@ class LlmPipeEncoder(PipeEncoderBase):
         )
         return None
 
-    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> FieldEncoding:
+    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> EncodedFieldResult:
         display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
         merged, size_need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
         normalized_merged = merged
         final_code = merged
         sim = 1.0 if final_code else 0.0
 
-        return FieldEncoding(
+        return EncodedFieldResult(
             field_type='SIZE',
-            original_value=' | '.join(display_values),
-            original_values=display_values,
-            matched_name=normalized_merged, matched_names=[normalized_merged] if normalized_merged else [],
-            encoding_input=normalized_merged,
+            stage2_input=self._clone_response_value(values[0] if len(values) == 1 else values),
             encode_confidence_v2=self._make_encode_meta(
                 source='size_processor',
                 confidence=0.96 if final_code and not size_need_review else (0.72 if final_code else 0.0),
@@ -291,7 +288,7 @@ class LlmPipeEncoder(PipeEncoderBase):
             similarity=sim if final_code else 0.0,
             is_exact_match=True,
             need_review=size_need_review,
-            candidates=[], display='', items=[]
+            candidates=[],
         )
 
     def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
@@ -418,7 +415,7 @@ class LlmPipeEncoder(PipeEncoderBase):
             match_result = self.matcher.match(field_type, value, use_semantic=False)
             return {
                 'original': value,
-                'matched': match_result.matched_name,
+                'matched': match_result.matched_value,
                 'code': match_result.code,
                 'similarity': match_result.similarity if match_result.code else 1.0,
                 'is_exact': match_result.is_exact_match,
@@ -435,9 +432,9 @@ class LlmPipeEncoder(PipeEncoderBase):
         values: List[str],
         modifier_map: Dict[int, Dict[str, List[str]]] = None,
         original_text: str = "",
-    ) -> FieldEncoding:
+    ) -> EncodedFieldResult:
         if not values:
-            return FieldEncoding(field_type='STANDARD')
+            return EncodedFieldResult(field_type='STANDARD')
 
         sp = self.standard_processor
 
@@ -522,6 +519,12 @@ class LlmPipeEncoder(PipeEncoderBase):
 
         detail = sp.process_standards_with_detail(merged_standards, original_text=original_text)
         ordered_detail_items = detail.get('ordered_items', []) or []
+        category_by_original = {}
+        for detail_item in ordered_detail_items:
+            original_key = str(detail_item.get('original', '') or '').strip()
+            category_key = str(detail_item.get('category', '') or '').strip()
+            if original_key and original_key not in category_by_original:
+                category_by_original[original_key] = sp.CATEGORY_LABELS.get(category_key, '')
         detail_index = {}
         for item in ordered_detail_items:
             key = (item.get('original', ''), item.get('encoded', ''))
@@ -553,7 +556,6 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'similarity': resolved_item.get('similarity', 1.0), 'is_exact': True, 'need_review': False,
                 'candidates': [], 'category': sp.CATEGORY_LABELS.get(detail_item.get('category', 'unknown'), ''), 'encode_meta': resolved_item.get('encode_meta')
             })
-        original_display = ' | '.join([item['original'] for item in items])
         chosen_by_base = {}
         base_order = []
         for item in items:
@@ -567,29 +569,26 @@ class LlmPipeEncoder(PipeEncoderBase):
             elif item.get('grade') and not chosen_by_base[base_code].get('grade'):
                 chosen_by_base[base_code] = item
         final_code = ''.join(chosen_by_base[base].get('code', '') for base in base_order)
-        display_text = detail.get('display', '无')
-        if not display_text or display_text == '无':
-            display_parts = []
-            for base in base_order:
-                item = chosen_by_base[base]
-                if item.get('category'):
-                    display_parts.append(f"{item.get('code', '')}({item.get('category', '')})")
-                else:
-                    display_parts.append(item.get('code', ''))
-            display_text = ' '.join(display_parts) if display_parts else '无'
 
-        return FieldEncoding(
+        stage2_standard_inputs = []
+        for idx, body in enumerate(values):
+            body_text = str(body or '').strip()
+            modifier_info = modifier_map.get(idx, {}) if isinstance(modifier_map, dict) else {}
+            stage2_standard_inputs.append({
+                'BODY': body_text,
+                'GRADE': ' '.join(str(v).strip() for v in (modifier_info.get('STANDARD_GRADE') or []) if str(v).strip()),
+                'APPENDIX': ' '.join(str(v).strip() for v in (modifier_info.get('STANDARD_APPENDIX') or []) if str(v).strip()),
+                'METHOD': ' '.join(str(v).strip() for v in (modifier_info.get('STANDARD_METHOD') or []) if str(v).strip()),
+                'CATEGORY': category_by_original.get(body_text, ''),
+            })
+
+        return EncodedFieldResult(
             field_type='STANDARD',
-            original_value=original_display,
-            original_values=values,
-            matched_name=display_text if display_text != '无' else '',
-            matched_names=[item['code'] for item in items],
-            encoding_input=display_text if display_text != '无' else '',
+            stage2_input=stage2_standard_inputs,
             encode_confidence_v2=self._aggregate_item_encode_confidence(items, fallback_source='standard_processor'),
             code=final_code,
             codes=[item['code'] for item in items],
             similarity=min((item['similarity'] for item in items), default=1.0), is_exact_match=True, need_review=False,
             candidates=[],
-            display=display_text,
-            items=items
+            detail_items=items
         )

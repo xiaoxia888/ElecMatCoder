@@ -29,71 +29,56 @@
           class="field-group"
           :class="{ 'need-review': field.need_review }"
         >
-          <!-- STANDARD 永远按 items 显示；其他字段有多个 items 时分行显示 -->
-          <template v-if="shouldRenderItems(type, field)">
-            <div 
-              v-for="(item, idx) in field.items" 
-              :key="idx"
+          <template v-if="shouldRenderStructuredRows(type, field)">
+            <div
+              v-for="(row, idx) in getStructuredRows(type, field)"
+              :key="`${type}-${idx}`"
               class="field-item field-item-sub"
-              :class="{ 'need-review': item.need_review }"
               @dblclick.stop="emitEditField(type, idx)"
             >
               <div class="field-main">
-                <!-- 第一行显示标签，后续行显示缩进符号 -->
-                <span v-if="idx === 0" class="type-tag" :class="getTypeClass(type)">
-                  {{ typeLabels[type] || type }}
-                </span>
+                <span v-if="idx === 0" class="type-tag" :class="getTypeClass(type)">{{ typeLabels[type] || type }}</span>
                 <span v-else class="type-tag type-indent">↳</span>
-                <span class="field-original" :title="getItemDisplayText(type, item)">{{ getItemDisplayText(type, item) || '—' }}</span>
-                <template v-if="showItemMatchedName(type, item)">
-                  <span class="field-arrow">→</span>
-                  <span class="field-matched" :title="item.matched">{{ item.matched }}</span>
-                </template>
-                <span v-if="item.category" class="field-category-tag" :class="item.category === '生产' ? 'prod' : 'manu'">
-                  {{ item.category }}
-                </span>
-                <span v-if="item.manual_override" class="field-manual-tag">修正</span>
-                <!-- 每行显示各自的编码 -->
-                <span class="field-code" :title="item.code">{{ item.code || '—' }}</span>
-              </div>
-              <!-- 每个 item 的候选项 -->
-              <div v-if="item.candidates && item.candidates.length > 1" class="field-candidates">
-                <span 
-                  v-for="(c, ci) in item.candidates.slice(0, 3)" 
-                  :key="ci" 
-                  class="candidate-chip"
-                  @click="$emit('select-candidate', { type, index: idx, candidate: c })"
+                <span class="field-original" :title="row.text">{{ row.text || '—' }}</span>
+                <span
+                  v-if="row.category"
+                  class="field-category-tag"
+                  :class="getCategoryClass(row.category)"
                 >
-                  {{ c.name }}
+                  {{ row.category }}
                 </span>
+                <span v-if="idx === 0 && field.manual_override" class="field-manual-tag">修正</span>
+                <span class="field-code" :title="row.code">{{ row.code || '—' }}</span>
               </div>
             </div>
           </template>
-          
-          <!-- 单值或无 items 时正常显示 -->
-          <template v-else>
-            <div class="field-item" @dblclick.stop="emitEditField(type)">
-              <div class="field-main">
-                <span class="type-tag" :class="getTypeClass(type)">{{ typeLabels[type] || type }}</span>
-                <span class="field-original" :title="getFieldDisplayText(type, field)">{{ getFieldDisplayText(type, field) || '—' }}</span>
-                <span v-if="field.manual_override" class="field-manual-tag">修正</span>
-                <!-- 最后一列：编码结果（靠右） -->
-                <span class="field-code" :title="field.code">{{ field.code || '—' }}</span>
-              </div>
-              
-              <!-- 候选项 -->
-              <div v-if="field.candidates && field.candidates.length > 1" class="field-candidates">
-                <span 
-                  v-for="(c, i) in field.candidates.slice(0, 3)" 
-                  :key="i" 
-                  class="candidate-chip"
-                  @click="$emit('select-candidate', { type, candidate: c })"
-                >
-                  {{ c.name }}
-                </span>
-              </div>
+
+          <div v-else class="field-item" @dblclick.stop="emitEditField(type)">
+            <div class="field-main">
+              <span class="type-tag" :class="getTypeClass(type)">{{ typeLabels[type] || type }}</span>
+              <span class="field-original" :title="getFieldDisplayText(type, field)">{{ getFieldDisplayText(type, field) || '—' }}</span>
+              <span
+                v-if="type === 'STANDARD' && getSingleStandardCategory(field)"
+                class="field-category-tag"
+                :class="getCategoryClass(getSingleStandardCategory(field))"
+              >
+                {{ getSingleStandardCategory(field) }}
+              </span>
+              <span v-if="field.manual_override" class="field-manual-tag">修正</span>
+              <span class="field-code" :title="getFieldCode(field)">{{ getFieldCode(field) || '—' }}</span>
             </div>
-          </template>
+
+            <div v-if="field.candidates && field.candidates.length > 1" class="field-candidates">
+              <span 
+                v-for="(c, i) in field.candidates.slice(0, 3)" 
+                :key="i" 
+                class="candidate-chip"
+                @click="$emit('select-candidate', { type, candidate: c })"
+              >
+                {{ c.name }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -280,11 +265,26 @@ const orderedFields = computed(() => {
   const ordered = {}
   for (const type of fieldOrder) {
     if (fields[type]) {
-      ordered[type] = fields[type]
+      ordered[type] = {
+        ...fields[type],
+        need_review: !!fields[type]?.status?.need_review
+      }
     }
   }
   return ordered
 })
+
+function getStage1Value(field) {
+  return field?.stage1_raw?.value
+}
+
+function getStage2Value(field) {
+  return field?.stage2_input?.value
+}
+
+function getFieldCode(field) {
+  return field?.stage2_output?.code || ''
+}
 
 const statusClass = computed(() => {
   if (props.result.need_review) return 'warning'
@@ -400,12 +400,10 @@ const routeBreakdownText = computed(() => {
 })
 
 const extractConfidenceV2Rows = computed(() => {
-  const raw = props.result?.extract_confidence_v2
-  if (!raw || typeof raw !== 'object') return []
-
   const sourceLabelMap = {
     finetuned_model: '微调模型',
     prompt_extraction: '提示词抽取',
+    rule_extraction: '规则/正则',
     unknown: '未知来源'
   }
 
@@ -455,7 +453,7 @@ const extractConfidenceV2Rows = computed(() => {
   const fieldOrderV2 = ['TYPE', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
   return fieldOrderV2
     .map(field => {
-      const item = raw[field]
+      const item = props.result?.fields?.[field]?.stage1_raw
       if (!item || typeof item !== 'object') return null
       const confidence = item.confidence === null || item.confidence === undefined ? null : Number(item.confidence)
       const source = sourceLabelMap[item.source] || item.source || '—'
@@ -479,96 +477,7 @@ const extractConfidenceV2Rows = computed(() => {
 })
 
 const encodeConfidenceV2Rows = computed(() => {
-  const fields = props.result?.fields
-  if (!fields || typeof fields !== 'object') return []
-
-  const sourceLabelMap = {
-    type_mapping: '类型映射',
-    material_mapping: '材质映射',
-    standard_processor: '规范规则编码器',
-    size_processor: '尺寸编码器',
-    thickness_processor: '壁厚编码器',
-    pressure_processor: '压力编码器',
-    llm_fallback: '大模型兜底',
-    regex_direct: '正则直提',
-    mixed: '混合来源',
-    unknown: '未知来源'
-  }
-
-  const reasonLabelMap = {
-    type_mapping_resolved: '类型映射命中',
-    type_mapping_unresolved_llm_used: '类型映射未命中，转大模型兜底',
-    type_mapping_unresolved_llm_failed: '类型映射未命中，且大模型兜底失败',
-    material_mapping_resolved: '材质映射命中',
-    standard_processor_resolved: '规范规则编码成功',
-    standard_processor_unresolved_llm_used: '规范规则未命中，转大模型兜底',
-    standard_processor_unresolved_llm_failed: '规范规则未命中，且大模型兜底失败',
-    size_processor_resolved: '尺寸编码成功',
-    size_processor_failed: '尺寸编码失败',
-    thickness_processor_resolved: '壁厚编码成功',
-    thickness_processor_failed: '壁厚编码失败',
-    pressure_processor_resolved: '压力编码成功',
-    pressure_processor_failed: '压力编码失败',
-    llm_fallback_used: '使用大模型兜底',
-    llm_fallback_failed: '大模型兜底失败',
-    regex_direct_match: '正则直接命中',
-    multi_item_aggregated: '多项结果聚合',
-    fallback_from_similarity: '由旧相似度回填',
-    no_item_results: '没有可用编码项'
-  }
-
-  const evidenceLabelMap = {
-    strategy: '命中策略',
-    matched_key: '命中键',
-    body_present: '主体值存在',
-    base_code: '基础编码',
-    suffix_count: '后缀数',
-    item_count: '编码项数',
-    code_present: '编码结果存在',
-    need_review: '需要审核',
-    field_type: '字段类型',
-    formatted_present: '格式化结果存在',
-    category: '分类',
-    source_count: '来源种类数',
-    mapping_item_count: '映射项数',
-    processor_item_count: '规则项数',
-    llm_item_count: '大模型项数',
-    used_model_confidence: '使用模型置信度',
-    merged_value_present: '编码输入存在',
-    value_present: '值存在'
-  }
-
-  const yesNoText = value => (value ? '是' : '否')
-  const formatEvidenceValue = (key, value) => {
-    if (typeof value === 'boolean') return yesNoText(value)
-    if (typeof value === 'number') return String(value)
-    return String(value)
-  }
-
-  const fieldOrderV2 = ['TYPE', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
-  return fieldOrderV2
-    .map(field => {
-      const item = fields[field]?.encode_confidence_v2
-      if (!item || typeof item !== 'object') return null
-      const confidence = Number(item.confidence ?? 0)
-      const source = sourceLabelMap[item.source] || item.source || '—'
-      const reason = reasonLabelMap[item.reason] || item.reason || '—'
-      const evidence = item.evidence && typeof item.evidence === 'object' ? item.evidence : {}
-      const evidenceText = Object.entries(evidence)
-        .filter(([, value]) => value !== null && value !== undefined && value !== '')
-        .map(([key, value]) => {
-          const label = evidenceLabelMap[key] || key
-          return `${label}: ${formatEvidenceValue(key, value)}`
-        })
-        .join('，')
-
-      return {
-        field,
-        fieldLabel: typeLabels[field] || field,
-        summary: `置信度 ${(confidence * 100).toFixed(2)}%；来源：${source}；判断：${reason}${evidenceText ? `；依据：${evidenceText}` : ''}`
-      }
-    })
-    .filter(Boolean)
+  return []
 })
 
 const fieldConfidenceRows = computed(() => {
@@ -587,14 +496,14 @@ const fieldConfidenceRows = computed(() => {
       const item = fields[field]
       if (!item || typeof item !== 'object') return null
       const hasAny =
-        item.stage1_confidence !== null && item.stage1_confidence !== undefined ||
-        item.stage2_confidence !== null && item.stage2_confidence !== undefined ||
-        item.field_confidence !== null && item.field_confidence !== undefined
+        item.confidence_detail?.stage1 !== null && item.confidence_detail?.stage1 !== undefined ||
+        item.confidence_detail?.stage2 !== null && item.confidence_detail?.stage2 !== undefined ||
+        item.confidence_detail?.field !== null && item.confidence_detail?.field !== undefined
       if (!hasAny) return null
       return {
         field,
         fieldLabel: typeLabels[field] || field,
-        summary: `一阶段 ${formatPercent(item.stage1_confidence)}；二阶段 ${formatPercent(item.stage2_confidence)}；字段最终 ${formatPercent(item.field_confidence)}`
+        summary: `一阶段 ${formatPercent(item.confidence_detail?.stage1)}；二阶段 ${formatPercent(item.confidence_detail?.stage2)}；字段最终 ${formatPercent(item.confidence_detail?.field)}`
       }
     })
     .filter(Boolean)
@@ -602,11 +511,7 @@ const fieldConfidenceRows = computed(() => {
 
 const hasCorrection = computed(() => {
   const fields = props.result?.fields || {}
-  return Object.values(fields).some(field => {
-    if (!field) return
-    if (field.manual_override) return true
-    return (field.items || []).some(item => item?.manual_override)
-  })
+  return Object.values(fields).some(field => !!field?.manual_override)
 })
 
 function getTypeClass(type) {
@@ -626,14 +531,11 @@ function getTypeClass(type) {
 }
 
 function shouldRenderItems(type, field) {
-  if (type === 'STANDARD') {
-    return !!(field?.items && field.items.length > 0)
-  }
-  return !!(field?.items && field.items.length > 1)
+  return false
 }
 
 function shouldHideOriginalValue(type) {
-  return type === 'MATERIAL'
+  return false
 }
 
 function safeParseJson(value) {
@@ -677,11 +579,64 @@ function formatTypeSummary(parsed) {
   return parts.join(';')
 }
 
+function formatMaterialSummary(parsed) {
+  const items = Array.isArray(parsed) ? parsed : [parsed]
+  return items
+    .map(item => {
+      if (!item || typeof item !== 'object') return String(item || '').trim()
+      const role = String(item.ROLE || '').trim()
+      const value = String(item.VALUE || '').trim()
+      const specialReq = Array.isArray(item.SPECIAL_REQ)
+        ? item.SPECIAL_REQ.map(token => String(token || '').trim()).filter(Boolean)
+        : []
+      const base = specialReq.length ? `${value}${specialReq.join('')}` : value
+      if (!role || role === 'MAIN') return base
+      return base ? `${role}:${base}` : role
+    })
+    .filter(Boolean)
+    .join(' ; ')
+}
+
+function formatStandardItemText(item) {
+  if (!item || typeof item !== 'object') return String(item || '').trim()
+  const body = String(item.BODY || '').trim()
+  const grade = String(item.GRADE || '').trim()
+  const appendix = String(item.APPENDIX || '').trim()
+  const method = String(item.METHOD || '').trim()
+  return [body, grade, appendix, method].filter(Boolean).join('')
+}
+
+function formatStandardSummary(parsed) {
+  const items = Array.isArray(parsed) ? parsed : [parsed]
+  return items
+    .map(item => formatStandardItemText(item))
+    .filter(Boolean)
+    .join(' ; ')
+}
+
+function formatPressureSummary(parsed) {
+  const items = Array.isArray(parsed?.items) ? parsed.items : []
+  if (!items.length) return ''
+  return items
+    .map(item => {
+      if (!item || typeof item !== 'object') return String(item || '').trim()
+      const type = String(item.type || '').trim()
+      const value = String(item.value || '').trim()
+      return [type, value].filter(Boolean).join(': ')
+    })
+    .filter(Boolean)
+    .join(' ; ')
+}
+
 function getFieldOriginalText(type, field) {
-  const parsed = safeParseJson(field.original_value || '')
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    return field.original_value || ''
+  const parsed = getStage1Value(field)
+  if (!parsed || typeof parsed !== 'object') {
+    return String(parsed || '')
   }
+
+  if (type === 'MATERIAL') return formatMaterialSummary(parsed)
+  if (type === 'STANDARD') return formatStandardSummary(parsed)
+  if (type === 'PRESSURE') return formatPressureSummary(parsed)
 
   if (type === 'TYPE') {
     const parts = []
@@ -704,7 +659,7 @@ function getFieldOriginalText(type, field) {
   }
 
   if (type !== 'SIZE' && type !== 'THICKNESS') {
-    return field.original_value || ''
+    return String(parsed || '')
   }
 
   const subtypeOrderMap = {
@@ -731,23 +686,65 @@ function getFieldOriginalText(type, field) {
 }
 
 function getFieldPrimaryText(type, field) {
-  if (shouldHideOriginalValue(type)) {
-    return field.encoding_input || field.matched_name || getFieldOriginalText(type, field) || ''
-  }
   return getFieldOriginalText(type, field)
 }
 
 function formatFieldTextByType(type, value) {
-  if (type === 'TYPE') {
-    const parsed = safeParseJson(value)
-    return formatTypeSummary(parsed)
+  const parsed = safeParseJson(value)
+  if (parsed && typeof parsed === 'object') {
+    if (type === 'TYPE') return formatTypeSummary(parsed)
+    if (type === 'MATERIAL') return formatMaterialSummary(parsed)
+    if (type === 'STANDARD') return formatStandardSummary(parsed)
+    if (type === 'PRESSURE') return formatPressureSummary(parsed)
+    return getFieldOriginalText(type, { stage1_raw: { value: parsed } })
   }
-  const text = String(value || '').trim()
-  if (!text) return ''
-  if (type === 'SIZE' || type === 'THICKNESS' || type === 'PRESSURE') {
-    return getFieldOriginalText(type, { original_value: text }) || text
+  return String(value || '').trim()
+}
+
+function getCategoryClass(category) {
+  const text = String(category || '').trim()
+  if (text === '生产') return 'prod'
+  if (text === '制造') return 'manu'
+  if (text === '产品') return 'product'
+  if (text === '建造' || text === '施工及验收') return 'construction'
+  return ''
+}
+
+function buildStandardRowCode(item) {
+  return formatStandardItemText(item)
+}
+
+function getStructuredRows(type, field) {
+  if (type !== 'STANDARD') return []
+  const stage1Items = Array.isArray(getStage1Value(field)) ? getStage1Value(field) : []
+  const stage2Items = Array.isArray(getStage2Value(field)) ? getStage2Value(field) : []
+  const rowCount = Math.max(stage1Items.length, stage2Items.length)
+  const rows = []
+  for (let index = 0; index < rowCount; index += 1) {
+    const stage1Item = stage1Items[index]
+    const stage2Item = stage2Items[index]
+    const originalText = formatStandardItemText(stage1Item)
+    const processedText = formatStandardItemText(stage2Item)
+    const text = processedText && normalizeComparableText(processedText) !== normalizeComparableText(originalText)
+      ? `${originalText} → ${processedText}`
+      : (originalText || processedText)
+    rows.push({
+      text,
+      code: buildStandardRowCode(stage2Item) || buildStandardRowCode(stage1Item),
+      category: String(stage2Item?.CATEGORY || '').trim()
+    })
   }
-  return text
+  return rows.filter(row => row.text || row.code || row.category)
+}
+
+function shouldRenderStructuredRows(type, field) {
+  return type === 'STANDARD' && getStructuredRows(type, field).length > 0
+}
+
+function getSingleStandardCategory(field) {
+  const stage2Items = Array.isArray(getStage2Value(field)) ? getStage2Value(field) : []
+  if (stage2Items.length !== 1) return ''
+  return String(stage2Items[0]?.CATEGORY || '').trim()
 }
 
 function normalizeComparableText(text) {
@@ -759,12 +756,7 @@ function normalizeComparableText(text) {
 }
 
 function getFieldProcessedText(type, field) {
-  let candidate = null
-  if (type === 'TYPE') {
-    candidate = field?.encoding_input ?? field?.stage1_final_value ?? null
-  } else {
-    candidate = field?.encoding_input ?? field?.stage1_final_value ?? null
-  }
+  const candidate = getStage2Value(field)
   if (candidate === null || candidate === undefined || candidate === '') return ''
   return formatFieldTextByType(type, candidate)
 }
@@ -777,21 +769,6 @@ function getFieldDisplayText(type, field) {
     return originalText
   }
   return `${originalText} → ${processedText}`
-}
-
-function showItemMatchedName(type, item) {
-  if (!item?.matched) return false
-  if (shouldHideOriginalValue(type)) {
-    return false
-  }
-  return item.matched !== item.original && item.matched !== item.code
-}
-
-function getItemDisplayText(type, item) {
-  if (shouldHideOriginalValue(type)) {
-    return item?.matched || item?.original || ''
-  }
-  return item?.original || ''
 }
 
 function emitEditField(type, index = null) {
@@ -1028,6 +1005,16 @@ function emitEditField(type, index = null) {
 .field-category-tag.manu {
   background: #e3f2fd;
   color: #1565c0;
+}
+
+.field-category-tag.product {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.field-category-tag.construction {
+  background: #f3e5f5;
+  color: #7b1fa2;
 }
 
 .field-manual-tag {

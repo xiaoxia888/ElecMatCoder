@@ -142,25 +142,34 @@ class PlatformSecondPassRunner:
     def _extract_stage1_value(cls, field_obj: Any) -> Any:
         if not isinstance(field_obj, dict):
             return None
-        stage1_final_value = field_obj.get("stage1_final_value")
-        if not cls._is_empty_value(stage1_final_value):
-            return stage1_final_value
-        original_value = field_obj.get("original_value")
-        if not cls._is_empty_value(original_value):
-            return original_value
+        stage1_raw = field_obj.get("stage1_raw")
+        if isinstance(stage1_raw, dict):
+            value = stage1_raw.get("value")
+            if not cls._is_empty_value(value):
+                return value
+        stage2_input = field_obj.get("stage2_input")
+        if isinstance(stage2_input, dict):
+            value = stage2_input.get("value")
+            if not cls._is_empty_value(value):
+                return value
         return None
 
     @classmethod
     def _extract_code(cls, field_obj: Any) -> str:
         if not isinstance(field_obj, dict):
             return ""
-        return cls._clean(field_obj.get("code"))
+        stage2_output = field_obj.get("stage2_output")
+        if isinstance(stage2_output, dict):
+            return cls._clean(stage2_output.get("code"))
+        return ""
 
     @classmethod
     def _extract_standard_items(cls, field_obj: Any) -> list[dict[str, str]]:
         if not isinstance(field_obj, dict):
             return []
-        return cls._normalize_standard_items(field_obj.get("items"))
+        stage2_input = field_obj.get("stage2_input")
+        value = stage2_input.get("value") if isinstance(stage2_input, dict) else None
+        return cls._normalize_standard_items(value)
 
     @classmethod
     def _normalize_standard_items(cls, items: Any) -> list[dict[str, str]]:
@@ -170,13 +179,13 @@ class PlatformSecondPassRunner:
         for item in items:
             if not isinstance(item, dict):
                 continue
-            code = cls._clean(item.get("code"))
+            code = cls._clean(item.get("BODY") or item.get("code"))
             if not code:
                 continue
             normalized.append(
                 {
                     "code": code,
-                    "category": cls._clean(item.get("category")),
+                    "category": cls._clean(item.get("CATEGORY") or item.get("category")),
                 }
             )
         return normalized

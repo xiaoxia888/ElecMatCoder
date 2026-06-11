@@ -40,7 +40,7 @@ _UNRESOLVED_SPEC_PATTERNS = (
     # 裸 mm：24mm
     re.compile(r'(?<![A-Za-z0-9./])\d+(?:\.\d+)?\s*(?:MM\b|毫米\b)', re.IGNORECASE),
     # 裸整数：位数不限，但必须处在干净分隔边界上
-    re.compile(r'(?:(?<=^)|(?<=[,，;；、\s()]))\d+(?=(?:$|[,，;；、\s()]))'),
+    re.compile(r'(?:(?<=^)|(?<=[,，;；、\s()\-]))\d+(?=(?:$|[,，;；、\s()\-]))'),
 )
 
 _COMMON_DN_VALUES: Optional[set[int]] = None

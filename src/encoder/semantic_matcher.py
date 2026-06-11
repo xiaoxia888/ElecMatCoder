@@ -50,7 +50,7 @@ def _get_faiss():
 @dataclass
 class MatchResult:
     """匹配结果"""
-    matched_name: str           # 匹配到的标准名称
+    matched_value: str          # 匹配到的规范化值
     code: str                   # 对应的编码
     similarity: float           # 相似度分数 (0-1)
     is_exact_match: bool        # 是否精确匹配
@@ -215,7 +215,7 @@ class SemanticMatcher:
                 code = str(info)
             
             return MatchResult(
-                matched_name=value,
+                matched_value=value,
                 code=code,
                 similarity=1.0,
                 is_exact_match=True,
@@ -230,7 +230,7 @@ class SemanticMatcher:
                 for alias in aliases:
                     if str(alias).lower() == value_lower:
                         return MatchResult(
-                            matched_name=name,
+                            matched_value=name,
                             code=str(info.get('code', '')),
                             similarity=1.0,
                             is_exact_match=True,
@@ -295,7 +295,7 @@ class SemanticMatcher:
         # 检查是否有索引数据
         if field_type not in self._indexes and field_type not in self._embeddings:
             return MatchResult(
-                matched_name=value,
+                matched_value=value,
                 code="",
                 similarity=0.0,
                 is_exact_match=False,
@@ -338,7 +338,7 @@ class SemanticMatcher:
             
             if matrix is None:
                 return MatchResult(
-                    matched_name=value,
+                    matched_value=value,
                     code="",
                     similarity=0.0,
                     is_exact_match=False,
@@ -368,7 +368,7 @@ class SemanticMatcher:
             need_review = best_score < threshold
             
             return MatchResult(
-                matched_name=best_name,
+                matched_value=best_name,
                 code=best_code,
                 similarity=best_score,
                 is_exact_match=False,
@@ -377,7 +377,7 @@ class SemanticMatcher:
             )
         
         return MatchResult(
-            matched_name=value,
+            matched_value=value,
             code="",
             similarity=0.0,
             is_exact_match=False,
@@ -406,7 +406,7 @@ class SemanticMatcher:
         """
         if not value or not value.strip():
             return MatchResult(
-                matched_name="",
+                matched_value="",
                 code="",
                 similarity=0.0,
                 is_exact_match=False,
@@ -424,7 +424,7 @@ class SemanticMatcher:
                 return result
             else:
                 return MatchResult(
-                    matched_name=value,
+                    matched_value=value,
                     code="",
                     similarity=0.0,
                     is_exact_match=False,

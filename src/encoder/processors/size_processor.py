@@ -907,6 +907,8 @@ class SizeProcessor:
         规则：
         1. 显式 DN/NPS/英制/OD/φ/Φ/D/LENGTH 直接走规则
         2. `DNx整数` 视为双 DN
+        3. `DN-整数` 若第二段在常见 DN 表中，也视为双 DN
+        4. `DN-小数` 仅保留首个显式 DN，第二段留给壁厚规则
         3. `DNx小数` 仅保留首个显式 DN，第二段不进入尺寸
         4. `OD/φ/Φ/D x 小数` 视为外径+壁厚，尺寸只保留第一段
         5. 不处理无锚点裸数字 / 裸 AxB
@@ -1202,6 +1204,26 @@ class SizeProcessor:
                 _add_ordered_item("DN", second_value, m.span(2))
                 consumed_pair_spans.append(span)
                 _record(m.group(0), span)
+
+        dn_dash_pair_pattern = re.compile(
+            rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*-\s*(\d+\.\d+|{"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})'
+            r'(?!\s*(?:MM|毫米))'
+        )
+        for m in dn_dash_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            first = m.group(1)
+            second = m.group(2)
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_pair_spans):
+                continue
+            first_value = self._normalize_number_text(first)
+            _add_unique(dn_values, first_value)
+            _add_ordered_item("DN", first_value, m.span(1))
+            if "." not in second and self._is_common_dn_integer(second):
+                second_value = self._normalize_number_text(second)
+                _add_unique(dn_values, second_value)
+                _add_ordered_item("DN", second_value, m.span(2))
+            consumed_pair_spans.append(span)
+            _record(m.group(0), span)
 
         dn_pair_pattern = re.compile(
             rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*(?:DN\s*)?({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})(?!\.\d)(?!\s*(?:MM|毫米))'

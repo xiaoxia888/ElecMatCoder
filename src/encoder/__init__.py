@@ -18,7 +18,7 @@ from .code_mapping import CodeMappingManager, get_mapping_manager
 from .pipe_encoder import (
     PipeEncoder,
     PipeEncodingResult,
-    FieldEncoding,
+    EncodedFieldResult,
     get_pipe_encoder
 )
 from .processors import (
@@ -65,7 +65,7 @@ __all__ = [
     # 管道材料编码器
     'PipeEncoder',
     'PipeEncodingResult',
-    'FieldEncoding',
+    'EncodedFieldResult',
     'get_pipe_encoder',
     
     # 处理器

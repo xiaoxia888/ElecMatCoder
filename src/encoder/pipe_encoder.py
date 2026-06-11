@@ -22,6 +22,22 @@ from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
+from ..domain.common import OrderedValueItem
+from ..domain.material import MaterialItem
+from ..domain.pipeline import (
+    ConfidenceDetail,
+    EncodeResultPayload,
+    FieldResultPayload,
+    FieldStatus,
+    Stage1RawPayload,
+    Stage2InputPayload,
+    Stage2OutputPayload,
+)
+from ..domain.pressure import PressureItem, PressureValue
+from ..domain.size import SizeValue
+from ..domain.standard import StandardItem
+from ..domain.thickness import ThicknessValue
+from ..domain.type import TypeGeometry, TypeValue
 from .semantic_matcher import get_semantic_matcher
 from .processors import get_standard_processor
 from .processors import get_thickness_processor
@@ -34,8 +50,8 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class FieldItem:
-    """多值字段中的单个项"""
+class EncodedFieldDetail:
+    """字段编码明细项，主要用于材质/规范等多值字段的辅助审查。"""
     original: str = ""
     matched: str = ""
     code: str = ""
@@ -50,18 +66,14 @@ class FieldItem:
 
 
 @dataclass
-class FieldEncoding:
-    """单个字段的编码结果"""
+class EncodedFieldResult:
+    """单字段编码结果，内部真值统一为三层：stage1_raw / stage2_input / code。"""
     field_type: str = ""
-    original_value: Any = ""
-    stage1_final_value: Any = ""
+    stage1_raw: Any = ""
+    stage2_input: Any = ""
     stage1_confidence: Optional[float] = None
     stage2_confidence: Optional[float] = None
     field_confidence: Optional[float] = None
-    original_values: List[str] = field(default_factory=list)
-    matched_name: str = ""
-    matched_names: List[str] = field(default_factory=list)
-    encoding_input: Any = ""
     encode_confidence_v2: Dict[str, Any] = field(default_factory=dict)
     code: str = ""
     codes: List[str] = field(default_factory=list)
@@ -69,8 +81,8 @@ class FieldEncoding:
     is_exact_match: bool = True
     need_review: bool = False
     candidates: List[Dict] = field(default_factory=list)
-    display: str = ""
-    items: List[Dict] = field(default_factory=list)
+    detail_items: List[Dict] = field(default_factory=list)
+    notes: List[str] = field(default_factory=list)
     
     def to_dict(self) -> dict:
         return asdict(self)
@@ -80,7 +92,7 @@ class FieldEncoding:
 class PipeEncodingResult:
     """管道材料编码结果"""
     original_text: str
-    fields: Dict[str, FieldEncoding] = field(default_factory=dict)
+    fields: Dict[str, EncodedFieldResult] = field(default_factory=dict)
     final_code: str = ""
     success: bool = False
     need_review: bool = False
@@ -95,23 +107,116 @@ class PipeEncodingResult:
     extract_confidence_v2: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> dict:
-        result = {
-            'original_text': self.original_text,
-            'final_code': self.final_code,
-            'success': self.success,
-            'need_review': self.need_review,
-            'hard_rule_hit': self.hard_rule_hit,
-            'confidence': self.confidence,
-            'min_similarity': self.min_similarity,
-            'review_fields': self.review_fields,
-            'missing_fields': self.missing_fields,
-            'errors': self.errors,
-            'warnings': self.warnings,
-            'thickness_conversion_notes': self.thickness_conversion_notes,
-            'extract_confidence_v2': self.extract_confidence_v2,
-            'fields': {k: v.to_dict() for k, v in self.fields.items()}
+        """默认直接返回统一三层 schema。"""
+        return self.to_payload_dict()
+
+    def to_payload_dict(self, *, processed_text: str = "", route_info: Optional[Dict[str, Any]] = None) -> dict:
+        """
+        转成统一三层 schema。
+
+        这里把新 schema 的组装责任下沉到编码器结果对象本身，避免 server 继续充当结构桥接层。
+        """
+        fields = {
+            field_type: self._build_field_payload(field_type, field_data)
+            for field_type, field_data in self.fields.items()
         }
+        payload = EncodeResultPayload(
+            original_text=self.original_text,
+            processed_text=processed_text or self.original_text,
+            final_code=self.final_code,
+            success=bool(self.success),
+            need_review=bool(self.need_review),
+            confidence=round(float(self.confidence or 0.0), 4),
+            fields=fields,
+            route_info=copy.deepcopy(route_info) if isinstance(route_info, dict) else None,
+            errors=list(self.errors or []),
+            warnings=list(self.warnings or []),
+        )
+        return payload.to_dict()
+
+    def _extract_stage1_meta(self, field_type: str) -> dict[str, Any]:
+        item = self.extract_confidence_v2.get(field_type)
+        if not isinstance(item, dict):
+            item = {}
+        return {
+            "source": str(item.get("source", "") or ""),
+            "confidence": item.get("confidence"),
+            "reason": str(item.get("reason", "") or ""),
+            "evidence": copy.deepcopy(item.get("evidence") or {}),
+        }
+
+    def _extract_mm_context_from_stage1_field(self, field_obj: Any) -> list[float]:
+        result: list[float] = []
+        if field_obj is None:
+            return result
+        stage1_value = _field_obj_get(field_obj, "stage1_raw")
+        if not isinstance(stage1_value, dict):
+            return result
+        ordered_items = stage1_value.get("_ITEMS") or stage1_value.get("ordered_items") or []
+        for item in ordered_items:
+            if not isinstance(item, dict):
+                continue
+            if str(item.get("type", "")).strip().upper() != "MM":
+                continue
+            raw = str(item.get("value", "") or "").strip().upper()
+            if raw.endswith("MM"):
+                raw = raw[:-2]
+            try:
+                result.append(float(raw))
+            except (TypeError, ValueError):
+                continue
         return result
+
+    def _build_stage2_input_value(self, field_type: str, field_obj: Any) -> Any:
+        return _rename_stage_value_keys(copy.deepcopy(_field_obj_get(field_obj, "stage2_input", "")))
+
+    @staticmethod
+    def _build_stage2_notes(field_type: str, stage1_value: Any, stage2_value: Any) -> list[str]:
+        notes: list[str] = []
+        if field_type == "TYPE" and isinstance(stage1_value, dict) and isinstance(stage2_value, dict):
+            stage1_conn = stage1_value.get("CONN") or stage1_value.get("ENDS") or []
+            stage2_conn = stage2_value.get("CONN") or []
+            if stage1_conn and not stage2_conn:
+                notes.append("连接方式未参与编码")
+        if field_type == "SIZE" and isinstance(stage2_value, dict) and stage2_value.get("thickness_mm_context"):
+            notes.append("附加壁厚上下文用于OD/DN消歧")
+        if field_type == "MATERIAL" and stage1_value != stage2_value:
+            notes.append("材质值归一化后参与编码")
+        if field_type == "STANDARD" and stage1_value != stage2_value:
+            notes.append("标准主体归一化并补充分类后参与编码")
+        return notes
+
+    def _build_field_payload(self, field_type: str, field_data: Any) -> FieldResultPayload:
+        stage1_value = _rename_stage_value_keys(copy.deepcopy(_field_obj_get(field_data, "stage1_raw", "")))
+        stage1_meta = self._extract_stage1_meta(field_type)
+        stage2_value = self._build_stage2_input_value(field_type, field_data)
+        return FieldResultPayload(
+            field_type=field_type,
+            stage1_raw=Stage1RawPayload(
+                value=stage1_value,
+                source=stage1_meta["source"],
+                confidence=stage1_meta["confidence"],
+                reason=stage1_meta["reason"],
+                evidence=stage1_meta["evidence"],
+            ),
+            stage2_input=Stage2InputPayload(
+                value=stage2_value,
+                notes=self._build_stage2_notes(field_type, stage1_value, stage2_value),
+            ),
+            stage2_output=Stage2OutputPayload(
+                code=str(_field_obj_get(field_data, "code", "") or "").strip(),
+            ),
+            confidence_detail=ConfidenceDetail(
+                stage1=_field_obj_get(field_data, "stage1_confidence", None),
+                stage2=_field_obj_get(field_data, "stage2_confidence", None),
+                field=_field_obj_get(field_data, "field_confidence", None),
+            ),
+            status=FieldStatus(
+                need_review=bool(_field_obj_get(field_data, "need_review", False)),
+                similarity=round(float(_field_obj_get(field_data, "similarity", 0.0) or 0.0), 4),
+                is_exact_match=_field_obj_get(field_data, "is_exact_match", None),
+            ),
+        )
 
 
 @dataclass
@@ -132,6 +237,49 @@ class StandardModifierHit:
     code: str = ""
 
 
+def _rename_stage_value_keys(value: Any) -> Any:
+    """统一历史内部键名，避免 `_ITEMS` 等实现细节泄漏到新 schema。"""
+    if isinstance(value, list):
+        return [_rename_stage_value_keys(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+
+    renamed: dict[str, Any] = {}
+    for key, item in value.items():
+        key_text = str(key)
+        if key_text == "_ITEMS":
+            renamed["ordered_items"] = _rename_stage_value_keys(item)
+            continue
+        if key_text == "_THICKNESS_MM_CONTEXT":
+            renamed["thickness_mm_context"] = _rename_stage_value_keys(item)
+            continue
+        if key_text.startswith("_"):
+            continue
+        renamed[key_text] = _rename_stage_value_keys(item)
+    return renamed
+
+
+def _field_obj_get(field_obj: Any, key: str, default: Any = None) -> Any:
+    """兼容 dataclass / 普通对象 / dict 三种字段结果读取方式。"""
+    if isinstance(field_obj, dict):
+        return field_obj.get(key, default)
+    return getattr(field_obj, key, default)
+
+
+def _to_ordered_items(items: Any) -> list[dict[str, str]]:
+    """将历史 `_ITEMS` 收敛成统一原子项列表。"""
+    result: list[dict[str, str]] = []
+    for item in items if isinstance(items, list) else []:
+        if not isinstance(item, dict):
+            continue
+        item_type = str(item.get("type", "") or "").strip()
+        item_value = str(item.get("value", "") or "").strip()
+        if not item_type or not item_value:
+            continue
+        result.append(OrderedValueItem(type=item_type, value=item_value).to_dict())
+    return result
+
+
 class PipeEncoderBase:
     """
     管道材料编码器 - 基类
@@ -147,10 +295,10 @@ class PipeEncoderBase:
     子类需实现的方法：
     - _should_use_type_combined()
     - _encode_type_value(merged_value)
-    - _encode_size_multi(values) -> FieldEncoding
+    - _encode_size_multi(values) -> EncodedFieldResult
     - _encode_thickness_value(value) -> str
     - _process_single_value(field_type, value) -> dict
-    - _process_standard_multi(values, modifier_map) -> FieldEncoding
+    - _process_standard_multi(values, modifier_map) -> EncodedFieldResult
     """
     
     DEFAULT_FIELD_ORDER = ['TYPE', 'RADIUS', 'ENDS', 'MANU', 'CONN', 'SEAL', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD']
@@ -221,7 +369,7 @@ class PipeEncoderBase:
         """编码合并后的 TYPE 值，返回 (code, confidence)"""
         raise NotImplementedError
 
-    def _encode_size_multi(self, values: List[str], original_text: str = "") -> FieldEncoding:
+    def _encode_size_multi(self, values: List[str], original_text: str = "") -> EncodedFieldResult:
         raise NotImplementedError
 
     def _encode_thickness_value(self, value: str, original_text: str = "") -> str:
@@ -235,7 +383,7 @@ class PipeEncoderBase:
         values: List[str],
         modifier_map: Dict[int, Dict[str, List[str]]] = None,
         original_text: str = "",
-    ) -> FieldEncoding:
+    ) -> EncodedFieldResult:
         raise NotImplementedError
 
     def _process_material_item_structured(self, item: Dict[str, Any]) -> Optional[dict]:
@@ -668,6 +816,9 @@ class PipeEncoderBase:
         type_text = self._get_type_included_text(filtered_input)
         for field in ('SEAL', 'CONN', 'MANU'):
             filtered_input[field] = self._filter_type_component_list(type_text, filtered_input[field])
+        # 直管/管子类的端部或连接方式不参与 TYPE 编码，只保留在 stage1_raw 中展示。
+        if filtered_input['BODY'].strip().upper() in {'直管', '钢管', '管子', 'PIPE'}:
+            filtered_input['CONN'] = []
         return filtered_input
 
     @staticmethod
@@ -864,7 +1015,7 @@ class PipeEncoderBase:
             })
         return entries
 
-    def _process_material_structured(self, value: Any) -> FieldEncoding:
+    def _process_material_structured(self, value: Any) -> EncodedFieldResult:
         relation = ""
         is_legacy_material = isinstance(value, dict) and isinstance(value.get('ITEMS'), list)
         if is_legacy_material:
@@ -880,7 +1031,7 @@ class PipeEncoderBase:
         if not item_texts:
             flattened = self._flatten_material_value_for_stage2(value)
             if not flattened:
-                return FieldEncoding(field_type='MATERIAL')
+                return EncodedFieldResult(field_type='MATERIAL')
             return self._process_field_multi('MATERIAL', [flattened])
 
         item_results = []
@@ -905,9 +1056,6 @@ class PipeEncoderBase:
                 'relation': relation,
                 'role': str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN',
             })
-
-        original_values = [str(r['original'] or t) for r, t in zip(item_results, item_texts)]
-        matched_names = [str(r['matched'] or t) for r, t in zip(item_results, item_texts)]
 
         unique_codes: List[str] = []
         if is_legacy_material:
@@ -934,13 +1082,23 @@ class PipeEncoderBase:
                 candidates = item_result['candidates']
                 break
 
-        return FieldEncoding(
+        normalized_stage2_input = []
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            normalized_stage2_input.append(
+                MaterialItem(
+                    role=str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN',
+                    # stage2_input 表示“实际送入二阶段编码前的结构”，
+                    # 这里只保留编码前材质项本身，不再回写最终编码结果。
+                    value=str(entry.get('VALUE') or '').strip(),
+                    special_req=self._normalize_material_special_req(entry.get('SPECIAL_REQ')),
+                ).to_dict()
+            )
+
+        return EncodedFieldResult(
             field_type='MATERIAL',
-            original_value=' | '.join(original_values),
-            original_values=original_values,
-            matched_name=' | '.join(matched_names),
-            matched_names=matched_names,
-            encoding_input=' | '.join(matched_names),
+            stage2_input=normalized_stage2_input,
             encode_confidence_v2=self._aggregate_item_encode_confidence(item_results, fallback_source='material_mapping'),
             code=separator.join(unique_codes),
             codes=unique_codes,
@@ -948,11 +1106,7 @@ class PipeEncoderBase:
             is_exact_match=all_exact,
             need_review=any_need_review,
             candidates=candidates,
-            display=relation or ' | '.join([
-                str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN'
-                for entry in entries
-            ]),
-            items=items
+            detail_items=items
         )
 
     def _normalize_field_value_for_stage2(self, field_type: str, value: Any) -> Any:
@@ -1140,16 +1294,16 @@ class PipeEncoderBase:
         if not thk_field or not thk_field.code or not size_field or not size_field.code or not std_field:
             return
 
-        standards = std_field.original_value or std_field.original_values or std_field.items or ''
-        if isinstance(size_field.original_value, dict):
-            dn_values = size_field.original_value
+        standards = std_field.stage1_raw or std_field.detail_items or ''
+        if isinstance(size_field.stage1_raw, dict):
+            dn_values = size_field.stage1_raw
         else:
             size_code_for_dn = str(size_field.code or '').strip()
             if not size_code_for_dn:
                 return
 
             length_prefix = self.size_processor.extract_length_prefix(
-                size_field.original_value or size_field.original_values,
+                size_field.stage1_raw,
                 original_text=result.original_text,
             )
             if length_prefix and size_code_for_dn.upper().endswith(length_prefix.upper()):
@@ -1203,8 +1357,6 @@ class PipeEncoderBase:
         final_code = deduped_parts[0] if len(deduped_parts) == 1 else 'X'.join(deduped_parts)
         thk_field.code = final_code
         thk_field.codes = [final_code]
-        thk_field.matched_name = final_code
-        thk_field.matched_names = [final_code]
         result.thickness_conversion_notes = note_lines
 
         logger.info(
@@ -1341,7 +1493,7 @@ class PipeEncoderBase:
             parts = [p for p in re.split(r"[xX×*/]+", str(text).replace(" ", "")) if p]
             return len(parts)
 
-        def _encoded_segment_count(field: Optional[FieldEncoding]) -> int:
+        def _encoded_segment_count(field: Optional[EncodedFieldResult]) -> int:
             if not field:
                 return 0
             # 仅看编码结果：字段主 code + 多值项 code
@@ -1350,8 +1502,8 @@ class PipeEncoderBase:
                 candidates.append(str(field.code))
             if field.codes:
                 candidates.extend([str(c) for c in field.codes if c])
-            if field.items:
-                for it in field.items:
+            if field.detail_items:
+                for it in field.detail_items:
                     cv = it.get('code') if isinstance(it, dict) else None
                     if cv:
                         candidates.append(str(cv))
@@ -1360,10 +1512,10 @@ class PipeEncoderBase:
         # 1) 壁厚异径时单位不一致
         if mixed_unit_cfg.get('enabled', True) and size_field and thk_field:
             size_text = self._stringify_field_value(
-                size_field.code or size_field.matched_name or size_field.original_value or ""
+                size_field.code or size_field.stage2_input or size_field.stage1_raw or ""
             ).upper()
             thk_text = self._stringify_field_value(
-                thk_field.code or thk_field.matched_name or thk_field.original_value or ""
+                thk_field.code or thk_field.stage2_input or thk_field.stage1_raw or ""
             ).upper()
             if 'X' in size_text:
                 parts = [p for p in re.split(r"[X×*/]+", thk_text.replace(" ", "")) if p]
@@ -1380,12 +1532,12 @@ class PipeEncoderBase:
 
         # 2) 材质有多个
         if multi_material_cfg.get('enabled', True) and mat_field:
-            material_count = len(mat_field.original_values or [])
-            if material_count <= 1 and mat_field.items:
-                material_count = len(mat_field.items)
+            material_count = len(mat_field.stage1_raw or []) if isinstance(mat_field.stage1_raw, list) else 0
+            if material_count <= 1 and mat_field.detail_items:
+                material_count = len(mat_field.detail_items)
             material_relation = ""
-            if mat_field.items:
-                material_relation = str(mat_field.items[0].get('relation') or '').strip().lower()
+            if mat_field.detail_items:
+                material_relation = str(mat_field.detail_items[0].get('relation') or '').strip().lower()
             if material_count > 1 and material_relation != 'alternative':
                 self._mark_field_review(
                     result,
@@ -1395,8 +1547,8 @@ class PipeEncoderBase:
                 )
 
         # 3) 规范未识别到类型（生产/制造）
-        if unknown_std_cfg.get('enabled', True) and std_field and std_field.items:
-            unknown_items = [it for it in std_field.items if not (it.get('category') or '').strip()]
+        if unknown_std_cfg.get('enabled', True) and std_field and std_field.detail_items:
+            unknown_items = [it for it in std_field.detail_items if not (it.get('category') or '').strip()]
             if unknown_items:
                 self._mark_field_review(
                     result,
@@ -1624,7 +1776,7 @@ class PipeEncoderBase:
         return float((x ** a) * (e ** b))
 
     @staticmethod
-    def _get_field_stage2_confidence(field_result: FieldEncoding) -> Optional[float]:
+    def _get_field_stage2_confidence(field_result: EncodedFieldResult) -> Optional[float]:
         """读取字段二阶段编码置信度，优先取结构化 V2，再回退当前相似度。"""
         meta = getattr(field_result, 'encode_confidence_v2', {}) or {}
         if isinstance(meta, dict):
@@ -1641,7 +1793,7 @@ class PipeEncoderBase:
 
     def _set_field_confidence_triplet(
         self,
-        field_result: FieldEncoding,
+        field_result: EncodedFieldResult,
         stage1_confidence: Optional[float],
         stage2_confidence: Optional[float],
     ):
@@ -1667,7 +1819,7 @@ class PipeEncoderBase:
         self,
         entities: Dict[str, Any],
         regex_value_code_map: Dict[str, Dict]
-    ) -> FieldEncoding:
+    ) -> EncodedFieldResult:
         """合并 TYPE 新结构及规则补提字段，统一编码。"""
         collected_values = []
         type_dict = self._ensure_type_dict(entities.get('TYPE'))
@@ -1735,7 +1887,7 @@ class PipeEncoderBase:
                                     collected_values.append((f, str(v).strip(), str(v).strip()))
         
         if not collected_values:
-            return FieldEncoding(field_type='TYPE', original_value='')
+            return EncodedFieldResult(field_type='TYPE')
         
         type_values = [display for f, display, code in collected_values if f == 'TYPE']
         type_text = ' '.join(type_values).lower() if type_values else ''
@@ -1755,7 +1907,7 @@ class PipeEncoderBase:
                     logger.debug(f"[TYPE合并] 跳过 {f}='{display}'，已包含在 TYPE 中")
         
         if not filtered_codes:
-            return FieldEncoding(field_type='TYPE')
+            return EncodedFieldResult(field_type='TYPE')
         
         merged_value = ';'.join(filtered_codes)
         original_parts = ' | '.join(filtered_displays)
@@ -1766,29 +1918,24 @@ class PipeEncoderBase:
         type_encoding_input = self._build_type_encoding_input(entities, regex_value_code_map)
         code, confidence = self._encode_type_value(merged_value, type_encoding_input)
         
-        return FieldEncoding(
+        return EncodedFieldResult(
             field_type='TYPE',
-            original_value=original_parts,
-            stage1_final_value='',
-            original_values=filtered_displays,
-            matched_name=merged_value,
-            matched_names=[merged_value],
-            encoding_input=self._clone_response_value(type_encoding_input),
+            stage2_input=self._clone_response_value(type_encoding_input),
             encode_confidence_v2=getattr(self, '_last_type_encode_meta', {}) or {},
             code=code,
             codes=[code] if code else [],
             similarity=confidence,
             is_exact_match=True,
             need_review=confidence < 0.8,
-            candidates=[], display='', items=[]
+            candidates=[],
         )
 
     # ──────────────────── 多值字段处理（公共逻辑） ────────────────────
 
-    def _process_field_multi(self, field_type: str, values: List[str], original_text: str = "") -> FieldEncoding:
+    def _process_field_multi(self, field_type: str, values: List[str], original_text: str = "") -> EncodedFieldResult:
         """处理多值字段"""
         if not values:
-            return FieldEncoding(field_type=field_type)
+            return EncodedFieldResult(field_type=field_type)
 
         if field_type == 'MATERIAL' and len(values) == 1 and isinstance(values[0], (dict, list)):
             return self._process_material_structured(values[0])
@@ -1814,27 +1961,24 @@ class PipeEncoderBase:
                     unique_results.append(r)
 
             processed = 'X'.join(unique_results) if unique_results else ''
-            original_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
+            input_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
 
-            return FieldEncoding(
+            return EncodedFieldResult(
                 field_type=field_type,
-                original_value=' | '.join(original_values),
-                original_values=original_values,
-                matched_name=processed, matched_names=[processed],
-                encoding_input=processed,
+                stage2_input=self._clone_response_value(values[0] if len(values) == 1 else values),
                 encode_confidence_v2=self._build_processor_encode_confidence(
                     source='thickness_processor',
                     confidence=0.96 if processed else 0.0,
                     reason='thickness_processor_resolved' if processed else 'thickness_processor_failed',
                     evidence={
-                        'value_present': bool(original_values),
-                        'item_count': len(original_values),
+                        'value_present': bool(input_values),
+                        'item_count': len(input_values),
                         'code_present': bool(processed),
                     },
                 ),
                 code=processed, codes=[processed] if processed else [],
                 similarity=1.0, is_exact_match=True, need_review=False,
-                candidates=[], display='', items=[]
+                candidates=[],
             )
 
         if field_type == 'THICKNESS' and len(values) > 1:
@@ -1853,12 +1997,9 @@ class PipeEncoderBase:
 
             processed = 'X'.join(unique_results) if unique_results else ''
             
-            return FieldEncoding(
+            return EncodedFieldResult(
                 field_type=field_type,
-                original_value=' | '.join(values),
-                original_values=list(values),
-                matched_name=processed, matched_names=[processed],
-                encoding_input=processed,
+                stage2_input=self._clone_response_value(values),
                 encode_confidence_v2=self._build_processor_encode_confidence(
                     source='thickness_processor',
                     confidence=0.96 if processed else 0.0,
@@ -1871,7 +2012,7 @@ class PipeEncoderBase:
                 ),
                 code=processed, codes=[processed] if processed else [],
                 similarity=1.0, is_exact_match=True, need_review=False,
-                candidates=[], display='', items=[]
+                candidates=[],
             )
         
         multi_display_fields = ['MATERIAL']
@@ -1891,8 +2032,6 @@ class PipeEncoderBase:
                     'candidates': r.get('candidates', []), 'category': ''
                 })
         
-        original_values = [str(r['original']) for r in results if r['original']]
-        matched_names = [str(r['matched']) for r in results if r['matched']]
         codes = [str(r['code']) for r in results if r['code']]
         
         unique_codes = []
@@ -1912,13 +2051,9 @@ class PipeEncoderBase:
                 candidates = r['candidates']
                 break
         
-        return FieldEncoding(
+        return EncodedFieldResult(
             field_type=field_type,
-            original_value=' | '.join(original_values),
-            original_values=original_values,
-            matched_name=' | '.join(matched_names),
-            matched_names=matched_names,
-            encoding_input=' | '.join(matched_names),
+            stage2_input=self._clone_response_value(values if len(values) != 1 else values[0]),
             encode_confidence_v2=self._aggregate_item_encode_confidence(results, fallback_source=f'{field_type.lower()}_processor'),
             code=''.join(unique_codes),
             codes=unique_codes,
@@ -1926,7 +2061,7 @@ class PipeEncoderBase:
             is_exact_match=all_exact,
             need_review=any_need_review,
             candidates=candidates,
-            display='', items=items
+            detail_items=items
         )
 
     def _build_exclude_ranges(self, entities: Dict[str, Any], original_text: str):
@@ -2317,9 +2452,10 @@ class PipeEncoderBase:
                 )
 
                 if field_type in raw_entities_snapshot:
-                    field_result.original_value = self._clone_response_value(raw_entities_snapshot.get(field_type))
+                    field_result.stage1_raw = self._clone_response_value(raw_entities_snapshot.get(field_type))
                 if field_type in stage1_final_snapshot:
-                    field_result.stage1_final_value = self._clone_response_value(stage1_final_snapshot.get(field_type))
+                    if field_result.stage2_input in ("", None, [], {}):
+                        field_result.stage2_input = self._clone_response_value(stage1_final_snapshot.get(field_type))
 
                 result.fields[field_type] = field_result
 
@@ -2355,12 +2491,9 @@ class PipeEncoderBase:
 
             if field_type in regex_value_code_map:
                 info = regex_value_code_map[field_type]
-                field_result = FieldEncoding(
+                field_result = EncodedFieldResult(
                     field_type=field_type,
-                    original_value=info['value'],
-                    original_values=[info['value']],
-                    matched_name=info['value'],
-                    matched_names=[info['value']],
+                    stage2_input=copy.deepcopy(info.get('value')),
                     encode_confidence_v2={
                         'source': 'regex_direct',
                         'confidence': 0.98,
@@ -2399,9 +2532,10 @@ class PipeEncoderBase:
             )
 
             if field_type in raw_entities_snapshot:
-                field_result.original_value = self._clone_response_value(raw_entities_snapshot.get(field_type))
+                field_result.stage1_raw = self._clone_response_value(raw_entities_snapshot.get(field_type))
             if field_type in stage1_final_snapshot:
-                field_result.stage1_final_value = self._clone_response_value(stage1_final_snapshot.get(field_type))
+                if field_result.stage2_input in ("", None, [], {}):
+                    field_result.stage2_input = self._clone_response_value(stage1_final_snapshot.get(field_type))
 
             result.fields[field_type] = field_result
 
@@ -2580,6 +2714,7 @@ class PipeEncoderBase:
         original_text: str = "",
         extract_confidence: Optional[Dict[str, Any]] = None,
         extract_confidence_v2: Optional[Dict[str, Any]] = None,
+        stage1_raw_snapshot: Optional[Dict[str, Any]] = None,
     ) -> PipeEncodingResult:
         """
         编码材料实体
@@ -2597,7 +2732,9 @@ class PipeEncoderBase:
             result.errors.append("输入实体为空")
             return result
 
-        raw_entities_snapshot = self._clone_response_value(entities) if isinstance(entities, dict) else {}
+        raw_entities_snapshot = self._clone_response_value(stage1_raw_snapshot) if isinstance(stage1_raw_snapshot, dict) else (
+            self._clone_response_value(entities) if isinstance(entities, dict) else {}
+        )
         
         regex_value_code_map = {}
         
@@ -2635,9 +2772,10 @@ class PipeEncoderBase:
                     self._get_field_stage2_confidence(type_combined_result),
                 )
                 if 'TYPE' in raw_entities_snapshot:
-                    type_combined_result.original_value = self._clone_response_value(raw_entities_snapshot.get('TYPE'))
+                    type_combined_result.stage1_raw = self._clone_response_value(raw_entities_snapshot.get('TYPE'))
                 if 'TYPE' in stage1_final_snapshot:
-                    type_combined_result.stage1_final_value = self._clone_response_value(stage1_final_snapshot.get('TYPE'))
+                    if type_combined_result.stage2_input in ("", None, [], {}):
+                        type_combined_result.stage2_input = self._clone_response_value(stage1_final_snapshot.get('TYPE'))
                 result.fields['TYPE'] = type_combined_result
                 type_combined_processed = True
                 if type_combined_result.need_review and 'TYPE' not in result.review_fields:

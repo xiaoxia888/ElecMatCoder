@@ -308,7 +308,7 @@
                   <div class="form-group">
                     <label>DN（公称直径）</label>
                     <input class="form-input" v-model="sizeEditForm.dn" />
-                    <div class="field-example">例如：`DN300 x DN150`</div>
+                    <div class="field-example">例如：`300 x 150`</div>
                   </div>
                   <div class="form-group">
                     <label>OD（外径）</label>
@@ -321,7 +321,7 @@
                     <div class="field-example">例如：`12 x 6` 或 `12&quot; x 6&quot;`</div>
                   </div>
                 </div>
-                <div class="form-hint">多个值请用 `x` 连接，例如 `DN300 x DN150`。</div>
+                <div class="form-hint">多个值请用 `x` 连接，例如 `300 x 150`。</div>
                 <div class="form-group">
                   <label>尺寸编码</label>
                   <input class="form-input" v-model="sizeEditForm.modifiedCode" />
@@ -546,6 +546,53 @@ function cloneDeep(value) {
   return JSON.parse(JSON.stringify(value))
 }
 
+function getFieldStage1Value(field) {
+  if (field?.stage1_raw) return field.stage1_raw.value ?? ''
+  if (Object.prototype.hasOwnProperty.call(field || {}, 'stage1_value')) return field.stage1_value ?? ''
+  return ''
+}
+
+function getFieldStage2Value(field) {
+  if (field?.stage2_input) return field.stage2_input.value ?? ''
+  if (Object.prototype.hasOwnProperty.call(field || {}, 'stage2_value')) return field.stage2_value ?? ''
+  return ''
+}
+
+function getFieldStage2Code(field) {
+  if (field?.stage2_output) return field.stage2_output.code || ''
+  if (Object.prototype.hasOwnProperty.call(field || {}, 'code')) return field.code || ''
+  return ''
+}
+
+function setFieldStage1Value(field, value) {
+  if (!field.stage1_raw || typeof field.stage1_raw !== 'object') field.stage1_raw = { value: '' }
+  field.stage1_raw.value = value
+}
+
+function setFieldStage2Value(field, value) {
+  if (!field.stage2_input || typeof field.stage2_input !== 'object') field.stage2_input = { value: '', notes: [] }
+  field.stage2_input.value = value
+}
+
+function setFieldStage2Code(field, value) {
+  if (!field.stage2_output || typeof field.stage2_output !== 'object') field.stage2_output = { code: '' }
+  field.stage2_output.code = value
+}
+
+function getFieldNeedReview(field) {
+  return !!field?.status?.need_review
+}
+
+function setFieldNeedReview(field, value) {
+  if (!field.status || typeof field.status !== 'object') field.status = {}
+  field.status.need_review = !!value
+}
+
+function setFieldSimilarity(field, value) {
+  if (!field.status || typeof field.status !== 'object') field.status = {}
+  field.status.similarity = value
+}
+
 function uniqueNonEmpty(values = []) {
   const result = []
   const seen = new Set()
@@ -566,33 +613,12 @@ function ensureEncodingOriginalSnapshot(result) {
 function ensureFieldOriginalSnapshot(field) {
   if (!field || field.original_snapshot) return
   field.original_snapshot = cloneDeep({
-    original_value: field.original_value || '',
-    stage1_final_value: field.stage1_final_value || '',
-    original_values: field.original_values || [],
-    matched_name: field.matched_name || '',
-    matched_names: field.matched_names || [],
-    encoding_input: field.encoding_input || '',
-    code: field.code || '',
-    codes: field.codes || [],
+    stage1_value: getFieldStage1Value(field),
+    stage2_value: getFieldStage2Value(field),
+    code: getFieldStage2Code(field),
     manual_form: field.manual_form || null,
-    similarity: field.similarity,
-    need_review: field.need_review,
-    display: field.display || '',
-    items: field.items || []
-  })
-}
-
-function ensureFieldItemOriginalSnapshot(item) {
-  if (!item || item.original_snapshot) return
-  item.original_snapshot = cloneDeep({
-    original: item.original || '',
-    matched: item.matched || '',
-    code: item.code || '',
-    similarity: item.similarity,
-    need_review: item.need_review,
-    category: item.category || '',
-    base_code: item.base_code || '',
-    grade: item.grade || ''
+    similarity: field?.status?.similarity,
+    need_review: getFieldNeedReview(field)
   })
 }
 
@@ -722,24 +748,20 @@ function formatItemFieldText(items = []) {
 }
 
 function getEditableFieldText(fieldLike, type) {
-  if (fieldLike?.items && fieldLike.items.length > 0) {
-    const itemText = formatItemFieldText(fieldLike.items)
-    if (itemText) return itemText
-  }
   if (type === 'TYPE') {
-    return formatTypeSummary(safeParseJson(fieldLike?.original_value || ''))
+    return formatTypeSummary(getFieldStage1Value(fieldLike))
   }
-  return formatStructuredFieldText(fieldLike?.original_value || '', type)
+  return formatStructuredFieldText(getFieldStage1Value(fieldLike), type)
 }
 
 function buildTypeEditForm(fieldLike, snapshot) {
   return {
-    modelOriginalContent: formatTypeStructuredText(snapshot?.original_value || ''),
-    stage1FinalContent: formatTypeStructuredText(snapshot?.stage1_final_value || ''),
-    encodingInput: String(snapshot?.encoding_input || snapshot?.matched_name || '').trim(),
+    modelOriginalContent: formatTypeStructuredText(snapshot?.stage1_value || ''),
+    stage1FinalContent: formatTypeStructuredText(snapshot?.stage2_value || ''),
+    encodingInput: formatTypeStructuredText(snapshot?.stage2_value || ''),
     originalCode: snapshot?.code || '',
-    modifiedContent: String(fieldLike?.encoding_input || fieldLike?.matched_name || '').trim(),
-    modifiedCode: fieldLike?.code || ''
+    modifiedContent: formatTypeStructuredText(getFieldStage2Value(fieldLike)),
+    modifiedCode: getFieldStage2Code(fieldLike)
   }
 }
 
@@ -777,7 +799,7 @@ function getStructuredFormSource(field, type) {
   if (field?.manual_form && field.manual_form.type === type) {
     return field.manual_form.values || {}
   }
-  const parsed = safeParseJson(field?.original_value || '')
+  const parsed = safeParseJson(getFieldStage2Value(field))
   if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
     return parsed
   }
@@ -798,11 +820,11 @@ function buildSizeEditForm(fieldLike) {
   const values = getStructuredFormSource(fieldLike, 'SIZE')
   return {
     originalContent: getEditableFieldText(fieldLike, 'SIZE'),
-    originalCode: fieldLike?.code || '',
+    originalCode: getFieldStage2Code(fieldLike),
     dn: toStructuredInputText(values.DN),
     od: toStructuredInputText(values.OD),
     inch: toStructuredInputText(values.INCH),
-    modifiedCode: fieldLike?.code || ''
+    modifiedCode: getFieldStage2Code(fieldLike)
   }
 }
 
@@ -810,32 +832,30 @@ function buildThicknessEditForm(fieldLike) {
   const values = getStructuredFormSource(fieldLike, 'THICKNESS')
   return {
     originalContent: getEditableFieldText(fieldLike, 'THICKNESS'),
-    originalCode: fieldLike?.code || '',
+    originalCode: getFieldStage2Code(fieldLike),
     mm: toStructuredInputText(values.MM),
     inch: toStructuredInputText(values.INCH),
     schedule: toStructuredInputText(values.SCHEDULE),
     series: toStructuredInputText(values.SERIES),
     bwg: toStructuredInputText(values.BWG),
-    modifiedCode: fieldLike?.code || ''
+    modifiedCode: getFieldStage2Code(fieldLike)
   }
 }
 
 function buildStandardEditItems(field) {
-  const items = (field?.items || []).map(item => {
-    ensureFieldItemOriginalSnapshot(item)
-    return {
-      id: ++editItemId,
-      subject: item.standard_subject || item.original || item.base_code || '',
-      grade: item.standard_grade || item.grade || '',
-      method: item.standard_method || '',
-      appendix: item.standard_appendix || '',
-      code: item.code || '',
-      snapshot: cloneDeep(item.original_snapshot || {
-        original: item.original || '',
-        code: item.code || ''
-      })
+  const source = Array.isArray(getFieldStage2Value(field)) ? getFieldStage2Value(field) : []
+  const items = source.map(item => ({
+    id: ++editItemId,
+    subject: item?.BODY || '',
+    grade: item?.GRADE || '',
+    method: item?.METHOD || '',
+    appendix: item?.APPENDIX || '',
+    code: item?.BODY || '',
+    snapshot: {
+      original: item?.BODY || '',
+      code: item?.BODY || ''
     }
-  })
+  }))
   return items.length ? items : [createEmptyStandardEditItem()]
 }
 
@@ -847,29 +867,8 @@ function composeStandardOriginal(item) {
 }
 
 function recomputeFieldState(field, type) {
-  const shouldUseItems = multiValueEditableFields.has(type) || (field.items && field.items.length > 0)
-  if (shouldUseItems) {
-    const items = (field.items || []).filter(item => item && (item.original || item.code || item.matched))
-    field.items = items
-    field.original_values = items.map(item => item.original || '').filter(Boolean)
-    field.matched_names = items.map(item => item.matched || item.original || '').filter(Boolean)
-    field.codes = uniqueNonEmpty(items.map(item => item.code || ''))
-    field.original_value = field.original_values.join(' | ')
-    field.matched_name = field.matched_names.join(' | ')
-    field.code = field.codes.join('')
-    field.similarity = items.length > 0
-      ? Math.min(...items.map(item => Number.isFinite(item.similarity) ? item.similarity : 1))
-      : 1
-    field.need_review = items.some(item => item.need_review)
-    if (field.manual_override && type === 'STANDARD') {
-      field.display = ''
-    }
-    return
-  }
-
-  field.original_values = field.original_value ? [field.original_value] : []
-  field.matched_names = field.matched_name ? [field.matched_name] : []
-  field.codes = field.code ? [field.code] : []
+  const code = getFieldStage2Code(field)
+  setFieldStage2Code(field, code)
 }
 
 function recomputeEncodingResult(result) {
@@ -879,10 +878,10 @@ function recomputeEncodingResult(result) {
     const field = result.fields[fieldType]
     if (!field) continue
     recomputeFieldState(field, fieldType)
-    if (field.code) finalCode += field.code
+    if (getFieldStage2Code(field)) finalCode += getFieldStage2Code(field)
   }
   result.final_code = finalCode
-  result.need_review = Object.values(result.fields).some(field => field.need_review)
+  result.need_review = Object.values(result.fields).some(field => getFieldNeedReview(field))
 }
 
 // 键盘导航（左右键切换记录）
@@ -1024,11 +1023,7 @@ function getItemDifficultyClass(index) {
 
 function hasManualCorrection(result) {
   if (!result?.fields) return false
-  return Object.values(result.fields).some(field => {
-    if (!field) return false
-    if (field.manual_override) return true
-    return (field.items || []).some(item => item?.manual_override)
-  })
+  return Object.values(result.fields).some(field => !!field?.manual_override)
 }
 
 // 识别当条
@@ -1051,79 +1046,34 @@ async function encodeCurrentItem(successMsg, failMsg) {
   isEncodingSingle.value = true
   
   try {
-    // 1. NER 提取实体
-    const predictRes = await axios.post('/api/pipe/predict', {
+    const encodeRes = await axios.post('/api/pipe/encode', {
       text,
-      preprocess: true
+      preprocess: true,
+      project_name: dataList.value[currentIndex.value]?.projectName || ''
     })
-    
-    if (!predictRes.data.success) {
+
+    if (!encodeRes.data.success) {
       encodings.value[currentIndex.value] = {
         original_text: text,
-        processed_text: predictRes.data.processed_text || text,
+        processed_text: encodeRes.data.processed_text || text,
         final_code: '',
         success: false,
         need_review: true,
-        errors: ['NER识别失败: ' + (predictRes.data.error || '未知错误')],
+        errors: ['编码失败: ' + ((encodeRes.data.errors || [])[0] || encodeRes.data.error || '未知错误')],
         fields: {}
       }
       showToast(failMsg, 'error')
       return
     }
 
-    const routeInfo = predictRes.data.route_info || null
+    const routeInfo = encodeRes.data.route_info || null
     if (routeInfo && routeInfo.encoding_enabled === false) {
-      encodings.value[currentIndex.value] = {
-        original_text: text,
-        processed_text: predictRes.data.processed_text || text,
-        final_code: '',
-        success: true,
-        need_review: false,
-        skipped_encoding: true,
-        skip_reason: routeInfo.skip_encoding_reason || '',
-        errors: [],
-        fields: {},
-        route_info: routeInfo,
-        stage1_output: {
-          ...(predictRes.data.model_output || {}),
-          _STRUCTURAL_PROMPT: predictRes.data.structural_prompt_output || null
-        },
-        stage1_raw_response: [
-          predictRes.data.model_raw_response || '',
-          predictRes.data.structural_prompt_raw_response
-            ? `\n\n[STRUCTURAL_PROMPT_RAW]\n${predictRes.data.structural_prompt_raw_response}`
-            : ''
-        ].join('')
-      }
+      encodings.value[currentIndex.value] = encodeRes.data
       showToast(routeInfo.skip_encoding_reason || successMsg, 'success')
       return
     }
-    
-    // 2. 实体编码
-    const encodeRes = await axios.post('/api/pipe/encode', {
-      entities: predictRes.data.entities,
-      extract_confidence: predictRes.data.extract_confidence,
-      extract_confidence_v2: predictRes.data.extract_confidence_v2,
-      text,
-      project_name: dataList.value[currentIndex.value]?.projectName || ''
-    })
 
-    encodings.value[currentIndex.value] = {
-      ...encodeRes.data,
-      processed_text: predictRes.data.processed_text || text,
-      extract_confidence_v2: encodeRes.data.extract_confidence_v2 || predictRes.data.extract_confidence_v2 || {},
-      route_info: predictRes.data.route_info || null,
-      stage1_output: {
-        ...(predictRes.data.model_output || {}),
-        _STRUCTURAL_PROMPT: predictRes.data.structural_prompt_output || null
-      },
-      stage1_raw_response: [
-        predictRes.data.model_raw_response || '',
-        predictRes.data.structural_prompt_raw_response
-          ? `\n\n[STRUCTURAL_PROMPT_RAW]\n${predictRes.data.structural_prompt_raw_response}`
-          : ''
-      ].join('')
-    }
+    encodings.value[currentIndex.value] = encodeRes.data
     showToast(successMsg, 'success')
     
   } catch (e) {
@@ -1169,10 +1119,7 @@ function buildEncodingEntry(encodeData, predictMeta) {
   return {
     ...encodeData,
     processed_text: encodeData?.processed_text || predictMeta?.processed_text || encodeData?.original_text || '',
-    extract_confidence_v2: encodeData?.extract_confidence_v2 || predictMeta?.extract_confidence_v2 || {},
-    route_info: encodeData?.route_info || predictMeta?.route_info || null,
-    stage1_output: encodeData?.stage1_output || predictMeta?.stage1_output || null,
-    stage1_raw_response: encodeData?.stage1_raw_response || predictMeta?.stage1_raw_response || ''
+    route_info: encodeData?.route_info || predictMeta?.route_info || null
   }
 }
 
@@ -1498,11 +1445,9 @@ function handleEditField({ type, index = null }) {
   editDialogIndex.value = index
 
   const snapshot = field.original_snapshot || {
-    original_value: field.original_value || '',
-    stage1_final_value: field.stage1_final_value || '',
-    encoding_input: field.encoding_input || '',
-    code: field.code || '',
-    items: cloneDeep(field.items || []),
+    stage1_value: getFieldStage1Value(field),
+    stage2_value: getFieldStage2Value(field),
+    code: getFieldStage2Code(field),
     manual_form: cloneDeep(field.manual_form || null)
   }
 
@@ -1532,7 +1477,7 @@ function handleEditField({ type, index = null }) {
       originalContent: getEditableFieldText(snapshot, type),
       originalCode: snapshot.code || '',
       modifiedContent: getEditableFieldText(field, type),
-      modifiedCode: field.code || ''
+      modifiedCode: getFieldStage2Code(field)
     }
   }
 
@@ -1615,31 +1560,28 @@ function confirmEditDialog() {
     const manualValues = {
       DN: splitJoinedValues(sizeEditForm.value.dn),
       OD: splitJoinedValues(sizeEditForm.value.od),
-      INCH: splitJoinedValues(sizeEditForm.value.inch)
+      INCH: splitJoinedValues(sizeEditForm.value.inch),
+      LENGTH: []
     }
-    field.original_value = buildStructuredSummary({
-      DN: joinValues(manualValues.DN),
-      OD: joinValues(manualValues.OD),
-      INCH: joinValues(manualValues.INCH)
-    }, ['DN', 'OD', 'INCH'])
-    field.matched_name = field.original_value
-    field.code = sizeEditForm.value.modifiedCode.trim()
-    field.codes = field.code ? [field.code] : []
-    field.original_values = field.original_value ? [field.original_value] : []
-    field.matched_names = field.matched_name ? [field.matched_name] : []
-    field.items = []
+    setFieldStage2Value(field, {
+      ...manualValues,
+      ordered_items: [
+        ...manualValues.DN.map(value => ({ type: 'DN', value })),
+        ...manualValues.OD.map(value => ({ type: 'OD', value })),
+        ...manualValues.INCH.map(value => ({ type: 'INCH', value }))
+      ]
+    })
+    setFieldStage2Code(field, sizeEditForm.value.modifiedCode.trim())
     field.manual_form = { type: 'SIZE', values: manualValues }
-    field.similarity = 1
-    field.need_review = false
+    setFieldSimilarity(field, 1)
+    setFieldNeedReview(field, false)
     field.manual_override = true
   } else if (editDialogMode.value === 'type') {
-    field.encoding_input = typeEditForm.value.modifiedContent.trim()
-    field.matched_name = typeEditForm.value.modifiedContent.trim()
-    field.code = typeEditForm.value.modifiedCode.trim()
-    field.codes = field.code ? [field.code] : []
-    field.matched_names = field.matched_name ? [field.matched_name] : []
-    field.similarity = 1
-    field.need_review = false
+    const parsed = safeParseJson(typeEditForm.value.modifiedContent.trim())
+    setFieldStage2Value(field, parsed && typeof parsed === 'object' ? parsed : getFieldStage2Value(field))
+    setFieldStage2Code(field, typeEditForm.value.modifiedCode.trim())
+    setFieldSimilarity(field, 1)
+    setFieldNeedReview(field, false)
     field.manual_override = true
   } else if (editDialogMode.value === 'thickness') {
     const manualValues = {
@@ -1649,76 +1591,51 @@ function confirmEditDialog() {
       SERIES: splitJoinedValues(thicknessEditForm.value.series),
       BWG: splitJoinedValues(thicknessEditForm.value.bwg)
     }
-    field.original_value = buildStructuredSummary({
-      MM: joinValues(manualValues.MM),
-      INCH: joinValues(manualValues.INCH),
-      SCHEDULE: joinValues(manualValues.SCHEDULE),
-      SERIES: joinValues(manualValues.SERIES),
-      BWG: joinValues(manualValues.BWG)
-    }, ['MM', 'INCH', 'SCHEDULE', 'SERIES', 'BWG'])
-    field.matched_name = field.original_value
-    field.code = thicknessEditForm.value.modifiedCode.trim()
-    field.codes = field.code ? [field.code] : []
-    field.original_values = field.original_value ? [field.original_value] : []
-    field.matched_names = field.matched_name ? [field.matched_name] : []
-    field.items = []
+    setFieldStage2Value(field, {
+      ...manualValues,
+      ordered_items: [
+        ...manualValues.MM.map(value => ({ type: 'MM', value })),
+        ...manualValues.INCH.map(value => ({ type: 'INCH', value })),
+        ...manualValues.SCHEDULE.map(value => ({ type: 'SCHEDULE', value })),
+        ...manualValues.SERIES.map(value => ({ type: 'SERIES', value })),
+        ...manualValues.BWG.map(value => ({ type: 'BWG', value }))
+      ]
+    })
+    setFieldStage2Code(field, thicknessEditForm.value.modifiedCode.trim())
     field.manual_form = { type: 'THICKNESS', values: manualValues }
-    field.similarity = 1
-    field.need_review = false
+    setFieldSimilarity(field, 1)
+    setFieldNeedReview(field, false)
     field.manual_override = true
   } else if (editDialogMode.value === 'standard') {
-    field.items = standardEditItems.value
+    const items = standardEditItems.value
       .map(item => {
         const subject = String(item.subject || '').trim()
         const grade = String(item.grade || '').trim()
         const method = String(item.method || '').trim()
         const appendix = String(item.appendix || '').trim()
-        const code = String(item.code || '').trim()
-        const original = composeStandardOriginal({ subject, grade, method, appendix })
-        if (!original && !code) return null
-        const snapshot = cloneDeep(item.snapshot || {
-          original: '',
-          code: ''
-        })
-        const isModified = original !== String(snapshot.original || '').trim() || code !== String(snapshot.code || '').trim()
+        if (!subject && !item.code) return null
         return {
-          original,
-          matched: original,
-          code,
-          similarity: 1,
-          is_exact: true,
-          need_review: false,
-          candidates: [],
-          category: '',
-          base_code: subject,
-          grade,
-          standard_subject: subject,
-          standard_grade: grade,
-          standard_method: method,
-          standard_appendix: appendix,
-          manual_override: isModified,
-          original_snapshot: snapshot
+          BODY: subject,
+          GRADE: grade,
+          METHOD: method,
+          APPENDIX: appendix,
+          CATEGORY: ''
         }
       })
       .filter(Boolean)
-    field.display = ''
+    setFieldStage2Value(field, items)
+    setFieldStage2Code(field, standardEditItems.value.map(item => String(item.code || '').trim()).filter(Boolean).join(''))
     field.manual_form = null
-    field.manual_override = field.items.some(item => item.manual_override)
+    setFieldSimilarity(field, 1)
+    setFieldNeedReview(field, false)
+    field.manual_override = true
   } else if (editDialogMode.value === 'single') {
-    field.original_value = singleEditForm.value.modifiedContent.trim()
-    field.matched_name = singleEditForm.value.modifiedContent.trim()
-    field.code = singleEditForm.value.modifiedCode.trim()
-    field.similarity = 1
-    field.need_review = false
+    setFieldStage2Value(field, singleEditForm.value.modifiedContent.trim())
+    setFieldStage2Code(field, singleEditForm.value.modifiedCode.trim())
+    setFieldSimilarity(field, 1)
+    setFieldNeedReview(field, false)
     field.manual_override = true
     field.manual_form = null
-    field.original_values = field.original_value ? [field.original_value] : []
-    field.matched_names = field.matched_name ? [field.matched_name] : []
-    field.codes = field.code ? [field.code] : []
-    field.items = []
-    if (editDialogType.value === 'STANDARD') {
-      field.display = ''
-    }
   }
 
   recomputeEncodingResult(currentEncoding.value)
@@ -1733,25 +1650,11 @@ function handleSelectCandidate({ type, index, candidate }) {
   const field = currentEncoding.value.fields[type]
   ensureEncodingOriginalSnapshot(currentEncoding.value)
   ensureFieldOriginalSnapshot(field)
-  
-  // 如果有 index，说明是更新 items 中的某一项
-  if (typeof index === 'number' && field.items && field.items[index]) {
-    ensureFieldItemOriginalSnapshot(field.items[index])
-    // 更新该项
-    field.items[index].matched = candidate.name
-    field.items[index].code = candidate.code
-    field.items[index].similarity = candidate.similarity
-    field.items[index].need_review = false
-    field.items[index].manual_override = true
-    field.manual_override = true
-  } else {
-    // 单值字段，直接更新
-    field.matched_name = candidate.name
-    field.code = candidate.code
-    field.similarity = candidate.similarity
-    field.need_review = false
-    field.manual_override = true
-  }
+
+  setFieldStage2Code(field, candidate.code)
+  setFieldSimilarity(field, candidate.similarity)
+  setFieldNeedReview(field, false)
+  field.manual_override = true
 
   recomputeEncodingResult(currentEncoding.value)
   showToast('已更新', 'success')
