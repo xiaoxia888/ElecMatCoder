@@ -57,12 +57,6 @@ def get_platform_config() -> Dict[str, Any]:
     return load_yaml_config("platform_config.yaml")
 
 
-def get_tokenizer_config() -> Dict[str, Any]:
-    """获取分词器配置"""
-    config = get_platform_config()
-    return config.get("tokenizer", {})
-
-
 def get_semantic_config() -> Dict[str, Any]:
     """获取语义匹配配置"""
     config = get_platform_config()
@@ -122,7 +116,6 @@ __all__ = [
     'CONFIG_DIR',
     'load_yaml_config',
     'get_platform_config',
-    'get_tokenizer_config',
     'get_semantic_config',
     'get_ner_config',
     'reload_config',

@@ -36,7 +36,6 @@ import Toast from './components/Toast.vue'
 // 导航配置（编码在前）
 const navItems = [
   { path: '/encoding', label: '编码' },
-  { path: '/annotation', label: '标注' },
   { path: '/review', label: '代码审核' }
 ]
 

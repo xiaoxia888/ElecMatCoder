@@ -28,13 +28,11 @@ import asyncio
 import copy
 
 # 导入配置模块
-from src.config import get_platform_config, get_tokenizer_config, get_semantic_config, get_ner_config
+from src.config import get_platform_config, get_semantic_config, get_ner_config
 from src.domain.pipeline import (
     Stage1DecisionNormalizer,
 )
 
-# 导入分词模块
-from src.tokenizer_utils.llm_tokenizer import LLMTokenizer
 from src.tokenizer_utils.preprocessor import TextPreprocessor
 
 # 导入NER预测器
@@ -111,7 +109,6 @@ async def startup_event():
 # 全局实例
 # ============================================================
 
-_tokenizers: Dict[str, LLMTokenizer] = {}
 _preprocessor = TextPreprocessor()
 _ner_predictor = None
 _ner_model_type: str = "bert"
@@ -1195,52 +1192,10 @@ def get_batch_max_concurrent(default_value: int = 3) -> int:
     return max(1, n)
 
 
-def get_tokenizer(model: str, platform: str = "pipe") -> LLMTokenizer:
-    """获取分词器实例"""
-    cache_key = f"{model}_{platform}"
-    if cache_key not in _tokenizers:
-        logger.info(f"创建分词器: model={model}, platform={platform}")
-        _tokenizers[cache_key] = LLMTokenizer(model=model, platform=platform)
-    return _tokenizers[cache_key]
-
-
-# ============================================================
-# 请求/响应模型
-# ============================================================
-
-class TokenizeRequest(BaseModel):
-    """分词请求"""
-    text: str = Field(..., description="待分词文本")
-    preprocess: bool = Field(True, description="是否预处理")
-    model: str = Field("deepseek-chat", description="使用的模型")
-    platform: str = Field("pipe", description="平台类型")
-
-
-class BatchTokenizeRequest(BaseModel):
-    """批量分词请求"""
-    texts: List[str] = Field(..., description="待分词文本列表")
-    preprocess: bool = Field(True, description="是否预处理")
-    model: str = Field("deepseek-chat", description="使用的模型")
-    platform: str = Field("pipe", description="平台类型")
-
-
-class TokenInfo(BaseModel):
-    """分词信息"""
-    word: str
-    tag: str
-
-
 class PipeEncodeRequest(BaseModel):
     """管道材料单次完整编码请求"""
     text: str = Field(..., description="原始描述")
     preprocess: bool = Field(True, description="是否预处理")
-    project_name: str = Field("", description="项目名称，可选")
-
-
-class PipeEncodeFromTokensRequest(BaseModel):
-    """管道材料编码请求（基于分词结果）"""
-    tokens: List[TokenInfo] = Field(..., description="分词结果")
-    text: str = Field("", description="原始描述")
     project_name: str = Field("", description="项目名称，可选")
 
 
@@ -1378,37 +1333,14 @@ async def health_check():
     return {"status": "ok"}
 
 
-@app.get("/api/models")
-async def get_models():
-    """获取可用模型列表"""
-    tokenizer_config = get_tokenizer_config()
-    default_model = tokenizer_config.get("default_model", "deepseek-chat")
-    
-    models = [
-        {"value": "ner_pipe", "label": "NER模型（本地）", "available": True},
-        {"value": "deepseek-chat", "label": "DeepSeek API", "available": True},
-        {"value": "qwen3:8b", "label": "Qwen3 8B", "available": True},
-        {"value": "qwen3:0.6b", "label": "Qwen3 0.6B", "available": True},
-    ]
-    return {
-        "models": models,
-        "default": default_model
-    }
-
-
 @app.get("/api/config")
 async def get_config():
     """获取平台配置"""
-    tokenizer_config = get_tokenizer_config()
     semantic_config = get_semantic_config()
     platform_config = get_platform_config()
     batch_config = platform_config.get("batch_processing", {})
     
     return {
-        "tokenizer": {
-            "default_model": tokenizer_config.get("default_model", "deepseek-chat"),
-            "default_platform": tokenizer_config.get("default_platform", "pipe"),
-        },
         "semantic": {
             "model_name": semantic_config.get("model_name", "paraphrase-multilingual-MiniLM-L12-v2"),
             "similarity_threshold": semantic_config.get("similarity_threshold", 0.9),
@@ -1417,150 +1349,6 @@ async def get_config():
             "max_concurrent": int(batch_config.get("max_concurrent", 3)),
             "progress_interval_ms": int(batch_config.get("progress_interval_ms", 100)),
         },
-    }
-
-
-@app.post("/api/tokenize")
-async def tokenize(request: TokenizeRequest):
-    """分词接口"""
-    text = request.text
-    
-    if not text or not text.strip():
-        return {"success": False, "error": "文本为空"}
-    
-    # 预处理
-    processed_text = text
-    if request.preprocess:
-        processed_text = _preprocessor.process(text)
-    
-    # 分词
-    try:
-        # 如果是 NER 模型，使用本地 BERT 预测器
-        if request.model == "ner_pipe":
-            predictor = get_ner_predictor()
-            result = predictor.predict(processed_text)
-            
-            # 打印 STANDARD 实体识别结果（调试用）
-            standard_tokens = [t for t in result["tokens"] if t["tag"] == "STANDARD"]
-            if standard_tokens:
-                logger.info(f"[NER识别] STANDARD实体: {[(t['word'], t.get('confidence', 'N/A')) for t in standard_tokens]}")
-            
-            # 获取置信度阈值
-            confidence_threshold = get_ner_confidence_threshold()
-            
-            # 过滤低置信度的实体（将其标记为 O）
-            tokens = []
-            for t in result["tokens"]:
-                conf = t.get("confidence", 1.0)
-                tag = t["tag"]
-                # 如果置信度低于阈值，将非 O 标签改为 O
-                if tag != "O" and conf < confidence_threshold:
-                    logger.debug(f"过滤低置信度实体: {t['word']} ({tag}) 置信度={conf:.2%}")
-                    tag = "O"
-                tokens.append({
-                    "word": t["word"], 
-                    "tag": tag, 
-                    "confidence": conf,
-                    "start": t.get("start"),
-                    "end": t.get("end")
-                })
-            
-            type_class = result.get("type_class")
-        else:
-            # 使用 LLM 分词器
-            tokenizer = get_tokenizer(request.model, request.platform)
-            result = await tokenizer.tokenize(processed_text)
-            tokens = result.get("tokens", [])
-            type_class = result.get("type_class")
-        
-        return {
-            "success": True,
-            "original_text": text,
-            "processed_text": processed_text,
-            "tokens": tokens,
-            "type_class": type_class
-        }
-    except Exception as e:
-        logger.error(f"分词失败: {e}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/tokenize/batch")
-async def batch_tokenize(request: BatchTokenizeRequest):
-    """批量分词（异步并发）"""
-    
-    # 如果是 NER 模型，使用本地预测器（同步）
-    if request.model == "ner_pipe":
-        predictor = get_ner_predictor()
-        confidence_threshold = get_ner_confidence_threshold()
-        results = []
-        for text in request.texts:
-            if not text or not text.strip():
-                results.append({"success": False, "error": "文本为空"})
-                continue
-            
-            processed_text = text
-            if request.preprocess:
-                processed_text = _preprocessor.process(text)
-            
-            try:
-                result = predictor.predict(processed_text)
-                # 过滤低置信度的实体
-                tokens = []
-                for t in result["tokens"]:
-                    conf = t.get("confidence", 1.0)
-                    tag = t["tag"]
-                    if tag != "O" and conf < confidence_threshold:
-                        tag = "O"
-                    tokens.append({"word": t["word"], "tag": tag, "confidence": conf})
-                results.append({
-                    "success": True,
-                    "original_text": text,
-                    "processed_text": processed_text,
-                    "tokens": tokens,
-                    "type_class": result.get("type_class")
-                })
-            except Exception as e:
-                results.append({"success": False, "error": str(e)})
-        
-        return {
-            "success": True,
-            "total": len(results),
-            "results": results
-        }
-    
-    # LLM 模型，使用异步并发
-    async def process_single(text: str):
-        if not text or not text.strip():
-            return {"success": False, "error": "文本为空"}
-        
-        processed_text = text
-        if request.preprocess:
-            processed_text = _preprocessor.process(text)
-        
-        try:
-            tokenizer = get_tokenizer(request.model, request.platform)
-            result = await tokenizer.tokenize(processed_text)
-            return {
-                "success": True,
-                "original_text": text,
-                "processed_text": processed_text,
-                "tokens": result.get("tokens", []),
-                "type_class": result.get("type_class")
-            }
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-    
-    # 并发执行
-    tasks = [process_single(text) for text in request.texts]
-    results = await asyncio.gather(*tasks)
-    
-    return {
-        "success": True,
-        "total": len(results),
-        "results": results
     }
 
 
@@ -1732,18 +1520,6 @@ def pipe_encode(request: PipeEncodeRequest):
         preprocess=request.preprocess,
     )
 
-
-@app.post("/api/pipe/encode/tokens")
-def pipe_encode_from_tokens(request: PipeEncodeFromTokensRequest):
-    """管道材料编码（基于分词结果）"""
-    encoder = get_pipe_encoder()
-    tokens = [{"word": t.word, "tag": t.tag} for t in request.tokens]
-    result = encoder.encode_from_tokens(tokens, request.text)
-    converted = _convert_pipe_result(result)
-    converted = _attach_base_difficulty(converted, request.project_name)
-    return _attach_second_pass(converted)
-
-
 @app.post("/api/pipe/encode/batch")
 async def pipe_batch_encode(request: PipeBatchEncodeRequest):
     """批量管道材料编码"""
@@ -1752,15 +1528,6 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
 
     async def process_item(item: Dict[str, Any]):
         async with semaphore:
-            if 'tokens' in item:
-                result = await asyncio.to_thread(
-                    encoder.encode_from_tokens,
-                    item['tokens'],
-                    item.get('text', '')
-                )
-                converted = _convert_pipe_result(result, processed_text=item.get('text', '') or '')
-                converted = _attach_base_difficulty(converted, str(item.get("project_name", "") or "").strip())
-                return _attach_second_pass(converted)
             return await asyncio.to_thread(
                 _run_pipe_encode_flow,
                 item.get('text', ''),

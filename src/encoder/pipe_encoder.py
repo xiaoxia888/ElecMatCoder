@@ -7,9 +7,8 @@
 
 架构：
 - PipeEncoderBase: 基类，包含所有公共逻辑（配置加载、预处理、字段收集、组装）
-- LegacyPipeEncoder (pipe_encoder_legacy.py): T5 Seq2Seq + 规则处理器
 - LlmPipeEncoder   (pipe_encoder_llm.py):   Qwen3 LLM 编码
-- get_pipe_encoder(): 工厂函数，根据配置自动选择实现
+- get_pipe_encoder(): 工厂函数，返回统一的 LLM 编码实现
 """
 
 import re
@@ -225,16 +224,6 @@ class StandardPosition:
     value: str
     index: int
     pos: int
-
-
-@dataclass
-class StandardModifierHit:
-    """规范修饰项命中（等级/附录/方法）。"""
-    label: str
-    value: str
-    start: int = 0
-    end: int = 0
-    code: str = ""
 
 
 def _rename_stage_value_keys(value: Any) -> Any:
@@ -2546,80 +2535,6 @@ class PipeEncoderBase:
             if field_result.similarity < result.min_similarity:
                 result.min_similarity = field_result.similarity
 
-    @staticmethod
-    def _append_entity(
-        entities: Dict[str, List[str]],
-        current_entity: Dict[str, str],
-        current_entity_pos: Dict[str, int],
-        standard_positions: List[StandardPosition],
-        entity_type: str
-    ):
-        """将当前实体片段写入实体集合，并维护 STANDARD 的位置信息。"""
-        value = current_entity.get(entity_type, "")
-        if not value:
-            return
-        if entity_type not in entities:
-            entities[entity_type] = []
-        entities[entity_type].append(value)
-        if entity_type == 'STANDARD':
-            pos = current_entity_pos.get(entity_type, 0)
-            standard_positions.append(StandardPosition(
-                value=value,
-                index=len(entities['STANDARD']) - 1,
-                pos=pos
-            ))
-
-    def _flush_standard_modifiers_from_current(
-        self,
-        current_entity: Dict[str, str],
-        current_entity_pos: Dict[str, int],
-        standard_modifiers: Dict[str, List[StandardModifierHit]]
-    ):
-        """将当前缓存的 STANDARD_* 修饰项写入列表并清理缓存。"""
-        for field in self.STANDARD_MODIFIER_FIELDS:
-            if field in current_entity:
-                standard_modifiers.setdefault(field, []).append(StandardModifierHit(
-                    label=field,
-                    value=current_entity[field],
-                    start=current_entity_pos.get(field, 0),
-                ))
-                current_entity.pop(field)
-                current_entity_pos.pop(field, None)
-
-    def _flush_current_entities(
-        self,
-        entities: Dict[str, List[str]],
-        current_entity: Dict[str, str],
-        current_entity_pos: Dict[str, int],
-        standard_positions: List[StandardPosition]
-    ):
-        """将当前缓存实体全部写入实体集合。"""
-        for etype in list(current_entity.keys()):
-            self._append_entity(entities, current_entity, current_entity_pos, standard_positions, etype)
-        current_entity.clear()
-        current_entity_pos.clear()
-
-    @staticmethod
-    def _ensure_token_positions(tokens: List[Dict[str, Any]], original_text: str):
-        """为缺失 start/end 的 token 基于原文补齐位置信息。"""
-        if not original_text:
-            return
-        current_pos = 0
-        for token in tokens:
-            word = token.get('word', '')
-            if token.get('start') is None and word:
-                idx = original_text.find(word, current_pos)
-                if idx >= 0:
-                    token['start'] = idx
-                    token['end'] = idx + len(word)
-                    current_pos = token['end']
-                else:
-                    token['start'] = current_pos
-                    token['end'] = current_pos + len(word)
-                    current_pos = token['end']
-            elif token.get('start') is not None:
-                current_pos = token.get('end', token['start'] + len(word))
-
     # ──────────────────── SIZE / THICKNESS 拆分修正 ────────────────────
 
     # 明确的壁厚起始标识（参考 ThicknessProcessor 的模式）
@@ -2823,99 +2738,6 @@ class PipeEncoderBase:
             if re.search(r'\dIA$', body):
                 item['BODY'] = re.sub(r'IA$', 'Ia', body)
 
-    # ──────────────────── 从分词结果编码 ────────────────────
-
-    def encode_from_tokens(
-        self,
-        tokens: List[Dict[str, str]],
-        original_text: str = ""
-    ) -> PipeEncodingResult:
-        """从分词结果编码"""
-        self._ensure_token_positions(tokens, original_text)
-        
-        entities: Dict[str, List[str]] = {}
-        current_entity: Dict[str, str] = {}
-        current_entity_pos: Dict[str, int] = {}
-        
-        standard_positions: List[StandardPosition] = []
-        standard_modifiers: Dict[str, List[StandardModifierHit]] = {}
-        
-        for token in tokens:
-            word = token.get('word', '')
-            tag = token.get('tag', 'O')
-            start_pos = token.get('start', 0)
-            end_pos = token.get('end', start_pos + len(word))
-            
-            if not tag or tag == 'O':
-                self._flush_current_entities(entities, current_entity, current_entity_pos, standard_positions)
-                continue
-            
-            if tag.startswith('B-') or tag.startswith('I-'):
-                prefix = tag[0]
-                entity_type = tag[2:]
-            else:
-                prefix = 'B'
-                entity_type = tag
-            
-            if entity_type in self.STANDARD_MODIFIER_FIELDS:
-                if prefix == 'B':
-                    if 'STANDARD' in current_entity and current_entity['STANDARD']:
-                        self._append_entity(
-                            entities, current_entity, current_entity_pos, standard_positions, 'STANDARD'
-                        )
-                        current_entity.pop('STANDARD')
-                        current_entity_pos.pop('STANDARD', None)
-                    
-                    current_entity[entity_type] = word
-                    current_entity_pos[entity_type] = start_pos
-                else:
-                    if entity_type in current_entity:
-                        current_entity[entity_type] += word
-                    else:
-                        current_entity[entity_type] = word
-                        current_entity_pos[entity_type] = start_pos
-                continue
-            
-            if prefix == 'B':
-                if entity_type in current_entity and current_entity[entity_type]:
-                    self._append_entity(
-                        entities, current_entity, current_entity_pos, standard_positions, entity_type
-                    )
-                
-                self._flush_standard_modifiers_from_current(
-                    current_entity, current_entity_pos, standard_modifiers
-                )
-                
-                current_entity[entity_type] = word
-                current_entity_pos[entity_type] = start_pos
-            else:
-                if entity_type in current_entity:
-                    current_entity[entity_type] += word
-                else:
-                    current_entity[entity_type] = word
-                    current_entity_pos[entity_type] = start_pos
-        
-        self._flush_standard_modifiers_from_current(
-            current_entity, current_entity_pos, standard_modifiers
-        )
-        
-        self._flush_current_entities(entities, current_entity, current_entity_pos, standard_positions)
-        
-        for field, hits in standard_modifiers.items():
-            if hits:
-                entities[field] = [
-                    {'value': hit.value, 'start': hit.start}
-                    for hit in hits
-                ]
-        
-        if standard_positions and 'STANDARD' in entities:
-            entities['_STANDARD_POSITIONS'] = [
-                {'value': p.value, 'index': p.index, 'start_pos': p.pos}
-                for p in standard_positions
-            ]
-        
-        return self.encode(entities, original_text, extract_confidence=None)
-
     # ──────────────────── 批量 / 工具方法 ────────────────────
 
     def batch_encode(
@@ -2927,14 +2749,11 @@ class PipeEncoderBase:
         results = []
         total = len(items)
         for i, item in enumerate(items):
-            if 'tokens' in item:
-                r = self.encode_from_tokens(item['tokens'], item.get('text', ''))
-            else:
-                r = self.encode(
-                    item.get('entities', {}),
-                    item.get('text', ''),
-                    item.get('extract_confidence')
-                )
+            r = self.encode(
+                item.get('entities', {}),
+                item.get('text', ''),
+                item.get('extract_confidence')
+            )
             results.append(r)
             if progress_callback:
                 progress_callback(i, total, r)
@@ -2959,28 +2778,12 @@ _encoder_instance: Optional[PipeEncoderBase] = None
 
 def get_pipe_encoder() -> PipeEncoderBase:
     """
-    根据 platform_config.yaml 中的 encoding.method 自动选择编码器实现
-    - 'llm'  → LlmPipeEncoder
-    - 其他   → LegacyPipeEncoder
+    返回统一的 LLM 管道编码器实现。
     """
     global _encoder_instance
     if _encoder_instance is None:
-        config_path = Path(__file__).parent.parent / "config" / "platform_config.yaml"
-        try:
-            with open(config_path, 'r', encoding='utf-8') as f:
-                cfg = yaml.safe_load(f) or {}
-        except Exception:
-            cfg = {}
-        
-        method = cfg.get('encoding', {}).get('method', 'legacy')
-        
-        if method == 'llm':
-            from .pipe_encoder_llm import LlmPipeEncoder
-            _encoder_instance = LlmPipeEncoder()
-            logger.info("编码器: LlmPipeEncoder")
-        else:
-            from .pipe_encoder_legacy import LegacyPipeEncoder
-            _encoder_instance = LegacyPipeEncoder()
-            logger.info("编码器: LegacyPipeEncoder")
+        from .pipe_encoder_llm import LlmPipeEncoder
+        _encoder_instance = LlmPipeEncoder()
+        logger.info("编码器: LlmPipeEncoder")
     
     return _encoder_instance

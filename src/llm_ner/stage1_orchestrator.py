@@ -232,8 +232,6 @@ class Stage1FieldOrchestrator:
                 "extract_confidence": {},
                 "extract_confidence_v2": {},
                 "route_info": route_payload,
-                "structural_prompt_output": None,
-                "structural_prompt_raw_response": "",
             }
 
         type_predictor = self._get_type_predictor(selected_category)
@@ -450,34 +448,17 @@ class Stage1FieldOrchestrator:
         self._apply_material_special_req_supplement(text, decisions)
 
         structural_visible = None
-        structural_raw = ""
         structural_sources: Dict[str, str] = {}
-        structural_status: Dict[str, str] = {}
-        structural_errors: Dict[str, str] = {}
         if isinstance(structural_result, dict):
             structural_visible = {
                 k: copy.deepcopy(v)
                 for k, v in structural_result.items()
                 if not str(k).startswith("_")
             }
-            structural_raw = str(structural_result.get("_raw", "") or "")
             structural_sources = {
                 str(k): str(v)
                 for k, v in (structural_result.get("_sources") or {}).items()
                 if k in {"SIZE", "THICKNESS", "PRESSURE"}
-            }
-            structural_status = {
-                str(k): str(v)
-                for k, v in (structural_result.get("_status") or {}).items()
-            }
-            structural_errors = {
-                str(k): str(v)
-                for k, v in (structural_result.get("_errors") or {}).items()
-            }
-            field_to_prompt_task = {
-                "SIZE": "size_length",
-                "THICKNESS": "thickness",
-                "PRESSURE": "pressure",
             }
             for field in ("SIZE", "THICKNESS", "PRESSURE"):
                 field_value = copy.deepcopy(structural_result.get(field))
@@ -493,8 +474,8 @@ class Stage1FieldOrchestrator:
                     field=field,
                     field_value=field_value,
                     source=structural_sources.get(field, "prompt_extraction"),
-                    prompt_status=structural_status.get(field_to_prompt_task[field], ""),
-                    prompt_error=structural_errors.get(field_to_prompt_task[field], ""),
+                    prompt_status="",
+                    prompt_error="",
                 )
 
         model_output = {
@@ -508,9 +489,6 @@ class Stage1FieldOrchestrator:
         }
         if structural_visible is not None:
             model_output["_STRUCTURAL_PROMPT"] = structural_visible
-            model_output["_STRUCTURAL_PROMPT_RAW"] = structural_raw
-            model_output["_STRUCTURAL_PROMPT_STATUS"] = structural_status
-            model_output["_STRUCTURAL_PROMPT_ERRORS"] = structural_errors
 
         return {
             "text": text,
@@ -522,10 +500,6 @@ class Stage1FieldOrchestrator:
             "extract_confidence": extract_confidence,
             "extract_confidence_v2": extract_confidence_v2,
             "route_info": route_payload,
-            "structural_prompt_output": structural_visible,
-            "structural_prompt_raw_response": structural_raw,
-            "structural_prompt_status": structural_status,
-            "structural_prompt_errors": structural_errors,
         }
 
     @staticmethod

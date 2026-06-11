@@ -135,9 +135,7 @@ class Stage1DecisionNormalizer:
             if isinstance(standard_output, dict) and standard_output.get("STANDARD") not in (None, "", [], {}):
                 raw_values["STANDARD"] = copy.deepcopy(standard_output.get("STANDARD"))
 
-            structural_output = predict_result.get("structural_prompt_output")
-            if not isinstance(structural_output, dict):
-                structural_output = model_output.get("_STRUCTURAL_PROMPT")
+            structural_output = model_output.get("_STRUCTURAL_PROMPT")
             if isinstance(structural_output, dict):
                 for field in ("SIZE", "THICKNESS", "PRESSURE"):
                     if structural_output.get(field) not in (None, "", [], {}):

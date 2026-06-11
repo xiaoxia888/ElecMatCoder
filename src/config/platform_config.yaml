@@ -10,24 +10,6 @@ server:
   # 是否在服务启动时预加载模型（生产环境建议 true）
   preload_models: false
 
-# ==================== 分词模型配置 ====================
-tokenizer:
-  # 默认分词模型
-  # 可选值: ner_pipe / deepseek-chat / qwen2.5:7b
-  default_model: "ner_pipe"
-  default_platform: "pipe"
-  
-  # Ollama 服务
-  ollama:
-    base_url: "http://localhost:11434"
-    timeout: 60
-  
-  # DeepSeek API
-  deepseek:
-    base_url: "https://api.deepseek.com"
-    model: "deepseek-chat"
-    timeout: 60
-
 # ==================== NER识别配置 ====================
 ner:
   # NER 模型类型
@@ -162,7 +144,7 @@ ner:
         
         thickness_prompt_version: "v3"       # v1=现有分层提示词；v2=旧版原子厚度提示词；v3=新版三段提示词（size/thickness/pressure 一起切换）
         api: "chat_completions"              # openai_compatible 可选: chat_completions / openai-completions
-        timeout: 60
+        timeout: 30
         temperature: 0.0
         max_tokens: 768
         max_workers: 1
@@ -177,28 +159,15 @@ ner:
 
 # ==================== 编码规则配置 ====================
 encoding:
-  # 编码方法
-  # 可选值: llm / legacy
-  #   llm:    使用 Qwen3 微调模型统一编码（推荐）
-  #   legacy: 使用 T5 seq2seq + 规则处理器（旧方案）
+  # 使用 Qwen3 微调模型统一编码
   method: "llm"
 
-  # LLM 编码配置（method=llm 时生效）
+  # LLM 编码配置
   llm:  
     model_name: "qwen3-4b-q8-coder"
     backend: "ollama"             # ollama / transformers
     ollama_url: "http://localhost:11434"
     model_path: "models/qwen3_pipe"  # transformers 后端时使用
-
-  # 以下为 legacy 模式配置（method=legacy 时生效）
-  # type_encoding: "seq2seq"      # 种类编码方式: semantic / seq2seq
-  # material_encoding: "seq2seq"  # 材质编码方式: semantic / seq2seq
-  
-  # Seq2Seq 模型配置
-  # seq2seq:
-  #   model_path: "models/seq2seq"
-  #   device: "auto"  # auto / cpu / cuda / mps
-  #   max_length: 32
 
 # ==================== 语义匹配配置 ====================
 semantic_matching:

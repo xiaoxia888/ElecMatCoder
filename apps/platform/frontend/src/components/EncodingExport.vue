@@ -5,16 +5,16 @@
     </div>
     
     <div class="export-buttons">
-      <button class="btn btn-secondary btn-sm" @click="exportCSV">
+      <button class="btn btn-secondary btn-sm" @click="exportCSV" :disabled="!hasEncodings">
         导出 CSV
       </button>
-      <button class="btn btn-primary btn-sm" @click="exportExcel">
+      <button class="btn btn-primary btn-sm" @click="exportExcel" :disabled="!hasEncodings">
         导出 Excel
       </button>
-      <button class="btn btn-secondary btn-sm" @click="exportStage1Dataset">
+      <button class="btn btn-secondary btn-sm" @click="exportStage1Dataset" :disabled="!hasEncodings">
         导出一阶段数据集
       </button>
-      <button class="btn btn-success btn-sm" @click="showImportDialog" :disabled="importing">
+      <button class="btn btn-success btn-sm" @click="showImportDialog" :disabled="importing || !hasEncodings">
         {{ importing ? '导入中...' : '导入氚云' }}
       </button>
     </div>
@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import axios from 'axios'
@@ -59,6 +59,7 @@ const props = defineProps({
 })
 
 const showToast = inject('showToast')
+const hasEncodings = computed(() => Object.keys(props.encodings).length > 0)
 
 // 氚云导入相关状态
 const showH3yunDialog = ref(false)
