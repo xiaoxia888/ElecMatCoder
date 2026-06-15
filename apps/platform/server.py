@@ -51,6 +51,12 @@ from src.material_description_splitter.second_pass import PlatformSecondPassRunn
 # 导入第三方集成模块
 from src.integrations import get_h3yun_client
 
+# 批量任务持久化存储（SQLite，落盘到 data/batch/batch_jobs.db）
+try:
+    from batch_store import BatchJobStore  # 以脚本/uvicorn 方式从 apps/platform 启动
+except ImportError:  # pragma: no cover - 以包方式导入时的兜底
+    from apps.platform.batch_store import BatchJobStore
+
 # 配置日志
 logging.basicConfig(
     level=logging.INFO,
@@ -85,6 +91,13 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """服务启动事件"""
+    # 上次未跑完的任务在重启后视为中断，避免出现僵尸"运行中"
+    try:
+        _batch_store.mark_interrupted_jobs()
+        _batch_store.cleanup()
+    except Exception:
+        logger.exception("批量任务存储初始化清理失败")
+
     platform_config = get_platform_config()
     server_config = platform_config.get("server", {})
     
@@ -121,9 +134,14 @@ _batch_job_active_id: Optional[str] = None
 _batch_job_scheduler_task: Optional[asyncio.Task] = None
 _batch_job_lock = asyncio.Lock()
 
+# 任务结果不再常驻内存，统一落盘到 SQLite（data/batch/batch_jobs.db）
+_batch_store = BatchJobStore(PROJECT_ROOT / "data" / "batch" / "batch_jobs.db")
+
 _BATCH_JOB_KEEP_SECONDS = 60.0
 _BATCH_JOB_TERMINAL_STATUSES = {"finished", "cancelled", "failed"}
 _BATCH_JOB_ACTIVE_STATUSES = {"queued", "running", "cancelling"}
+# 任务列表最多展示的任务条数（按执行时间排序后取前 N）
+_BATCH_JOB_LIST_LIMIT = 30
 
 
 def _merge_nested_dict(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
@@ -140,7 +158,8 @@ def _utc_ts() -> float:
     return time.time()
 
 
-def _batch_job_public(job: Dict[str, Any], *, include_results: bool = True) -> Dict[str, Any]:
+def _batch_job_public(job: Dict[str, Any], *, results: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """构造对外的任务快照。结果体不再来自内存，由调用方从 SQLite 取好后通过 results 传入。"""
     queue_position = 0
     if job.get("status") == "queued":
         try:
@@ -164,136 +183,9 @@ def _batch_job_public(job: Dict[str, Any], *, include_results: bool = True) -> D
         "error": job.get("error", ""),
         "items": copy.deepcopy(job.get("items_meta", [])),
     }
-    if include_results:
-        result["results"] = copy.deepcopy(job.get("results", {}))
+    if results is not None:
+        result["results"] = results
     return result
-
-
-def _build_batch_item_trace_base(
-    *,
-    text: str,
-    processed_text: str,
-    route_info: Dict[str, Any],
-    stage1: Dict[str, Any],
-) -> Dict[str, Any]:
-    return {
-        "original_text": text,
-        "processed_text": processed_text,
-        "route_info": copy.deepcopy(route_info),
-        "stage1": copy.deepcopy(stage1),
-        "difficulty_stage1_before_project": None,
-        "second_pass_before_project": None,
-        "difficulty_stage1_after_project": None,
-        "second_pass_after_project": None,
-        "status": "pending",
-        "skip_reason": "",
-        "error": "",
-    }
-
-
-def _build_batch_item_trace_summary(
-    converted: Optional[Dict[str, Any]],
-    trace: Optional[Dict[str, Any]],
-) -> Dict[str, Any]:
-    converted = converted or {}
-    trace = trace or {}
-    route_info = trace.get("route_info") or converted.get("route_info") or {}
-    stage1_decisions = ((trace.get("stage1") or {}).get("decisions") if isinstance(trace.get("stage1"), dict) else None) or ((converted.get("stage1") or {}).get("decisions") if isinstance(converted.get("stage1"), dict) else {}) or {}
-    fields = converted.get("fields") if isinstance(converted.get("fields"), dict) else {}
-
-    def _source_label(source: str) -> str:
-        source = str(source or "").strip()
-        if source == "finetuned_model":
-            return "微调模型"
-        if source == "rule_extraction":
-            return "规则/正则"
-        if source == "prompt_extraction":
-            return "提示词模型"
-        return source or "未知"
-
-    def _field_source(field: str) -> str:
-        field_obj = fields.get(field) if isinstance(fields, dict) else None
-        stage1_raw = field_obj.get("stage1_raw") if isinstance(field_obj, dict) else None
-        if isinstance(stage1_raw, dict):
-            return str(stage1_raw.get("source", "") or "")
-        return ""
-
-    def _stringify_stage1_value(field: str, value: Any) -> str:
-        if value is None:
-            return ""
-        if field == "TYPE" and isinstance(value, dict):
-            body = str(value.get("BODY", "") or "").strip()
-            return body
-        if field == "MATERIAL" and isinstance(value, list):
-            values = []
-            for item in value:
-                if isinstance(item, dict):
-                    raw = str(item.get("VALUE", "") or "").strip()
-                    if raw:
-                        values.append(raw)
-            return "; ".join(values)
-        if field == "STANDARD" and isinstance(value, list):
-            values = []
-            for item in value:
-                if isinstance(item, dict):
-                    raw = str(item.get("BODY", "") or "").strip()
-                    if raw:
-                        values.append(raw)
-            return "; ".join(values)
-        if isinstance(value, dict):
-            parts = []
-            for key in ("DN", "OD", "INCH", "MM", "SCHEDULE", "SERIES", "BWG"):
-                raw = value.get(key)
-                if isinstance(raw, list):
-                    raw = " | ".join(str(v).strip() for v in raw if str(v).strip())
-                elif raw is None:
-                    raw = ""
-                raw = str(raw or "").strip()
-                if raw:
-                    parts.append(f"{key}: {raw}")
-            return "; ".join(parts)
-        if isinstance(value, list):
-            return "; ".join(str(v).strip() for v in value if str(v).strip())
-        return str(value or "").strip()
-
-    def _stage1_field(field: str, value: Any) -> Dict[str, Any]:
-        source = _field_source(field)
-        return {
-            "value": _stringify_stage1_value(field, value),
-            "source": source,
-            "source_label": _source_label(source),
-        }
-
-    return {
-        "route": {
-            "category": route_info.get("category", ""),
-            "confidence": route_info.get("confidence"),
-            "reason": route_info.get("reason", ""),
-        },
-        "stage1": {
-            "type": _stage1_field("TYPE", stage1_decisions.get("TYPE")),
-            "size": _stage1_field("SIZE", stage1_decisions.get("SIZE")),
-            "thickness": _stage1_field("THICKNESS", stage1_decisions.get("THICKNESS")),
-            "pressure": _stage1_field("PRESSURE", stage1_decisions.get("PRESSURE")),
-            "material": _stage1_field("MATERIAL", stage1_decisions.get("MATERIAL")),
-            "standard": _stage1_field("STANDARD", stage1_decisions.get("STANDARD")),
-        },
-        "split": {
-            "difficulty_before_project": (trace.get("difficulty_stage1_before_project") or {}).get("difficulty", ""),
-            "difficulty_before_project_reason": (trace.get("difficulty_stage1_before_project") or {}).get("reason", ""),
-            "second_pass_before_project": (trace.get("second_pass_before_project") or {}).get("final_level", ""),
-            "second_pass_before_project_reason": (trace.get("second_pass_before_project") or {}).get("reason", ""),
-            "difficulty_after_project": (trace.get("difficulty_stage1_after_project") or {}).get("difficulty", ""),
-            "difficulty_after_project_reason": (trace.get("difficulty_stage1_after_project") or {}).get("reason", ""),
-            "second_pass_after_project": (trace.get("second_pass_after_project") or {}).get("final_level", ""),
-            "second_pass_after_project_reason": (trace.get("second_pass_after_project") or {}).get("reason", ""),
-        },
-        "skip": {
-            "skipped": bool(converted.get("skipped_encoding")),
-            "reason": trace.get("skip_reason", "") or converted.get("skip_reason", ""),
-        },
-        "status": trace.get("status", ""),
-    }
 
 
 async def _batch_job_emit(job: Dict[str, Any], event: Dict[str, Any]) -> None:
@@ -327,7 +219,30 @@ async def _batch_job_cleanup_locked() -> None:
 async def _batch_job_get(job_id: str) -> Optional[Dict[str, Any]]:
     async with _batch_job_lock:
         await _batch_job_cleanup_locked()
-        return _batch_jobs.get(job_id)
+        job = _batch_jobs.get(job_id)
+    if job is not None:
+        return job
+    # 内存中没有（已结束并清理 / 跨进程 / 服务重启后），从 SQLite 恢复只读快照
+    return await asyncio.to_thread(_batch_store.get_job, job_id)
+
+
+def _persist_job_meta(job: Dict[str, Any]) -> None:
+    """把任务的元数据 + 计数同步到 SQLite（结果体走 save_result，不在这里）。"""
+    try:
+        _batch_store.update_job(
+            job["job_id"],
+            status=str(job.get("status", "") or ""),
+            processed=int(job.get("processed", 0) or 0),
+            success_count=int(job.get("success_count", 0) or 0),
+            review_count=int(job.get("review_count", 0) or 0),
+            threshold=job.get("threshold"),
+            error=str(job.get("error", "") or ""),
+            started_at=job.get("started_at"),
+            finished_at=job.get("finished_at"),
+            updated_at=job.get("updated_at"),
+        )
+    except Exception:
+        logger.exception("批量任务元数据持久化失败: job=%s", job.get("job_id"))
 
 
 async def _batch_job_mark_finished(job: Dict[str, Any], status: str, error: str = "") -> None:
@@ -335,6 +250,7 @@ async def _batch_job_mark_finished(job: Dict[str, Any], status: str, error: str 
     job["updated_at"] = _utc_ts()
     job["finished_at"] = _utc_ts()
     job["error"] = str(error or "")
+    await asyncio.to_thread(_persist_job_meta, job)
 
 
 async def _run_batch_job(job_id: str) -> None:
@@ -346,6 +262,7 @@ async def _run_batch_job(job_id: str) -> None:
         job["started_at"] = _utc_ts()
         job["updated_at"] = _utc_ts()
         job["error"] = ""
+    await asyncio.to_thread(_persist_job_meta, job)
     await _batch_job_emit(job, {"type": "start", "snapshot": _batch_job_public(job)})
 
     encoder = get_pipe_encoder()
@@ -360,7 +277,7 @@ async def _run_batch_job(job_id: str) -> None:
     next_index = 0
     converted_results: list[Optional[Dict[str, Any]]] = [None] * total
 
-    async def process_one(order_index: int, item: Dict[str, Any]) -> tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
+    async def process_one(order_index: int, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         text = item.get("text", "")
         preprocess = bool(item.get("preprocess", True))
         processed_text = _preprocessor.process(text) if preprocess else text
@@ -372,12 +289,6 @@ async def _run_batch_job(job_id: str) -> None:
         route_info = _decorate_predict_route_info(predict_result.get("route_info"))
         stage1_snapshot = Stage1DecisionNormalizer.build_snapshot(predict_result)
         stage1 = stage1_snapshot.to_dict()
-        trace = _build_batch_item_trace_base(
-            text=text,
-            processed_text=processed_text,
-            route_info=route_info,
-            stage1=stage1,
-        )
 
         if route_info.get("encoding_enabled") is False:
             converted = EncodeResultPayload(
@@ -397,9 +308,7 @@ async def _run_batch_job(job_id: str) -> None:
             converted["stage1"] = stage1
             converted["difficulty_split"] = None
             converted["second_pass"] = None
-            trace["status"] = "skipped"
-            trace["skip_reason"] = converted.get("skip_reason", "")
-            return converted, trace
+            return converted
 
         extract_confidence = predict_result.get("extract_confidence", {}) or {}
         extract_confidence_v2 = stage1_snapshot.field_meta
@@ -420,10 +329,7 @@ async def _run_batch_job(job_id: str) -> None:
         converted["stage1"] = stage1
         converted = _attach_base_difficulty(converted, str(item.get("project_name", "") or "").strip())
         converted = _attach_second_pass(converted)
-        trace["status"] = "processed"
-        trace["difficulty_stage1_before_project"] = copy.deepcopy(converted.get("difficulty_split"))
-        trace["second_pass_before_project"] = copy.deepcopy(converted.get("second_pass"))
-        return converted, trace
+        return converted
 
     async def worker() -> None:
         nonlocal next_index
@@ -442,9 +348,11 @@ async def _run_batch_job(job_id: str) -> None:
                 order_index = next_index
                 next_index += 1
             item = items[order_index]
+            client_index = int(item.get("client_index", order_index))
             try:
-                converted, trace = await process_one(order_index, item)
+                converted = await process_one(order_index, item)
                 converted_results[order_index] = converted
+                await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, converted)
                 async with _batch_job_lock:
                     current_job = _batch_jobs.get(job_id)
                     if not current_job:
@@ -454,16 +362,13 @@ async def _run_batch_job(job_id: str) -> None:
                         current_job["success_count"] = int(current_job.get("success_count", 0) or 0) + 1
                     if converted and converted.get("need_review"):
                         current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
-                    current_job["results"][str(order_index)] = copy.deepcopy(converted)
-                    current_job["item_traces"][str(order_index)] = copy.deepcopy(trace)
                     current_job["updated_at"] = _utc_ts()
                     snapshot = _batch_job_public(current_job)
                 await _batch_job_emit(job, {
                     "type": "progress",
-                    "index": int(item.get("client_index", order_index)),
+                    "index": client_index,
                     "order_index": order_index,
                     "result": converted,
-                    "trace_summary": _build_batch_item_trace_summary(converted, trace),
                     "snapshot": snapshot,
                 })
             except Exception as exc:
@@ -476,36 +381,21 @@ async def _run_batch_job(job_id: str) -> None:
                     "errors": [str(exc)],
                     "fields": {},
                 }
-                failed_trace = {
-                    "original_text": item.get("text", ""),
-                    "processed_text": "",
-                    "route_info": None,
-                    "stage1": None,
-                    "difficulty_stage1_before_project": None,
-                    "second_pass_before_project": None,
-                    "difficulty_stage1_after_project": None,
-                    "second_pass_after_project": None,
-                    "status": "failed",
-                    "skip_reason": "",
-                    "error": str(exc),
-                }
                 converted_results[order_index] = failed_result
+                await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, failed_result)
                 async with _batch_job_lock:
                     current_job = _batch_jobs.get(job_id)
                     if not current_job:
                         return
                     current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
                     current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
-                    current_job["results"][str(order_index)] = copy.deepcopy(failed_result)
-                    current_job["item_traces"][str(order_index)] = failed_trace
                     current_job["updated_at"] = _utc_ts()
                     snapshot = _batch_job_public(current_job)
                 await _batch_job_emit(job, {
                     "type": "progress",
-                    "index": int(item.get("client_index", order_index)),
+                    "index": client_index,
                     "order_index": order_index,
                     "result": failed_result,
-                    "trace_summary": _build_batch_item_trace_summary(failed_result, failed_trace),
                     "snapshot": snapshot,
                 })
 
@@ -549,23 +439,19 @@ async def _run_batch_job(job_id: str) -> None:
                 continue
             converted["difficulty_split"] = difficulty
             _attach_second_pass(converted)
+            client_index = int(item.get("client_index", order_index))
+            await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, converted)
             async with _batch_job_lock:
                 current_job = _batch_jobs.get(job_id)
                 if not current_job:
                     return
-                current_job["results"][str(order_index)] = copy.deepcopy(converted)
-                trace = current_job["item_traces"].setdefault(str(order_index), {})
-                trace["difficulty_stage1_after_project"] = copy.deepcopy(converted.get("difficulty_split"))
-                trace["second_pass_after_project"] = copy.deepcopy(converted.get("second_pass"))
-                trace["status"] = "finalized"
                 current_job["updated_at"] = _utc_ts()
                 snapshot = _batch_job_public(current_job)
             await _batch_job_emit(job, {
                 "type": "finalize",
-                "index": int(item.get("client_index", order_index)),
+                "index": client_index,
                 "order_index": order_index,
                 "result": converted,
-                "trace_summary": _build_batch_item_trace_summary(converted, trace),
                 "snapshot": snapshot,
             })
 
@@ -629,8 +515,6 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
             }
             for idx, item in enumerate(request.items)
         ],
-        "results": {},
-        "item_traces": {},
         "processed": 0,
         "success_count": 0,
         "review_count": 0,
@@ -645,6 +529,10 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
         "error": "",
         "subscribers": [],
     }
+    # 任务一创建即落盘（结果体随处理逐条 save_result 写入）
+    await asyncio.to_thread(_batch_store.create_job, job)
+    # 新建任务是自然的清理时机：顺带按保留策略清理过期/超量的历史任务，避免长期运行时 DB 无限增长
+    await asyncio.to_thread(_batch_store.cleanup)
     async with _batch_job_lock:
         await _batch_job_cleanup_locked()
         _batch_jobs[job_id] = job
@@ -1110,11 +998,25 @@ def _merge_structural_stage1_fields(
     target = model_output.get("decisions") if isinstance(model_output.get("decisions"), dict) else model_output
     for field in ("SIZE", "THICKNESS", "PRESSURE"):
         value = structural.get(field)
+        if field in ("SIZE", "THICKNESS") and isinstance(value, dict):
+            items_key = f"{field}_ITEMS"
+            items_value = structural.get(items_key)
+            if isinstance(items_value, list) and items_value:
+                value = copy.deepcopy(value)
+                value["_ITEMS"] = copy.deepcopy(items_value)
         target[field] = copy.deepcopy(value)
 
     structural_visible = {
         k: copy.deepcopy(v) for k, v in structural.items() if not str(k).startswith("_")
     }
+    for field in ("SIZE", "THICKNESS"):
+        field_value = target.get(field)
+        if isinstance(field_value, dict):
+            structural_visible[field] = copy.deepcopy(field_value)
+    # 结构字段覆盖后，同步回写 _STRUCTURAL_PROMPT。
+    # 否则 raw_values 仍会读取旧的一阶段原始提示词结果，导致
+    # stage1_raw 与 decisions/stage2_input 出现“同一轮请求两套值”的假差异。
+    model_output["_STRUCTURAL_PROMPT"] = copy.deepcopy(structural_visible)
     structural_status = copy.deepcopy(structural.get("_status", {}) or {})
     structural_errors = copy.deepcopy(structural.get("_errors", {}) or {})
 
@@ -1181,7 +1083,7 @@ def get_ner_confidence_threshold() -> float:
     return ner_config.get("confidence_threshold", 0.9)
 
 
-def get_batch_max_concurrent(default_value: int = 3) -> int:
+def get_batch_max_concurrent(default_value: int = 2) -> int:
     """获取批处理并发上限（最小为1）"""
     platform_config = get_platform_config()
     batch_cfg = platform_config.get("batch_processing", {}) or {}
@@ -1190,6 +1092,13 @@ def get_batch_max_concurrent(default_value: int = 3) -> int:
     except Exception:
         n = default_value
     return max(1, n)
+
+
+def get_show_terminated_jobs(default_value: bool = False) -> bool:
+    """是否在任务列表展示中途停止/失败的任务（默认 False）"""
+    platform_config = get_platform_config()
+    batch_cfg = platform_config.get("batch_processing", {}) or {}
+    return bool(batch_cfg.get("show_terminated_jobs", default_value))
 
 
 class PipeEncodeRequest(BaseModel):
@@ -1346,7 +1255,7 @@ async def get_config():
             "similarity_threshold": semantic_config.get("similarity_threshold", 0.9),
         },
         "batch_processing": {
-            "max_concurrent": int(batch_config.get("max_concurrent", 3)),
+            "max_concurrent": int(batch_config.get("max_concurrent", 2)),
             "progress_interval_ms": int(batch_config.get("progress_interval_ms", 100)),
         },
     }
@@ -1587,14 +1496,24 @@ async def pipe_batch_encode_create_job(request: PipeBatchEncodeRequest):
 
 @app.get("/api/pipe/encode/batch/jobs")
 async def pipe_batch_encode_list_jobs():
+    # 内存中的（运行中 / 刚结束）任务 + SQLite 近期历史任务，按 job_id 去重（内存优先）
     async with _batch_job_lock:
         await _batch_job_cleanup_locked()
-        jobs = [
-            _batch_job_public(job, include_results=False)
-            for job in _batch_jobs.values()
-            if str(job.get("status", "") or "") in _BATCH_JOB_ACTIVE_STATUSES
-        ]
-    jobs.sort(key=lambda item: float(item.get("created_at") or 0.0))
+        mem_jobs = [_batch_job_public(job) for job in _batch_jobs.values()]
+    db_jobs = await asyncio.to_thread(_batch_store.list_recent_jobs, 50)
+    merged: Dict[str, Any] = {job["job_id"]: _batch_job_public(job) for job in db_jobs}
+    for job in mem_jobs:
+        merged[job["job_id"]] = job
+    # 中途停止(cancelled)/失败(failed) 默认不展示，可由配置 batch_processing.show_terminated_jobs 开启（数据始终保留在 DB）。
+    show_terminated = get_show_terminated_jobs()
+    allowed = set(_BATCH_JOB_ACTIVE_STATUSES) | (_BATCH_JOB_TERMINAL_STATUSES if show_terminated else {"finished"})
+    visible = [j for j in merged.values() if str(j.get("status", "") or "") in allowed]
+    # 统一按「执行实际时间」排序（started_at 优先，未开始则回退 created_at），最近的在前；不按状态分组
+    visible.sort(
+        key=lambda item: float(item.get("started_at") or item.get("created_at") or 0.0),
+        reverse=True,
+    )
+    jobs = visible[:_BATCH_JOB_LIST_LIMIT]
     return {"success": True, "jobs": jobs}
 
 
@@ -1603,32 +1522,29 @@ async def pipe_batch_encode_get_job(job_id: str):
     job = await _batch_job_get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="任务不存在或已过期")
-    return {"success": True, "job": _batch_job_public(job)}
+    results = await asyncio.to_thread(_batch_store.get_results, job_id)
+    return {"success": True, "job": _batch_job_public(job, results=results)}
 
 
 @app.get("/api/pipe/encode/batch/jobs/{job_id}/items/{item_index}")
 async def pipe_batch_encode_get_job_item(job_id: str, item_index: int):
+    """单条结果查询：点击描述时按需取该条的完整结果，便于在 F12 中独立查看调试。"""
     job = await _batch_job_get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="任务不存在或已过期")
 
     items_meta = list(job.get("items_meta", []))
     order_index = -1
-    item_meta: Dict[str, Any] | None = None
+    item_meta: Optional[Dict[str, Any]] = None
     for idx, meta in enumerate(items_meta):
         if int(meta.get("index", idx)) == item_index:
             order_index = idx
-            item_meta = copy.deepcopy(meta)
+            item_meta = dict(meta)
             break
     if order_index < 0:
         raise HTTPException(status_code=404, detail="任务条目不存在")
 
-    result = copy.deepcopy(job.get("results", {}).get(str(order_index)))
-    trace = copy.deepcopy(job.get("item_traces", {}).get(str(order_index), {}))
-    item_status = str(trace.get("status", "") or "")
-    if not item_status:
-        item_status = "pending" if result is None else "processed"
-
+    result = await asyncio.to_thread(_batch_store.get_result, job_id, order_index)
     return {
         "success": True,
         "job_id": job_id,
@@ -1636,9 +1552,8 @@ async def pipe_batch_encode_get_job_item(job_id: str, item_index: int):
         "item_index": int(item_index),
         "order_index": order_index,
         "item": item_meta or {"index": int(item_index)},
-        "status": item_status,
+        "status": "pending" if result is None else "processed",
         "result": result,
-        "trace": trace,
     }
 
 

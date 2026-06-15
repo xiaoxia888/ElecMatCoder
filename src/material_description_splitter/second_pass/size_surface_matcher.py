@@ -136,8 +136,8 @@ class SizeSurfaceMatcher:
                     raw=f"LENGTH: {value}MM",
                     value=value,
                     values=[value],
-                    anchored_patterns=[(f"{value}MM", self._compile_mm_pattern(value))],
-                    bare_values=[value],
+                    anchored_patterns=self._build_length_patterns(value),
+                    bare_values=self._build_length_fallback_values(value),
                 )
             )
 
@@ -203,8 +203,8 @@ class SizeSurfaceMatcher:
                             raw=f"LENGTH: {value}MM",
                             value=value,
                             values=[value],
-                            anchored_patterns=[(f"{value}MM", self._compile_mm_pattern(value))],
-                            bare_values=[value],
+                            anchored_patterns=self._build_length_patterns(value),
+                            bare_values=self._build_length_fallback_values(value),
                         )
                     )
         return items
@@ -360,19 +360,34 @@ class SizeSurfaceMatcher:
 
     def _extract_length_items(self, text: str) -> list[ParsedSizeItem]:
         items: list[ParsedSizeItem] = []
-        for match in re.finditer(r'(?i)(\d+(?:\.\d+)?)\s*MM\b', text):
-            value = self._clean_number(match.group(1))
-            raw = match.group(0).strip()
-            items.append(
-                ParsedSizeItem(
-                    field="LENGTH",
-                    raw=raw,
-                    value=value,
-                    values=[value],
-                    anchored_patterns=[(raw, self._compile_mm_pattern(value))],
-                    bare_values=[value],
+        patterns = [
+            re.compile(r'(?i)\bLENGTH\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(MM|毫米|CM|厘米|M|米)?\b'),
+            re.compile(r'(?i)\bLEN\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(MM|毫米|CM|厘米|M|米)?\b'),
+            re.compile(r'(?i)(?<![A-Z0-9])L\s*=\s*(\d+(?:\.\d+)?)\s*(MM|毫米|CM|厘米|M|米)?\b'),
+            re.compile(r'长度\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(MM|毫米|CM|厘米|M|米)?'),
+            re.compile(r'(?i)\bCUT\s*[-]?\s*TO\s*(\d+(?:\.\d+)?)\s*(MM|毫米|CM|厘米|M|米)?\b'),
+            re.compile(r'(?i)(\d+(?:\.\d+)?)\s*MM\s*LENGTH\b'),
+        ]
+        for pattern in patterns:
+            for match in pattern.finditer(text):
+                raw_value = match.group(1)
+                unit = match.group(2) if pattern.groups >= 2 else "MM"
+                value = self._normalize_length_value(raw_value, unit or "")
+                if not value:
+                    continue
+                if self._is_mm_length_unit(unit or "MM") and not self._is_valid_mm_length(value):
+                    continue
+                raw = match.group(0).strip()
+                items.append(
+                    ParsedSizeItem(
+                        field="LENGTH",
+                        raw=raw,
+                        value=value,
+                        values=[value],
+                        anchored_patterns=self._build_length_patterns(value),
+                        bare_values=self._build_length_fallback_values(value),
+                    )
                 )
-            )
         return items
 
     def _extract_single_inch_items(self, text: str) -> list[ParsedSizeItem]:
@@ -487,6 +502,90 @@ class SizeSurfaceMatcher:
             .replace('"', "")
             .replace("″", "")
         )
+
+    @staticmethod
+    def _normalize_decimal_text(value: float) -> str:
+        if abs(value - int(value)) < 1e-9:
+            return str(int(value))
+        return f"{value:.6f}".rstrip("0").rstrip(".")
+
+    @classmethod
+    def _normalize_length_value(cls, value: str, unit: str = "") -> str:
+        text = cls._clean_number(value)
+        if not text:
+            return ""
+        try:
+            numeric = float(text)
+        except ValueError:
+            return ""
+        unit_u = str(unit or "").strip().upper()
+        if unit_u in ("", "MM", "毫米"):
+            return cls._normalize_decimal_text(numeric)
+        if unit_u in ("CM", "厘米"):
+            return cls._normalize_decimal_text(numeric * 10)
+        if unit_u in ("M", "米"):
+            return cls._normalize_decimal_text(numeric * 1000)
+        return cls._normalize_decimal_text(numeric)
+
+    @staticmethod
+    def _is_mm_length_unit(unit: str) -> bool:
+        return str(unit or "").strip().upper() in ("", "MM", "毫米")
+
+    @classmethod
+    def _is_valid_mm_length(cls, value: str) -> bool:
+        try:
+            return float(cls._clean_number(value)) > 100
+        except ValueError:
+            return False
+
+    @classmethod
+    def _build_length_fallback_values(cls, value: str) -> list[str]:
+        if not cls._is_valid_mm_length(value):
+            return []
+        return [cls._clean_number(value)]
+
+    @classmethod
+    def _build_length_patterns(cls, value: str) -> list[tuple[str, re.Pattern[str]]]:
+        mm_text = cls._clean_number(value)
+        if not mm_text:
+            return []
+
+        try:
+            mm_value = float(mm_text)
+        except ValueError:
+            return []
+
+        variants: list[tuple[str, str, str]] = []
+        if cls._is_valid_mm_length(mm_text):
+            variants.append((mm_text, "MM", "MM"))
+            variants.append((mm_text, "毫米", "毫米"))
+
+        cm_value = cls._normalize_decimal_text(mm_value / 10)
+        variants.append((cm_value, "CM", "CM"))
+        variants.append((cm_value, "厘米", "厘米"))
+
+        m_value = cls._normalize_decimal_text(mm_value / 1000)
+        variants.append((m_value, "M", "M"))
+        variants.append((m_value, "米", "米"))
+
+        patterns: list[tuple[str, re.Pattern[str]]] = []
+        seen: set[tuple[str, str]] = set()
+        explicit_templates = [
+            r'(?i)\bLENGTH\s*[:=]?\s*({value})\s*{unit}\b',
+            r'(?i)\bLEN\s*[:=]?\s*({value})\s*{unit}\b',
+            r'(?i)(?<![A-Z0-9])L\s*=\s*({value})\s*{unit}\b',
+            r'长度\s*[:：]?\s*({value})\s*{unit}',
+            r'(?i)\bCUT\s*[-]?\s*TO\s*({value})\s*{unit}\b',
+        ]
+        for numeric_text, unit_text, alias_unit in variants:
+            key = (numeric_text, alias_unit)
+            if key in seen:
+                continue
+            seen.add(key)
+            for template in explicit_templates:
+                pattern = re.compile(template.format(value=re.escape(numeric_text), unit=re.escape(unit_text)))
+                patterns.append((f"{numeric_text}{alias_unit}", pattern))
+        return patterns
 
     @staticmethod
     def _normalize_inch_value(value: str) -> str:

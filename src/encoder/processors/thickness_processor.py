@@ -1131,7 +1131,7 @@ class ThicknessProcessor:
         # 尺寸右侧 x 厚度值：DN20x5.6mm / OD219.1X4.00 / 6"x10mm
         size_spans = list(getattr(size_context, "consumed_spans", None) or getattr(size_context, "matched_spans", []) or [])
         right_mm_pattern = re.compile(
-            r'(?i)^\s*[xX×*]\s*(?:(\d+(?:\.\d+)?)\s*(MM|毫米)|(\d+\.\d+)(?!\s*[A-Za-z]))'
+            r'(?i)^\s*[xX×*]\s*(?:(\d+(?:\.\d+)?)\s*(MM|毫米)|(\d+\.\d+)(?![\dA-Za-z]))'
         )
         for size_start, size_end in size_spans:
             if not (0 <= size_end < len(normalized)):

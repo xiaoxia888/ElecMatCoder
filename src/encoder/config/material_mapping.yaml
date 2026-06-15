@@ -7,6 +7,12 @@ value_mapping:
   - 12Cr5MoNT
   15CrMo:
   - 15CrMo
+  B60ZN:
+  - B60ZN
+  B60:
+  - B60
+  PP:
+  - FRPP
   15CrMoG:
   - 15CrMoG
   15CrMoIII:
@@ -315,10 +321,10 @@ value_mapping:
   - N04400
   P11:
   - ASTM A335 Gr.P11
-  PTFE/CS:
-  - PTFE/CS
-  PVCU:
+  UPVC:
   - PVC-U
+  - UPVC
+  - PVCU
   Q235B:
   - Q235B
   Q245R:

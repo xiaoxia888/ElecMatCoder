@@ -474,8 +474,8 @@ const runningBatchJobs = ref([])
 const filter = ref('all')
 const isImportCollapsed = ref(true)
 const dataListRef = ref(null)
-const defaultMaxConcurrent = ref(3)
-const maxConcurrent = ref(3)
+const defaultMaxConcurrent = ref(2)
+const maxConcurrent = ref(2)
 const showStopConfirmDialog = ref(false)
 const isStopSubmitting = ref(false)
 const showEditDialog = ref(false)
@@ -914,8 +914,8 @@ onUnmounted(() => {
 async function loadBatchConfig() {
   try {
     const res = await axios.get('/api/config')
-    const backendDefault = Number(res.data?.batch_processing?.max_concurrent || 3)
-    defaultMaxConcurrent.value = Number.isFinite(backendDefault) ? Math.max(1, Math.min(16, backendDefault)) : 3
+    const backendDefault = Number(res.data?.batch_processing?.max_concurrent || 2)
+    defaultMaxConcurrent.value = Number.isFinite(backendDefault) ? Math.max(1, Math.min(16, backendDefault)) : 2
 
     const saved = Number(localStorage.getItem('encoding_max_concurrent'))
     if (Number.isFinite(saved) && saved >= 1) {
@@ -924,9 +924,9 @@ async function loadBatchConfig() {
       maxConcurrent.value = defaultMaxConcurrent.value
     }
   } catch (e) {
-    defaultMaxConcurrent.value = 3
+    defaultMaxConcurrent.value = 2
     const saved = Number(localStorage.getItem('encoding_max_concurrent'))
-    maxConcurrent.value = Number.isFinite(saved) && saved >= 1 ? Math.max(1, Math.min(16, Math.trunc(saved))) : 3
+    maxConcurrent.value = Number.isFinite(saved) && saved >= 1 ? Math.max(1, Math.min(16, Math.trunc(saved))) : 2
   }
 }
 

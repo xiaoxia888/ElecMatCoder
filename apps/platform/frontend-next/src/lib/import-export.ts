@@ -3,7 +3,12 @@ import { downloadBlob, formatPercent } from '@/lib/utils'
 import type { EncodingResult, FieldPayload, ImportedRow } from '@/types/encoding'
 import { formatFieldCode, formatFieldValue, getDifficultyLevel, getRouteReason } from '@/lib/formatters'
 
-const DIFFICULTY_HEADER = '分流最终难度（0=困难，1=简单，2=二次简单）'
+const DIFFICULTY_HEADER = '分流最终难度（0=困难，1=中等，2=简单）'
+
+// 导出时占位符 — 视为空值
+function blankDash(value: string): string {
+  return value === '—' ? '' : value
+}
 
 const EXPORT_FIELDS: Array<{ key: string; label: string }> = [
   { key: 'TYPE', label: 'TYPE' },
@@ -29,8 +34,10 @@ function buildExportRecord(item: ImportedRow, result: EncodingResult): Record<st
   }
   EXPORT_FIELDS.forEach(({ key, label }) => {
     const field = result.fields?.[key] as FieldPayload | undefined
-    record[`${label}_原始结果`] = field ? formatFieldValue(key, field.stage1_raw?.value) : ''
-    record[`${label}_原始编码`] = field ? formatFieldCode(field) : ''
+    // 取二阶段实际输入作为字段值（回退到一阶段原始识别），与最终编码对齐
+    const fieldValue = field?.stage2_input?.value ?? field?.stage1_raw?.value
+    record[`${label}_原始结果`] = field ? blankDash(formatFieldValue(key, fieldValue)) : ''
+    record[`${label}_原始编码`] = field ? blankDash(formatFieldCode(field)) : ''
   })
   return record
 }

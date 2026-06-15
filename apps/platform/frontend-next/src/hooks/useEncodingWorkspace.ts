@@ -24,8 +24,8 @@ export function useEncodingWorkspace() {
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null)
   const [currentIndex, setCurrentIndex] = useState(-1)
   const [filter, setFilter] = useState<'all' | 'review' | 'hard'>('all')
-  const [defaultMaxConcurrent, setDefaultMaxConcurrent] = useState(3)
-  const [maxConcurrent, setMaxConcurrent] = useState(3)
+  const [defaultMaxConcurrent, setDefaultMaxConcurrent] = useState(2)
+  const [maxConcurrent, setMaxConcurrent] = useState(2)
   const [isEncodingSingle, setIsEncodingSingle] = useState(false)
   const [isEncodingBatch, setIsEncodingBatch] = useState(false)
   const [isStoppingBatch, setIsStoppingBatch] = useState(false)
@@ -40,7 +40,7 @@ export function useEncodingWorkspace() {
       .getConfig()
       .then((config) => {
         if (!mounted) return
-        const nextDefault = clamp(Number(config.batch_processing?.max_concurrent || 3), 1, 16)
+        const nextDefault = clamp(Number(config.batch_processing?.max_concurrent || 2), 1, 16)
         setDefaultMaxConcurrent(nextDefault)
         const saved = Number(window.localStorage.getItem('encoding_max_concurrent'))
         setMaxConcurrent(Number.isFinite(saved) && saved >= 1 ? clamp(saved, 1, 16) : nextDefault)
@@ -48,7 +48,7 @@ export function useEncodingWorkspace() {
       .catch(() => {
         if (!mounted) return
         const saved = Number(window.localStorage.getItem('encoding_max_concurrent'))
-        setMaxConcurrent(Number.isFinite(saved) && saved >= 1 ? clamp(saved, 1, 16) : 3)
+        setMaxConcurrent(Number.isFinite(saved) && saved >= 1 ? clamp(saved, 1, 16) : 2)
       })
     // 仅拉取任务列表用于展示，不自动加载任何任务的数据（保持页面空白，需手动点击任务）
     api
@@ -78,7 +78,8 @@ export function useEncodingWorkspace() {
     const values = Object.values(results)
     return {
       total: values.length,
-      success: values.filter((item) => item.success && !item.need_review).length,
+      // 只要编码成功就算成功（含需审核）
+      success: values.filter((item) => item.success).length,
       review: values.filter((item) => item.need_review).length,
     }
   }, [results])
@@ -93,7 +94,6 @@ export function useEncodingWorkspace() {
     const list: TaskInfo[] = jobs.map((job) => {
       const total = Number(job.total || 0)
       const processed = Number(job.processed || 0)
-      const resultValues = Object.values(job.results || {})
       const st = String(job.status || '')
       const running = ['queued', 'running', 'cancelling'].includes(st)
       const status: TaskInfo['status'] = running ? 'running' : processed === 0 ? 'idle' : processed >= total && total > 0 ? 'done' : 'partial'
@@ -101,30 +101,46 @@ export function useEncodingWorkspace() {
         id: job.job_id,
         name: `批量任务 ${job.job_id.slice(0, 6)}`,
         total,
-        success: resultValues.filter((r) => r.success && !r.need_review).length,
-        review: resultValues.filter((r) => r.need_review).length,
+        // 计数来自服务端汇总字段（列表接口不再下发完整 results）
+        success: Number(job.success_count || 0),
+        review: Number(job.review_count || 0),
         progress: total > 0 ? Math.round((processed / total) * 100) : 0,
         status,
       }
     })
 
-    // 当前正在查看/运行的任务，用实时进度覆盖
     if (activeTaskId) {
       const idx = list.findIndex((t) => t.id === activeTaskId)
-      const total = dataList.length || (idx >= 0 ? list[idx].total : 0)
-      const done = stats.total
-      const live: TaskInfo = {
-        id: activeTaskId,
-        name: idx >= 0 ? list[idx].name : taskName || '当前任务',
-        total,
-        success: stats.success,
-        review: stats.review,
-        progress: isEncodingBatch ? progress : total > 0 ? Math.round((done / total) * 100) : 0,
-        status: isEncodingBatch ? 'running' : done === 0 ? 'idle' : done >= total && total > 0 ? 'done' : 'partial',
+      if (idx >= 0) {
+        // 后端已有该任务：仅当本地正在运行该批量任务时，才用实时进度覆盖；
+        // 查看已完成/历史任务时保留后端数据，避免切换瞬间本地结果清空导致进度条闪烁
+        if (isEncodingBatch) {
+          list[idx] = {
+            ...list[idx],
+            total: dataList.length || list[idx].total,
+            success: stats.success,
+            review: stats.review,
+            progress,
+            status: 'running',
+          }
+        }
+      } else {
+        // 本地导入、尚未提交为后端任务
+        const total = dataList.length
+        const done = stats.total
+        list.unshift({
+          id: activeTaskId,
+          name: taskName || '当前导入',
+          total,
+          success: stats.success,
+          review: stats.review,
+          progress: isEncodingBatch ? progress : total > 0 ? Math.round((done / total) * 100) : 0,
+          status: isEncodingBatch ? 'running' : done === 0 ? 'idle' : done >= total && total > 0 ? 'done' : 'partial',
+        })
       }
-      if (idx >= 0) list[idx] = live
-      else list.unshift({ ...live, name: taskName || '当前导入' })
     }
+    // 是否展示中途停止/失败的任务由后端配置（batch_processing.show_terminated_jobs）决定，
+    // 前端直接展示后端下发的任务，不再额外过滤
     return list
   }, [jobs, activeTaskId, dataList.length, stats, isEncodingBatch, progress, taskName])
 
@@ -202,7 +218,11 @@ export function useEncodingWorkspace() {
       return
     }
     if (id === activeTaskId) return
+    // 切换任务前：停掉上一个任务的实时流并清空数据，避免跨任务结果串台
+    clearStream()
     setActiveTaskId(id)
+    setResults({})
+    setDataList([])
     setCurrentIndex(-1)
     try {
       const res = await api.getBatchJob(id)
@@ -256,6 +276,8 @@ export function useEncodingWorkspace() {
     if (dataList.length === 0) return
     setIsEncodingBatch(true)
     setError('')
+    // 新任务从零开始，清掉上一个任务可能残留的结果，避免计数/展示串台
+    setResults({})
     try {
       const job = await api.createBatchJob({
         items: dataList.map((item) => ({
@@ -296,14 +318,15 @@ export function useEncodingWorkspace() {
 
   async function selectItem(index: number) {
     setCurrentIndex(index)
-    if (activeJob?.job_id) {
+    // 服务端任务：点击描述时按需查询该条结果（F12 可独立查看该条请求/响应），并写回缓存
+    if (activeTaskId && activeTaskId !== 'local') {
       try {
-        const detail = await api.getBatchJobItem(activeJob.job_id, index)
+        const detail = await api.getBatchJobItem(activeTaskId, index)
         if (detail.result) {
           setResults((prev) => ({ ...prev, [index]: detail.result! }))
         }
       } catch {
-        // ignore detail miss
+        // 单条查询失败不影响切换
       }
     }
   }
@@ -317,6 +340,13 @@ export function useEncodingWorkspace() {
   }
   const goPrev = () => goRelative(-1)
   const goNext = () => goRelative(1)
+
+  // 跳转到第 position 条（1 基，基于全部数据，超出范围自动夹紧）
+  function goTo(position: number) {
+    if (dataList.length === 0) return
+    const clamped = Math.max(1, Math.min(dataList.length, Math.floor(position)))
+    void selectItem(dataList[clamped - 1].index)
+  }
 
   // 键盘左右方向键切换上一条/下一条
   useEffect(() => {
@@ -385,6 +415,7 @@ export function useEncodingWorkspace() {
     setCurrentIndex: selectItem,
     goPrev,
     goNext,
+    goTo,
     getItemStatus,
     getItemDifficulty,
   }

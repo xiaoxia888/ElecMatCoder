@@ -116,7 +116,8 @@ class ThicknessSurfaceMatcher:
         raw_text = str(text or "")
         upper_text = raw_text.upper()
         for value in item.bare_values:
-            pattern = re.compile(rf'(?<!\d)({re.escape(value)})(?!\d)', re.IGNORECASE)
+            # Prevent integer items like `5` from matching the tail of decimal values like `4.5`.
+            pattern = re.compile(rf'(?<![\d.])({re.escape(value)})(?![\d.])', re.IGNORECASE)
             for match in pattern.finditer(upper_text):
                 start = match.start(1)
                 end = match.end(1)
@@ -292,10 +293,28 @@ class ThicknessSurfaceMatcher:
 
     @staticmethod
     def _build_mm_patterns(value: str) -> list[tuple[str, re.Pattern[str]]]:
+        number_pattern = ThicknessSurfaceMatcher._build_equivalent_numeric_pattern(value)
         return [
-            (f"{value}MM", re.compile(rf'(?<!\d)({re.escape(value)}\s*MM)(?![A-Z0-9])', re.IGNORECASE)),
-            (f"{value}THK", re.compile(rf'(?<![A-Z0-9])(THK\s*=?\s*{re.escape(value)})(?!\d)', re.IGNORECASE)),
+            # 数值等价匹配：8 可命中 8mm / 8.0mm / 8.00mm，
+            # 但仍不能误命中 18mm 或 4.8mm 的尾部。
+            (f"{value}MM", re.compile(rf'(?<![\d.])(({number_pattern})\s*MM)(?![A-Z0-9.])', re.IGNORECASE)),
+            (f"{value}THK", re.compile(rf'(?<![A-Z0-9])(THK\s*=?\s*({number_pattern}))(?!\d)', re.IGNORECASE)),
         ]
+
+    @staticmethod
+    def _build_equivalent_numeric_pattern(value: str) -> str:
+        text = str(value or "").strip()
+        if not text:
+            return re.escape(text)
+
+        if "." not in text:
+            return rf"{re.escape(text)}(?:\.0+)?"
+
+        integer, decimal = text.split(".", 1)
+        decimal = decimal.rstrip("0")
+        if not decimal:
+            return rf"{re.escape(integer)}(?:\.0+)?"
+        return rf"{re.escape(integer)}\.{re.escape(decimal)}0*"
 
     @staticmethod
     def _overlaps_consumed(start: int, end: int, consumed_spans: list[tuple[int, int]]) -> bool:

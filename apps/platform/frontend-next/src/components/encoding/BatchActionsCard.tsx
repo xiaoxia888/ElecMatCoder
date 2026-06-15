@@ -75,9 +75,7 @@ export function BatchActionsCard(props: BatchActionsCardProps) {
                   <span>
                     {task.progress}% · {task.total} 条
                   </span>
-                  <span>
-                    成功 {task.success} · 待审 {task.review}
-                  </span>
+                  <span>成功 {task.success}</span>
                 </div>
               </button>
             )

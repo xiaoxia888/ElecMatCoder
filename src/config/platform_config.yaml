@@ -144,7 +144,7 @@ ner:
         
         thickness_prompt_version: "v3"       # v1=现有分层提示词；v2=旧版原子厚度提示词；v3=新版三段提示词（size/thickness/pressure 一起切换）
         api: "chat_completions"              # openai_compatible 可选: chat_completions / openai-completions
-        timeout: 30
+        timeout: 60
         temperature: 0.0
         max_tokens: 768
         max_workers: 1
@@ -183,8 +183,10 @@ semantic_matching:
 
 # ==================== 批量处理配置 ====================
 batch_processing:
-  max_concurrent: 3
+  max_concurrent: 2
   progress_interval_ms: 100
+  # 是否在任务列表展示「中途停止/失败」的任务（默认 false 只展示进行中与正常完成的任务，开启后也展示已取消/失败的任务）
+  show_terminated_jobs: true
 
 # ==================== 日志配置 ====================
 logging:

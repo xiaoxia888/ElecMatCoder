@@ -135,7 +135,9 @@ class StructuralPromptExtractor:
         thickness_context_items = self._extract_context_thickness_items(context)
 
         try:
-            results["size_length"] = self._generate(self.size_length_prompt, self._build_user_content(text))
+            # 尺寸这一步也带上已识别壁厚上下文，便于在「外径x壁厚」等结构里反推尺寸
+            size_user = self._build_user_content(text, thickness_items=thickness_context_items)
+            results["size_length"] = self._generate(self.size_length_prompt, size_user)
             statuses["size_length"] = "ok"
             usage["size_length"] = dict(self._last_usage or {})
         except Exception as exc:
@@ -234,10 +236,7 @@ class StructuralPromptExtractor:
                 if key == "LENGTH":
                     continue
                 for value in cls._normalize_list(structured.get(key)):
-                    text_value = value if str(value).upper().startswith(key) or key != "DN" else f"DN{value}"
-                    if key == "OD" and not str(value).upper().startswith("OD"):
-                        text_value = f"OD{value}"
-                    collected.append({"type": key, "value": text_value})
+                    collected.append({"type": key, "value": str(value)})
             return cls._normalize_items(collected, cls.ITEM_TYPES["SIZE_ITEMS"])
         return []
 
@@ -550,8 +549,8 @@ class StructuralPromptExtractor:
             result.append(text)
         return result
 
-    @staticmethod
-    def _normalize_items(value: Any, allowed_types: set[str]) -> List[Dict[str, str]]:
+    @classmethod
+    def _normalize_items(cls, value: Any, allowed_types: set[str]) -> List[Dict[str, str]]:
         if value in (None, "", []):
             return []
         if not isinstance(value, list):
@@ -562,7 +561,7 @@ class StructuralPromptExtractor:
             if not isinstance(item, dict):
                 continue
             item_type = str(item.get("type", "")).strip().upper()
-            item_value = str(item.get("value", "")).strip()
+            item_value = cls._normalize_item_value(item_type, item.get("value", ""))
             if not item_type or not item_value or item_type not in allowed_types:
                 continue
             key = (item_type, item_value)
@@ -571,6 +570,47 @@ class StructuralPromptExtractor:
             seen.add(key)
             result.append({"type": item_type, "value": item_value})
         return result
+
+    @staticmethod
+    def _normalize_item_value(item_type: str, raw_value: Any) -> str:
+        text = str(raw_value or "").strip()
+        if not text:
+            return ""
+
+        kind = str(item_type or "").strip().upper()
+        normalized = text.replace("”", "\"").replace("“", "\"").replace("″", "\"").strip()
+
+        if kind == "DN":
+            matched = re.fullmatch(r'(?i)DN\s*(\d+(?:\.\d+)?)', normalized)
+            if matched:
+                return matched.group(1)
+            return normalized
+
+        if kind == "OD":
+            matched = re.fullmatch(r'(?i)(?:OD|[ΦφФфØø])\s*(\d+(?:\.\d+)?)', normalized)
+            if matched:
+                return matched.group(1)
+            return normalized
+
+        if kind == "INCH":
+            normalized = re.sub(r'(?i)^NPS\s*', '', normalized)
+            if normalized.endswith('"'):
+                normalized = normalized[:-1].strip()
+            return re.sub(r'\s+', '', normalized)
+
+        if kind == "MM":
+            matched = re.fullmatch(r'(\d+(?:\.\d+)?)(?:\s*MM)?', normalized, flags=re.IGNORECASE)
+            if matched:
+                return matched.group(1)
+            return normalized.upper()
+
+        if kind == "BWG":
+            matched = re.fullmatch(r'(?i)(?:BWG\s*)?(\d+(?:\.\d+)?)', normalized)
+            if matched:
+                return matched.group(1)
+            return normalized.upper()
+
+        return normalized.upper() if kind in {"SCHEDULE", "SERIES"} else normalized
 
     @staticmethod
     def _group_items(items: List[Dict[str, str]], keys: tuple[str, ...]) -> Dict[str, List[str]]:

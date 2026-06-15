@@ -2464,6 +2464,17 @@ class PipeEncoderBase:
 
             raw_value = self._normalize_field_value_for_stage2(field_type, raw_value)
             if not raw_value:
+                if field_type in {'SIZE', 'THICKNESS', 'PRESSURE'}:
+                    raw_stage1 = raw_entities_snapshot.get(field_type)
+                    final_stage1 = stage1_final_snapshot.get(field_type)
+                    if raw_stage1 not in (None, "", [], {}) or final_stage1 not in (None, "", [], {}):
+                        logger.warning(
+                            "[编码前差异][%s] 一阶段原始识别有值，但送编码前为空。raw_stage1=%s | stage1_final=%s | original_text=%s",
+                            field_type,
+                            raw_stage1,
+                            final_stage1,
+                            original_text,
+                        )
                 continue
 
             if isinstance(raw_value, list):
@@ -2503,6 +2514,15 @@ class PipeEncoderBase:
                 field_result = self._process_standard_multi(values, modifier_map, original_text=original_text)
             else:
                 field_result = self._process_field_multi(field_type, values, original_text=original_text)
+
+            if field_type in {'SIZE', 'THICKNESS', 'PRESSURE'} and not field_result.code:
+                logger.warning(
+                    "[编码结果为空][%s] 送编码值=%s | stage2_input=%s | original_text=%s",
+                    field_type,
+                    values,
+                    field_result.stage2_input,
+                    original_text,
+                )
 
             field_extract_conf = self._get_field_extract_confidence(
                 field_type,

@@ -14,8 +14,11 @@ from .models import DifficultyFeature, GlueHit
 
 LEFT_RIGHT_SEPARATORS = set(" \t\r\n,;，；")
 RIGHT_SUFFIX_PATTERNS = (
-    re.compile(r"\((?:[IVX]{1,4}|[A-Z]{1,3}|\d{4})\)"),
-    re.compile(r"(?:IA|IB|II|III|IV|A|B)"),
+    (re.compile(r"\((?:[IVX]{1,4}|[A-Z]{1,3}|\d{4})\)"), False),
+    # Series / SER 视为规范合法后缀表达，可继续带常见等级尾缀。
+    # 例如 GB/T12459Series II、GB/T12459SER II、GB/T12459SeriesA。
+    (re.compile(r"(?i)(?:SER(?:IES)?)\s*(?:IA|IB|II|III|IV|A|B)?"), True),
+    (re.compile(r"(?:IA|IB|II|III|IV|A|B)"), True),
 )
 
 
@@ -101,13 +104,12 @@ class StandardGlueDetector:
                 matched = True
                 continue
 
-            for pattern in RIGHT_SUFFIX_PATTERNS:
+            for pattern, require_boundary in RIGHT_SUFFIX_PATTERNS:
                 m = pattern.match(tail)
                 if not m:
                     continue
-                # bare suffix must stop at a boundary
                 next_pos = pos + len(m.group(0))
-                if pattern.pattern == RIGHT_SUFFIX_PATTERNS[-1].pattern:
+                if require_boundary:
                     if next_pos < len(text) and text[next_pos].isalnum():
                         continue
                 pos = next_pos

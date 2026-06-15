@@ -467,6 +467,8 @@ class Stage1FieldOrchestrator:
                     items_value = structural_result.get(items_key)
                     if isinstance(items_value, list) and items_value:
                         field_value["_ITEMS"] = copy.deepcopy(items_value)
+                if isinstance(structural_visible, dict):
+                    structural_visible[field] = copy.deepcopy(field_value)
                 decisions[field] = field_value
                 extract_confidence[field] = 1.0 if not _is_empty_structural_value(field, structural_result.get(field)) else 0.0
                 extract_confidence_v2[field] = self._build_structural_field_confidence_v2(

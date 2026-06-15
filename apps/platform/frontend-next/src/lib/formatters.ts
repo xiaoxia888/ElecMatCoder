@@ -2,8 +2,8 @@ import type { EncodingResult, FieldPayload, JsonValue } from '@/types/encoding'
 
 const DIFFICULTY_LABELS: Record<number, string> = {
   0: '困难',
-  1: '简单',
-  2: '二次简单',
+  1: '中等',
+  2: '简单',
 }
 
 export function getDifficultyLevel(result?: EncodingResult): number | null {
@@ -108,6 +108,8 @@ function formatStandardItem(item: JsonValue): string {
 }
 
 function formatPressureValue(value: JsonValue | undefined): string {
+  // 直接是字符串/标量（如 "PN16"）时原样返回
+  if (!isObject(value as JsonValue)) return s(value)
   const items = Array.isArray(asObj(value).items) ? (asObj(value).items as JsonValue[]) : []
   return items
     .map((item) => {
@@ -188,24 +190,55 @@ export function getDifficultyLabel(result?: EncodingResult) {
 export function getDifficultyVariant(result?: EncodingResult) {
   const level = getDifficultyLevel(result)
   if (level === 0) return 'danger' as const
-  if (level === 1) return 'success' as const
-  if (level === 2) return 'accent' as const
+  if (level === 1) return 'caution' as const
+  if (level === 2) return 'success' as const
   return 'neutral' as const
 }
 
 export function getRouteReason(result?: EncodingResult) {
-  if (result?.second_pass?.final_level != null && result?.difficulty_split?.reason_text) {
-    return result.difficulty_split.reason_text
+  const finalLevel = getDifficultyLevel(result)
+  const stage1ReasonText = result?.difficulty_split?.reason_text?.trim()
+  const stage1Reasons = Array.isArray(result?.difficulty_split?.reasons)
+    ? result!.difficulty_split!.reasons.map((item) => String(item).trim()).filter(Boolean)
+    : []
+  const stage1Reason = stage1ReasonText || stage1Reasons.join(' | ')
+  const stage1Error = Array.isArray(result?.errors) && result.errors.length > 0 ? result.errors[0] : ''
+
+  if (finalLevel === 0) {
+    if (stage1Reason) return stage1Reason
+    if (stage1Error) return stage1Error
+    return '未提供一阶段分流原因'
   }
-  if (result?.difficulty_split?.reason_text) return result.difficulty_split.reason_text
-  if (Array.isArray(result?.errors) && result.errors.length > 0) return result.errors[0]
+
+  const secondPassResults = result?.second_pass?.results
+  if (secondPassResults && typeof secondPassResults === 'object') {
+    const reasonParts = Object.entries(secondPassResults)
+      .map(([field, payload]) => {
+        if (!payload || typeof payload !== 'object') return ''
+        const reason = typeof payload.reason === 'string' ? payload.reason.trim() : ''
+        if (!reason) return ''
+        const passed = Boolean(payload.passed)
+        return passed ? '' : `${field}: ${reason}`
+      })
+      .filter(Boolean)
+    if (reasonParts.length > 0) return reasonParts.join(' | ')
+  }
+
+  if (finalLevel === 1 || result?.second_pass?.final_level != null) {
+    return '未提供二次分流原因'
+  }
+
+  if (finalLevel === 2) return '无需二次分流原因'
+  if (stage1Reason) return stage1Reason
+  if (stage1Error) return stage1Error
   return '未提供原因说明'
 }
 
 export function getRoutingStageText(result?: EncodingResult) {
   if (result?.second_pass?.final_level == null) return '仅一阶段判定'
-  const stage1Level = result?.second_pass?.stage1_level
+  const stage1Level = result?.second_pass?.stage1_level ?? result?.second_pass?.stage1_difficulty
   const finalLevel = result?.second_pass?.final_level
+  if (stage1Level === 0) return '一阶段已判困难，未进入二次分流'
   if (stage1Level === finalLevel) return '一阶段直接判定'
   return '一阶段通过后触发二次分流'
 }

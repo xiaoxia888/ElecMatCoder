@@ -1,0 +1,20 @@
+FROM /tmp/contract-llm-fittings-q8.gguf
+
+TEMPLATE """{{- if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{- range .Messages }}{{- if eq .Role "system" }}<|im_start|>system
+{{ .Content }}<|im_end|>
+{{- else if eq .Role "user" }}<|im_start|>user
+{{ .Content }}<|im_end|>
+<|im_start|>assistant
+{{- else if eq .Role "assistant" }}{{ .Content }}<|im_end|>
+{{- end }}{{- end }}"""
+
+SYSTEM """"""
+
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "<|im_start|>"
+PARAMETER num_ctx 4096
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER num_predict 256

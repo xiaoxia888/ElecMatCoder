@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import type { EncodingResult, ImportedRow } from '@/types/encoding'
 
 interface DescriptionCardProps {
@@ -10,13 +11,29 @@ interface DescriptionCardProps {
   onReencode: () => void
   onPrev: () => void
   onNext: () => void
+  onJump: (position: number) => void
 }
 
-export function DescriptionCard({ currentItem, currentResult, dataCount, currentIndex, isEncodingSingle, onReencode, onPrev, onNext }: DescriptionCardProps) {
+export function DescriptionCard({ currentItem, currentResult, dataCount, currentIndex, isEncodingSingle, onReencode, onPrev, onNext, onJump }: DescriptionCardProps) {
   const rawText = currentItem?.text || ''
   const processed = currentResult?.processed_text || ''
   // 格式化描述与原始描述一致时不重复展示
   const processedText = processed && processed !== rawText ? processed : ''
+
+  // 页码跳转输入（受控，跟随当前条目同步）
+  const [pageInput, setPageInput] = useState(String(currentIndex + 1))
+  useEffect(() => {
+    setPageInput(String(currentIndex + 1))
+  }, [currentIndex])
+
+  function commitJump() {
+    const next = parseInt(pageInput, 10)
+    if (Number.isFinite(next) && next >= 1) {
+      onJump(next)
+    } else {
+      setPageInput(String(currentIndex + 1))
+    }
+  }
 
   return (
     <section className="rounded-xl border border-line bg-white p-4 shadow-panel">
@@ -34,8 +51,26 @@ export function DescriptionCard({ currentItem, currentResult, dataCount, current
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <span className="px-1 tabular-nums">
-                #{currentIndex + 1} / {dataCount}
+              <span className="flex items-center gap-1 px-1 tabular-nums">
+                #
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={pageInput}
+                  onChange={(event) => setPageInput(event.target.value.replace(/[^0-9]/g, ''))}
+                  onFocus={(event) => event.target.select()}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      commitJump()
+                      event.currentTarget.blur()
+                    }
+                  }}
+                  onBlur={commitJump}
+                  disabled={!currentItem}
+                  title="输入行号后回车跳转"
+                  className="w-14 rounded-md border border-line bg-canvas px-1 py-0.5 text-center text-[13px] tabular-nums text-ink outline-none transition focus:border-accent disabled:opacity-40"
+                />
+                / {dataCount}
               </span>
               <button
                 type="button"

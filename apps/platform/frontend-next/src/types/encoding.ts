@@ -63,9 +63,14 @@ export interface EncodingResult {
   } | null
   second_pass?: {
     stage1_level?: number | null
+    stage1_difficulty?: number | null
     final_level?: number | null
     skipped_fields?: Record<string, string>
-    results?: Record<string, unknown>
+    results?: Record<string, {
+      passed?: boolean
+      reason?: string
+      [key: string]: unknown
+    }>
   } | null
   errors?: string[]
   warnings?: string[]
@@ -76,6 +81,8 @@ export interface BatchJobSummary {
   status: string
   total: number
   processed: number
+  success_count?: number
+  review_count?: number
   max_concurrent?: number
   queue_position?: number | null
   created_at?: number

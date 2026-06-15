@@ -69,6 +69,7 @@ export function EncodingWorkspace() {
                 onReencode={workspace.encodeCurrentItem}
                 onPrev={workspace.goPrev}
                 onNext={workspace.goNext}
+                onJump={workspace.goTo}
               />
             </div>
             <div className="shrink-0">

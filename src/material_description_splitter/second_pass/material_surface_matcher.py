@@ -153,9 +153,30 @@ class MaterialSurfaceMatcher:
         escaped = re.escape(alias.upper())
         if any("\u4e00" <= ch <= "\u9fff" for ch in alias):
             pattern = rf"({escaped})"
-        else:
+        elif alias.isdigit() or alias.isalpha():
             pattern = rf"(?<![{BOUNDARY_CLASS}])({escaped})(?![{BOUNDARY_CLASS}])"
+        else:
+            # 混合字母数字材质采用非对称边界：
+            # - 若首字符是字母，则左侧不允许继续粘字母
+            # - 若首字符是数字，则左侧不允许继续粘数字
+            # - 若尾字符是字母，则右侧不允许继续粘字母
+            # - 若尾字符是数字，则右侧不允许继续粘数字
+            #
+            # 这样 CF415GB/T13401 可视为合法命中，
+            # 但像 ACF415 / CF4157 这种同类字符继续粘连仍会被挡住。
+            left_guard = MaterialSurfaceMatcher._build_side_guard(alias[0], is_left=True)
+            right_guard = MaterialSurfaceMatcher._build_side_guard(alias[-1], is_left=False)
+            pattern = rf"{left_guard}({escaped}){right_guard}"
         return re.compile(pattern, re.IGNORECASE)
+
+    @staticmethod
+    def _build_side_guard(ch: str, *, is_left: bool) -> str:
+        upper = str(ch or "").upper()
+        if upper.isalpha():
+            return r"(?<![A-Z])" if is_left else r"(?![A-Z])"
+        if upper.isdigit():
+            return r"(?<!\d)" if is_left else r"(?!\d)"
+        return rf"(?<![{BOUNDARY_CLASS}])" if is_left else rf"(?![{BOUNDARY_CLASS}])"
 
     @staticmethod
     def _prune_overlaps(hits: list[MaterialSurfaceHit]) -> list[MaterialSurfaceHit]:

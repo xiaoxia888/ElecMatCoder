@@ -271,25 +271,23 @@ class SizeProcessor:
             return False
         return int(text) in self._common_dn_values
     
-    def _resolve_candidate_rows(self, rows: List[Dict[str, Any]], thickness_mm: Optional[float]) -> Optional[int]:
-        """在同一 OD 对应多条候选记录时，优先用显式 mm 壁厚消歧。"""
+    def _resolve_candidate_rows(self, rows: List[Dict[str, Any]], thickness_mm: Optional[float] = None) -> Optional[int]:
+        """在同一 OD 对应多条候选记录时确定 DN。
+
+        同一外径在对照表里常常同时映射到多个公称直径（如 OD720 → DN700/DN800），
+        壁厚也无法唯一区分。此时按物理规则选择：取「小于该外径且最接近外径」的公称直径
+        （DN 通常略小于 OD）；若候选 DN 全部不小于外径，则退而取最小的 DN。
+        """
         if not rows:
             return None
-        if len(rows) == 1:
-            return int(rows[0]['dn'])
-        if thickness_mm is not None:
-            eligible = [
-                row for row in rows
-                if row.get('thickness_mm') is not None and float(row['thickness_mm']) <= float(thickness_mm)
-            ]
-            if eligible:
-                best = max(eligible, key=lambda row: float(row['thickness_mm']))
-                return int(best['dn'])
-        # 无可用 mm 壁厚时，回退到当前旧逻辑（保持既有行为）
-        first_od = rows[0].get('od')
-        if first_od in self._od_to_dn_mapping:
-            return int(self._od_to_dn_mapping[first_od])
-        return int(rows[-1]['dn'])
+        distinct_dns = sorted({int(row['dn']) for row in rows})
+        if len(distinct_dns) == 1:
+            return distinct_dns[0]
+        od_value = float(rows[0].get('od'))
+        below = [dn for dn in distinct_dns if dn < od_value]
+        if below:
+            return max(below)
+        return min(distinct_dns)
 
     def _od_to_dn(self, od_value: float, thickness_mm: Optional[float] = None) -> Optional[int]:
         """
@@ -298,9 +296,10 @@ class SizeProcessor:
         规则：
         1. 先精确匹配映射表
         2. 再做小容差匹配（±0.5mm）
-        3. 若同一 OD 命中多条记录，且存在显式 mm 壁厚，则按「表中壁厚 <= 描述壁厚」且最接近描述壁厚的记录选 DN
+        3. 若同一 OD 命中多条记录（对应多个不同 DN），取「小于该外径且最接近外径」的 DN
+           （DN 通常略小于 OD；候选 DN 全部不小于外径时退而取最小 DN）
         4. 若仍未命中，则按工程直径规则，取「小于等于当前 OD 数值」且最接近的 DN
-        4. 若不存在满足条件的 DN，则返回 None，由上层决定是否回退原始 OD
+        5. 若不存在满足条件的 DN，则返回 None，由上层决定是否回退原始 OD
         """
         if not self._od_to_dn_mapping:
             return None
@@ -519,6 +518,14 @@ class SizeProcessor:
             s = str(text or "").strip().upper()
             if not s:
                 return ""
+            # 区间长度（如 1000~2000mm / 1000-2000 / 1000至2000）取较大端作为长度
+            range_m = re.search(
+                r'(\d+(?:\.\d+)?)\s*(?:MM|CM|M|毫米|厘米|米)?\s*[~～\-至到]\s*(\d+(?:\.\d+)?)\s*(MM|CM|M|毫米|厘米|米)?',
+                s,
+            )
+            if range_m:
+                bigger = max(float(range_m.group(1)), float(range_m.group(2)))
+                return f"L{self._normalize_length_value(bigger, range_m.group(3) or '')}"
             m = re.search(r'(?:L|LEN|LENGTH)\s*=?\s*(\d+(?:\.\d+)?)(?:\s*(MM|CM|M|毫米|厘米|米))?', s)
             if m:
                 return f"L{self._normalize_length_value(m.group(1), m.group(2) or '')}"
@@ -1016,7 +1023,8 @@ class SizeProcessor:
 
         size_code = self.format_code([float(v) for v in code_values if re.fullmatch(r'\d+(?:\.\d+)?', v)]) if code_values else ""
         if length_values:
-            size_code = self._append_length_suffix(size_code, f"L{length_values[0]}")
+            # 编码取区间大端（_extract_length_prefix 内部已处理区间 → L{大端}）
+            size_code = self._append_length_suffix(size_code, self._extract_length_prefix(length_values[0]))
 
         result = RuleSizeExtraction(
             dn=dn_values,
@@ -1039,6 +1047,8 @@ class SizeProcessor:
         consumed_spans: List[Tuple[int, int]] = []
         cursor_by_span: Dict[Tuple[int, int], int] = {}
         numeric_token_re = re.compile(r'\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?')
+        # 长度允许区间写法（1000~2000），消费 span 需覆盖整个区间，避免大端被当成未消费残留
+        length_token_re = re.compile(r'\d+(?:\.\d+)?(?:\s*[~～\-至到]\s*\d+(?:\.\d+)?)?')
         schedule_like_re = re.compile(r'(?i)SCH\s*\.?\s*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|S\d+S?|\d+S|STD|XS|XXS')
 
         for item in ordered_items:
@@ -1053,7 +1063,9 @@ class SizeProcessor:
             search_text = full_text[cursor:]
             item_type = str(item.get("type") or "").upper()
             token_match = None
-            if item_type in {"DN", "OD", "MM", "LENGTH", "PRESSURE", "INCH"}:
+            if item_type == "LENGTH":
+                token_match = length_token_re.search(search_text)
+            elif item_type in {"DN", "OD", "MM", "PRESSURE", "INCH"}:
                 token_match = numeric_token_re.search(search_text)
             elif item_type == "SCHEDULE":
                 token_match = schedule_like_re.search(search_text)
@@ -1123,9 +1135,10 @@ class SizeProcessor:
         )
         for m in cn_range_pattern.finditer(normalized):
             span = (m.start(), m.end())
-            first = float(m.group(1))
-            second = float(m.group(2))
-            mm_length_candidates.append(self._normalize_number_text(max(first, second)))
+            # 区间长度按原样保留（如 1000~2000），编码阶段再取大端；
+            # 消费 span 覆盖整个区间，避免大端被残留数字校验误判为未消费规格
+            interval = f"{self._normalize_number_text(m.group(1))}~{self._normalize_number_text(m.group(2))}"
+            mm_length_candidates.append(interval)
             consumed_length_spans.append(span)
             _record(m.group(0), span)
         for m in re.finditer(r'(?i)(\d+(?:\.\d+)?)\s*MM\s*LENGTH\b', normalized):
@@ -1469,7 +1482,14 @@ class SizeProcessor:
                 consumed_d_single_spans.append(span)
                 _record(m.group(0), span)
 
-        od_single_pattern = re.compile(r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)\b')
+        # 单值外径兜底：
+        # 1. 允许常规边界结尾：Φ89; / OD60.3 空格 / 句末
+        # 2. 允许后面紧跟 `X/×` 再接另一段显式外径锚点：
+        #    这样即便双外径规则漏掉，`Φ133XΦ89` 也能分别兜底出 Φ133 与 Φ89，
+        #    不会只剩下右半段。
+        od_single_pattern = re.compile(
+            r'(?i)(?:\bOD|[φΦФф])\s*(\d+(?:\.\d+)?)(?=\b|\s*[xX×]\s*(?:\bOD|[φΦФф]))'
+        )
         for m in od_single_pattern.finditer(normalized):
             span = (m.start(), m.end())
             if _is_astm_d_context(m.start()):
@@ -1489,10 +1509,12 @@ class SizeProcessor:
             _add_ordered_item("OD", od_value, span)
             _record(m.group(0), span)
 
+        inch_suffix_pattern = r'(?:["”″]|\'\s*\'|\bIN(?:CH)?\b)'
+
         inch_pair_pattern = re.compile(
             r'(?<![A-Za-z0-9])'
-            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:["”″]|\bIN(?:CH)?\b)?\s*[xX×*]\s*'
-            r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*(?:["”″]|\bIN(?:CH)?\b)'
+            rf'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*{inch_suffix_pattern}?\s*[xX×*]\s*'
+            rf'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*{inch_suffix_pattern}'
             r'(?![A-Za-z0-9])'
             , re.IGNORECASE
         )
@@ -1532,7 +1554,7 @@ class SizeProcessor:
             consumed_inch_spans.append(span)
             _record(m.group(0), span)
 
-        size_labeled_inch_pattern = re.compile(rf'(?i)\bSIZE\s*{imperial_token}\s*["]')
+        size_labeled_inch_pattern = re.compile(rf'(?i)\bSIZE\s*{imperial_token}\s*{inch_suffix_pattern}')
         for m in size_labeled_inch_pattern.finditer(normalized):
             span = (m.start(), m.end())
             inch_value = self._normalize_nps_token(m.group(1))
@@ -1541,7 +1563,9 @@ class SizeProcessor:
             consumed_inch_spans.append(span)
             _record(m.group(0), span)
 
-        inch_quote_pattern = re.compile(rf'(?<![A-Za-z0-9./-]){imperial_token}\s*["](?![A-Za-z0-9])')
+        # 英寸锚点后允许紧跟壁厚、材质或中文描述，例如：
+        # 10"SCH20、3"PIPE、3"管
+        inch_quote_pattern = re.compile(rf'(?<![A-Za-z0-9./-]){imperial_token}\s*{inch_suffix_pattern}')
         for m in inch_quote_pattern.finditer(normalized):
             span = (m.start(), m.end())
             if m.start() > 0 and normalized[m.start() - 1] in {'/', '-', '.'}:

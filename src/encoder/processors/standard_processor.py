@@ -404,58 +404,54 @@ class StandardProcessor:
     def _classify_standard(self, standard: str) -> str:
         """
         分类标准为生产/制造/产品/建造标准
-        通过模糊匹配，忽略前缀，要求输入包含配置中的核心标准号
-        
+        匹配优先级：
+        1. 不忽略前缀和后缀，完整标准化后精确匹配
+        2. 忽略末尾英文后缀，再做精确匹配
+        3. 忽略前缀和末尾英文后缀，仅按数字序列完全匹配
+
         例如：
-        - DIN EN 10253-4 → 包含 EN10253，匹配
-        - MSS SP-97 → 包含 MSSSP97，匹配
+        - HGT20615A -> HGT20615（忽略后缀）
+        - MSS SP-97 -> MS97 / SP97（数字序列完全一致）
         """
-        # 从 code_conversion 配置中提取可忽略前缀
-        # 如 "DIN EN": "EN" → DIN 是可忽略前缀
-        ignorable_prefixes = set()
-        for old_prefix, new_prefix in self.code_conversion.items():
-            # 如果旧前缀包含新前缀，则旧前缀中除了新前缀以外的部分是可忽略的
-            # 如 "DIN EN" → "EN"，则 "DIN" 是可忽略的
-            old_normalized = re.sub(r'[^A-Z0-9]', '', old_prefix.upper())
-            new_normalized = re.sub(r'[^A-Z0-9]', '', new_prefix.upper())
-            if old_normalized.endswith(new_normalized) and old_normalized != new_normalized:
-                ignorable = old_normalized[:-len(new_normalized)]
-                if ignorable:
-                    ignorable_prefixes.add(ignorable)
-        
-        # 已知的标准体系前缀（用于从配置键中剥离）
+        # 已知的标准体系前缀（用于最后一级从配置键中剥离）
         system_prefixes = ['AB', 'ASME', 'MS', 'MSS', 'GBT', 'HGT', 'SHT', 'NBT', 'SYT', 'JBT', 'API', 'EN', 'DIN', 'ISO', 'BS', 'JIS']
-        
-        # 提取标准的标准化key (去除空格、斜杠等，只保留字母和数字)
-        normalized = re.sub(r'[^A-Z0-9]', '', standard.upper())
-        
-        # 预处理：去除可忽略前缀
-        input_normalized = normalized
-        for prefix in ignorable_prefixes:
-            if input_normalized.startswith(prefix):
-                input_normalized = input_normalized[len(prefix):]
-                break
-        
-        # 尝试匹配配置中的标准
+
+        def _normalize(text: str) -> str:
+            return re.sub(r'[^A-Z0-9]', '', str(text or '').upper())
+
+        def _strip_alpha_suffix(text: str) -> str:
+            return re.sub(r'[A-Z]+$', '', text)
+
+        def _digits(text: str) -> Tuple[str, ...]:
+            return tuple(re.findall(r'\d+', text))
+
+        def _strip_system_prefix(text: str) -> str:
+            for prefix in sorted(system_prefixes, key=len, reverse=True):
+                if text.startswith(prefix):
+                    return text[len(prefix):]
+            return text
+
+        input_normalized = _normalize(standard)
+        input_no_suffix = _strip_alpha_suffix(input_normalized)
+        input_digits = _digits(input_no_suffix)
+
+        # 尝试匹配配置中的标准，严格按优先级执行
         for std_key, category in self.standards.items():
-            # 标准化配置中的key
-            config_normalized = re.sub(r'[^A-Z0-9]', '', std_key.upper())
-            
-            # 1. 精确匹配
+            config_normalized = _normalize(std_key)
+            config_no_suffix = _strip_alpha_suffix(config_normalized)
+
+            # 1. 不忽略前缀和后缀，完整精确匹配
             if input_normalized == config_normalized:
                 return category
-            
-            # 2. 输入包含配置的标准号（如 EN102534 包含 EN10253，MSSSP97 包含 MSSSP97）
-            if config_normalized in input_normalized:
+
+            # 2. 忽略后缀，再做精确匹配
+            if input_no_suffix and input_no_suffix == config_no_suffix:
                 return category
-            
-            # 3. 忽略体系前缀匹配：SP97 匹配 MSSSP97（去掉 MSS 后变成 SP97）
-            for prefix in system_prefixes:
-                if config_normalized.startswith(prefix):
-                    # 去掉前缀后的核心部分
-                    core = config_normalized[len(prefix):]
-                    if core and core in input_normalized:
-                        return category
+
+            # 3. 忽略前缀和后缀英文，仅按数字完全匹配
+            config_digits = _digits(_strip_alpha_suffix(_strip_system_prefix(config_normalized)))
+            if input_digits and config_digits and input_digits == config_digits:
+                return category
         
         # 默认为未知（排在生产和制造之后）
         return 'unknown'
@@ -623,20 +619,19 @@ class StandardProcessor:
         return 'ZZZ'
 
     @staticmethod
-    def _extract_numeric_parts(text: str) -> Tuple[int, ...]:
-        numbers = re.findall(r'\d+', str(text or ''))
-        if not numbers:
-            return (10**9,)
-        return tuple(int(n) for n in numbers)
+    def _extract_lexicographic_key(text: str) -> str:
+        return re.sub(r'[^A-Z0-9]', '', str(text or '').upper())
 
-    def _sort_item_key(self, item: Dict[str, str]) -> Tuple[int, int, Tuple[int, ...], str]:
+    def _sort_item_key(self, item: Dict[str, str]) -> Tuple[int, int, str, str]:
         family = self._extract_sort_family(item)
         priority = self.prefix_priority.get(family, 999)
-        number_key = self._extract_numeric_parts(item.get('formatted', '') or item.get('original', '') or item.get('encoded', ''))
+        text_key = self._extract_lexicographic_key(
+            item.get('formatted', '') or item.get('original', '') or item.get('encoded', '')
+        )
         return (
             self.CATEGORY_ORDER.get(item.get('category', 'unknown'), 999),
             priority,
-            number_key,
+            text_key,
             str(item.get('encoded', '')).upper(),
         )
     

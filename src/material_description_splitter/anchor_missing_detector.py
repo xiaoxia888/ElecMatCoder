@@ -11,7 +11,8 @@ import yaml
 from .models import DifficultyFeature, GlueHit
 
 
-NAKED_NUMBER_RE = re.compile(r"(?<![A-Za-z0-9])\d+(?:\.\d+)?(?![A-Za-z0-9])")
+NAKED_INTEGER_RE = re.compile(r"(?<![A-Za-z0-9])\d+(?![A-Za-z0-9.])")
+NAKED_DECIMAL_RE = re.compile(r"(?<![A-Za-z0-9.])\d+\.\d+(?![A-Za-z0-9.])")
 NAKED_SPEC_RE = re.compile(
     r"(?<![A-Za-z0-9])"
     r"\d+(?:\.\d+)?\s*(?:[xX×*/-]|/)\s*\d+(?:\.\d+)?(?:\s*mm)?"
@@ -37,6 +38,23 @@ MALFORMED_STANDARD_BODY_TAIL_RE = re.compile(
     r"(?:GB|NB|SH|HG|DL|TB)(?:\s*/?\s*T)?[\s/\-_.]*[A-Z][A-Z0-9]*(?:\.[A-Z0-9]*)?[\s/\-_.]*$",
     re.IGNORECASE,
 )
+DIAMETER_SYMBOLS = ("φ", "Φ", "ø", "Ø", "⌀", "∅", "Ф", "ф")
+INCH_UNIT_RIGHT_RE = re.compile(r'(?i)^\s*(?:"|”|″|\'\'|INCH\b|IN\b)')
+INCH_UNIT_LEFT_RE = re.compile(r'(?i)(?:"|”|″|\'\'|INCH\b|IN\b)\s*$')
+MM_UNIT_RIGHT_RE = re.compile(r"(?i)^\s*(?:MM\b|毫米)")
+PRESSURE_UNIT_RIGHT_RE = re.compile(r"(?i)^\s*(?:MPA\b|BAR\b)")
+ANCHOR_OR_DIAMETER_LEFT_RE = re.compile(
+    r'(?i)(?:DN|OD|NPS|PN|CL|CLASS)\s*\d+(?:\.\d+)?\s*[*xX×/]\s*$'
+)
+ANCHOR_OR_DIAMETER_RIGHT_RE = re.compile(
+    r'(?i)^\s*[*xX×/]\s*(?:DN|OD|NPS|PN|CL|CLASS|THK|SCH)'
+)
+RIGHT_INCH_COMBO_RE = re.compile(
+    r'(?i)^\s*[*xX×/]\s*\d+(?:\.\d+)?\s*(?:"|”|″|\'\'|INCH\b|IN\b)'
+)
+LEFT_INCH_COMBO_RE = re.compile(
+    r'(?i)(?:"|”|″|\'\'|INCH\b|IN\b)\s*[*xX×/]\s*$'
+)
 
 
 class AnchorMissingDetector:
@@ -50,6 +68,7 @@ class AnchorMissingDetector:
             if config_path is not None
             else Path(__file__).resolve().parent / "config" / "common_code_mapping.yaml"
         )
+        self.encoder_config_path = Path(__file__).resolve().parent.parent / "encoder" / "config" / "encoder_config.yaml"
         self._load_config()
 
     def analyze(self, text: str) -> DifficultyFeature:
@@ -79,6 +98,8 @@ class AnchorMissingDetector:
             value = match.group(0)
             if any(start <= match.start() and match.end() <= end for start, end in covered_spans):
                 continue
+            # 带 mm/毫米 单位的值不再按“裸公制值”参与一阶段困难分流。
+            continue
             if self._has_explicit_anchor(text, match.start(), match.end()):
                 continue
             if self._has_length_context_on_right(text, match.end()):
@@ -99,9 +120,37 @@ class AnchorMissingDetector:
             )
             covered_spans.append((match.start(), match.end()))
 
-        for match in NAKED_NUMBER_RE.finditer(text):
+        for match in NAKED_DECIMAL_RE.finditer(text):
             value = match.group(0)
-            if not self._is_candidate_number(value):
+            if value in self.common_numeric_material_codes:
+                continue
+            if any(start <= match.start() and match.end() <= end for start, end in covered_spans):
+                continue
+            if self._is_percentage_value(text, match.start(), match.end()):
+                continue
+            if self._has_explicit_anchor(text, match.start(), match.end()):
+                continue
+            standard_context = self._classify_standard_body_context(text, match.start())
+            if standard_context in {"strict", "malformed"}:
+                continue
+            if self._looks_like_standard_suffix(text, match.start(), match.end()):
+                continue
+
+            hits.append(
+                GlueHit(
+                    tag=self.TAG_NAME,
+                    code_group="naked_numbers",
+                    code=value,
+                    token=value,
+                    start=match.start(),
+                    end=match.end(),
+                    note=f"数字 {value} 左右缺少明确字段锚点，可能需要靠语义判断其含义",
+                )
+            )
+
+        for match in NAKED_INTEGER_RE.finditer(text):
+            value = match.group(0)
+            if value not in self.common_integer_anchor_values:
                 continue
             if value in self.common_numeric_material_codes:
                 continue
@@ -159,13 +208,28 @@ class AnchorMissingDetector:
             for raw in data.get("common_material_codes", [])
             if (text := str(raw).strip()) and re.fullmatch(r"\d+(?:\.\d+)?", text)
         }
+        self.common_integer_anchor_values = set()
+        if self.encoder_config_path.exists():
+            with self.encoder_config_path.open("r", encoding="utf-8") as f:
+                encoder_config = yaml.safe_load(f) or {}
+            size_processing = encoder_config.get("size_processing", {}) or {}
+            pressure_processing = encoder_config.get("pressure_processing", {}) or {}
 
-    @staticmethod
-    def _is_candidate_number(value: str) -> bool:
-        # First pass is intentionally conservative:
-        # - decimals are suspicious enough
-        # - integers only when length >= 3
-        return "." in value or len(value) >= 3
+            self.common_integer_anchor_values.update(
+                str(raw).strip()
+                for raw in size_processing.get("common_dn_values", [])
+                if str(raw).strip() and re.fullmatch(r"\d+", str(raw).strip())
+            )
+            self.common_integer_anchor_values.update(
+                str(raw).strip()
+                for raw in pressure_processing.get("class_values", [])
+                if str(raw).strip() and re.fullmatch(r"\d+", str(raw).strip())
+            )
+            self.common_integer_anchor_values.update(
+                str(raw).strip()
+                for raw in pressure_processing.get("pn_values", [])
+                if str(raw).strip() and re.fullmatch(r"\d+", str(raw).strip())
+            )
 
     @staticmethod
     def _is_percentage_value(text: str, start: int, end: int) -> bool:
@@ -178,18 +242,37 @@ class AnchorMissingDetector:
         right = text[end : min(len(text), end + 16)]
         return bool(re.match(r"(?i)^\s*(?:length|len|long|长度)\b", right))
 
+    @staticmethod
+    def _is_diameter_symbol_char(ch: str) -> bool:
+        return ch in DIAMETER_SYMBOLS
+
+    @classmethod
+    def _has_diameter_or_inch_context(cls, text: str, start: int, end: int) -> bool:
+        left = text[max(0, start - 16) : start]
+        right = text[end : min(len(text), end + 16)]
+
+        if left.rstrip().endswith(DIAMETER_SYMBOLS):
+            return True
+        left_stripped = left.rstrip()
+        if left_stripped and cls._is_diameter_symbol_char(left_stripped[-1]):
+            return True
+        if INCH_UNIT_RIGHT_RE.match(right):
+            return True
+        if INCH_UNIT_LEFT_RE.search(left):
+            return True
+        return False
 
     @staticmethod
     def _has_explicit_anchor(text: str, start: int, end: int) -> bool:
         left = text[max(0, start - 12) : start].upper()
-        right = text[end : min(len(text), end + 4)].upper()
+        right = text[end : min(len(text), end + 16)].upper()
         left_raw = text[max(0, start - 16) : start]
 
         left_compact = re.sub(r"[\s:=\-_/.]", "", left)
 
         if any(left_compact.endswith(anchor) for anchor in ("DN", "OD", "NPS", "PN", "CL", "CLASS", "THK", "SCH")):
             return True
-        if any(left.rstrip().endswith(anchor) for anchor in ("φ", "Φ")):
+        if any(left.rstrip().endswith(anchor) for anchor in DIAMETER_SYMBOLS):
             return True
         if any(left.endswith(anchor) for anchor in ("STD ", "XS ", "XXS ")):
             return True
@@ -199,14 +282,29 @@ class AnchorMissingDetector:
         # 这里不区分具体语义，只要是局部“字母=数字”结构，就不应再当作裸数字。
         if re.search(r"(?i)(?:^|[^A-Za-z0-9])(?:[A-Za-z]{1,6})\s*=\s*$", left_raw):
             return True
-        if right.startswith('"'):
+        if INCH_UNIT_RIGHT_RE.match(right):
+            return True
+        # 数字右侧即使与单位之间存在空格，只要仍紧邻 mm/毫米，
+        # 就说明它已经有显式壁厚锚点，不应再按“裸数字缺锚点”处理。
+        if MM_UNIT_RIGHT_RE.match(right):
+            return True
+        # 压力单位即使与数字之间存在空格，也属于显式压力锚点。
+        # 例如 1.0 bar / 1.0 MPa 不应再被当作“裸数字缺锚点”。
+        if PRESSURE_UNIT_RIGHT_RE.match(right):
             return True
         # 组合尺寸里的锚点传递：DN350*150、DN80/40、OD48x2.8 等，
         # 第二个数字虽然本身没有再次写出锚点，但前一个数字已被同一组合里的
         # 显式锚点约束，此时不应再当作“裸数字缺锚点”。
-        if re.search(r"(?i)(?:DN|OD|NPS|PN|CL|CLASS)\s*\d+(?:\.\d+)?\s*[*xX×/]\s*$", left_raw):
+        if ANCHOR_OR_DIAMETER_LEFT_RE.search(left_raw):
             return True
-        if re.search(r"(?:φ|Φ)\s*\d+(?:\.\d+)?\s*[*xX×/]\s*$", left_raw):
+        if re.search(r'(?:' + '|'.join(map(re.escape, DIAMETER_SYMBOLS)) + r')\s*\d+(?:\.\d+)?\s*[*xX×/]\s*$', left_raw):
+            return True
+        # 组合尺寸里右侧显式锚点传递：20xDN10、4x5"、4x5 in、4"x5 等
+        if ANCHOR_OR_DIAMETER_RIGHT_RE.match(right):
+            return True
+        if RIGHT_INCH_COMBO_RE.match(right):
+            return True
+        if LEFT_INCH_COMBO_RE.search(left_raw):
             return True
         return False
 

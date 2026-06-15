@@ -73,6 +73,11 @@ def _is_valid_single_residual_integer(text: str) -> bool:
         return False
 
 
+def _is_ignored_residual_slash_pair(text: str) -> bool:
+    raw = re.sub(r"\s+", "", str(text or "").strip())
+    return raw == "20/20"
+
+
 _ANGLE_CN_SUFFIX_RE = re.compile(r"^\s*(?:°|度)")
 _ANGLE_EN_SUFFIX_RE = re.compile(r"^\s*DEG(?:REE)?S?\b", re.IGNORECASE)
 _ANGLE_PREFIX_RE = re.compile(r"(?:角度|度数)\s*$", re.IGNORECASE)
@@ -106,6 +111,9 @@ def _should_ignore_unresolved_match(
     span: Optional[tuple[int, int]] = None,
 ) -> bool:
     text = str(match_text or "").strip()
+    # 20/20 在当前业务里按材质表达处理，不参与规格残留清空。
+    if pattern_index == 1 and _is_ignored_residual_slash_pair(text):
+        return True
     # 单裸整数只在“像公称直径”的情况下参与残留校验：
     # 1. 纯整数
     # 2. 在 common_dn_values 中

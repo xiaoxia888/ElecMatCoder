@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import copy
+import logging
 from dataclasses import dataclass, field
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -152,8 +155,42 @@ class Stage1DecisionNormalizer:
     @classmethod
     def build_snapshot(cls, predict_result: dict[str, Any]) -> Stage1Snapshot:
         """一次性生成统一一阶段快照。"""
+        decisions = cls.build_decisions(predict_result)
+        raw_values = cls.build_raw_values(predict_result)
+        cls._debug_log_stage1_divergence(predict_result, decisions, raw_values)
         return Stage1Snapshot(
-            decisions=cls.build_decisions(predict_result),
-            raw_values=cls.build_raw_values(predict_result),
+            decisions=decisions,
+            raw_values=raw_values,
             field_meta=cls.build_field_meta(predict_result),
         )
+
+    @staticmethod
+    def _debug_log_stage1_divergence(
+        predict_result: dict[str, Any],
+        decisions: dict[str, Any],
+        raw_values: dict[str, Any],
+    ) -> None:
+        """临时调试：对比「结构提示词原值」与「送入编码的 decisions」，不一致时打印。
+
+        目的：定位 SIZE/THICKNESS/PRESSURE 在一阶段 → 编码之间被改写（如 INCH 3/4 → DN75、
+        OD8×壁厚 → OD8×OD1 等）的源头。定位完成后可删除本方法及其调用。
+        """
+        try:
+            model_output = predict_result.get("model_output")
+            structural_prompt = model_output.get("_STRUCTURAL_PROMPT") if isinstance(model_output, dict) else None
+            empties = (None, "", [], {})
+            for field_name in ("SIZE", "THICKNESS", "PRESSURE"):
+                prompt_val = structural_prompt.get(field_name) if isinstance(structural_prompt, dict) else None
+                decision_val = decisions.get(field_name)
+                raw_val = raw_values.get(field_name)
+                # 仅在两边都有值且被改写时记录（跳过规则器命中、字段为空等正常情况，减少噪音）
+                if prompt_val not in empties and decision_val not in empties and decision_val != prompt_val:
+                    logger.warning(
+                        "[一阶段差异][%s] 提示词原值=%r | raw_values=%r | 送编码decisions=%r",
+                        field_name,
+                        prompt_val,
+                        raw_val,
+                        decision_val,
+                    )
+        except Exception:
+            logger.debug("[一阶段差异] 调试日志记录失败", exc_info=True)

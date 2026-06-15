@@ -98,13 +98,13 @@ SIZE_PLATFORM_ADAPTER_TEXT_V3 = """
     ],
     "LENGTH": ""
   }
-- 规格若为单值 `DN100`，输出一个 item：`{"type":"DN","value":"DN100"}`
+- 规格若为单值 `DN100`，输出一个 item：`{"type":"DN","value":"100"}`
 - 规格若为 `DN300xDN200`，拆成两个 item，顺序必须与原文一致：
-  `{"type":"DN","value":"DN300"}`、`{"type":"DN","value":"DN200"}`
-- 规格若为 `DN50x20`，拆成两个 `DN` item，第二段补成 `DN20`
-- 规格若为 `NPS3xDN65`，拆成 `INCH` 与 `DN` 两个 item，顺序与原文一致
-- 规格若为 `DN65xNPS3`，拆成 `DN` 与 `INCH` 两个 item，顺序与原文一致
-- 规格若来自 `φ/Φ/OD/外径` 兜底，则对应输出 `OD` item，值写成 `OD60.3` 这种形式
+  `{"type":"DN","value":"300"}`、`{"type":"DN","value":"200"}`
+- 规格若为 `DN50x20`，拆成两个 `DN` item，第二段补成 `20`
+- 规格若为 `NPS3xDN65`，拆成 `INCH` 与 `DN` 两个 item，顺序与原文一致，值分别写 `3`、`65`
+- 规格若为 `DN65xNPS3`，拆成 `DN` 与 `INCH` 两个 item，顺序与原文一致，值分别写 `65`、`3`
+- 规格若来自 `φ/Φ/OD/外径` 兜底，则对应输出 `OD` item，值只写数值，如 `60.3`
 - 若存在长度（例如模板中的 `DN200L3000` / `NPS2L3000`），不要把 `L3000` 拼进尺寸 item；尺寸仍按上面规则拆分，长度单独写到顶层 `LENGTH="3000"`
 - 若没有长度，`LENGTH=""`
 - 最终只输出 JSON，不要解释。
@@ -120,10 +120,11 @@ THICKNESS_PLATFORM_ADAPTER_TEXT_V3 = """
       {"type": "MM|SCHEDULE|BWG|INCH", "value": "..."}
     ]
   }
-- 如果最终壁厚结果是毫米壁厚或包含毫米主值的复合壁厚（如 `3.5MM`、`4MMX3.5MM`、`12MMXSCH40S`、`5MMX3.2MMX2.9MM`），输出为 `type="MM"`，`value` 保留完整最终字符串
+- 如果最终壁厚结果是单一毫米壁厚（如 `3.5MM`），输出为 `type="MM"`，`value` 只写数值本身，如 `3.5`
+- 如果最终壁厚结果是复合毫米壁厚或包含毫米主值的混合壁厚（如 `4MMX3.5MM`、`12MMXSCH40S`、`5MMX3.2MMX2.9MM`），仍输出为 `type="MM"`，`value` 保留完整最终字符串
 - 如果最终壁厚结果是纯等级壁厚（如 `SCH40S`、`SCH40XSCH80`、`STD`、`STDXSTD`、`S10SXS40S`），输出为 `type="SCHEDULE"`，`value` 保留完整最终字符串
-- 如果最终壁厚结果是 `BWG` 体系，输出为 `type="BWG"`
-- 如果最终壁厚结果是英寸壁厚，输出为 `type="INCH"`
+- 如果最终壁厚结果是 `BWG` 体系，输出为 `type="BWG"`，单值时 `value` 只写数值本身
+- 如果最终壁厚结果是英寸壁厚，输出为 `type="INCH"`，单值时 `value` 只写数值本身
 - 若同一材料描述中存在多个独立壁厚结果，按原文顺序输出多个 item
 - 最终只输出 JSON，不要解释。
 """.strip()
@@ -144,23 +145,23 @@ PRESSURE_PLATFORM_ADAPTER_TEXT_V3 = """
 
 SIZE_EXAMPLES_TEXT_V3 = """
 **复杂格式处理示例**:
-- `DN300xDN200` → `SIZE_ITEMS=[{"type":"DN","value":"DN300"},{"type":"DN","value":"DN200"}]`, `LENGTH=""`
-- `DN50X20` → `SIZE_ITEMS=[{"type":"DN","value":"DN50"},{"type":"DN","value":"DN20"}]`, `LENGTH=""`
-- `φ60.3Xφ48.3` → `SIZE_ITEMS=[{"type":"OD","value":"OD60.3"},{"type":"OD","value":"OD48.3"}]`, `LENGTH=""`
-- `3"*DN65` → `SIZE_ITEMS=[{"type":"INCH","value":"NPS3"},{"type":"DN","value":"DN65"}]`, `LENGTH=""`
-- `灰口铸铁, 壁厚5.8mm, L=3m, DN200` → `SIZE_ITEMS=[{"type":"DN","value":"DN200"}]`, `LENGTH="3000"`
-- `PIPE ... CUT TO 1505 DN100` → `SIZE_ITEMS=[{"type":"DN","value":"DN100"}]`, `LENGTH="1505"`
+ - `DN300xDN200` → `SIZE_ITEMS=[{"type":"DN","value":"300"},{"type":"DN","value":"200"}]`, `LENGTH=""`
+ - `DN50X20` → `SIZE_ITEMS=[{"type":"DN","value":"50"},{"type":"DN","value":"20"}]`, `LENGTH=""`
+ - `φ60.3Xφ48.3` → `SIZE_ITEMS=[{"type":"OD","value":"60.3"},{"type":"OD","value":"48.3"}]`, `LENGTH=""`
+ - `3"*DN65` → `SIZE_ITEMS=[{"type":"INCH","value":"3"},{"type":"DN","value":"65"}]`, `LENGTH=""`
+ - `灰口铸铁, 壁厚5.8mm, L=3m, DN200` → `SIZE_ITEMS=[{"type":"DN","value":"200"}]`, `LENGTH="3000"`
+ - `PIPE ... CUT TO 1505 DN100` → `SIZE_ITEMS=[{"type":"DN","value":"100"}]`, `LENGTH="1505"`
 """.strip()
 
 
 THICKNESS_EXAMPLES_TEXT_V3 = """
 **复杂格式处理示例**:
-- `THK=6.3mm` → `THICKNESS_ITEMS=[{"type":"MM","value":"6.3MM"}]`
-- `异径管 R(E)，DN80x50Ⅱ-4x3.5，20，GB/T12459-2017` → `THICKNESS_ITEMS=[{"type":"MM","value":"4MMX3.5MM"}]`
-- `273x5.0/3.2 - 219.1x2.9` → `THICKNESS_ITEMS=[{"type":"MM","value":"5MMX3.2MMX2.9MM"}]`
-- `12mm*SCH40S` → `THICKNESS_ITEMS=[{"type":"MM","value":"12MMXSCH40S"}]`
-- `SCH40XSCH80` → `THICKNESS_ITEMS=[{"type":"SCHEDULE","value":"SCH40XSCH80"}]`
-- `S-STDXS-STD` → `THICKNESS_ITEMS=[{"type":"SCHEDULE","value":"STDXSTD"}]`
+ - `THK=6.3mm` → `THICKNESS_ITEMS=[{"type":"MM","value":"6.3"}]`
+ - `异径管 R(E)，DN80x50Ⅱ-4x3.5，20，GB/T12459-2017` → `THICKNESS_ITEMS=[{"type":"MM","value":"4MMX3.5MM"}]`
+ - `273x5.0/3.2 - 219.1x2.9` → `THICKNESS_ITEMS=[{"type":"MM","value":"5MMX3.2MMX2.9MM"}]`
+ - `12mm*SCH40S` → `THICKNESS_ITEMS=[{"type":"MM","value":"12MMXSCH40S"}]`
+ - `SCH40XSCH80` → `THICKNESS_ITEMS=[{"type":"SCHEDULE","value":"SCH40XSCH80"}]`
+ - `S-STDXS-STD` → `THICKNESS_ITEMS=[{"type":"SCHEDULE","value":"STDXSTD"}]`
 """.strip()
 
 
@@ -189,7 +190,7 @@ SIZE_LENGTH_SYSTEM_PROMPT_V3 = "\n\n".join([
     """请严格按照以下JSON格式返回，不要添加任何解释：
 {
   "SIZE_ITEMS": [
-    {"type": "DN", "value": "DN100"}
+    {"type": "DN", "value": "100"}
   ],
   "LENGTH": ""
 }""",
@@ -207,7 +208,7 @@ THICKNESS_SYSTEM_PROMPT_V3 = "\n\n".join([
     """请严格按照以下JSON格式返回，不要添加任何解释：
 {
   "THICKNESS_ITEMS": [
-    {"type": "MM", "value": "6.0MM"}
+    {"type": "MM", "value": "6.0"}
   ]
 }""",
 ])
