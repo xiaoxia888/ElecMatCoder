@@ -109,7 +109,12 @@ class PipeEncodingResult:
         """默认直接返回统一三层 schema。"""
         return self.to_payload_dict()
 
-    def to_payload_dict(self, *, processed_text: str = "", route_info: Optional[Dict[str, Any]] = None) -> dict:
+    def to_payload_dict(
+        self,
+        *,
+        processed_text: str = "",
+        route_info: Optional[Dict[str, Any]] = None,
+    ) -> dict:
         """
         转成统一三层 schema。
 

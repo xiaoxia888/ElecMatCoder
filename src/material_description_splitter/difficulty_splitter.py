@@ -7,8 +7,10 @@ from typing import Iterable
 
 from .anchor_missing_detector import AnchorMissingDetector
 from .models import DifficultyResult
+from .standard_completeness_detector import StandardCompletenessDetector
 from .special_token_detector import SpecialTokenDetector
 from .standard_glue_detector import StandardGlueDetector
+from .structure_completeness_detector import StructureCompletenessDetector
 from .type_glue_detector import TypeGlueDetector
 from .uncommon_code_detector import UncommonCodeDetector
 
@@ -19,7 +21,9 @@ class MaterialDifficultySplitter:
     def __init__(self) -> None:
         self.type_glue_detector = TypeGlueDetector()
         self.standard_glue_detector = StandardGlueDetector()
+        self.standard_completeness_detector = StandardCompletenessDetector()
         self.anchor_missing_detector = AnchorMissingDetector()
+        self.structure_completeness_detector = StructureCompletenessDetector()
         self.special_token_detector = SpecialTokenDetector()
         self.uncommon_code_detector = UncommonCodeDetector()
 
@@ -29,19 +33,27 @@ class MaterialDifficultySplitter:
         type_code: str = "",
         material_code: str = "",
         standard_code: str | Iterable[str] = "",
+        *,
+        normalized_text: str | None = None,
+        enable_code_rules: bool = False,
     ) -> DifficultyResult:
         features = [
             self.type_glue_detector.analyze(text),
             self.standard_glue_detector.analyze(text),
+            self.standard_completeness_detector.analyze(text),
             self.anchor_missing_detector.analyze(text),
+            self.structure_completeness_detector.analyze(text, normalized_text=normalized_text),
             self.special_token_detector.analyze(text),
-            self.uncommon_code_detector.analyze(
-                text,
-                type_code=type_code,
-                material_code=material_code,
-                standard_code=standard_code,
-            ),
         ]
+        if enable_code_rules:
+            features.append(
+                self.uncommon_code_detector.analyze(
+                    text,
+                    type_code=type_code,
+                    material_code=material_code,
+                    standard_code=standard_code,
+                )
+            )
         reasons = [feature.reason for feature in features if feature.matched and feature.reason]
         return DifficultyResult(
             text=text,

@@ -1,0 +1,169 @@
+meta:
+  version: 1
+  note: 描述完整性校验总配置。当前先落地结构字段与规范存在性，后续再扩展种类和材质。
+
+text:
+  # 完整性校验统一优先使用 processed_text。
+  # 如果上游还没传 processed_text，再回退原始描述。
+  prefer_processed_text: true
+
+checks:
+  structure:
+    enabled: true
+    source: stage1_rules
+    # 当前结构完整性的最小要求：
+    # 1. 必须命中 SIZE
+    # 2. THICKNESS / PRESSURE 至少命中一个
+    required_fields: [SIZE]
+    require_one_of:
+      - [THICKNESS, PRESSURE]
+
+  standard:
+    enabled: true
+    # 这里只判断“描述里是否疑似有规范”，不判断规范写法是否标准，也不判断后缀是否完整。
+    #
+    # strong:
+    # - prefix + core 一起命中
+    #
+    # weak:
+    # - 只命中 core，也算“疑似有规范”
+    # - weak 也放行，不拦截
+    #
+    # missing:
+    # - 完全没有命中任何规范表达
+    # - 只有 missing 才拦截
+    allow_levels: [strong, weak]
+    block_levels: [missing]
+    families:
+      # 常规 prefix_core 家族：
+      # - prefix + core 命中 => strong
+      # - 只命中 core => weak
+
+      GBT:
+        mode: prefix_core
+        prefixes: [GB/T, GBT, GB]
+        cores: ["10002", "10002.1", "10002.2", "12228", "1245", "12459", "12771", "12976", "13401", "13663", "13663.2", "13663.3", "13793", "14383", "14525", "14976", "16693", "17395", "18742", "18742.2", "18742.3", "18984", "19326", "20801", "21547", "21832", "21832.2", "21833", "21833.2", "21835", "2205", "23257", "24511", "26500", "27684", "3087", "3089", "3091", "3274", "3287", "3406", "3408", "3410", "3621", "3624", "40317", "4237", "4334", "47008", "50235", "531", "5310", "5836", "58361", "6479", "669", "699", "700", "711", "713", "8136", "8162", "8163", "9118", "9124", "9124.1", "9124.2", "9711", "9948"]
+
+      HGT:
+        mode: prefix_core
+        prefixes: [HG/T, HGT, HG]
+        cores: ["20538", "20539", "20553", "20592", "20610", "20613", "20615", "20623", "2130", "21501", "21547", "21632", "2437", "3651", "3731", "4284", "4372"]
+
+      SHT:
+        mode: prefix_core
+        prefixes: [SH/T, SHT, SH]
+        cores: ["3401", "3405", "3406", "3408", "3410", "3411", "3412", "3419", "3424", "3425", "3426"]
+
+      NBT:
+        mode: prefix_core
+        prefixes: [NB/T, NBT, NB]
+        cores: ["4700", "47008", "47009", "47010", "47023", "8163"]
+
+      GB:
+        mode: prefix_core
+        prefixes: [GB]
+        cores: ["713", "8163", "26500"]
+
+      DIN:
+        mode: prefix_core
+        prefixes: [DIN]
+        cores: ["2605", "2615", "2616", "2626", "11850", "118532", "16966", "17455"]
+
+      EN:
+        mode: prefix_core
+        prefixes: [EN]
+        cores: ["1092", "10028", "10216", "10217", "10220", "10222", "10253", "10305", "10374"]
+
+      ENI:
+        mode: prefix_core
+        prefixes: [EN ISO, ENI, EN]
+        cores: ["1127"]
+
+      CJT:
+        mode: prefix_core
+        prefixes: [CJ/T, CJT, CJ]
+        cores: ["120", "123", "124", "192"]
+
+      DLT:
+        mode: prefix_core
+        prefixes: [DL/T, DLT, DL]
+        cores: ["695"]
+
+      SYT:
+        mode: prefix_core
+        prefixes: [SY/T, SYT, SY]
+        cores: ["5037", "5257"]
+
+      TB:
+        mode: prefix_core
+        prefixes: [TB]
+        cores: ["1960-003", "1960-004", "1960-006"]
+
+      GD:
+        mode: prefix_core
+        prefixes: [GD]
+        cores: ["2016"]
+
+      I:
+        mode: prefix_core
+        prefixes: [ISO, I]
+        cores: ["2037", "2852"]
+
+      ASTM:
+        mode: prefix_core
+        prefixes: [ASTM]
+        cores: ["420"]
+
+      ANM:
+        mode: prefix_core
+        prefixes: [ASME NM, ANM, NM]
+        cores: ["1"]
+
+      ASMC:
+        mode: prefix_core
+        prefixes: [ASME C, ASMC, AS MC]
+        cores: ["09"]
+
+      MC:
+        mode: prefix_core
+        prefixes: [MC]
+        cores: ["0901"]
+
+      # 美标 B 系列只把完整 body 当 core。
+      # 例如 B16.5 / B16.9 / B36.19。
+      # 不单独把 16.5 这种短裸数字当规范。
+      AB:
+        mode: prefix_core
+        prefixes: [ASME]
+        cores: ["B1.20.1", "B6.19", "B16.5", "B16.9", "B16.11", "B16.25", "B16.36", "B16.47", "B16.48", "B16.49", "B31.3", "B31.8", "B36.10", "B36.12", "B36.14", "B36.18", "B36.19", "B36.20", "B36.21", "B36.22", "B36.23", "B36.25", "B36.26", "B36.27", "B36.29", "B36.30"]
+
+      # 这两个家族按你的要求单独走 direct。
+      API:
+        mode: direct
+        patterns:
+          - API\s*6D
+          - API\s*600
+          - API\s*602
+          - API\s*608
+          - API\s*623
+
+      MSS:
+        mode: direct
+        patterns:
+          - MSS\s*SP\s*-?\s*75
+          - MSS\s*SP\s*-?\s*83
+          - MSS\s*SP\s*-?\s*95
+          - MSS\s*SP\s*-?\s*97
+          - MSSSP\s*95
+          - MS\s*75
+          - MS\s*83
+          - MS\s*95
+          - MS\s*97
+
+  type:
+    enabled: false
+    note: 预留。后续在这里补种类主体存在性配置。
+
+  material:
+    enabled: false
+    note: 预留。后续在这里补材质存在性配置。

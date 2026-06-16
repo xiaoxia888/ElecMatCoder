@@ -51,10 +51,12 @@ def format_reason_text(result: DifficultyResult) -> str:
 def build_base_difficulty(
     text: str,
     *,
+    normalized_text: str | None = None,
     type_code: str = "",
     material_code: str = "",
     standard_code: str = "",
     standard_codes: Iterable[str] | None = None,
+    enable_code_rules: bool = False,
 ) -> Dict[str, Any]:
     clean_text = _clean_text(text)
     if not clean_text:
@@ -76,6 +78,8 @@ def build_base_difficulty(
             if standard_codes is not None
             else _clean_text(standard_code)
         ),
+        normalized_text=_clean_text(normalized_text) or clean_text,
+        enable_code_rules=enable_code_rules,
     )
     return {
         "difficulty": DIFF_HARD if result.is_difficult else DIFF_EASY,
@@ -143,6 +147,7 @@ def finalize_batch_difficulty(items: Iterable[Dict[str, Any]]) -> List[Dict[str,
                 material_code=_clean_text(row.get("material_code", "")),
                 standard_code=_clean_text(row.get("standard_code", "")),
                 standard_codes=row.get("standard_codes") if isinstance(row.get("standard_codes"), (list, tuple)) else None,
+                enable_code_rules=False,
             )
 
         project_feature = project_features[idx] if idx < len(project_features) else DifficultyFeature(

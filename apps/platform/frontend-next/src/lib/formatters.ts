@@ -7,7 +7,11 @@ const DIFFICULTY_LABELS: Record<number, string> = {
 }
 
 export function getDifficultyLevel(result?: EncodingResult): number | null {
-  const rawLevel = result?.second_pass?.final_level ?? result?.difficulty_split?.level ?? result?.difficulty_split?.difficulty
+  const rawLevel =
+    result?.routing?.final_level ??
+    result?.second_pass?.final_level ??
+    result?.difficulty_split?.level ??
+    result?.difficulty_split?.difficulty
   if (rawLevel == null) return null
 
   const level = Number(rawLevel)
@@ -196,6 +200,9 @@ export function getDifficultyVariant(result?: EncodingResult) {
 }
 
 export function getRouteReason(result?: EncodingResult) {
+  const routingReason = result?.routing?.reason_text?.trim()
+  if (routingReason) return routingReason
+
   const finalLevel = getDifficultyLevel(result)
   const stage1ReasonText = result?.difficulty_split?.reason_text?.trim()
   const stage1Reasons = Array.isArray(result?.difficulty_split?.reasons)
@@ -210,15 +217,14 @@ export function getRouteReason(result?: EncodingResult) {
     return '未提供一阶段分流原因'
   }
 
-  const secondPassResults = result?.second_pass?.results
-  if (secondPassResults && typeof secondPassResults === 'object') {
-    const reasonParts = Object.entries(secondPassResults)
-      .map(([field, payload]) => {
-        if (!payload || typeof payload !== 'object') return ''
-        const reason = typeof payload.reason === 'string' ? payload.reason.trim() : ''
+  const secondPassChecks = Array.isArray(result?.second_pass?.failed_checks) ? result!.second_pass!.failed_checks : []
+  if (secondPassChecks.length > 0) {
+    const reasonParts = secondPassChecks
+      .map((item) => {
+        const field = String(item?.field ?? '').trim()
+        const reason = String(item?.reason ?? '').trim()
         if (!reason) return ''
-        const passed = Boolean(payload.passed)
-        return passed ? '' : `${field}: ${reason}`
+        return field ? `${field}: ${reason}` : reason
       })
       .filter(Boolean)
     if (reasonParts.length > 0) return reasonParts.join(' | ')
@@ -235,12 +241,15 @@ export function getRouteReason(result?: EncodingResult) {
 }
 
 export function getRoutingStageText(result?: EncodingResult) {
-  if (result?.second_pass?.final_level == null) return '仅一阶段判定'
-  const stage1Level = result?.second_pass?.stage1_level ?? result?.second_pass?.stage1_difficulty
-  const finalLevel = result?.second_pass?.final_level
-  if (stage1Level === 0) return '一阶段已判困难，未进入二次分流'
-  if (stage1Level === finalLevel) return '一阶段直接判定'
-  return '一阶段通过后触发二次分流'
+  const decisionStage = result?.routing?.decision_stage ?? result?.second_pass?.decision_stage
+  if (decisionStage === 'stage1') {
+    const stage1Level = result?.routing?.stage1_level ?? result?.second_pass?.stage1_level ?? result?.second_pass?.stage1_difficulty
+    return stage1Level === 0 ? '一阶段已判困难，未进入二次分流' : '一阶段直接判定'
+  }
+  if (decisionStage === 'second_pass') return '一阶段通过后触发二次分流'
+  if (decisionStage === 'project_frequency') return '批量完成后叠加项目频次复核'
+  if (result?.routing?.final_level == null && result?.second_pass?.final_level == null) return '仅一阶段判定'
+  return '分流已完成'
 }
 
 export function summarizeItemText(text: string, max = 36) {

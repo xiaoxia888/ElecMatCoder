@@ -90,6 +90,7 @@ class EncodeResultPayload:
     confidence: float | None
     fields: dict[str, FieldResultPayload] = field(default_factory=dict)
     route_info: dict[str, Any] | None = None
+    routing: dict[str, Any] | None = None
     difficulty_split: dict[str, Any] | None = None
     second_pass: dict[str, Any] | None = None
     errors: list[str] = field(default_factory=list)
@@ -107,6 +108,7 @@ class EncodeResultPayload:
             "confidence": self.confidence,
             "fields": {key: value.to_dict() for key, value in self.fields.items()},
             "route_info": self.route_info,
+            "routing": self.routing,
             "difficulty_split": self.difficulty_split,
             "second_pass": self.second_pass,
             "errors": list(self.errors),

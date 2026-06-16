@@ -25,7 +25,7 @@ suffix_enabled_codes:
 
 common_materials:
   "20":
-    - 20
+    - "20"
     - 20#
     - 20号钢
     - 锻20
@@ -33,7 +33,7 @@ common_materials:
     - S30408
     - SF304
     - 06Cr19Ni10
-    - 304
+    - "304"
     - WP304
     - F304
     - TP304
@@ -66,14 +66,14 @@ common_materials:
     - 06Cr18Ni11Ti
     - F321
     - X6CrNiTi18-10
-    - 1.4541
+    - "1.4541"
     - WP321
     - TP321
   "CF415K":
     - CF415K
   "2205":
     - SF2205
-    - 2205
+    - "2205"
     - S32205
     - S22053
     - WPS32205
@@ -126,7 +126,7 @@ common_materials:
     - Q345-E
   "316":
     - 06Cr17Ni12Mo2
-    - 316
+    - "316"
     - F316
     - SUS 316
     - S31608
@@ -150,3 +150,5 @@ common_materials:
     - 07Cr19Ni10
   "16MnDG":
     - 16MnDG
+  "12Cr5Mo":
+    - "12Cr5Mo"

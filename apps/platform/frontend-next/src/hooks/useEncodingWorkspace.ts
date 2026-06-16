@@ -16,6 +16,10 @@ function normalizeImportedRows(rows: Record<string, unknown>[], column: string):
     .filter((item) => item.text)
 }
 
+function isBatchJobRunning(status: string | undefined) {
+  return ['queued', 'running', 'cancelling'].includes(String(status || ''))
+}
+
 export function useEncodingWorkspace() {
   const [dataList, setDataList] = useState<ImportedRow[]>([])
   const [results, setResults] = useState<Record<number, EncodingResult>>({})
@@ -150,8 +154,12 @@ export function useEncodingWorkspace() {
   }
 
   function applyJobSnapshot(job: BatchJobSummary) {
+    const running = isBatchJobRunning(job.status)
     setActiveJob(job)
-    setIsEncodingBatch(['queued', 'running', 'cancelling'].includes(String(job.status || '')))
+    setIsEncodingBatch(running)
+    if (!running) {
+      setIsStoppingBatch(false)
+    }
 
     const items = Array.isArray(job.items) ? job.items : []
     if (items.length > 0) {
@@ -190,8 +198,12 @@ export function useEncodingWorkspace() {
         setResults((prev) => ({ ...prev, [event.index!]: event.result! }))
       }
       if (event.snapshot) {
+        const running = isBatchJobRunning(event.snapshot.status)
         setActiveJob(event.snapshot)
-        setIsEncodingBatch(['queued', 'running', 'cancelling'].includes(String(event.snapshot.status || '')))
+        setIsEncodingBatch(running)
+        if (!running) {
+          setIsStoppingBatch(false)
+        }
       }
       if (event.type === 'end' || event.type === 'cancelled' || event.type === 'failed') {
         if (event.snapshot) applyJobSnapshot(event.snapshot)
@@ -229,7 +241,7 @@ export function useEncodingWorkspace() {
       if (res.job) {
         applyJobSnapshot(res.job)
         setCurrentIndex((res.job.items?.length ?? 0) > 0 ? 0 : -1)
-        if (['queued', 'running', 'cancelling'].includes(String(res.job.status || ''))) {
+        if (isBatchJobRunning(res.job.status)) {
           subscribeBatchJob(id)
         } else {
           clearStream()
@@ -302,17 +314,23 @@ export function useEncodingWorkspace() {
   }
 
   async function cancelBatchJob() {
-    if (!activeJob?.job_id) return
+    if (!activeJob?.job_id) return false
     setIsStoppingBatch(true)
     setError('')
     try {
       const res = await api.cancelBatchJob(activeJob.job_id)
       setActiveJob(res.job)
+      if (!isBatchJobRunning(res.job?.status)) {
+        setIsEncodingBatch(false)
+        setIsStoppingBatch(false)
+        refreshJobs()
+      }
       setNotice('已提交停止请求。')
+      return true
     } catch (err) {
       setError(err instanceof Error ? err.message : '停止任务失败')
-    } finally {
       setIsStoppingBatch(false)
+      return false
     }
   }
 

@@ -92,6 +92,8 @@ combo_value_mapping:
   "20/304":
     - "20/304"
     - "20/S30408"
+  "12Cr5Mo":
+    - "12Cr5Mo"
   "304L/304":
     - "304L/304"
     - "S30403/S30408"
@@ -451,8 +453,6 @@ weak_value_mapping:
   "PTFE":
     - "PTFE"
     - "PTFE Lined"
-  "L245M":
-    - "L245M"
   "AF14":
     - "AF14"
   "FRP":

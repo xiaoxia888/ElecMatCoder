@@ -48,6 +48,40 @@ class PlatformSecondPassRunner:
             standard_items=extracted["STANDARD_ITEMS"],
         )
 
+    def analyze_payload_summary(self, payload: dict[str, Any]) -> dict[str, Any]:
+        text = self._clean(payload.get("text") or payload.get("original_text"))
+        stage1_difficulty = normalize_difficulty_level(
+            payload.get("stage1_difficulty") if payload.get("stage1_difficulty") is not None else payload.get("difficulty")
+        )
+        fields = payload.get("fields") if isinstance(payload.get("fields"), dict) else {}
+        extracted = {
+            "SIZE": self._extract_stage1_value(fields.get("SIZE")),
+            "THICKNESS": self._extract_stage1_value(fields.get("THICKNESS")),
+            "PRESSURE": self._extract_stage1_value(fields.get("PRESSURE")),
+            "MATERIAL_CODE": self._extract_code(fields.get("MATERIAL")),
+            "TYPE_CODE": self._extract_code(fields.get("TYPE")),
+            "STANDARD_ITEMS": self._extract_standard_items(fields.get("STANDARD")),
+        }
+        detailed = self.analyze(
+            text=text,
+            stage1_difficulty=stage1_difficulty,
+            size_value=extracted["SIZE"],
+            thickness_value=extracted["THICKNESS"],
+            pressure_value=extracted["PRESSURE"],
+            material_code=extracted["MATERIAL_CODE"],
+            type_code=extracted["TYPE_CODE"],
+            standard_items=extracted["STANDARD_ITEMS"],
+        )
+        return self._summarize_result(
+            detailed,
+            size_value=extracted["SIZE"],
+            thickness_value=extracted["THICKNESS"],
+            pressure_value=extracted["PRESSURE"],
+            material_code=extracted["MATERIAL_CODE"],
+            type_code=extracted["TYPE_CODE"],
+            standard_items=extracted["STANDARD_ITEMS"],
+        )
+
     def analyze(
         self,
         *,
@@ -309,3 +343,99 @@ class PlatformSecondPassRunner:
         if stage1_difficulty == DIFF_EASY and all_passed:
             return DIFF_SECOND_EASY
         return DIFF_EASY
+
+    @staticmethod
+    def _make_check(field: str, reason: str) -> dict[str, str]:
+        return {
+            "field": str(field or "").strip(),
+            "reason": str(reason or "").strip(),
+            "stage": "second_pass",
+            "rule": "second_pass",
+        }
+
+    @classmethod
+    def _build_missing_required_checks(
+        cls,
+        *,
+        size_value: Any,
+        thickness_value: Any,
+        pressure_value: Any,
+        material_code: str,
+        type_code: str,
+        standard_items: list[dict[str, str]] | None,
+    ) -> list[str]:
+        presence = cls._second_easy_field_presence(
+            size_value=size_value,
+            thickness_value=thickness_value,
+            pressure_value=pressure_value,
+            material_code=material_code,
+            type_code=type_code,
+            standard_items=standard_items,
+        )
+        missing: list[str] = []
+        for field_name in ("TYPE", "SIZE", "MATERIAL", "STANDARD"):
+            if not presence[field_name]:
+                missing.append(field_name)
+        if not (presence["THICKNESS"] or presence["PRESSURE"]):
+            missing.append("THICKNESS_OR_PRESSURE")
+        return missing
+
+    @classmethod
+    def _summarize_result(
+        cls,
+        detailed: dict[str, Any],
+        *,
+        size_value: Any,
+        thickness_value: Any,
+        pressure_value: Any,
+        material_code: str,
+        type_code: str,
+        standard_items: list[dict[str, str]] | None,
+    ) -> dict[str, Any]:
+        stage1_level = normalize_difficulty_level(detailed.get("stage1_difficulty"))
+        final_level = normalize_difficulty_level(detailed.get("final_level"))
+        results = detailed.get("results") if isinstance(detailed.get("results"), dict) else {}
+
+        failed_checks: list[dict[str, str]] = []
+        passed_checks: list[str] = []
+        for field, payload in results.items():
+            if not isinstance(payload, dict):
+                continue
+            if payload.get("passed"):
+                passed_checks.append(str(field))
+                continue
+            reason = cls._clean(payload.get("reason"))
+            if reason:
+                failed_checks.append(cls._make_check(str(field), reason))
+
+        missing_required_checks = cls._build_missing_required_checks(
+            size_value=size_value,
+            thickness_value=thickness_value,
+            pressure_value=pressure_value,
+            material_code=material_code,
+            type_code=type_code,
+            standard_items=standard_items,
+        )
+
+        if failed_checks:
+            reason_text = " | ".join(f"{check['field']}: {check['reason']}" for check in failed_checks if check["reason"])
+        elif final_level == DIFF_SECOND_EASY:
+            reason_text = "二次分流全部通过"
+        elif missing_required_checks:
+            reason_text = f"未满足自动通过条件: 缺少 {'、'.join(missing_required_checks)}"
+        elif passed_checks:
+            reason_text = "二次分流已回查，维持中等"
+        else:
+            reason_text = "未进入二次分流"
+
+        return {
+            "stage1_level": stage1_level,
+            "stage1_difficulty": stage1_level,
+            "final_level": final_level,
+            "decision_stage": "second_pass" if stage1_level == DIFF_EASY else "stage1",
+            "need_review": final_level != DIFF_SECOND_EASY,
+            "reason_text": reason_text,
+            "failed_checks": failed_checks,
+            "passed_checks": passed_checks,
+            "missing_required_checks": missing_required_checks,
+        }

@@ -55,6 +55,10 @@ RIGHT_INCH_COMBO_RE = re.compile(
 LEFT_INCH_COMBO_RE = re.compile(
     r'(?i)(?:"|”|″|\'\'|INCH\b|IN\b)\s*[*xX×/]\s*$'
 )
+ANGLE_CN_SUFFIX_RE = re.compile(r"^\s*(?:°|度)")
+ANGLE_EN_SUFFIX_RE = re.compile(r"^\s*DEG(?:REE)?S?\b", re.IGNORECASE)
+ANGLE_PREFIX_RE = re.compile(r"(?:角度|度数)\s*$", re.IGNORECASE)
+LEADING_NOISE_RE = re.compile(r"^[\s,，;；、()\[\]{}:：\-_/]+$")
 
 
 class AnchorMissingDetector:
@@ -128,6 +132,10 @@ class AnchorMissingDetector:
                 continue
             if self._is_percentage_value(text, match.start(), match.end()):
                 continue
+            if self._is_angle_context(text, match.start(), match.end()):
+                continue
+            if self._is_leading_fallback_number(text, match.start(), match.end(), value):
+                continue
             if self._has_explicit_anchor(text, match.start(), match.end()):
                 continue
             standard_context = self._classify_standard_body_context(text, match.start())
@@ -150,6 +158,8 @@ class AnchorMissingDetector:
 
         for match in NAKED_INTEGER_RE.finditer(text):
             value = match.group(0)
+            if value in self.ignored_naked_integer_values:
+                continue
             if value not in self.common_integer_anchor_values:
                 continue
             if value in self.common_numeric_material_codes:
@@ -157,6 +167,10 @@ class AnchorMissingDetector:
             if any(start <= match.start() and match.end() <= end for start, end in covered_spans):
                 continue
             if self._is_percentage_value(text, match.start(), match.end()):
+                continue
+            if self._is_angle_context(text, match.start(), match.end()):
+                continue
+            if self._is_leading_fallback_number(text, match.start(), match.end(), value):
                 continue
             if self._has_explicit_anchor(text, match.start(), match.end()):
                 continue
@@ -208,6 +222,7 @@ class AnchorMissingDetector:
             for raw in data.get("common_material_codes", [])
             if (text := str(raw).strip()) and re.fullmatch(r"\d+(?:\.\d+)?", text)
         }
+        self.ignored_naked_integer_values = {"20", "45", "90"}
         self.common_integer_anchor_values = set()
         if self.encoder_config_path.exists():
             with self.encoder_config_path.open("r", encoding="utf-8") as f:
@@ -230,6 +245,25 @@ class AnchorMissingDetector:
                 for raw in pressure_processing.get("pn_values", [])
                 if str(raw).strip() and re.fullmatch(r"\d+", str(raw).strip())
             )
+
+    @staticmethod
+    def _is_angle_context(text: str, start: int, end: int) -> bool:
+        left = text[max(0, start - 8) : start]
+        right = text[end : min(len(text), end + 12)]
+        return bool(
+            ANGLE_CN_SUFFIX_RE.match(right)
+            or ANGLE_EN_SUFFIX_RE.match(right)
+            or ANGLE_PREFIX_RE.search(left)
+        )
+
+    @staticmethod
+    def _is_leading_fallback_number(text: str, start: int, end: int, value: str) -> bool:
+        if str(value).strip() not in {"20", "45", "90"}:
+            return False
+        left = str(text or "")[:start]
+        if not left:
+            return True
+        return bool(LEADING_NOISE_RE.fullmatch(left))
 
     @staticmethod
     def _is_percentage_value(text: str, start: int, end: int) -> bool:

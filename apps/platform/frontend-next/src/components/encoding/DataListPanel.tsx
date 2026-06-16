@@ -16,6 +16,7 @@ interface DataListPanelProps {
 
 const DIFF_STYLE: Record<string, string> = {
   困难: 'bg-dangerSoft text-danger',
+  中等: 'bg-cautionSoft text-caution',
   简单: 'bg-successSoft text-success',
 }
 const STATUS_STYLE: Record<string, string> = {

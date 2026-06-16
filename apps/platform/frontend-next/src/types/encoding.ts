@@ -55,22 +55,49 @@ export interface EncodingResult {
   confidence?: number
   fields: Record<string, FieldPayload>
   route_info?: Record<string, unknown> | null
+  routing?: {
+    stage1_level?: number | null
+    final_level?: number | null
+    decision_stage?: 'stage1' | 'second_pass' | 'project_frequency' | string
+    need_review?: boolean
+    reason_text?: string
+    failed_checks?: Array<{
+      field?: string
+      reason?: string
+      stage?: string
+      rule?: string
+    }>
+    passed_checks?: string[]
+    missing_required_checks?: string[]
+  } | null
   difficulty_split?: {
     level?: number | null
     difficulty?: number | null
     reason_text?: string
     reasons?: string[]
+    failed_checks?: Array<{
+      field?: string
+      reason?: string
+      stage?: string
+      rule?: string
+    }>
+    passed_checks?: string[]
   } | null
   second_pass?: {
     stage1_level?: number | null
     stage1_difficulty?: number | null
     final_level?: number | null
-    skipped_fields?: Record<string, string>
-    results?: Record<string, {
-      passed?: boolean
+    decision_stage?: string
+    need_review?: boolean
+    reason_text?: string
+    failed_checks?: Array<{
+      field?: string
       reason?: string
-      [key: string]: unknown
+      stage?: string
+      rule?: string
     }>
+    passed_checks?: string[]
+    missing_required_checks?: string[]
   } | null
   errors?: string[]
   warnings?: string[]

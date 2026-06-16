@@ -42,11 +42,11 @@ from src.bert_ner.predictor import PipePredictor
 # 导入编码模块
 from src.encoder.pipe_encoder import PipeEncoder, get_pipe_encoder
 from src.encoder.semantic_matcher import get_semantic_matcher
-from src.material_description_splitter.platform_integration import (
-    build_base_difficulty,
-    finalize_batch_difficulty,
+from src.material_description_splitter.routing_pipeline import (
+    apply_project_frequency,
+    attach_routing,
 )
-from src.material_description_splitter.second_pass import PlatformSecondPassRunner
+from src.material_description_splitter import Stage1StructureChecker
 
 # 导入第三方集成模块
 from src.integrations import get_h3yun_client
@@ -127,7 +127,7 @@ _ner_predictor = None
 _ner_model_type: str = "bert"
 _pipe_router = None
 _structural_prompt_extractor = None
-_second_pass_runner = PlatformSecondPassRunner()
+_stage1_structure_checker = Stage1StructureChecker()
 _batch_jobs: Dict[str, Dict[str, Any]] = {}
 _batch_job_queue: deque[str] = deque()
 _batch_job_active_id: Optional[str] = None
@@ -289,7 +289,6 @@ async def _run_batch_job(job_id: str) -> None:
         route_info = _decorate_predict_route_info(predict_result.get("route_info"))
         stage1_snapshot = Stage1DecisionNormalizer.build_snapshot(predict_result)
         stage1 = stage1_snapshot.to_dict()
-
         if route_info.get("encoding_enabled") is False:
             converted = EncodeResultPayload(
                 original_text=text,
@@ -306,6 +305,7 @@ async def _run_batch_job(job_id: str) -> None:
                 skip_reason=route_info.get("skip_encoding_reason", "") or "",
             ).to_dict()
             converted["stage1"] = stage1
+            converted["routing"] = None
             converted["difficulty_split"] = None
             converted["second_pass"] = None
             return converted
@@ -327,8 +327,7 @@ async def _run_batch_job(job_id: str) -> None:
         converted["processed_text"] = processed_text
         converted["route_info"] = route_info
         converted["stage1"] = stage1
-        converted = _attach_base_difficulty(converted, str(item.get("project_name", "") or "").strip())
-        converted = _attach_second_pass(converted)
+        converted = attach_routing(converted)
         return converted
 
     async def worker() -> None:
@@ -419,32 +418,29 @@ async def _run_batch_job(job_id: str) -> None:
             await _batch_job_emit(job, {"type": "cancelled", "snapshot": snapshot})
             return
 
-        finalized = finalize_batch_difficulty(
-            [
-                {
-                    "text": (converted or {}).get("original_text", "") if isinstance(converted, dict) else "",
-                    "project_name": str(item.get("project_name", "") or "").strip(),
-                    "type_code": _extract_code_from_field(converted or {}, "TYPE") if isinstance(converted, dict) else "",
-                    "material_code": _extract_code_from_field(converted or {}, "MATERIAL") if isinstance(converted, dict) else "",
-                    "standard_code": _extract_code_from_field(converted or {}, "STANDARD") if isinstance(converted, dict) else "",
-                    "standard_codes": _extract_standard_codes_from_field(converted or {}) if isinstance(converted, dict) else [],
-                    "base_difficulty": (converted or {}).get("difficulty_split") if isinstance(converted, dict) else None,
-                }
-                for item, converted in zip(items, converted_results)
-            ]
+        finalized = apply_project_frequency(
+            [converted if isinstance(converted, dict) else {} for converted in converted_results],
+            [str(item.get("project_name", "") or "").strip() for item in items],
         )
 
-        for order_index, (item, converted, difficulty) in enumerate(zip(items, converted_results, finalized)):
+        final_success_count = 0
+        final_review_count = 0
+        for order_index, (item, converted) in enumerate(zip(items, finalized)):
             if not isinstance(converted, dict) or converted.get("skipped_encoding"):
                 continue
-            converted["difficulty_split"] = difficulty
-            _attach_second_pass(converted)
+            converted_results[order_index] = converted
+            if converted.get("success"):
+                final_success_count += 1
+            if converted.get("need_review"):
+                final_review_count += 1
             client_index = int(item.get("client_index", order_index))
             await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, converted)
             async with _batch_job_lock:
                 current_job = _batch_jobs.get(job_id)
                 if not current_job:
                     return
+                current_job["success_count"] = final_success_count
+                current_job["review_count"] = final_review_count
                 current_job["updated_at"] = _utc_ts()
                 snapshot = _batch_job_public(current_job)
             await _batch_job_emit(job, {
@@ -1176,7 +1172,6 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
     stage1 = Stage1DecisionNormalizer.build_snapshot(predict_result)
     stage1_decisions = stage1.decisions
     stage1_meta = stage1.field_meta
-
     if route_info.get("encoding_enabled") is False:
         payload = EncodeResultPayload(
             original_text=text,
@@ -1193,6 +1188,7 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
             skip_reason=route_info.get("skip_encoding_reason", "") or "",
         ).to_dict()
         payload["stage1"] = stage1.to_dict()
+        payload["routing"] = None
         payload["difficulty_split"] = None
         payload["second_pass"] = None
         return payload
@@ -1206,8 +1202,7 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
     )
     converted = _convert_pipe_result(result, processed_text=processed_text, route_info=route_info)
     converted["stage1"] = stage1.to_dict()
-    converted = _attach_base_difficulty(converted, str(project_name or "").strip())
-    return _attach_second_pass(converted)
+    return attach_routing(converted)
 
 
 def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
@@ -1305,12 +1300,14 @@ async def pipe_predict(request: PipePredictRequest):
         result = await asyncio.to_thread(predictor.predict, processed_text)
         _apply_structural_prompt_override(result, processed_text)
         stage1 = Stage1DecisionNormalizer.build_snapshot(result).to_dict()
+        stage1_structure = _build_stage1_structure_payload(text)
 
         return {
             "success": True,
             "original_text": text,
             "processed_text": processed_text,
             "stage1": stage1,
+            "stage1_structure": stage1_structure,
             "route_info": result.get("route_info"),
         }
     except Exception as e:
@@ -1334,12 +1331,14 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
                 result = await asyncio.to_thread(predictor.predict, processed_text)
             _apply_structural_prompt_override(result, processed_text)
             stage1 = Stage1DecisionNormalizer.build_snapshot(result).to_dict()
+            stage1_structure = _build_stage1_structure_payload(text)
 
             return {
                 "success": True,
                 "original_text": text,
                 "processed_text": processed_text,
                 "stage1": stage1,
+                "stage1_structure": stage1_structure,
                 "route_info": result.get("route_info"),
             }
         except Exception as e:
@@ -1450,23 +1449,12 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
     review_count = sum(1 for r in results if isinstance(r, dict) and r.get("need_review"))
     converted_results = list(results)
 
-    finalized = finalize_batch_difficulty(
-        [
-            {
-                "text": converted.get("original_text", "") or "",
-                "project_name": str(item.get("project_name", "") or "").strip(),
-                "type_code": _extract_code_from_field(converted, "TYPE"),
-                "material_code": _extract_code_from_field(converted, "MATERIAL"),
-                "standard_code": _extract_code_from_field(converted, "STANDARD"),
-                "standard_codes": _extract_standard_codes_from_field(converted),
-                "base_difficulty": converted.get("difficulty_split"),
-            }
-            for item, converted in zip(request.items, converted_results)
-        ]
+    converted_results = apply_project_frequency(
+        [converted if isinstance(converted, dict) else {} for converted in converted_results],
+        [str(item.get("project_name", "") or "").strip() for item in request.items],
     )
-    for converted, difficulty in zip(converted_results, finalized):
-        converted["difficulty_split"] = difficulty
-        _attach_second_pass(converted)
+
+    review_count = sum(1 for r in converted_results if isinstance(r, dict) and r.get("need_review"))
 
     return {
         "total": total,
@@ -1480,7 +1468,10 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
 @app.post("/api/pipe/difficulty/finalize")
 async def pipe_finalize_difficulty(request: PipeDifficultyFinalizeRequest):
     """根据项目维度对已编码结果做最终分流修正。"""
-    finalized = finalize_batch_difficulty(request.items)
+    finalized = apply_project_frequency(
+        [item if isinstance(item, dict) else {} for item in request.items],
+        [str((item or {}).get("project_name", "") or "").strip() for item in request.items],
+    )
     return {
         "success": True,
         "total": len(finalized),
@@ -1979,71 +1970,21 @@ async def get_h3yun_reason_categories(request: ReasonCategoryRequest):
         logger.error(f"获取原因分类失败: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-def _convert_pipe_result(result, *, processed_text: str = "", route_info: Optional[Dict[str, Any]] = None) -> dict:
+def _build_stage1_structure_payload(text: str) -> Dict[str, Any]:
+    return _stage1_structure_checker.analyze(text or "").to_dict()
+
+
+def _convert_pipe_result(
+    result,
+    *,
+    processed_text: str = "",
+    route_info: Optional[Dict[str, Any]] = None,
+) -> dict:
     """委托编码器结果对象输出统一三层 schema。"""
-    return result.to_payload_dict(processed_text=processed_text, route_info=route_info)
-
-
-def _extract_code_from_field(result_dict: Dict[str, Any], field: str) -> str:
-    fields = result_dict.get("fields", {}) if isinstance(result_dict, dict) else {}
-    field_data = fields.get(field, {}) if isinstance(fields, dict) else {}
-    stage2_output = field_data.get("stage2_output", {}) if isinstance(field_data, dict) else {}
-    return str(stage2_output.get("code", "") or "").strip()
-
-
-def _extract_standard_codes_from_field(result_dict: Dict[str, Any]) -> List[str]:
-    fields = result_dict.get("fields", {}) if isinstance(result_dict, dict) else {}
-    field_data = fields.get("STANDARD", {}) if isinstance(fields, dict) else {}
-    stage2_input = field_data.get("stage2_input", {}) if isinstance(field_data, dict) else {}
-    value = stage2_input.get("value") if isinstance(stage2_input, dict) else None
-    codes: list[str] = []
-    for item in value if isinstance(value, list) else []:
-        if not isinstance(item, dict):
-            continue
-        code = str(item.get("BODY", "") or item.get("code", "") or "").strip()
-        if code:
-            codes.append(code)
-    if codes:
-        return codes
-    stage2_output = field_data.get("stage2_output", {}) if isinstance(field_data, dict) else {}
-    fallback = str(stage2_output.get("code", "") or "").strip() if isinstance(stage2_output, dict) else ""
-    return [fallback] if fallback else []
-
-
-def _attach_base_difficulty(result_dict: Dict[str, Any], project_name: str = "") -> Dict[str, Any]:
-    difficulty = build_base_difficulty(
-        result_dict.get("original_text", "") or "",
-        type_code=_extract_code_from_field(result_dict, "TYPE"),
-        material_code=_extract_code_from_field(result_dict, "MATERIAL"),
-        standard_code=_extract_code_from_field(result_dict, "STANDARD"),
-        standard_codes=_extract_standard_codes_from_field(result_dict),
+    return result.to_payload_dict(
+        processed_text=processed_text,
+        route_info=route_info,
     )
-    difficulty["project_name"] = str(project_name or "").strip()
-    result_dict["difficulty_split"] = difficulty
-    return result_dict
-
-
-def _attach_second_pass(result_dict: Dict[str, Any]) -> Dict[str, Any]:
-    if not isinstance(result_dict, dict):
-        return result_dict
-
-    difficulty_info = result_dict.get("difficulty_split") if isinstance(result_dict.get("difficulty_split"), dict) else {}
-    payload = {
-        "text": result_dict.get("original_text", "") or "",
-        "stage1_difficulty": difficulty_info.get("difficulty"),
-        "fields": result_dict.get("fields", {}) if isinstance(result_dict.get("fields"), dict) else {},
-    }
-    try:
-        result_dict["second_pass"] = _second_pass_runner.analyze_payload(payload)
-    except Exception as exc:
-        logger.exception("二次校验执行失败: %s", exc)
-        result_dict["second_pass"] = {
-            "final_level": None,
-            "results": {},
-            "skipped_fields": {},
-            "error": str(exc),
-        }
-    return result_dict
 
 
 # ============================================================
