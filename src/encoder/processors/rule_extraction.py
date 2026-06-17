@@ -313,11 +313,19 @@ def build_structured_thickness_field(result: RuleThicknessExtraction, original_t
 
 
 def build_structured_rule_entities(result: RuleExtractionResult, original_text: str = "") -> Dict[str, Any]:
-    return {
+    payload: Dict[str, Any] = {
         "SIZE": build_structured_size_field(result.size, original_text=original_text),
         "THICKNESS": build_structured_thickness_field(result.thickness, original_text=original_text),
         "PRESSURE": result.pressure.pressure_code,
     }
+    if getattr(result.pressure, "cleared", False):
+        payload["_rule_flags"] = {
+            "PRESSURE": {
+                "cleared": True,
+                "clear_reason": str(getattr(result.pressure, "clear_reason", "") or ""),
+            }
+        }
+    return payload
 
 
 def extract_size_and_thickness_by_rules(
@@ -406,6 +414,8 @@ def extract_size_and_thickness_by_rules(
             matched_spans=[],
             consumed_spans=[],
             ordered_items=[],
+            cleared=True,
+            clear_reason="residual_spec_guard",
         )
 
     if apply_residual_guard and any(decision.action == "ambiguous_clear" for decision in od_pair_decisions):

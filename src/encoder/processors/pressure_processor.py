@@ -31,6 +31,8 @@ class RulePressureExtraction:
     matched_spans: List[Tuple[int, int]]
     consumed_spans: List[Tuple[int, int]] = field(default_factory=list)
     ordered_items: List[Dict[str, str]] = field(default_factory=list)
+    cleared: bool = False
+    clear_reason: str = ""
 
 
 class PressureProcessor:
@@ -85,6 +87,9 @@ class PressureProcessor:
         self.hash_pattern = re.compile(
             rf"(?i)(?<![A-Z0-9])({hash_value_pattern})\s*#(?![A-Z0-9])"
         )
+        self.encoded_class_pattern = re.compile(
+            rf"(?i)(?<![A-Z0-9])C\s*({hash_value_pattern})(?![A-Z0-9])"
+        )
         self.pn_pattern = re.compile(
             r"(?i)(?<![A-Z0-9])PN\s*(\d+(?:\.\d+)?)"
         )
@@ -98,11 +103,13 @@ class PressureProcessor:
         )
 
         self.combo_separator_pattern = re.compile(r"\s*(?:/|;|,|，)\s*")
+        self.slash_separator_pattern = re.compile(r"\s*/\s*")
         self.comparison_chars = set("><=≤≥")
         self.pressure_token_pattern = re.compile(
             rf"(?i)("
             rf"CL\s*\.?\s*\d+"
             rf"|CLASS\s*\d+"
+            rf"|C\s*(?:{hash_value_pattern})"
             rf"|\d+\s*LB(?:S)?"
             rf"|(?:{hash_value_pattern})\s*#"
             rf"|PN\s*\d+(?:\.\d+)?"
@@ -183,7 +190,7 @@ class PressureProcessor:
             while j < len(token_matches):
                 next_start, next_end, next_raw, next_normalized = token_matches[j]
                 separator_text = source[combo_end:next_start]
-                if not self.combo_separator_pattern.fullmatch(separator_text):
+                if not self.slash_separator_pattern.fullmatch(separator_text):
                     break
                 combo_raw_parts.append(next_raw)
                 combo_normalized_parts.append(next_normalized)
@@ -214,6 +221,18 @@ class PressureProcessor:
                 continue
             deduped_items.append(item)
             seen_values.add(value)
+
+        if len(deduped_items) >= 2:
+            return RulePressureExtraction(
+                values=[],
+                pressure_code="",
+                matched_texts=matched_texts,
+                matched_spans=matched_spans,
+                consumed_spans=[],
+                ordered_items=[],
+                cleared=True,
+                clear_reason="multiple_pressure_without_slash",
+            )
 
         pressure_code = "/".join(str(item["value"]) for item in deduped_items)
         consumed_value_spans = self._derive_consumed_spans_from_ordered_items(source, deduped_items)
@@ -263,6 +282,9 @@ class PressureProcessor:
             value_part = self._normalize_common_numeric(m.group(1), self.class_values, allow_prefix=False)
             return f"C{value_part}" if value_part else ""
         m = self.hash_pattern.fullmatch(upper)
+        if m:
+            return f"C{m.group(1)}"
+        m = self.encoded_class_pattern.fullmatch(upper)
         if m:
             return f"C{m.group(1)}"
         m = re.fullmatch(r"PN\s*(\d+(?:\.\d+)?)", upper, re.IGNORECASE)

@@ -49,7 +49,8 @@ class StructuralFieldResolver:
     1. 可通过配置决定是否先走规则层
     2. SIZE 为空时回退大模型；仅有 LENGTH 也视为 SIZE 为空
     3. THICKNESS 为空时回退大模型
-    4. PRESSURE 只有在 THICKNESS 和 PRESSURE 都为空时才回退大模型
+    4. PRESSURE 在 THICKNESS 和 PRESSURE 都为空时回退大模型；
+       如果规则主动清空 PRESSURE，也单独回退大模型
     """
 
     def __init__(
@@ -115,10 +116,15 @@ class StructuralFieldResolver:
         size_value = rule_structural.get("SIZE")
         thickness_value = rule_structural.get("THICKNESS")
         pressure_value = rule_structural.get("PRESSURE")
+        rule_flags = rule_structural.get("_rule_flags") if isinstance(rule_structural.get("_rule_flags"), dict) else {}
+        pressure_rule_flag = rule_flags.get("PRESSURE") if isinstance(rule_flags.get("PRESSURE"), dict) else {}
+        pressure_was_cleared = bool(pressure_rule_flag.get("cleared"))
 
         need_size_model = _is_size_empty_for_rule_fallback(size_value)
         need_thickness_model = _is_thickness_empty_for_rule_fallback(thickness_value)
-        need_pressure_model = need_thickness_model and _is_pressure_empty_for_rule_fallback(pressure_value)
+        need_pressure_model = _is_pressure_empty_for_rule_fallback(pressure_value) and (
+            need_thickness_model or pressure_was_cleared
+        )
 
         if not (need_size_model or need_thickness_model or need_pressure_model):
             merged = copy.deepcopy(rule_structural)
