@@ -392,6 +392,7 @@ class SizeSurfaceMatcher:
 
     def _extract_single_inch_items(self, text: str) -> list[ParsedSizeItem]:
         items: list[ParsedSizeItem] = []
+        labeled_as_inch = bool(re.match(r'(?i)^\s*INCH\s*:', str(text or "")))
         # Avoid re-parsing inch values already included in a composite payload.
         if re.search(rf'(?i){INCH_TOKEN_RE}\s*"?\s*[xX×*]\s*{INCH_TOKEN_RE}\s*"?', text):
             payload = self._strip_head_label(text, "INCH")
@@ -410,6 +411,23 @@ class SizeSurfaceMatcher:
                     bare_values=[value],
                 )
             )
+        if items or not labeled_as_inch:
+            return items
+
+        payload = self._strip_head_label(text, "INCH")
+        value = self._normalize_inch_value(payload)
+        if not value:
+            return items
+        items.append(
+            ParsedSizeItem(
+                field="INCH",
+                raw=payload,
+                value=value,
+                values=[value],
+                anchored_patterns=self._build_single_inch_patterns(payload, value),
+                bare_values=[value],
+            )
+        )
         return items
 
     def _extract_bare_items(self, text: str) -> list[ParsedSizeItem]:
@@ -442,11 +460,26 @@ class SizeSurfaceMatcher:
             if not raw:
                 continue
             parts = [part.strip() for part in raw.split(";") if part.strip()]
-            if parts:
-                expanded.extend(parts)
-            else:
-                expanded.append(raw)
+            if not parts:
+                parts = [raw]
+            for part in parts:
+                slash_parts = SizeSurfaceMatcher._split_slash_size_parts(part)
+                expanded.extend(slash_parts or [part])
         return expanded
+
+    @staticmethod
+    def _split_slash_size_parts(text: str) -> list[str]:
+        raw = str(text or "").strip()
+        if not raw or "/" not in raw:
+            return [raw] if raw else []
+
+        upper = raw.upper()
+        if upper.startswith("INCH:"):
+            return [raw]
+        if re.fullmatch(rf'{INCH_TOKEN_RE}\s*(?:["″]|\bIN(?:CH)?\b)?', upper, re.IGNORECASE):
+            return [raw]
+
+        return [part.strip() for part in re.split(r"\s*/\s*", raw) if part.strip()]
 
     @staticmethod
     def _normalize_size_result(size_result: object) -> list[str]:

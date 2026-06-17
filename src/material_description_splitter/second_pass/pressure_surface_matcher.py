@@ -185,9 +185,26 @@ class PressureSurfaceMatcher:
     @staticmethod
     def _normalize_values(value: object) -> list[str]:
         if isinstance(value, (list, tuple)):
-            return [str(item or "").strip() for item in value if str(item or "").strip()]
+            result: list[str] = []
+            for item in value:
+                text = str(item or "").strip()
+                if not text:
+                    continue
+                result.extend(PressureSurfaceMatcher._split_compound_text(text))
+            return result
         text = str(value or "").strip()
-        return [text] if text else []
+        return PressureSurfaceMatcher._split_compound_text(text)
+
+    @staticmethod
+    def _split_compound_text(text: str) -> list[str]:
+        raw = str(text or "").strip()
+        if not raw:
+            return []
+        parts: list[str] = []
+        for chunk in [part.strip() for part in raw.split(";") if part.strip()]:
+            slash_parts = [part.strip() for part in re.split(r"\s*/\s*", chunk) if part.strip()]
+            parts.extend(slash_parts or [chunk])
+        return parts
 
     @staticmethod
     def _dedupe_hits(hits: list[PressureSurfaceHit]) -> list[PressureSurfaceHit]:

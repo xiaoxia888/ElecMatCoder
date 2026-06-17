@@ -353,6 +353,19 @@ class PlatformSecondPassRunner:
             "rule": "second_pass",
         }
 
+    @staticmethod
+    def _field_label(field_name: str) -> str:
+        mapping = {
+            "TYPE": "种类",
+            "SIZE": "尺寸",
+            "THICKNESS": "壁厚",
+            "PRESSURE": "磅级",
+            "MATERIAL": "材质",
+            "STANDARD": "规范",
+            "THICKNESS_OR_PRESSURE": "壁厚或磅级",
+        }
+        return mapping.get(str(field_name or "").strip(), str(field_name or "").strip())
+
     @classmethod
     def _build_missing_required_checks(
         cls,
@@ -416,13 +429,18 @@ class PlatformSecondPassRunner:
             type_code=type_code,
             standard_items=standard_items,
         )
+        missing_required_labels = [cls._field_label(field_name) for field_name in missing_required_checks]
 
         if failed_checks:
-            reason_text = " | ".join(f"{check['field']}: {check['reason']}" for check in failed_checks if check["reason"])
+            reason_text = " | ".join(
+                f"{cls._field_label(check['field'])}: {check['reason']}"
+                for check in failed_checks
+                if check["reason"]
+            )
         elif final_level == DIFF_SECOND_EASY:
             reason_text = "二次分流全部通过"
         elif missing_required_checks:
-            reason_text = f"未满足自动通过条件: 缺少 {'、'.join(missing_required_checks)}"
+            reason_text = f"未满足自动通过条件: 缺少 {'、'.join(missing_required_labels)}"
         elif passed_checks:
             reason_text = "二次分流已回查，维持中等"
         else:

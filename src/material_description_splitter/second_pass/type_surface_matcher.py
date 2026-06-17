@@ -243,4 +243,50 @@ class TypeSurfaceMatcher:
                             text=raw_text[start_match.start(1): start_match.end(1)],
                         )
                     )
+            unordered_hit = self._build_unordered_token_hit(raw_text, upper_text, code, field, alias)
+            if unordered_hit is not None:
+                hits.append(unordered_hit)
         return self._prune_overlaps(hits)
+
+    def _build_unordered_token_hit(
+        self,
+        raw_text: str,
+        upper_text: str,
+        code: str,
+        field: str,
+        alias: str,
+    ) -> TypeSurfaceHit | None:
+        tokens = self._split_alias_tokens(alias)
+        if len(tokens) < 2:
+            return None
+
+        matched_spans: list[tuple[int, int]] = []
+        for token in tokens:
+            token_pattern = self._compile_alias_pattern(token)
+            match = token_pattern.search(upper_text)
+            if not match:
+                return None
+            matched_spans.append((match.start(1), match.end(1)))
+
+        start = min(item[0] for item in matched_spans)
+        end = max(item[1] for item in matched_spans)
+        return TypeSurfaceHit(
+            code=code,
+            field=field,
+            alias=alias,
+            start=start,
+            end=end,
+            text=raw_text[start:end],
+        )
+
+    @staticmethod
+    def _split_alias_tokens(alias: str) -> list[str]:
+        raw = str(alias or "").strip().upper()
+        if not raw or " " not in raw:
+            return []
+        tokens = [token.strip() for token in re.split(r"\s+", raw) if token.strip()]
+        if len(tokens) < 2:
+            return []
+        if not all(re.fullmatch(r"[A-Z0-9./+-]+", token) for token in tokens):
+            return []
+        return tokens

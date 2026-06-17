@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -115,32 +116,37 @@ class ThicknessTableProcessor:
         if not target:
             return []
 
-        dn_parts = self._normalize_dn_values(dn_values, original_text=original_text)
-        thickness_parts = self._normalize_thickness_parts(thickness_values, original_text=original_text)
+        dn_items = self.build_dn_items(dn_values, original_text=original_text)
+        thickness_items = self.build_thickness_items(thickness_values, original_text=original_text)
 
-        if not thickness_parts:
+        if not thickness_items:
             return []
-        if not dn_parts:
+        if not dn_items:
             return []
 
         results: List[Dict[str, str]] = []
 
-        if len(thickness_parts) == len(dn_parts):
-            pairs = zip(dn_parts, thickness_parts)
-        elif len(thickness_parts) == 1:
-            # 变径 + 单壁厚：同一个壁厚号分别作用于每个尺寸位
-            pairs = [(dn_part, thickness_parts[0]) for dn_part in dn_parts]
-        elif len(dn_parts) == 1:
-            pairs = [(dn_parts[0], part) for part in thickness_parts]
+        if len(dn_items) == 1:
+            pairs = [(dn_items[0], part) for part in thickness_items]
+        elif len(dn_items) == len(thickness_items):
+            pairs = zip(dn_items, thickness_items)
         else:
-            pairs = [(dn_parts[min(i, len(dn_parts) - 1)], part) for i, part in enumerate(thickness_parts)]
+            logger.info(
+                "[ThicknessTableProcessor] 跳过壁厚毫米换算：DN数量(%s) 与壁厚数量(%s) 不满足 1->N 或 N->N",
+                len(dn_items),
+                len(thickness_items),
+            )
+            return []
 
-        for dn_part, thickness_part in pairs:
+        for dn_item, thickness_item in pairs:
+            dn_part = str(dn_item.get('value') or '').strip()
+            thickness_part = str(thickness_item.get('normalized') or '').strip()
             mm = self.lookup_mm(standards, dn_part, thickness_part)
             results.append({
-                'source': str(thickness_part or '').strip(),
+                'source': thickness_part,
                 'converted': str(mm or '').strip(),
-                'dn': str(dn_part or '').strip(),
+                'dn': dn_part,
+                'source_type': str(thickness_item.get('type') or '').strip().upper(),
                 'target_standard': target,
             })
 
@@ -202,22 +208,86 @@ class ThicknessTableProcessor:
             value = value.get('value')
         return cls._normalize_dn_cell(value)
 
-    def _normalize_dn_values(self, value: Any, original_text: str = "") -> List[str]:
-        if isinstance(value, dict):
-            return self.size_processor.extract_dn_values(value, original_text=original_text)
-        items = self._coerce_list(value)
-        dn_parts: List[str] = []
-        for item in items:
-            if isinstance(item, str) and re.search(r'[xX×*/]', item):
-                for part in re.split(r'\s*[xX×*/]\s*', item):
-                    dn = self._normalize_dn_value(part)
-                    if dn and re.fullmatch(r'\d+', dn):
-                        dn_parts.append(dn)
+    def build_dn_items(self, value: Any, original_text: str = "") -> List[Dict[str, str]]:
+        dn_parts = self.size_processor.extract_dn_values(value, original_text=original_text)
+        result: List[Dict[str, str]] = []
+        seen: set[str] = set()
+        for dn in dn_parts:
+            normalized = self._normalize_dn_value(dn)
+            if not normalized or normalized in seen:
                 continue
-            dn = self._normalize_dn_value(item)
-            if dn and re.fullmatch(r'\d+', dn):
-                dn_parts.append(dn)
-        return dn_parts
+            seen.add(normalized)
+            result.append({"type": "DN", "value": normalized})
+        return result
+
+    def build_thickness_items(self, value: Any, original_text: str = "") -> List[Dict[str, str]]:
+        if isinstance(value, dict):
+            items = value.get("_ITEMS")
+            if isinstance(items, list) and items:
+                normalized_items = self._normalize_thickness_item_list(items)
+                if normalized_items:
+                    return normalized_items
+            normalized_parts = self._normalize_thickness_parts(value, original_text=original_text)
+        else:
+            normalized_parts = self._normalize_thickness_parts(value, original_text=original_text)
+
+        result: List[Dict[str, str]] = []
+        for part in normalized_parts:
+            normalized = str(part or '').strip().upper()
+            if not normalized:
+                continue
+            result.append({
+                "type": self._infer_thickness_item_type(normalized),
+                "value": normalized,
+                "normalized": normalized,
+            })
+        return result
+
+    def _normalize_thickness_item_list(self, items: List[Any]) -> List[Dict[str, str]]:
+        result: List[Dict[str, str]] = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            subtype = str(item.get("type") or "").strip().upper()
+            raw_value = item.get("value")
+            normalized = self._normalize_thickness_item(subtype, raw_value)
+            if not normalized:
+                continue
+            result.append({
+                "type": subtype or self._infer_thickness_item_type(normalized),
+                "value": str(raw_value or "").strip(),
+                "normalized": normalized,
+            })
+        return result
+
+    @classmethod
+    def _normalize_thickness_item(cls, subtype: str, raw_value: Any) -> str:
+        text = str(raw_value or "").strip()
+        if not text:
+            return ""
+        if subtype == "MM":
+            mm_match = re.search(r'(\d+(?:\.\d+)?)', text.upper())
+            if not mm_match:
+                return ""
+            return f"{cls._normalize_mm_cell(mm_match.group(1))}MM"
+        if subtype in {"SCHEDULE", "SERIES"}:
+            return cls._normalize_lookup_code(text)
+        if subtype == "INCH":
+            return re.sub(r'\s+', '', text.upper())
+        if subtype == "BWG":
+            return text.upper()
+        return cls._normalize_lookup_code(text)
+
+    @staticmethod
+    def _infer_thickness_item_type(normalized: str) -> str:
+        upper = str(normalized or "").strip().upper()
+        if not upper:
+            return ""
+        if upper.endswith("MM"):
+            return "MM"
+        if upper in {"XS", "XXS", "STD"} or upper.startswith("SCH"):
+            return "SCHEDULE"
+        return "UNKNOWN"
 
     def _normalize_thickness_parts(self, value: Any, original_text: str = "") -> List[str]:
         if isinstance(value, dict):
@@ -337,6 +407,30 @@ class ThicknessTableProcessor:
         if isinstance(value, list):
             return value
         return [value]
+
+    @staticmethod
+    def is_schedule_like(value: Any) -> bool:
+        text = str(value or "").strip().upper()
+        return bool(text) and (text in {"XS", "XXS", "STD"} or text.startswith("SCH"))
+
+    @staticmethod
+    def mm_values_equivalent(left: Any, right: Any, tolerance: float = 1e-6) -> bool:
+        def _to_number(raw: Any) -> Optional[float]:
+            text = str(raw or "").strip().upper()
+            if text.endswith("MM"):
+                text = text[:-2]
+            if not text:
+                return None
+            try:
+                return float(text)
+            except (TypeError, ValueError):
+                return None
+
+        left_num = _to_number(left)
+        right_num = _to_number(right)
+        if left_num is None or right_num is None:
+            return False
+        return math.isclose(left_num, right_num, rel_tol=tolerance, abs_tol=tolerance)
 
 
 @lru_cache(maxsize=1)

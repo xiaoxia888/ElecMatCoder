@@ -1,5 +1,5 @@
 import { formatFieldCode, formatFieldStage1Lines, formatFieldStage2Lines } from '@/lib/formatters'
-import type { EncodingResult } from '@/types/encoding'
+import type { EncodingResult, FieldPayload } from '@/types/encoding'
 
 const FIELD_ORDER = ['TYPE', 'SIZE', 'THICKNESS', 'PRESSURE', 'MATERIAL', 'STANDARD'] as const
 const FIELD_LABELS: Record<(typeof FIELD_ORDER)[number], string> = {
@@ -15,7 +15,7 @@ interface FieldBreakdownCardProps {
   result: EncodingResult | null
 }
 
-function Cell({ lines }: { lines: string[] }) {
+function Cell({ lines, note }: { lines: string[]; note?: string }) {
   return (
     <td className="px-3 py-2.5 align-top text-muted">
       {lines.map((line, idx) => (
@@ -23,8 +23,15 @@ function Cell({ lines }: { lines: string[] }) {
           {line}
         </div>
       ))}
+      {note ? <div className="mt-1.5 text-[12px] leading-5 text-[#8a97ad]">{note}</div> : null}
     </td>
   )
+}
+
+function getThicknessStage2Note(field: FieldPayload | undefined, fieldType: string) {
+  if (fieldType !== 'THICKNESS') return ''
+  const notes = Array.isArray(field?.stage2_input?.notes) ? field!.stage2_input!.notes! : []
+  return notes.length > 0 ? String(notes[0] ?? '').trim() : ''
 }
 
 export function FieldBreakdownCard({ result }: FieldBreakdownCardProps) {
@@ -47,7 +54,7 @@ export function FieldBreakdownCard({ result }: FieldBreakdownCardProps) {
               <tr key={fieldType} className="align-top">
                 <td className="px-3 py-2.5 align-top font-medium text-ink">{FIELD_LABELS[fieldType]}</td>
                 <Cell lines={formatFieldStage1Lines(field, fieldType)} />
-                <Cell lines={formatFieldStage2Lines(field, fieldType)} />
+                <Cell lines={formatFieldStage2Lines(field, fieldType)} note={getThicknessStage2Note(field, fieldType)} />
                 <td className="px-3 py-2.5 align-top font-mono font-semibold text-accent">{formatFieldCode(field)}</td>
               </tr>
             )

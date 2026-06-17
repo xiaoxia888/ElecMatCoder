@@ -1657,6 +1657,16 @@ class SizeProcessor:
             _add_ordered_item("OD", od_value, block["span"])
             _record(block["raw"], block["span"])
 
+        if dn_values or od_values or inch_values:
+            return
+
+        tail_dn_block = self._extract_tail_dn_fallback_block(normalized)
+        if tail_dn_block:
+            dn_value = self._normalize_number_text(tail_dn_block["dn"])
+            _add_unique(dn_values, dn_value)
+            _add_ordered_item("DN", dn_value, tail_dn_block["span"])
+            _record(tail_dn_block["raw"], tail_dn_block["span"])
+
     @staticmethod
     def _has_complex_composite_size(text: str) -> bool:
         """
@@ -1777,6 +1787,37 @@ class SizeProcessor:
                 "pressure_span": combo.second_span,
             })
         return blocks
+
+    def _extract_tail_dn_fallback_block(self, text: str) -> Optional[Dict[str, Any]]:
+        """
+        最低优先级兜底：
+        若描述末尾存在一个裸整数，且该整数属于 common_dn_values，
+        则把它视为一个疑似 DN。
+
+        例：
+        - PIPE / WELDED / ASME B36.19M SCH5S / A312 TP304 / BE / POLISHING 50
+        """
+        if not self._common_dn_values:
+            return None
+
+        match = re.search(r'(?<![A-Za-z0-9./])(\d+)\s*$', str(text or ""))
+        if not match:
+            return None
+
+        raw_value = self._normalize_number_text(match.group(1))
+        try:
+            numeric_value = int(float(raw_value))
+        except Exception:
+            return None
+
+        if numeric_value not in self._common_dn_values:
+            return None
+
+        return {
+            "raw": match.group(0).strip(),
+            "dn": raw_value,
+            "span": match.span(1),
+        }
 
     @staticmethod
     def _normalize_section_labels(text: str) -> str:

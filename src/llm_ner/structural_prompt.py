@@ -306,6 +306,7 @@ THICKNESS_FIELD_RULES_TEXT_V3 = """
    - **S-STD 消歧（硬约束）**：`S-STD`、`S-XS`、`S-XXS` 均为完整壁厚词；若原文出现 `S-STDXS-STD`，必须按 `S-STD X S-STD` 解析，其中中间 `X` 仅表示两段连接，禁止将其误拆为 `STDxXS` 或 `STD + XS`。示例：`S-STDXS-STD` → `STDXSTD`。
    - **尾部S保留与S等级壁厚**：`10S/20S/40S/80S`、`S10S/S20S/S40S/S80S`、`SCH10S/SCH20S/SCH40S/SCH80S` 中的尾部 `S` 都是壁厚等级的一部分，必须保留；组合壁厚中每一段都必须逐段保留尾部 `S`。
    - **禁止提取衬层厚度当作壁厚。
+   - **禁止提取 Mnf Std / MFR STD / MFRS STD / ENR STD 等类似标准的描述当壁厚
    - **夹套双壁厚硬约束**：当夹套件描述中出现以 `/` 连接的两组壁厚（如 `6.3x6.3/7.1x6.3`）时，必须将两组壁厚按原顺序完整保留到 `wall_thickness`，禁止截断为前半段单组壁厚。
 """.strip()
 

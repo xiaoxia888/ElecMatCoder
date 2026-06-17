@@ -35,7 +35,7 @@ class ParsedThicknessItem:
 
 class ThicknessSurfaceMatcher:
     def parse_thickness_items(self, thickness_result: object, thickness_code: str = "") -> list[ParsedThicknessItem]:
-        texts = self._normalize_values(thickness_result)
+        texts = self._expand_texts(self._normalize_values(thickness_result))
         if not texts:
             return []
 
@@ -223,6 +223,18 @@ class ThicknessSurfaceMatcher:
             return [str(item or "").strip() for item in value if str(item or "").strip()]
         text = str(value or "").strip()
         return [text] if text else []
+
+    @staticmethod
+    def _expand_texts(texts: list[str]) -> list[str]:
+        expanded: list[str] = []
+        for text in texts:
+            raw = str(text or "").strip()
+            if not raw:
+                continue
+            for chunk in [part.strip() for part in raw.split(";") if part.strip()]:
+                slash_parts = [part.strip() for part in re.split(r"\s*/\s*", chunk) if part.strip()]
+                expanded.extend(slash_parts or [chunk])
+        return expanded
 
     @staticmethod
     def _strip_head_label(text: str, label: str) -> str:

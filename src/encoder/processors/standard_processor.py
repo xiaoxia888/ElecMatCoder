@@ -460,25 +460,15 @@ class StandardProcessor:
         """
         对同类标准进行排序（格式化后的标准）
         1. 按前缀优先级
-        2. 同前缀按字典序（逐字符比较）
+        2. 同前缀按数字段逐段升序
+        3. 最后按规范化字面兜底
         """
-        def sort_key(std: str) -> Tuple[int, str]:
-            # 提取前缀
-            prefix_match = re.match(r'^([A-Z/]+)', std.upper())
-            prefix = prefix_match.group(1) if prefix_match else 'ZZZ'
-            
-            # 标准化前缀 (去除斜杠)
-            normalized_prefix = prefix.replace('/', '')
-            
-            # 获取优先级
-            priority = 999
-            for p, pri in self.prefix_priority.items():
-                if normalized_prefix.startswith(p):
-                    priority = pri
-                    break
-            
-            # 同前缀按字典序排序（逐字符比较：'1' < '4'）
-            return (priority, std.upper())
+        def sort_key(std: str) -> Tuple[int, Tuple[int, ...], str]:
+            family = self._extract_sort_family({'formatted': std})
+            priority = self.prefix_priority.get(family, 999)
+            numeric_key = self._extract_numeric_segments(std)
+            text_key = self._extract_lexicographic_key(std)
+            return (priority, numeric_key, text_key)
         
         return sorted(standards, key=sort_key)
     
@@ -486,22 +476,15 @@ class StandardProcessor:
         """
         对编码后的标准进行排序（编码格式统一，直接字典序）
         1. 按前缀优先级
-        2. 同前缀按字典序（逐字符比较）
+        2. 同前缀按数字段逐段升序
+        3. 最后按规范化字面兜底
         """
-        def sort_key(encoded: str) -> Tuple[int, str]:
-            # 提取前缀（编码后的前缀，如 GBT, HGT, AB）
-            prefix_match = re.match(r'^([A-Z]+)', encoded.upper())
-            prefix = prefix_match.group(1) if prefix_match else 'ZZZ'
-            
-            # 获取优先级
-            priority = 999
-            for p, pri in self.prefix_priority.items():
-                if prefix.startswith(p):
-                    priority = pri
-                    break
-            
-            # 同前缀按字典序排序
-            return (priority, encoded.upper())
+        def sort_key(encoded: str) -> Tuple[int, Tuple[int, ...], str]:
+            family = self._extract_sort_family({'encoded': encoded})
+            priority = self.prefix_priority.get(family, 999)
+            numeric_key = self._extract_numeric_segments(encoded)
+            text_key = self._extract_lexicographic_key(encoded)
+            return (priority, numeric_key, text_key)
         
         return sorted(encoded_list, key=sort_key)
 
@@ -614,23 +597,39 @@ class StandardProcessor:
         for candidate in (item.get('formatted', ''), item.get('original', ''), item.get('encoded', '')):
             upper = str(candidate or '').upper()
             for prefix in sorted(self.PREFIX_ALIASES.keys(), key=len, reverse=True):
-                if upper.startswith(prefix):
-                    return self.PREFIX_ALIASES[prefix]
+                if not upper.startswith(prefix):
+                    continue
+                next_index = len(prefix)
+                if next_index < len(upper) and upper[next_index].isalpha():
+                    continue
+                return self.PREFIX_ALIASES[prefix]
         return 'ZZZ'
 
     @staticmethod
     def _extract_lexicographic_key(text: str) -> str:
         return re.sub(r'[^A-Z0-9]', '', str(text or '').upper())
 
-    def _sort_item_key(self, item: Dict[str, str]) -> Tuple[int, int, str, str]:
+    @staticmethod
+    def _extract_numeric_segments(text: str) -> Tuple[int, ...]:
+        segments = re.findall(r'\d+', str(text or ''))
+        return tuple(int(segment) for segment in segments)
+
+    @classmethod
+    def _sort_category_bucket(cls, category: str) -> int:
+        return 0 if str(category or '').strip() == 'production' else 1
+
+    def _sort_item_key(self, item: Dict[str, str]) -> Tuple[int, int, Tuple[int, ...], str, str]:
         family = self._extract_sort_family(item)
         priority = self.prefix_priority.get(family, 999)
-        text_key = self._extract_lexicographic_key(
+        sort_text = (
             item.get('formatted', '') or item.get('original', '') or item.get('encoded', '')
         )
+        text_key = self._extract_lexicographic_key(sort_text)
+        numeric_key = self._extract_numeric_segments(sort_text)
         return (
-            self.CATEGORY_ORDER.get(item.get('category', 'unknown'), 999),
+            self._sort_category_bucket(item.get('category', 'unknown')),
             priority,
+            numeric_key,
             text_key,
             str(item.get('encoded', '')).upper(),
         )
@@ -743,18 +742,21 @@ class StandardProcessor:
             all_encoded.append(encoded)
             all_categories.append(category)
         
-        # 按分类排序：production > manufacturing > unknown
-        category_order = {'production': 0, 'manufacturing': 1, 'unknown': 2}
-        sorted_items = sorted(
-            zip(all_encoded, all_categories, all_formatted),
-            key=lambda x: (category_order.get(x[1], 2), x[0])
-        )
-        sorted_encoded = [item[0] for item in sorted_items]
-        sorted_formatted = [item[2] for item in sorted_items]
+        sortable_items = [
+            {
+                'encoded': encoded,
+                'category': category,
+                'formatted': formatted,
+            }
+            for encoded, category, formatted in zip(all_encoded, all_categories, all_formatted)
+        ]
+        sorted_items = sorted(sortable_items, key=self._sort_item_key)
+        sorted_encoded = [item['encoded'] for item in sorted_items]
+        sorted_formatted = [item['formatted'] for item in sorted_items]
         
         combined_encoded = ''.join(sorted_encoded)
         combined_formatted = ' | '.join(sorted_formatted) if len(sorted_formatted) > 1 else sorted_formatted[0]
-        main_category = sorted_items[0][1] if sorted_items else 'unknown'
+        main_category = sorted_items[0]['category'] if sorted_items else 'unknown'
         
         # 对于单个规范，提取等级信息
         if len(expanded) == 1:
@@ -872,7 +874,7 @@ class StandardProcessor:
                 'original_index': idx,
             })
 
-        should_sort = len(raw_items) >= 2 and all(item['category'] in self.CATEGORY_ORDER for item in raw_items)
+        should_sort = len(raw_items) >= 2
         if should_sort:
             ordered_items = sorted(raw_items, key=self._sort_item_key)
         elif original_text:
@@ -955,19 +957,13 @@ class StandardProcessor:
         items: [(原始, 格式化, 编码), ...]
         使用编码后的值排序（格式统一）
         """
-        def sort_key(item) -> Tuple[int, str]:
-            encoded = item[2]  # 使用编码后的值排序（格式统一）
-            prefix_match = re.match(r'^([A-Z]+)', encoded.upper())
-            prefix = prefix_match.group(1) if prefix_match else 'ZZZ'
-            
-            priority = 999
-            for p, pri in self.prefix_priority.items():
-                if prefix.startswith(p):
-                    priority = pri
-                    break
-            
-            # 同前缀按字典序排序（逐字符比较）
-            return (priority, encoded.upper())
+        def sort_key(item) -> Tuple[int, Tuple[int, ...], str]:
+            encoded = item[2]
+            family = self._extract_sort_family({'encoded': encoded, 'formatted': item[1], 'original': item[0]})
+            priority = self.prefix_priority.get(family, 999)
+            numeric_key = self._extract_numeric_segments(encoded or item[1] or item[0])
+            text_key = self._extract_lexicographic_key(encoded or item[1] or item[0])
+            return (priority, numeric_key, text_key)
         
         return sorted(items, key=sort_key)
     

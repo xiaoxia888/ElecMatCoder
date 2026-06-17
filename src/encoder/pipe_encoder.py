@@ -175,7 +175,7 @@ class PipeEncodingResult:
         return _rename_stage_value_keys(copy.deepcopy(_field_obj_get(field_obj, "stage2_input", "")))
 
     @staticmethod
-    def _build_stage2_notes(field_type: str, stage1_value: Any, stage2_value: Any) -> list[str]:
+    def _build_stage2_notes(field_type: str, stage1_value: Any, stage2_value: Any, field_notes: Any = None) -> list[str]:
         notes: list[str] = []
         if field_type == "TYPE" and isinstance(stage1_value, dict) and isinstance(stage2_value, dict):
             stage1_conn = stage1_value.get("CONN") or stage1_value.get("ENDS") or []
@@ -188,12 +188,17 @@ class PipeEncodingResult:
             notes.append("材质值归一化后参与编码")
         if field_type == "STANDARD" and stage1_value != stage2_value:
             notes.append("标准主体归一化并补充分类后参与编码")
+        for item in field_notes if isinstance(field_notes, list) else []:
+            text = str(item or "").strip()
+            if text and text not in notes:
+                notes.append(text)
         return notes
 
     def _build_field_payload(self, field_type: str, field_data: Any) -> FieldResultPayload:
         stage1_value = _rename_stage_value_keys(copy.deepcopy(_field_obj_get(field_data, "stage1_raw", "")))
         stage1_meta = self._extract_stage1_meta(field_type)
         stage2_value = self._build_stage2_input_value(field_type, field_data)
+        field_notes = copy.deepcopy(_field_obj_get(field_data, "notes", []))
         return FieldResultPayload(
             field_type=field_type,
             stage1_raw=Stage1RawPayload(
@@ -205,7 +210,7 @@ class PipeEncodingResult:
             ),
             stage2_input=Stage2InputPayload(
                 value=stage2_value,
-                notes=self._build_stage2_notes(field_type, stage1_value, stage2_value),
+                notes=self._build_stage2_notes(field_type, stage1_value, stage2_value, field_notes),
             ),
             stage2_output=Stage2OutputPayload(
                 code=str(_field_obj_get(field_data, "code", "") or "").strip(),
@@ -320,6 +325,8 @@ class PipeEncoderBase:
         self.regex_extractor = get_regex_extractor()
         thickness_mm_cfg = self.config.get('thickness_mm_conversion', {}) or {}
         self.thickness_mm_conversion_enabled = bool(thickness_mm_cfg.get('enabled', False))
+        thickness_mm_dedup_cfg = self.config.get('thickness_mm_dedup', {}) or {}
+        self.thickness_mm_dedup_enabled = bool(thickness_mm_dedup_cfg.get('enabled', False))
         
         self.semantic_match_fields = set(self.config.get('semantic_match_fields', ['TYPE', 'MATERIAL']))
         self.exact_match_fields = set(self.config.get('exact_match_fields', ['MANU', 'CONN']))
@@ -1270,6 +1277,24 @@ class PipeEncoderBase:
             return text
         return f'{text}MM'
 
+    @staticmethod
+    def _is_mm_code(value: Any) -> bool:
+        return bool(re.fullmatch(r'\d+(?:\.\d+)?MM', str(value or '').strip().upper()))
+
+    def _build_thickness_items_for_conversion(self, value: Any, original_text: str = "") -> List[Dict[str, str]]:
+        return self.thickness_table_processor.build_thickness_items(value, original_text=original_text)
+
+    @staticmethod
+    def _build_thickness_conversion_note(source_part: str, dn: str, formatted: str) -> str:
+        source = str(source_part or '').strip().upper()
+        target = str(formatted or '').strip().upper()
+        dn_text = str(dn or '').strip()
+        if not source or not target:
+            return ''
+        if dn_text:
+            return f"壁厚 {source} 按 DN{dn_text} 换算为 {target}"
+        return f"壁厚 {source} 换算为 {target}"
+
     def _apply_thickness_mm_conversion(self, result: PipeEncodingResult):
         """
         使用 STANDARD + SIZE + THICKNESS 查壁厚表，将 Sch/S/Series 转成 mm。
@@ -1279,7 +1304,7 @@ class PipeEncoderBase:
         2) 多段换算后若全部相同，只保留一个（如 `SCH30X3.91` -> `3.91MM`）
         3) 完全查不到则保持现有编码原样
         """
-        if not self.thickness_mm_conversion_enabled:
+        if not self.thickness_mm_conversion_enabled and not self.thickness_mm_dedup_enabled:
             return
 
         thk_field = result.fields.get('THICKNESS')
@@ -1303,42 +1328,89 @@ class PipeEncoderBase:
             if length_prefix and size_code_for_dn.upper().endswith(length_prefix.upper()):
                 size_code_for_dn = size_code_for_dn[:-len(length_prefix)]
             dn_values = size_code_for_dn
+        thickness_input = thk_field.stage2_input or thk_field.stage1_raw or thk_field.code
         thickness_values = thk_field.code
+
+        thickness_items = self._build_thickness_items_for_conversion(
+            thickness_input,
+            original_text=result.original_text,
+        )
+        if not thickness_items:
+            thickness_items = [
+                {"type": "", "value": part, "normalized": part}
+                for part in (self._split_encoded_parts(thickness_values) or [str(thickness_values).strip()])
+                if str(part or '').strip()
+            ]
+
+        explicit_mm_codes = [
+            str(item.get("normalized") or "").strip().upper()
+            for item in thickness_items
+            if self._is_mm_code(item.get("normalized"))
+        ]
+        has_explicit_mm = bool(explicit_mm_codes)
+        has_schedule_like = any(
+            self.thickness_table_processor.is_schedule_like(item.get("normalized"))
+            for item in thickness_items
+        )
+
+        if self.thickness_mm_dedup_enabled and not self.thickness_mm_conversion_enabled:
+            if not (has_explicit_mm and has_schedule_like):
+                return
 
         conversion_details = self.thickness_table_processor.convert_to_mm_details(
             standards,
             dn_values,
-            thickness_values,
+            thickness_input,
             original_text=result.original_text,
         )
         if not conversion_details:
             return
 
-        original_parts = self._split_encoded_parts(thickness_values)
-        if not original_parts:
-            original_parts = [str(thickness_values).strip()]
-
         changed = False
         formatted_parts: List[str] = []
         note_lines: List[str] = []
-        source_standard_text = self._format_standard_source_for_note(standards)
-        for idx, detail in enumerate(conversion_details):
+        for detail in conversion_details:
             converted = str(detail.get('converted') or '').strip()
             source_part = str(detail.get('source') or '').strip()
+            source_type = str(detail.get('source_type') or '').strip().upper()
             if not converted:
                 formatted_parts.append(source_part)
                 continue
-            source = original_parts[min(idx, len(original_parts) - 1)] if original_parts else ''
-            if converted.upper() != str(source or '').strip().upper():
-                changed = True
             formatted = self._format_mm_code(converted) if re.fullmatch(r'\d+(?:\.\d+)?', converted) else converted
-            formatted_parts.append(formatted)
-            if converted.upper() != str(source or '').strip().upper():
-                dn = str(detail.get('dn') or '').strip()
-                target_standard = str(detail.get('target_standard') or '').strip()
-                note_lines.append(
-                    f"[壁厚换算] {source} -> {formatted}（原文描述标准：{source_standard_text}，换算依据标准：{target_standard}，公称直径：DN{dn}）"
-                )
+
+            if self.thickness_table_processor.is_schedule_like(source_part):
+                if has_explicit_mm and self.thickness_mm_dedup_enabled:
+                    if any(
+                        self.thickness_table_processor.mm_values_equivalent(formatted, existing_mm)
+                        for existing_mm in explicit_mm_codes
+                    ):
+                        changed = True
+                        dn = str(detail.get('dn') or '').strip()
+                        note = self._build_thickness_conversion_note(source_part, dn, formatted)
+                        if note:
+                            note_lines.append(note)
+                        continue
+                    formatted_parts.append(source_part)
+                    continue
+
+                if self.thickness_mm_conversion_enabled and not has_explicit_mm:
+                    if formatted.upper() != source_part.upper():
+                        changed = True
+                        dn = str(detail.get('dn') or '').strip()
+                        note = self._build_thickness_conversion_note(source_part, dn, formatted)
+                        if note:
+                            note_lines.append(note)
+                    formatted_parts.append(formatted)
+                    continue
+
+                formatted_parts.append(source_part)
+                continue
+
+            if source_type == 'MM':
+                formatted_parts.append(source_part)
+                continue
+
+            formatted_parts.append(source_part)
 
         if not changed or not formatted_parts:
             return
@@ -1351,6 +1423,7 @@ class PipeEncoderBase:
         final_code = deduped_parts[0] if len(deduped_parts) == 1 else 'X'.join(deduped_parts)
         thk_field.code = final_code
         thk_field.codes = [final_code]
+        thk_field.notes = list(dict.fromkeys(note_lines))
         result.thickness_conversion_notes = note_lines
 
         logger.info(

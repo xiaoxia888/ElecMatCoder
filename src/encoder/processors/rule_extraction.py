@@ -325,6 +325,8 @@ def extract_size_and_thickness_by_rules(
     size_processor: Optional[SizeProcessor] = None,
     thickness_processor: Optional[ThicknessProcessor] = None,
     pressure_processor: Optional[PressureProcessor] = None,
+    *,
+    apply_residual_guard: bool = True,
 ) -> RuleExtractionResult:
     """
     规则抽取统一入口。
@@ -360,6 +362,8 @@ def extract_size_and_thickness_by_rules(
     # 主体裸复合规格存在，但规则侧未拿到任何显式/兜底尺寸时，
     # 说明本句整体应让给大模型，壁厚规则结果也一并作废，避免半规则半模型。
     if (
+        apply_residual_guard
+        and
         size_processor._has_unconsumed_bare_complex_spec(str(text or ""))
         and not size_result.dn
         and not size_result.od
@@ -374,7 +378,7 @@ def extract_size_and_thickness_by_rules(
             consumed_spans=[],
             ordered_items=[],
         )
-    if _should_clear_due_to_residual_spec(str(text or ""), size_result, thickness_result, pressure_result):
+    if apply_residual_guard and _should_clear_due_to_residual_spec(str(text or ""), size_result, thickness_result, pressure_result):
         size_result = RuleSizeExtraction(
             dn=[],
             od=[],
@@ -404,7 +408,7 @@ def extract_size_and_thickness_by_rules(
             ordered_items=[],
         )
 
-    if any(decision.action == "ambiguous_clear" for decision in od_pair_decisions):
+    if apply_residual_guard and any(decision.action == "ambiguous_clear" for decision in od_pair_decisions):
         size_result = RuleSizeExtraction(
             dn=[],
             od=[],

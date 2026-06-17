@@ -33,6 +33,12 @@ exact_match_fields:
 thickness_mm_conversion:
   enabled: false
 
+# 壁厚重复表达去重
+# 仅在同时存在 SCH/STD/XS/XXS 与显式 MM 壁厚时生效：
+# 若两者按换算表等价，则最终编码仅保留 MM 壁厚。
+thickness_mm_dedup:
+  enabled: true
+
 # 材质特殊要求补提
 # 仅用于编码前后处理：当原文命中别名，且材质 VALUE 未自带后缀时，
 # 将对应后缀补入 MATERIAL[*].SPECIAL_REQ
@@ -267,6 +273,8 @@ regex_extraction:
   CONN:
     keywords_strict:
       - THD
+      - TBE
+      - GROOVED
     keywords_loose:
       - SO
       - SW

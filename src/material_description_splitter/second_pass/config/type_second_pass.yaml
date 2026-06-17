@@ -229,7 +229,6 @@ common_types:
       - 异径三通
       - REDUCING TEE
       - RED TEE
-      - REDTEE
       - TEE REDUCED
       - TEE(TR)
     block_if_matches:

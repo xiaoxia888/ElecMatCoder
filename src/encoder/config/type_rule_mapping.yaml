@@ -147,6 +147,8 @@ conn_codes:
   FNPT: FN
   SCRN: N
   SW: S
+  TBE: N
+  GROOVED: G
 
 body_implicit_conn:
   带颈平焊法兰:
@@ -165,6 +167,8 @@ manu_codes:
   SAW: W
   SAWH: W
   SAWL: W
+  LSAW: W
+  HSAW: W
   DSAW: W
   DSAWL: W
   DSAWH: W
