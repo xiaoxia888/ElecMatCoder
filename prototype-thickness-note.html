@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>壁厚换算说明原型</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --line: #e6ebf2;
+      --text: #1f2a3d;
+      --muted: #6f7d95;
+      --blue: #2f6bff;
+      --blue-soft: #edf3ff;
+      --orange: #f59e0b;
+      --orange-soft: #fff4df;
+      --green: #16a34a;
+      --green-soft: #e9f8ef;
+      --shadow: 0 10px 30px rgba(47, 79, 133, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top right, rgba(47, 107, 255, 0.08), transparent 26%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+    }
+
+    .page {
+      width: 1480px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 340px;
+      gap: 16px;
+      min-height: calc(100vh - 48px);
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .aside {
+      padding: 20px;
+    }
+
+    .stub {
+      height: 180px;
+      border: 1px dashed #cfd9e8;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #fafcff 0%, #f4f8ff 100%);
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .desc {
+      padding: 24px 28px;
+    }
+
+    .desc-title,
+    .section-title {
+      margin: 0 0 18px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .desc-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .desc-row:first-of-type { border-top: 0; }
+    .label { color: var(--muted); font-size: 14px; }
+    .value {
+      font-size: 18px;
+      line-height: 1.55;
+      font-family: "SFMono-Regular", "Menlo", monospace;
+    }
+
+    .code-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .code-top {
+      display: grid;
+      grid-template-columns: 1fr 280px 180px;
+      gap: 0;
+      padding: 22px 24px;
+    }
+
+    .cell {
+      padding-right: 24px;
+    }
+
+    .cell + .cell {
+      padding-left: 24px;
+      border-left: 1px solid var(--line);
+    }
+
+    .tiny-label {
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .code-text {
+      font-size: 28px;
+      line-height: 1.35;
+      font-family: "SFMono-Regular", "Menlo", monospace;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      word-break: break-all;
+    }
+
+    .percent {
+      margin-bottom: 12px;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #e9eef7;
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      width: 77.48%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2f6bff 0%, #5486ff 100%);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tag.review { background: var(--orange-soft); color: #d97706; }
+    .tag.info { background: var(--blue-soft); color: var(--blue); }
+    .tag.ok { background: var(--green-soft); color: var(--green); }
+
+    .notes {
+      border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, #fbfdff 0%, #f7faff 100%);
+      padding: 18px 24px 22px;
+    }
+
+    .notes-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .notes-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .mini {
+      padding: 12px 14px;
+      border: 1px solid #dde6f4;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .mini .k {
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .mini .v {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .note-line {
+      padding: 12px 14px;
+      border: 1px solid #dde6f4;
+      border-radius: 14px;
+      background: #fff;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #334155;
+    }
+
+    .table-card {
+      padding: 18px 20px 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    th, td {
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .code-blue {
+      color: var(--blue);
+      font-weight: 800;
+      font-family: "SFMono-Regular", "Menlo", monospace;
+    }
+
+    .right-list {
+      padding: 20px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .item:last-child { border-bottom: 0; }
+    .item strong { display: block; margin-bottom: 4px; font-size: 16px; }
+    .item p { margin: 0; color: var(--muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="layout">
+      <aside class="panel aside">
+        <h2 class="section-title">左侧功能区</h2>
+        <div class="stub"></div>
+      </aside>
+
+      <main class="main">
+        <section class="panel desc">
+          <h2 class="desc-title">描述信息</h2>
+          <div class="desc-row">
+            <div class="label">原始描述</div>
+            <div class="value">无缝衬里钢管 ,20/PTFE, SMLS,RF, PN16 HG/T20538-16 Sch40 THK=6.3mm PTFE THK=4.0mm DN100</div>
+          </div>
+          <div class="desc-row">
+            <div class="label">格式化描述</div>
+            <div class="value">—</div>
+          </div>
+        </section>
+
+        <section class="panel code-card">
+          <div class="code-top">
+            <div class="cell">
+              <div class="tiny-label">编码结果</div>
+              <div class="code-text">P20X6.3MMX4MMPN16/PTFEHGT20538</div>
+            </div>
+            <div class="cell">
+              <div class="tiny-label">总置信度</div>
+              <div class="percent">77.48%</div>
+              <div class="bar"><span></span></div>
+            </div>
+            <div class="cell">
+              <div class="tiny-label">状态</div>
+              <span class="tag review">需审核</span>
+            </div>
+          </div>
+
+          <div class="notes">
+            <div class="notes-head">
+              <div class="notes-title">
+                <span class="tag info">壁厚处理说明</span>
+                <span>建议放在“编码结果”下面，而不是“分流结果”里</span>
+              </div>
+              <span class="tag ok">发生处理时才展示</span>
+            </div>
+
+            <div class="notes-grid">
+              <div class="mini">
+                <div class="k">处理类型</div>
+                <div class="v">壁厚去重</div>
+              </div>
+              <div class="mini">
+                <div class="k">原始壁厚</div>
+                <div class="v">SCH40</div>
+              </div>
+              <div class="mini">
+                <div class="k">关联尺寸</div>
+                <div class="v">DN100</div>
+              </div>
+              <div class="mini">
+                <div class="k">原文规范</div>
+                <div class="v">HG/T20538-16</div>
+              </div>
+              <div class="mini">
+                <div class="k">换算依据</div>
+                <div class="v">HG/T20553Ia</div>
+              </div>
+            </div>
+
+            <div class="note-line">
+              <strong>处理结论：</strong>
+              壁厚 <strong>SCH40</strong> 在 <strong>DN100</strong> 且按 <strong>HG/T20553Ia</strong> 换算后得到
+              <strong>6.3MM</strong>；描述中已存在显式毫米壁厚 <strong>6.3MM</strong>，判定为重复表达，
+              最终编码仅保留 <strong>6.3MM × 4MM</strong>。
+            </div>
+          </div>
+        </section>
+
+        <section class="panel table-card">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 140px;">字段</th>
+                <th>一阶段原始识别</th>
+                <th>二阶段实际输入</th>
+                <th>最终编码</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>尺寸</td>
+                <td>DN: 100</td>
+                <td>DN: 100</td>
+                <td class="code-blue">100</td>
+              </tr>
+              <tr>
+                <td>壁厚</td>
+                <td>MM: 6.3 ; MM: 4.0 ; SCHEDULE: SCH40</td>
+                <td>MM: 6.3 ; MM: 4.0 ; SCHEDULE: SCH40</td>
+                <td class="code-blue">6.3MMX4MM</td>
+              </tr>
+              <tr>
+                <td>规范</td>
+                <td>HGT20538（生产）</td>
+                <td>HGT20538（生产）</td>
+                <td class="code-blue">HGT20538</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+
+      <aside class="panel right-list">
+        <h2 class="section-title">数据列表</h2>
+        <div class="item">
+          <div>
+            <strong>#1271 无缝衬里钢管</strong>
+            <p>Sch40 THK=6.3mm PTFE THK=4.0mm DN100</p>
+          </div>
+          <span class="tag review">需审</span>
+        </div>
+        <div class="item">
+          <div>
+            <strong>#1272 无缝衬里钢管</strong>
+            <p>Sch20 THK=4.5mm DN80</p>
+          </div>
+          <span class="tag info">处理中</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
