@@ -200,6 +200,9 @@ class PressureSurfaceMatcher:
         raw = str(text or "").strip()
         if not raw:
             return []
+        parenthetical = re.fullmatch(r"([^()]+?)\s*\(\s*[^()]+?\s*\)", raw)
+        if parenthetical:
+            raw = parenthetical.group(1).strip()
         parts: list[str] = []
         for chunk in [part.strip() for part in raw.split(";") if part.strip()]:
             slash_parts = [part.strip() for part in re.split(r"\s*/\s*", chunk) if part.strip()]

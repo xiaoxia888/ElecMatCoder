@@ -1,0 +1,13 @@
+# 测试环境覆盖配置
+# 只写与 src/config/platform_config.yaml 不同的配置项。
+# 未配置项会自动继承基础配置。
+
+server:
+  host: "0.0.0.0"
+  port: 8001
+  reload: true
+  preload_models: false
+
+batch_processing:
+  # 测试环境默认展示中途停止/失败任务，方便排查问题。
+  show_terminated_jobs: true

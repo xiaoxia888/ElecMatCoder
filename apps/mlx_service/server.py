@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+
+"""
+单进程服务
+python -m apps.mlx_service.server \
+  --config apps/mlx_service/service.yaml
+"""
 from __future__ import annotations
 
 import argparse
@@ -18,6 +24,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
+DEFAULT_SERVICE_CONFIG = Path(__file__).resolve().with_name("service.yaml")
 
 DEFAULT_INSTRUCTION = (
     "你是一个工业管道材料结构化信息提取助手。"
@@ -61,6 +68,13 @@ class ModelSpec:
     temperature: float
     top_p: float
     trust_remote_code: bool
+
+
+@dataclass
+class ServiceSpec:
+    max_loaded_models: int = 2
+    idle_timeout_seconds: int = 1800
+    idle_check_interval_seconds: int = 60
 
 
 @dataclass
@@ -155,6 +169,13 @@ class MLXModelManager:
         ]
         for name in idle_names:
             self.unload(name)
+
+    async def evict_idle_models(self) -> int:
+        """定时清理空闲模型，让无人访问时也能按时释放内存。"""
+        async with self._lock:
+            before = len(self.loaded)
+            self._evict_idle_models(time.time())
+            return max(0, before - len(self.loaded))
 
     def _evict_lru_if_needed(self) -> None:
         while len(self.loaded) >= self.max_loaded_models and self.loaded:
@@ -297,11 +318,31 @@ class MLXModelManager:
             await self.release(request.model)
 
 
-def load_registry(path: Path) -> dict[str, ModelSpec]:
+def _load_yaml(path: Path) -> dict[str, Any]:
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict):
+        raise ValueError(f"配置文件必须是 YAML 对象: {path}")
+    return data
+
+
+def load_service_config(path: Path) -> ServiceSpec:
+    data = _load_yaml(path)
+    raw_service = data.get("service") or data
+    return ServiceSpec(
+        max_loaded_models=int(raw_service.get("max_loaded_models", 2)),
+        idle_timeout_seconds=int(raw_service.get("idle_timeout_seconds", 1800)),
+        idle_check_interval_seconds=int(raw_service.get("idle_check_interval_seconds", 60)),
+    )
+
+
+def load_registry(path: Path, only_models: list[str] | None = None) -> dict[str, ModelSpec]:
+    data = _load_yaml(path)
     raw_models = data.get("models") or {}
+    wanted = {name.strip() for name in (only_models or []) if name.strip()}
     specs: dict[str, ModelSpec] = {}
     for name, row in raw_models.items():
+        if wanted and name not in wanted:
+            continue
         specs[name] = ModelSpec(
             name=name,
             model_path=str(Path(str(row["model_path"])).expanduser()),
@@ -311,11 +352,53 @@ def load_registry(path: Path) -> dict[str, ModelSpec]:
             top_p=float(row.get("top_p", 1.0)),
             trust_remote_code=bool(row.get("trust_remote_code", True)),
         )
+    missing = sorted(wanted - set(specs))
+    if missing:
+        raise ValueError(f"配置文件缺少模型: {missing}")
     return specs
 
 
-def build_app(manager: MLXModelManager) -> FastAPI:
+async def _idle_model_cleaner(manager: MLXModelManager, interval_seconds: int) -> None:
+    if manager.idle_timeout_seconds <= 0 or interval_seconds <= 0:
+        logger.info("[MLX Service] 模型自动休眠已关闭")
+        return
+    logger.info(
+        "[MLX Service] 模型自动休眠已启用: idle_timeout=%ss, check_interval=%ss",
+        manager.idle_timeout_seconds,
+        interval_seconds,
+    )
+    while True:
+        await asyncio.sleep(interval_seconds)
+        try:
+            unloaded = await manager.evict_idle_models()
+            if unloaded:
+                logger.info("[MLX Service] 自动休眠卸载模型数量: %s", unloaded)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("[MLX Service] 自动休眠检查失败")
+
+
+def build_app(manager: MLXModelManager, *, idle_check_interval_seconds: int) -> FastAPI:
     app = FastAPI(title="MLX Lazy Model Service", version="0.1.0")
+    cleaner_task: asyncio.Task | None = None
+
+    @app.on_event("startup")
+    async def startup() -> None:
+        nonlocal cleaner_task
+        if manager.idle_timeout_seconds > 0 and idle_check_interval_seconds > 0:
+            cleaner_task = asyncio.create_task(
+                _idle_model_cleaner(manager, idle_check_interval_seconds)
+            )
+
+    @app.on_event("shutdown")
+    async def shutdown() -> None:
+        if cleaner_task is not None:
+            cleaner_task.cancel()
+            try:
+                await cleaner_task
+            except asyncio.CancelledError:
+                pass
 
     @app.get("/health")
     async def health():
@@ -323,6 +406,8 @@ def build_app(manager: MLXModelManager) -> FastAPI:
             "ok": True,
             "registered_models": len(manager.specs),
             "loaded_models": len(manager.loaded),
+            "idle_timeout_seconds": manager.idle_timeout_seconds,
+            "idle_check_interval_seconds": idle_check_interval_seconds,
         }
 
     @app.get("/models")
@@ -359,11 +444,15 @@ def build_app(manager: MLXModelManager) -> FastAPI:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="MLX 多模型懒加载服务")
-    parser.add_argument("--registry", type=Path, required=True, help="模型注册表 YAML")
+    parser.add_argument("--config", type=Path, default=DEFAULT_SERVICE_CONFIG, help="统一服务配置 YAML")
+    parser.add_argument("--registry", type=Path, default=None, help="兼容旧参数：模型注册表 YAML")
+    parser.add_argument("--service-config", type=Path, default=None, help="兼容旧参数：公共服务配置 YAML")
+    parser.add_argument("--models", nargs="+", default=None, help="只注册指定模型，供 worker 模式使用")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8200)
-    parser.add_argument("--max-loaded-models", type=int, default=2, help="最多同时保留几个已加载模型")
-    parser.add_argument("--idle-timeout-seconds", type=int, default=1800, help="模型空闲多久后自动释放")
+    parser.add_argument("--max-loaded-models", type=int, default=None, help="临时覆盖配置：最多同时保留几个已加载模型")
+    parser.add_argument("--idle-timeout-seconds", type=int, default=None, help="临时覆盖配置：模型空闲多久后自动释放")
+    parser.add_argument("--idle-check-interval-seconds", type=int, default=None, help="临时覆盖配置：后台自动休眠检查间隔")
     parser.add_argument("--log-level", default="info")
     return parser.parse_args()
 
@@ -375,13 +464,27 @@ def main() -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    specs = load_registry(args.registry)
+    config_path = (args.registry or args.config).expanduser()
+    service_config_path = (args.service_config or args.config).expanduser()
+    specs = load_registry(config_path, args.models)
+    service = load_service_config(service_config_path)
+    max_loaded_models = (
+        service.max_loaded_models if args.max_loaded_models is None else args.max_loaded_models
+    )
+    idle_timeout_seconds = (
+        service.idle_timeout_seconds if args.idle_timeout_seconds is None else args.idle_timeout_seconds
+    )
+    idle_check_interval_seconds = (
+        service.idle_check_interval_seconds
+        if args.idle_check_interval_seconds is None
+        else args.idle_check_interval_seconds
+    )
     manager = MLXModelManager(
         specs,
-        max_loaded_models=args.max_loaded_models,
-        idle_timeout_seconds=args.idle_timeout_seconds,
+        max_loaded_models=max_loaded_models,
+        idle_timeout_seconds=idle_timeout_seconds,
     )
-    app = build_app(manager)
+    app = build_app(manager, idle_check_interval_seconds=idle_check_interval_seconds)
     uvicorn.run(app, host=args.host, port=args.port)
     return 0
 

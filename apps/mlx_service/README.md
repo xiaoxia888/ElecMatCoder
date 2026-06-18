@@ -1,106 +1,64 @@
 # MLX Lazy Model Service
 
-一个给平台一阶段结构化模型用的本地 MLX-LM 服务，接口兼容 `apps/hf_lazy_service` 的最小子集。
+给平台一阶段结构化模型使用的本地 MLX-LM 服务，接口兼容 `apps/hf_lazy_service` 的最小子集。
 
-## 单 worker 启动
+## 配置文件
 
-```bash
-python -m apps.mlx_service.server \
-  --registry apps/mlx_service/models.example.yaml \
-  --host 0.0.0.0 \
-  --port 8200
-```
+最终只维护一个配置文件：
 
-## 多 worker + gateway 启动
+- `apps/mlx_service/service.yaml`
 
-如果你不想手工起 3 个进程，直接用启动器：
+里面同时包含：
+
+- 启动模式
+- 模型自动休眠配置
+- 单进程端口
+- 多 worker 端口
+- gateway 配置
+- 模型路径和推理参数
+
+## 启动
+
+统一使用这一条命令：
 
 ```bash
 python -m apps.mlx_service.launch \
-  --registry apps/mlx_service/cluster.example.yaml
+  --config apps/mlx_service/service.yaml
 ```
 
-这条命令会统一拉起：
-- `type` worker
-- `material-standard` worker
-- gateway
+## 切换启动方式
 
-你只需要准备：
-- `apps/mlx_service/type.worker.yaml`
-- `apps/mlx_service/material.worker.yaml`
-- `apps/mlx_service/gateway.example.yaml`
-
-### 1. 启动 `type` worker
-
-准备一个只包含 `type` 的 registry，例如 `apps/mlx_service/type.worker.yaml`：
+编辑 `apps/mlx_service/service.yaml`：
 
 ```yaml
-models:
-  type:
-    model_path: /abs/path/to/qwen3-8b-type-mlx
-    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
-    max_tokens: 512
-    temperature: 0.0
-    top_p: 1.0
-    trust_remote_code: true
+deployment:
+  mode: single
 ```
 
-启动：
+可选值：
 
-```bash
-python -m apps.mlx_service.server \
-  --registry apps/mlx_service/type.worker.yaml \
-  --host 0.0.0.0 \
-  --port 8201
-```
+- `single`：单进程，一个服务同时管理 `type` 和 `material-standard`
+- `gateway_serial`：多 worker + gateway，gateway 全局串行
+- `gateway_parallel`：多 worker + gateway，按 worker 并行
 
-### 2. 启动 `material-standard` worker
+## 自动休眠
 
-准备一个只包含 `material-standard` 的 registry，例如 `apps/mlx_service/material.worker.yaml`：
+配置在 `service.yaml`：
 
 ```yaml
-models:
-  material-standard:
-    model_path: /abs/path/to/qwen3-8b-material-standard-mlx
-    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
-    max_tokens: 512
-    temperature: 0.0
-    top_p: 1.0
-    trust_remote_code: true
+service:
+  max_loaded_models: 2
+  idle_timeout_seconds: 1800
+  idle_check_interval_seconds: 60
 ```
 
-启动：
+含义：
 
-```bash
-python -m apps.mlx_service.server \
-  --registry apps/mlx_service/material.worker.yaml \
-  --host 0.0.0.0 \
-  --port 8202
-```
+- `max_loaded_models`：最多同时保留几个已加载模型
+- `idle_timeout_seconds`：模型空闲多久后自动卸载，`1800` 秒等于 30 分钟
+- `idle_check_interval_seconds`：后台检查间隔，`60` 秒表示最多延迟约一分钟触发卸载
 
-### 3. 启动 gateway
-
-编辑：
-
-- [gateway.example.yaml](/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/mlx_service/gateway.example.yaml)
-
-其中：
-
-- `gateway.concurrency_mode: "serial"` 表示 gateway 全局串行放行请求，适合本地 Apple Silicon
-- `gateway.concurrency_mode: "parallel"` 表示允许不同 worker 并发
-
-启动：
-
-```bash
-python -m apps.mlx_service.gateway \
-  --registry apps/mlx_service/gateway.example.yaml \
-  --host 0.0.0.0 \
-  --port 8200
-```
-
-平台统一指向：
-
-- `http://127.0.0.1:8200`
+设置 `idle_timeout_seconds: 0` 可以关闭自动休眠。
 
 ## 接口
 
@@ -123,18 +81,13 @@ python -m apps.mlx_service.gateway \
 }
 ```
 
-返回体关键字段：
+平台统一访问：
 
-- `raw_response`
-- `parsed_json`
-- `json_parse_ok`
+- `http://127.0.0.1:8200`
 
 ## 说明
 
-- HTTP 层是 FastAPI。
+- `single` 模式最简单，内存通常最低。
+- `gateway_serial` 模式保留给对并发非常保守的场景。
+- `gateway_parallel` 模式适合批量请求，允许不同 worker 并行。
 - 单个 worker 内部仍然串行推理，避免本地 Apple Silicon 上多请求争抢 Metal 资源。
-- `gateway` 可配置：
-  - `serial`：全局串行
-  - `parallel`：按 worker 并发
-- 真正并发依赖多个 worker 进程，由 gateway 负责按模型路由。
-- 这是本地开发/内网服务方案，不是公网生产网关。

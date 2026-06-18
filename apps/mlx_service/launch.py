@@ -14,82 +14,134 @@ from typing import Any
 import yaml
 
 logger = logging.getLogger(__name__)
+DEFAULT_SERVICE_CONFIG = Path(__file__).resolve().with_name("service.yaml")
 
 
 @dataclass
 class WorkerLaunchSpec:
     name: str
-    registry: Path
     host: str
     port: int
-    max_loaded_models: int
-    idle_timeout_seconds: int
+    models: list[str]
 
 
 @dataclass
 class GatewayLaunchSpec:
-    registry: Path
     host: str
     port: int
 
 
-def load_cluster_registry(path: Path) -> tuple[list[WorkerLaunchSpec], GatewayLaunchSpec]:
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    raw_workers = data.get("workers") or []
-    if not isinstance(raw_workers, list) or not raw_workers:
-        raise ValueError("cluster registry 必须配置 workers 列表")
+@dataclass
+class SingleLaunchSpec:
+    host: str
+    port: int
+    models: list[str]
 
+
+@dataclass
+class LaunchConfig:
+    mode: str
+    single: SingleLaunchSpec
+    workers: list[WorkerLaunchSpec]
+    gateway: GatewayLaunchSpec
+
+
+def _load_yaml(path: Path) -> dict[str, Any]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict):
+        raise ValueError(f"配置文件必须是 YAML 对象: {path}")
+    return data
+
+
+def _iter_worker_rows(raw_workers: Any) -> list[tuple[str, dict[str, Any]]]:
+    if isinstance(raw_workers, dict):
+        return [(str(name), row or {}) for name, row in raw_workers.items()]
+    if isinstance(raw_workers, list):
+        rows: list[tuple[str, dict[str, Any]]] = []
+        for row in raw_workers:
+            if isinstance(row, dict):
+                rows.append((str(row.get("name", "") or ""), row))
+        return rows
+    return []
+
+
+def load_launch_config(path: Path) -> LaunchConfig:
+    data = _load_yaml(path)
+    mode = str((data.get("deployment") or {}).get("mode", "single") or "single").strip().lower()
+    if mode not in {"single", "gateway_serial", "gateway_parallel"}:
+        raise ValueError(f"deployment.mode 只支持 single|gateway_serial|gateway_parallel，当前为: {mode}")
+
+    raw_single = data.get("single") or {}
+    single_models = [
+        str(model).strip()
+        for model in (raw_single.get("models") or list((data.get("models") or {}).keys()))
+        if str(model).strip()
+    ]
+    single = SingleLaunchSpec(
+        host=str(raw_single.get("host", "0.0.0.0")),
+        port=int(raw_single.get("port", 8200)),
+        models=single_models,
+    )
+
+    raw_workers = data.get("workers") or []
     workers: list[WorkerLaunchSpec] = []
-    for row in raw_workers:
+    for name, row in _iter_worker_rows(raw_workers):
+        if not name:
+            raise ValueError("worker 未配置 name")
+        models = [str(model).strip() for model in (row.get("models") or []) if str(model).strip()]
+        if not models:
+            raise ValueError(f"worker {name} 未配置 models")
         workers.append(
             WorkerLaunchSpec(
-                name=str(row["name"]),
-                registry=Path(str(row["registry"])).expanduser(),
+                name=name,
                 host=str(row.get("host", "0.0.0.0")),
                 port=int(row["port"]),
-                max_loaded_models=int(row.get("max_loaded_models", 2)),
-                idle_timeout_seconds=int(row.get("idle_timeout_seconds", 1800)),
+                models=models,
             )
         )
 
     raw_gateway = data.get("gateway") or {}
     if not raw_gateway:
-        raise ValueError("cluster registry 必须配置 gateway")
+        raise ValueError("service.yaml 必须配置 gateway")
     gateway = GatewayLaunchSpec(
-        registry=Path(str(raw_gateway["registry"])).expanduser(),
         host=str(raw_gateway.get("host", "0.0.0.0")),
         port=int(raw_gateway.get("port", 8200)),
     )
-    return workers, gateway
+    return LaunchConfig(mode=mode, single=single, workers=workers, gateway=gateway)
 
 
-def _spawn_worker(worker: WorkerLaunchSpec) -> subprocess.Popen[str]:
+def _spawn_server(
+    *,
+    name: str,
+    config: Path,
+    host: str,
+    port: int,
+    models: list[str],
+) -> subprocess.Popen[str]:
     cmd = [
         sys.executable,
         "-m",
         "apps.mlx_service.server",
-        "--registry",
-        str(worker.registry),
+        "--config",
+        str(config),
         "--host",
-        worker.host,
+        host,
         "--port",
-        str(worker.port),
-        "--max-loaded-models",
-        str(worker.max_loaded_models),
-        "--idle-timeout-seconds",
-        str(worker.idle_timeout_seconds),
+        str(port),
+        "--models",
+        *models,
     ]
-    logger.info("[MLX Launch] 启动 worker=%s port=%s", worker.name, worker.port)
+    logger.info("[MLX Launch] 启动 %s port=%s models=%s", name, port, ",".join(models))
     return subprocess.Popen(cmd)
 
 
-def _spawn_gateway(gateway: GatewayLaunchSpec) -> subprocess.Popen[str]:
+def _spawn_gateway(gateway: GatewayLaunchSpec, config: Path) -> subprocess.Popen[str]:
     cmd = [
         sys.executable,
         "-m",
         "apps.mlx_service.gateway",
-        "--registry",
-        str(gateway.registry),
+        "--config",
+        str(config),
         "--host",
         gateway.host,
         "--port",
@@ -101,7 +153,8 @@ def _spawn_gateway(gateway: GatewayLaunchSpec) -> subprocess.Popen[str]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="MLX service 一键启动器")
-    parser.add_argument("--registry", type=Path, required=True, help="cluster registry YAML")
+    parser.add_argument("--config", type=Path, default=DEFAULT_SERVICE_CONFIG, help="统一服务配置 YAML")
+    parser.add_argument("--registry", type=Path, default=None, help="兼容旧参数：等同于 --config")
     parser.add_argument("--log-level", default="info")
     return parser.parse_args()
 
@@ -114,7 +167,8 @@ def main() -> int:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    workers, gateway = load_cluster_registry(args.registry)
+    config_path = (args.registry or args.config).expanduser()
+    launch_config = load_launch_config(config_path)
     processes: list[subprocess.Popen[str]] = []
 
     def terminate_all() -> None:
@@ -139,10 +193,29 @@ def main() -> int:
     signal.signal(signal.SIGTERM, handle_signal)
 
     try:
-        for worker in workers:
-            processes.append(_spawn_worker(worker))
-        time.sleep(1.0)
-        processes.append(_spawn_gateway(gateway))
+        if launch_config.mode == "single":
+            processes.append(
+                _spawn_server(
+                    name="single_server",
+                    config=config_path,
+                    host=launch_config.single.host,
+                    port=launch_config.single.port,
+                    models=launch_config.single.models,
+                )
+            )
+        else:
+            for worker in launch_config.workers:
+                processes.append(
+                    _spawn_server(
+                        name=f"worker={worker.name}",
+                        config=config_path,
+                        host=worker.host,
+                        port=worker.port,
+                        models=worker.models,
+                    )
+                )
+            time.sleep(1.0)
+            processes.append(_spawn_gateway(launch_config.gateway, config_path))
 
         while True:
             for proc in processes:

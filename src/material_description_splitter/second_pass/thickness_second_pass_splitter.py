@@ -28,7 +28,7 @@ class ThicknessSecondPassSplitter:
         if "." not in text:
             return False
         decimal = text.split(".", 1)[1].rstrip("0")
-        return len(decimal) > 1
+        return len(decimal) > 2
 
     def _render_thickness_result(self, thickness_result: Any) -> str:
         texts = self.matcher._normalize_values(thickness_result)
@@ -97,7 +97,7 @@ class ThicknessSecondPassSplitter:
                 thickness_result=clean_result,
                 thickness_code=clean_code,
                 passed=False,
-                reason=f"壁厚小数位超过1位: {invalid_text}",
+                reason=f"壁厚小数位超过2位: {invalid_text}",
                 items=[item.to_result_item() for item in items],
                 unmatched_items=[item.to_result_item() for item in invalid_mm_items],
                 consumed_spans=initial_consumed,

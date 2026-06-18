@@ -1,0 +1,13 @@
+# 正式环境覆盖配置
+# 只写与 src/config/platform_config.yaml 不同的配置项。
+# SQLite 批量任务库仍共用 data/batch/batch_jobs.db，不在这里区分。
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+  preload_models: false
+
+batch_processing:
+  # 正式环境默认隐藏中途停止/失败任务。
+  show_terminated_jobs: false

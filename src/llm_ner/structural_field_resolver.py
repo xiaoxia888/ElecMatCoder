@@ -32,12 +32,14 @@ def _copy_structural_field(value: Any) -> Any:
     return copy.deepcopy(value)
 
 
-def _build_prompt_context(size_value: Any, thickness_value: Any) -> Dict[str, Any]:
+def _build_prompt_context(size_value: Any, thickness_value: Any, pressure_value: Any) -> Dict[str, Any]:
     context: Dict[str, Any] = {}
     if not _is_size_empty_for_rule_fallback(size_value):
         context["SIZE"] = _copy_structural_field(size_value)
     if not _is_thickness_empty_for_rule_fallback(thickness_value):
         context["THICKNESS"] = _copy_structural_field(thickness_value)
+    if not _is_pressure_empty_for_rule_fallback(pressure_value):
+        context["PRESSURE"] = _copy_structural_field(pressure_value)
     return context
 
 
@@ -134,8 +136,14 @@ class StructuralFieldResolver:
             merged["_errors"] = {}
             return merged
 
-        prompt_context = _build_prompt_context(size_value, thickness_value)
-        prompt_structural = self.prompt_extractor.extract_with_context(raw_text, context=prompt_context)
+        prompt_context = _build_prompt_context(size_value, thickness_value, pressure_value)
+        prompt_structural = self.prompt_extractor.extract_with_context(
+            raw_text,
+            context=prompt_context,
+            run_size_length=need_size_model,
+            run_thickness=need_thickness_model,
+            run_pressure=need_pressure_model,
+        )
         if not isinstance(prompt_structural, dict):
             merged = copy.deepcopy(rule_structural)
             merged["_sources"] = sources

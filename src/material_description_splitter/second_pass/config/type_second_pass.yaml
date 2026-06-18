@@ -602,3 +602,31 @@ common_types:
     conn:
       - FLANGED
       - 法兰
+  N:
+    body:
+      - nipple
+      - 短节
+      - 短管接头
+      - PIPE NIPPLE
+    seal:
+      - NN
+      - NMN
+  NN:
+    body:
+      - nipple
+      - 短节
+      - 短管接头
+      - PIPE NIPPLE
+    conn:
+      - NPT
+  NMN:
+    direct:
+      - 单头外螺纹短节
+    body:
+      - nipple
+      - 短节
+      - 短管接头
+      - PIPE NIPPLE
+    conn:
+      - MNPT
+      - NPTM

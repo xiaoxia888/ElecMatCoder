@@ -2,6 +2,11 @@
 """
 材料智能处理平台 - 统一后端服务
 整合标注和编码功能
+
+测试环境
+PLATFORM_ENV=test python apps/platform/server.py
+整数环境
+PLATFORM_ENV=prod python apps/platform/server.py
 """
 
 import os
@@ -91,6 +96,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """服务启动事件"""
+    global _batch_job_maintenance_task
     # 上次未跑完的任务在重启后视为中断，避免出现僵尸"运行中"
     try:
         _batch_store.mark_interrupted_jobs()
@@ -117,6 +123,24 @@ async def startup_event():
     else:
         logger.info("预加载模型已禁用，将在首次使用时加载")
 
+    if _batch_maintenance_enabled() and (
+        _batch_job_maintenance_task is None or _batch_job_maintenance_task.done()
+    ):
+        _batch_job_maintenance_task = asyncio.create_task(_batch_job_maintenance_loop())
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """服务关闭事件"""
+    global _batch_job_maintenance_task
+    if _batch_job_maintenance_task is not None:
+        _batch_job_maintenance_task.cancel()
+        try:
+            await _batch_job_maintenance_task
+        except asyncio.CancelledError:
+            pass
+        _batch_job_maintenance_task = None
+
 
 # ============================================================
 # 全局实例
@@ -126,22 +150,58 @@ _preprocessor = TextPreprocessor()
 _ner_predictor = None
 _ner_model_type: str = "bert"
 _pipe_router = None
-_structural_prompt_extractor = None
 _stage1_structure_checker = Stage1StructureChecker()
 _batch_jobs: Dict[str, Dict[str, Any]] = {}
 _batch_job_queue: deque[str] = deque()
 _batch_job_active_id: Optional[str] = None
 _batch_job_scheduler_task: Optional[asyncio.Task] = None
+_batch_job_maintenance_task: Optional[asyncio.Task] = None
 _batch_job_lock = asyncio.Lock()
 
-# 任务结果不再常驻内存，统一落盘到 SQLite（data/batch/batch_jobs.db）
-_batch_store = BatchJobStore(PROJECT_ROOT / "data" / "batch" / "batch_jobs.db")
 
-_BATCH_JOB_KEEP_SECONDS = 60.0
+def _get_batch_processing_config() -> Dict[str, Any]:
+    platform_config = get_platform_config()
+    return platform_config.get("batch_processing", {}) or {}
+
+
+def _get_batch_maintenance_config() -> Dict[str, Any]:
+    return _get_batch_processing_config().get("maintenance", {}) or {}
+
+
+def _get_batch_history_config() -> Dict[str, Any]:
+    return _get_batch_processing_config().get("history", {}) or {}
+
+
+def _batch_maintenance_enabled() -> bool:
+    return bool(_get_batch_maintenance_config().get("enabled", True))
+
+
+def _batch_maintenance_interval_seconds() -> float:
+    value = float(_get_batch_maintenance_config().get("interval_seconds", 600) or 600)
+    return max(60.0, value)
+
+
+def _batch_history_keep_days() -> float:
+    return float(_get_batch_history_config().get("keep_days", 7) or 7)
+
+
+def _batch_history_max_jobs() -> int:
+    return max(1, int(_get_batch_history_config().get("max_jobs", 200) or 200))
+
+
+def _batch_job_list_limit() -> int:
+    return max(1, int(_get_batch_processing_config().get("list_limit", 30) or 30))
+
+
+# 任务结果不再常驻内存，统一落盘到 SQLite（data/batch/batch_jobs.db）
+_batch_store = BatchJobStore(
+    PROJECT_ROOT / "data" / "batch" / "batch_jobs.db",
+    keep_days=_batch_history_keep_days(),
+    max_jobs=_batch_history_max_jobs(),
+)
+
 _BATCH_JOB_TERMINAL_STATUSES = {"finished", "cancelled", "failed"}
 _BATCH_JOB_ACTIVE_STATUSES = {"queued", "running", "cancelling"}
-# 任务列表最多展示的任务条数（按执行时间排序后取前 N）
-_BATCH_JOB_LIST_LIMIT = 30
 
 
 def _merge_nested_dict(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
@@ -201,19 +261,32 @@ async def _batch_job_emit(job: Dict[str, Any], event: Dict[str, Any]) -> None:
 
 
 async def _batch_job_cleanup_locked() -> None:
-    now = _utc_ts()
-    remove_ids: list[str] = []
-    for job_id, job in list(_batch_jobs.items()):
-        status = str(job.get("status", "") or "")
-        finished_at = float(job.get("finished_at") or 0.0)
-        if status in _BATCH_JOB_TERMINAL_STATUSES and finished_at and (now - finished_at) >= _BATCH_JOB_KEEP_SECONDS:
-            remove_ids.append(job_id)
-    for job_id in remove_ids:
-        _batch_jobs.pop(job_id, None)
+    """只整理队列里的无效引用，不删除已完成任务快照。"""
+    if not _batch_job_queue:
+        return
+    active_queue = deque()
+    for job_id in list(_batch_job_queue):
+        job = _batch_jobs.get(job_id)
+        if job and str(job.get("status", "") or "") == "queued":
+            active_queue.append(job_id)
+    _batch_job_queue.clear()
+    _batch_job_queue.extend(active_queue)
+
+
+async def _batch_job_maintenance_loop() -> None:
+    """后台维护批量任务历史，避免无人访问时历史任务和 SQLite 长期不清理。"""
+    interval_seconds = _batch_maintenance_interval_seconds()
+    logger.info("批量任务后台维护已启动: interval=%ss", interval_seconds)
+    while True:
+        await asyncio.sleep(interval_seconds)
         try:
-            _batch_job_queue.remove(job_id)
-        except ValueError:
-            pass
+            await asyncio.to_thread(_batch_store.cleanup)
+            async with _batch_job_lock:
+                await _batch_job_cleanup_locked()
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("批量任务后台维护失败")
 
 
 async def _batch_job_get(job_id: str) -> Optional[Dict[str, Any]]:
@@ -284,7 +357,6 @@ async def _run_batch_job(job_id: str) -> None:
 
         async with semaphore:
             predict_result = await asyncio.to_thread(predictor.predict, processed_text)
-        _apply_structural_prompt_override(predict_result, processed_text)
 
         route_info = _decorate_predict_route_info(predict_result.get("route_info"))
         stage1_snapshot = Stage1DecisionNormalizer.build_snapshot(predict_result)
@@ -902,177 +974,6 @@ def get_pipe_router():
     return _pipe_router
 
 
-def get_structural_prompt_extractor():
-    """获取结构字段决策器（规则优先 + 提示词回退，惰性加载）。"""
-    global _structural_prompt_extractor
-
-    ner_config = get_ner_config()
-    qwen3_config = ner_config.get("qwen3", {}) or {}
-    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
-    prompt_cfg = stage1_cfg.get("structural_prompt", {}) or {}
-    rule_cfg = stage1_cfg.get("structural_rules", {}) or {}
-    if not prompt_cfg.get("enabled", False) and not rule_cfg.get("enabled", False):
-        return None
-
-    if _structural_prompt_extractor is None:
-        from src.llm_ner.structural_field_resolver import StructuralFieldResolver
-
-        _structural_prompt_extractor = StructuralFieldResolver.from_configs(
-            prompt_config=prompt_cfg,
-            rule_config=rule_cfg,
-        )
-        logger.info(
-            "启用结构字段决策: prompt=%s, rules=%s, model=%s",
-            bool(prompt_cfg.get("enabled", False)),
-            bool(rule_cfg.get("enabled", False)),
-            prompt_cfg.get("model_name"),
-        )
-    return _structural_prompt_extractor
-
-
-def _is_empty_structural_value(field: str, value: Any) -> bool:
-    if field in {"SIZE", "THICKNESS"}:
-        return not isinstance(value, dict) or not any(
-            v not in (None, "", [], {}) for v in value.values()
-        )
-    if field == "PRESSURE":
-        return value in (None, "", [], {})
-    return True
-
-
-def _size_debug_snapshot(value: Any) -> Any:
-    """收缩 SIZE 调试输出，避免日志过长。"""
-    if isinstance(value, dict):
-        snapshot = {
-            "DN": copy.deepcopy(value.get("DN", [])),
-            "OD": copy.deepcopy(value.get("OD", [])),
-            "INCH": copy.deepcopy(value.get("INCH", [])),
-            "LENGTH": copy.deepcopy(value.get("LENGTH", [])),
-        }
-        if isinstance(value.get("_ITEMS"), list):
-            snapshot["_ITEMS"] = copy.deepcopy(value.get("_ITEMS"))
-        return snapshot
-    return copy.deepcopy(value)
-
-
-def _apply_structural_prompt_override(result: Dict[str, Any], text: str) -> Optional[Dict[str, Any]]:
-    """
-    用结构字段决策器（规则优先 + 提示词回退）覆盖强结构字段。
-
-    微调模型仍负责 TYPE / MATERIAL / STANDARD。SIZE / THICKNESS / PRESSURE
-    以统一结构字段决策结果为准，避免微调模型按训练分布补 SCH/CL 等不存在的值。
-    """
-    structural = _extract_structural_prompt_fields(text)
-    return _merge_structural_stage1_fields(result, structural)
-
-
-def _extract_structural_prompt_fields(text: str) -> Optional[Dict[str, Any]]:
-    extractor = get_structural_prompt_extractor()
-    if extractor is None:
-        return None
-    try:
-        structural = extractor.extract(text)
-        return structural
-    except Exception as exc:
-        logger.warning("[结构字段提示词] 抽取失败，保留微调结果: %s", exc)
-        return None
-
-
-def _merge_structural_stage1_fields(
-    result: Dict[str, Any],
-    structural: Optional[Dict[str, Any]],
-) -> Optional[Dict[str, Any]]:
-    """将结构字段决策直接并入一阶段 decisions，不再对外保留旧调试块。"""
-    if not structural:
-        return None
-
-    model_output = result.get("model_output")
-    if not isinstance(model_output, dict):
-        model_output = {}
-        result["model_output"] = model_output
-
-    target = model_output.get("decisions") if isinstance(model_output.get("decisions"), dict) else model_output
-    for field in ("SIZE", "THICKNESS", "PRESSURE"):
-        value = structural.get(field)
-        if field in ("SIZE", "THICKNESS") and isinstance(value, dict):
-            items_key = f"{field}_ITEMS"
-            items_value = structural.get(items_key)
-            if isinstance(items_value, list) and items_value:
-                value = copy.deepcopy(value)
-                value["_ITEMS"] = copy.deepcopy(items_value)
-        target[field] = copy.deepcopy(value)
-
-    structural_visible = {
-        k: copy.deepcopy(v) for k, v in structural.items() if not str(k).startswith("_")
-    }
-    for field in ("SIZE", "THICKNESS"):
-        field_value = target.get(field)
-        if isinstance(field_value, dict):
-            structural_visible[field] = copy.deepcopy(field_value)
-    # 结构字段覆盖后，同步回写 _STRUCTURAL_PROMPT。
-    # 否则 raw_values 仍会读取旧的一阶段原始提示词结果，导致
-    # stage1_raw 与 decisions/stage2_input 出现“同一轮请求两套值”的假差异。
-    model_output["_STRUCTURAL_PROMPT"] = copy.deepcopy(structural_visible)
-    structural_status = copy.deepcopy(structural.get("_status", {}) or {})
-    structural_errors = copy.deepcopy(structural.get("_errors", {}) or {})
-
-    logger.info(
-        "[结构字段覆盖] source=%s SIZE=%s THICKNESS=%s PRESSURE=%s",
-        structural.get("_sources"),
-        structural_visible.get("SIZE"),
-        structural_visible.get("THICKNESS"),
-        structural_visible.get("PRESSURE"),
-    )
-
-    extract_confidence = result.get("extract_confidence")
-    if not isinstance(extract_confidence, dict):
-        extract_confidence = {}
-        result["extract_confidence"] = extract_confidence
-    for field in ("SIZE", "THICKNESS", "PRESSURE"):
-        extract_confidence[field] = 1.0 if not _is_empty_structural_value(field, structural.get(field)) else 0.0
-
-    extract_confidence_v2 = result.get("extract_confidence_v2")
-    if not isinstance(extract_confidence_v2, dict):
-        extract_confidence_v2 = {}
-        result["extract_confidence_v2"] = extract_confidence_v2
-    source_map = structural.get("_sources") if isinstance(structural.get("_sources"), dict) else {}
-    prompt_status_map = structural_status if isinstance(structural_status, dict) else {}
-    field_to_prompt_task = {
-        "SIZE": "size_length",
-        "THICKNESS": "thickness",
-        "PRESSURE": "pressure",
-    }
-    for field in ("SIZE", "THICKNESS", "PRESSURE"):
-        source = str(source_map.get(field, "prompt_extraction"))
-        prompt_task = field_to_prompt_task[field]
-        prompt_status = str(prompt_status_map.get(prompt_task, "") or "")
-        if _is_empty_structural_value(field, structural.get(field)):
-            reason = "field_missing"
-            evidence: Dict[str, Any] = {}
-            if source == "prompt_extraction" and prompt_status:
-                reason = f"prompt_{prompt_status}"
-                if prompt_task in structural_errors:
-                    evidence["prompt_error"] = structural_errors[prompt_task]
-            extract_confidence_v2[field] = {
-                "source": source,
-                "confidence": 0.0,
-                "reason": reason,
-                "evidence": evidence,
-            }
-        else:
-            evidence = {}
-            if source == "prompt_extraction" and prompt_status:
-                evidence["prompt_status"] = prompt_status
-            extract_confidence_v2[field] = {
-                "source": source,
-                "confidence": 1.0,
-                "reason": "rule_based_extraction" if source == "rule_extraction" else "prompt_extraction",
-                "evidence": evidence,
-            }
-
-    return structural_visible
-
-
 def get_ner_confidence_threshold() -> float:
     """获取NER置信度阈值"""
     ner_config = get_ner_config()
@@ -1166,7 +1067,6 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
     encoder = get_pipe_encoder()
 
     predict_result = predictor.predict(processed_text)
-    _apply_structural_prompt_override(predict_result, processed_text)
 
     route_info = _decorate_predict_route_info(predict_result.get("route_info"))
     stage1 = Stage1DecisionNormalizer.build_snapshot(predict_result)
@@ -1298,7 +1198,6 @@ async def pipe_predict(request: PipePredictRequest):
     try:
         predictor = get_ner_predictor()
         result = await asyncio.to_thread(predictor.predict, processed_text)
-        _apply_structural_prompt_override(result, processed_text)
         stage1 = Stage1DecisionNormalizer.build_snapshot(result).to_dict()
         stage1_structure = _build_stage1_structure_payload(text)
 
@@ -1329,7 +1228,6 @@ async def pipe_batch_predict(request: PipeBatchPredictRequest):
         try:
             async with semaphore:
                 result = await asyncio.to_thread(predictor.predict, processed_text)
-            _apply_structural_prompt_override(result, processed_text)
             stage1 = Stage1DecisionNormalizer.build_snapshot(result).to_dict()
             stage1_structure = _build_stage1_structure_payload(text)
 
@@ -1504,7 +1402,7 @@ async def pipe_batch_encode_list_jobs():
         key=lambda item: float(item.get("started_at") or item.get("created_at") or 0.0),
         reverse=True,
     )
-    jobs = visible[:_BATCH_JOB_LIST_LIMIT]
+    jobs = visible[:_batch_job_list_limit()]
     return {"success": True, "jobs": jobs}
 
 
@@ -1989,22 +1887,37 @@ def _convert_pipe_result(
 
 # ============================================================
 # 启动
+
 # ============================================================
 
 if __name__ == "__main__":
     import argparse
     import uvicorn
+
+    platform_config = get_platform_config()
+    server_config = platform_config.get("server", {})
     
     parser = argparse.ArgumentParser(description="材料智能处理平台")
-    parser.add_argument("--host", default="0.0.0.0", help="监听地址")
-    parser.add_argument("--port", type=int, default=8000, help="监听端口")
-    parser.add_argument("--reload", action="store_true", help="开发模式")
+    parser.add_argument("--host", default=server_config.get("host", "0.0.0.0"), help="监听地址")
+    parser.add_argument("--port", type=int, default=int(server_config.get("port", 8000)), help="监听端口")
+    parser.add_argument(
+        "--reload",
+        action=argparse.BooleanOptionalAction,
+        default=bool(server_config.get("reload", False)),
+        help="是否启用开发热重载",
+    )
     
     args = parser.parse_args()
     
-    logger.info(f"启动材料智能处理平台: http://{args.host}:{args.port}")
+    logger.info(
+        "启动材料智能处理平台: http://%s:%s env=%s config=%s",
+        args.host,
+        args.port,
+        os.environ.get("PLATFORM_ENV", "") or "default",
+        os.environ.get("PLATFORM_CONFIG", "") or "auto",
+    )
     uvicorn.run(
-        "server:app" if args.reload else app,
+        "apps.platform.server:app" if args.reload else app,
         host=args.host,
         port=args.port,
         reload=args.reload

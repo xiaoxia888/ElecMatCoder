@@ -1,0 +1,57 @@
+deployment:
+  # 可选值：
+  # single           单进程：一个服务同时管理 type / material-standard
+  # gateway_serial   多 worker + gateway，全局串行
+  # gateway_parallel 多 worker + gateway，按 worker 并行
+  mode: single
+
+service:
+  # 最多同时保留几个已加载模型。single 模式建议为 2；worker 模式每个进程只注册自己的模型。
+  max_loaded_models: 2
+  # 模型空闲多久后自动卸载。1800 秒 = 30 分钟；设置为 0 可关闭自动休眠。
+  idle_timeout_seconds: 1800
+  # 后台检查空闲模型的间隔。60 秒表示最多延迟约一分钟触发卸载。
+  idle_check_interval_seconds: 60
+
+single:
+  host: 0.0.0.0
+  port: 8200
+  models:
+    - type
+    - material-standard
+
+workers:
+  type_worker:
+    host: 0.0.0.0
+    port: 8201
+    timeout_seconds: 300
+    models:
+      - type
+
+  material_worker:
+    host: 0.0.0.0
+    port: 8202
+    timeout_seconds: 300
+    models:
+      - material-standard
+
+gateway:
+  host: 0.0.0.0
+  port: 8200
+
+models:
+  type:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type-0618-mlx
+    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    trust_remote_code: true
+
+  material-standard:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-material-standard-0609-mlx
+    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    trust_remote_code: true

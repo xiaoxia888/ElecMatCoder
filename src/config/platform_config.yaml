@@ -187,6 +187,17 @@ batch_processing:
   progress_interval_ms: 100
   # 是否在任务列表展示「中途停止/失败」的任务（默认 false 只展示进行中与正常完成的任务，开启后也展示已取消/失败的任务）
   show_terminated_jobs: true
+  # 批量任务后台维护。只负责清理历史数据，不负责执行/停止编码任务。
+  maintenance:
+    enabled: true
+    # 历史清理不需要太频繁，默认 10 分钟检查一次。
+    interval_seconds: 600
+  # 批量任务历史保留策略。只清理非活跃任务，queued/running/cancelling 永不删除。
+  history:
+    keep_days: 7
+    max_jobs: 200
+  # 任务列表最多返回多少个任务。
+  list_limit: 30
 
 # ==================== 日志配置 ====================
 logging:

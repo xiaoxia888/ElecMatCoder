@@ -59,6 +59,7 @@ class SizeProcessor:
     _nps_to_dn_mapping: dict = None
     _common_dn_values: set = None
     STRUCTURED_SUBTYPES = ("DN", "OD", "INCH")
+    LARGE_OD_THRESHOLD_MM = 355.6
     
     def __init__(
         self,
@@ -289,6 +290,48 @@ class SizeProcessor:
             return max(below)
         return min(distinct_dns)
 
+    def _get_large_nps_candidates(self) -> List[Tuple[float, int]]:
+        """提取可用于大口径 OD→DN 近似映射的标准 NPS 序列。"""
+        candidates: List[Tuple[float, int]] = []
+        for nps_token, dn in (self._nps_to_dn_mapping or {}).items():
+            token = str(nps_token or "").strip()
+            if not re.fullmatch(r'\d+(?:\.\d+)?', token):
+                continue
+            try:
+                nps_value = float(token)
+                dn_value = int(dn)
+            except (ValueError, TypeError):
+                continue
+            if nps_value >= 14 or dn_value >= 350:
+                candidates.append((nps_value, dn_value))
+        return sorted(candidates, key=lambda item: item[0])
+
+    def _od_to_dn_large_series(self, od_value: float) -> Optional[int]:
+        """大口径近似映射：OD(mm) -> 最近标准 NPS -> DN。
+
+        依据：
+        - NPS 14 及以上，大口径系列通常满足 OD(inch) ≈ NPS
+        - DN 为对应标准公称系列名
+        因此做法不是简单向上取整，而是先换算理论 NPS，再映射到
+        `nps_to_dn` 配置中维护的最近标准 NPS 序列。
+        """
+        candidates = self._get_large_nps_candidates()
+        if not candidates:
+            return None
+        nps_estimate = float(od_value) / 25.4
+        best_nps, best_dn = min(
+            candidates,
+            key=lambda item: (abs(item[0] - nps_estimate), item[0]),
+        )
+        logger.debug(
+            "[SizeProcessor] 大口径OD换算: OD=%s -> NPS≈%.4f -> NPS=%s -> DN=%s",
+            od_value,
+            nps_estimate,
+            best_nps,
+            best_dn,
+        )
+        return int(best_dn)
+
     def _od_to_dn(self, od_value: float, thickness_mm: Optional[float] = None) -> Optional[int]:
         """
         将管外径转换为公称直径。
@@ -296,10 +339,11 @@ class SizeProcessor:
         规则：
         1. 先精确匹配映射表
         2. 再做小容差匹配（±0.5mm）
-        3. 若同一 OD 命中多条记录（对应多个不同 DN），取「小于该外径且最接近外径」的 DN
-           （DN 通常略小于 OD；候选 DN 全部不小于外径时退而取最小 DN）
-        4. 若仍未命中，则按工程直径规则，取「小于等于当前 OD 数值」且最接近的 DN
-        5. 若不存在满足条件的 DN，则返回 None，由上层决定是否回退原始 OD
+        3. 小尺寸（OD < 355.6mm）若未命中表，则取「表中小于等于当前 OD 且最接近的外径」
+           对应的 DN 作为回退
+        4. 大尺寸（OD >= 355.6mm）若未命中表，则按标准大口径 NPS 序列近似映射：
+           先算 NPS≈OD/25.4，再映射到 `nps_to_dn` 中最近的标准 NPS
+        5. 若仍未命中，则返回 None，由上层决定是否回退原始 OD
         """
         if not self._od_to_dn_mapping:
             return None
@@ -313,10 +357,14 @@ class SizeProcessor:
             if abs(od - od_value) <= 0.5:
                 return self._resolve_candidate_rows(rows, thickness_mm)
 
-        # 工程直径回退：按 DN 数值比较，取不大于当前 OD 且最接近的 DN
-        dn_candidates = [int(dn) for dn in self._od_to_dn_mapping.values() if float(dn) <= od_value]
-        if dn_candidates:
-            return max(dn_candidates)
+        if od_value >= self.LARGE_OD_THRESHOLD_MM:
+            return self._od_to_dn_large_series(od_value)
+
+        # 小尺寸回退：找表中小于等于当前 OD 且最接近的外径，取其对应 DN
+        smaller_ods = [float(od) for od in self._od_candidate_rows.keys() if float(od) <= od_value]
+        if smaller_ods:
+            nearest_od = max(smaller_ods)
+            return self._resolve_candidate_rows(self._od_candidate_rows[nearest_od], thickness_mm)
 
         return None
 

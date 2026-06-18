@@ -65,11 +65,25 @@ class StructuralPromptExtractor:
     def extract(self, text: str) -> Dict[str, Any]:
         return self.extract_with_context(text)
 
-    def extract_with_context(self, text: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def extract_with_context(
+        self,
+        text: str,
+        context: Optional[Dict[str, Any]] = None,
+        *,
+        run_size_length: bool = True,
+        run_thickness: bool = True,
+        run_pressure: bool = True,
+    ) -> Dict[str, Any]:
         if not text or not text.strip():
             return self.empty_result()
         prompt_text = self._preprocess_text(text)
-        partials, statuses, errors, usage = self._extract_partials(prompt_text, context=context)
+        partials, statuses, errors, usage = self._extract_partials(
+            prompt_text,
+            context=context,
+            run_size_length=run_size_length,
+            run_thickness=run_thickness,
+            run_pressure=run_pressure,
+        )
         merged = self._merge_partials(partials)
         normalized = self._normalize(merged)
         normalized["_raw"] = "\n\n".join(
@@ -83,11 +97,25 @@ class StructuralPromptExtractor:
     def debug_extract(self, text: str) -> Dict[str, Any]:
         return self.debug_extract_with_context(text)
 
-    def debug_extract_with_context(self, text: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def debug_extract_with_context(
+        self,
+        text: str,
+        context: Optional[Dict[str, Any]] = None,
+        *,
+        run_size_length: bool = True,
+        run_thickness: bool = True,
+        run_pressure: bool = True,
+    ) -> Dict[str, Any]:
         if not text or not text.strip():
             return {"trace": [], "field_diagnostics": {}, "final": self.empty_result(), "_raw": ""}
         prompt_text = self._preprocess_text(text)
-        partials, statuses, errors, usage = self._extract_partials(prompt_text, context=context)
+        partials, statuses, errors, usage = self._extract_partials(
+            prompt_text,
+            context=context,
+            run_size_length=run_size_length,
+            run_thickness=run_thickness,
+            run_pressure=run_pressure,
+        )
         merged = self._merge_partials(partials)
         normalized_final = self._normalize(merged)
         normalized_final["_status"] = statuses
@@ -125,6 +153,10 @@ class StructuralPromptExtractor:
         self,
         text: str,
         context: Optional[Dict[str, Any]] = None,
+        *,
+        run_size_length: bool = True,
+        run_thickness: bool = True,
+        run_pressure: bool = True,
     ) -> tuple[Dict[str, str], Dict[str, str], Dict[str, str], Dict[str, Any]]:
         results: Dict[str, str] = {}
         statuses: Dict[str, str] = {}
@@ -134,17 +166,22 @@ class StructuralPromptExtractor:
         size_context_items = self._extract_context_size_items(context)
         thickness_context_items = self._extract_context_thickness_items(context)
 
-        try:
-            # 尺寸这一步也带上已识别壁厚上下文，便于在「外径x壁厚」等结构里反推尺寸
-            size_user = self._build_user_content(text, thickness_items=thickness_context_items)
-            results["size_length"] = self._generate(self.size_length_prompt, size_user)
-            statuses["size_length"] = "ok"
-            usage["size_length"] = dict(self._last_usage or {})
-        except Exception as exc:
-            logger.warning("[结构字段提示词][size_length] 调用失败: %s", exc)
+        if run_size_length:
+            try:
+                # 尺寸这一步也带上已识别壁厚上下文，便于在「外径x壁厚」等结构里反推尺寸
+                size_user = self._build_user_content(text, thickness_items=thickness_context_items)
+                results["size_length"] = self._generate(self.size_length_prompt, size_user)
+                statuses["size_length"] = "ok"
+                usage["size_length"] = dict(self._last_usage or {})
+            except Exception as exc:
+                logger.warning("[结构字段提示词][size_length] 调用失败: %s", exc)
+                results["size_length"] = ""
+                statuses["size_length"] = self._classify_error(exc)
+                errors["size_length"] = str(exc)
+                usage["size_length"] = {}
+        else:
             results["size_length"] = ""
-            statuses["size_length"] = self._classify_error(exc)
-            errors["size_length"] = str(exc)
+            statuses["size_length"] = "skipped"
             usage["size_length"] = {}
 
         if not size_context_items:
@@ -155,16 +192,21 @@ class StructuralPromptExtractor:
                 parsed_size.get("SIZE_ITEMS"), self.ITEM_TYPES["SIZE_ITEMS"]
             )
 
-        try:
-            thickness_user = self._build_user_content(text, size_items=size_context_items)
-            results["thickness"] = self._generate(self.thickness_prompt, thickness_user)
-            statuses["thickness"] = "ok"
-            usage["thickness"] = dict(self._last_usage or {})
-        except Exception as exc:
-            logger.warning("[结构字段提示词][thickness] 调用失败: %s", exc)
+        if run_thickness:
+            try:
+                thickness_user = self._build_user_content(text, size_items=size_context_items)
+                results["thickness"] = self._generate(self.thickness_prompt, thickness_user)
+                statuses["thickness"] = "ok"
+                usage["thickness"] = dict(self._last_usage or {})
+            except Exception as exc:
+                logger.warning("[结构字段提示词][thickness] 调用失败: %s", exc)
+                results["thickness"] = ""
+                statuses["thickness"] = self._classify_error(exc)
+                errors["thickness"] = str(exc)
+                usage["thickness"] = {}
+        else:
             results["thickness"] = ""
-            statuses["thickness"] = self._classify_error(exc)
-            errors["thickness"] = str(exc)
+            statuses["thickness"] = "skipped"
             usage["thickness"] = {}
 
         if not thickness_context_items:
@@ -172,20 +214,25 @@ class StructuralPromptExtractor:
             normalized_thickness = self._normalize(merged_thickness)
             thickness_context_items = normalized_thickness.get("THICKNESS_ITEMS") or []
 
-        try:
-            pressure_user = self._build_user_content(
-                text,
-                size_items=size_context_items,
-                thickness_items=thickness_context_items,
-            )
-            results["pressure"] = self._generate(self.pressure_prompt, pressure_user)
-            statuses["pressure"] = "ok"
-            usage["pressure"] = dict(self._last_usage or {})
-        except Exception as exc:
-            logger.warning("[结构字段提示词][pressure] 调用失败: %s", exc)
+        if run_pressure:
+            try:
+                pressure_user = self._build_user_content(
+                    text,
+                    size_items=size_context_items,
+                    thickness_items=thickness_context_items,
+                )
+                results["pressure"] = self._generate(self.pressure_prompt, pressure_user)
+                statuses["pressure"] = "ok"
+                usage["pressure"] = dict(self._last_usage or {})
+            except Exception as exc:
+                logger.warning("[结构字段提示词][pressure] 调用失败: %s", exc)
+                results["pressure"] = ""
+                statuses["pressure"] = self._classify_error(exc)
+                errors["pressure"] = str(exc)
+                usage["pressure"] = {}
+        else:
             results["pressure"] = ""
-            statuses["pressure"] = self._classify_error(exc)
-            errors["pressure"] = str(exc)
+            statuses["pressure"] = "skipped"
             usage["pressure"] = {}
 
         usage["total"] = self._merge_usage_totals(usage)
@@ -271,7 +318,7 @@ class StructuralPromptExtractor:
             )
             if size_lines:
                 parts.append(
-                    "已识别尺寸结果（高优先级约束，仅可用于约束当前判断，不得虚构新值）：\n"
+                    "已识别尺寸结果，已被识别的不要重复识别：\n"
                     f"{size_lines}"
                 )
         if thickness_items:
@@ -282,7 +329,7 @@ class StructuralPromptExtractor:
             )
             if thickness_lines:
                 parts.append(
-                    "已识别壁厚结果（高优先级约束，仅可用于约束当前判断，不得虚构新值）：\n"
+                    "已识别壁厚结果，已被识别的不要重复识别：\n"
                     f"{thickness_lines}"
                 )
         parts.append("只输出一个 JSON 对象，输出到最后一个 } 后立即停止。")

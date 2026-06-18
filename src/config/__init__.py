@@ -4,6 +4,7 @@
 
 import os
 import importlib.util
+import copy
 from pathlib import Path
 from typing import Dict, Any
 import yaml
@@ -16,6 +17,16 @@ CONFIG_DIR = Path(__file__).parent
 
 # 配置缓存
 _config_cache: Dict[str, Any] = {}
+
+
+def _merge_nested_dict(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    merged = copy.deepcopy(base)
+    for key, value in (override or {}).items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _merge_nested_dict(merged[key], value)
+        else:
+            merged[key] = copy.deepcopy(value)
+    return merged
 
 
 def load_yaml_config(filepath: str, use_cache: bool = True) -> Dict[str, Any]:
@@ -54,7 +65,17 @@ def load_yaml_config(filepath: str, use_cache: bool = True) -> Dict[str, Any]:
 
 def get_platform_config() -> Dict[str, Any]:
     """获取平台配置"""
-    return load_yaml_config("platform_config.yaml")
+    base_config = load_yaml_config("platform_config.yaml")
+    config_file = os.environ.get("PLATFORM_CONFIG", "").strip()
+    platform_env = os.environ.get("PLATFORM_ENV", "").strip()
+
+    if not config_file and platform_env:
+        config_file = f"platform_config.{platform_env}.yaml"
+    if not config_file:
+        return base_config
+
+    override_config = load_yaml_config(config_file)
+    return _merge_nested_dict(base_config, override_config)
 
 
 def get_semantic_config() -> Dict[str, Any]:

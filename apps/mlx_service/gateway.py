@@ -15,6 +15,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
+DEFAULT_SERVICE_CONFIG = Path(__file__).resolve().with_name("service.yaml")
 
 
 class PredictRequest(BaseModel):
@@ -168,17 +169,50 @@ class GatewayRouter:
         return {"ok": True, "unloaded": total, "workers": results}
 
 
-def load_gateway_registry(path: Path) -> tuple[dict[str, WorkerSpec], GatewayConfig]:
+def _load_yaml(path: Path) -> dict[str, Any]:
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict):
+        raise ValueError(f"配置文件必须是 YAML 对象: {path}")
+    return data
+
+
+def _resolve_gateway_concurrency(data: dict[str, Any]) -> str:
+    mode = str((data.get("deployment") or {}).get("mode", "") or "").strip().lower()
+    if mode == "gateway_serial":
+        return "serial"
+    if mode == "gateway_parallel":
+        return "parallel"
+    raw_gateway = data.get("gateway") or {}
+    return str(raw_gateway.get("concurrency_mode", "serial")).strip().lower()
+
+
+def _iter_worker_rows(raw_workers: Any) -> list[tuple[str, dict[str, Any]]]:
+    if isinstance(raw_workers, dict):
+        return [(str(name), row or {}) for name, row in raw_workers.items()]
+    if isinstance(raw_workers, list):
+        rows: list[tuple[str, dict[str, Any]]] = []
+        for row in raw_workers:
+            if isinstance(row, dict):
+                rows.append((str(row.get("name", "") or ""), row))
+        return rows
+    return []
+
+
+def load_gateway_registry(path: Path) -> tuple[dict[str, WorkerSpec], GatewayConfig]:
+    data = _load_yaml(path)
     raw_workers = data.get("workers") or {}
     workers: dict[str, WorkerSpec] = {}
-    for name, row in raw_workers.items():
+    for name, row in _iter_worker_rows(raw_workers):
+        if not name:
+            raise ValueError("worker 未配置 name")
         models = [str(model).strip() for model in (row.get("models") or []) if str(model).strip()]
         if not models:
             raise ValueError(f"worker {name} 未配置 models")
-        base_url = str(row.get("base_url", "")).strip()
+        base_url = str(row.get("base_url", "") or "").strip()
+        if not base_url and row.get("port"):
+            base_url = f"http://127.0.0.1:{int(row['port'])}"
         if not base_url:
-            raise ValueError(f"worker {name} 未配置 base_url")
+            raise ValueError(f"worker {name} 未配置 base_url 或 port")
         workers[name] = WorkerSpec(
             name=str(name),
             base_url=base_url,
@@ -187,8 +221,7 @@ def load_gateway_registry(path: Path) -> tuple[dict[str, WorkerSpec], GatewayCon
         )
     if not workers:
         raise ValueError("gateway registry 未配置任何 workers")
-    raw_gateway = data.get("gateway") or {}
-    concurrency_mode = str(raw_gateway.get("concurrency_mode", "serial")).strip().lower()
+    concurrency_mode = _resolve_gateway_concurrency(data)
     if concurrency_mode not in {"serial", "parallel"}:
         raise ValueError(f"gateway.concurrency_mode 只支持 serial|parallel，当前为: {concurrency_mode}")
     return workers, GatewayConfig(concurrency_mode=concurrency_mode)
@@ -239,7 +272,8 @@ def build_app(router: GatewayRouter) -> FastAPI:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="MLX 多 worker 网关服务")
-    parser.add_argument("--registry", type=Path, required=True, help="gateway registry YAML")
+    parser.add_argument("--config", type=Path, default=DEFAULT_SERVICE_CONFIG, help="统一服务配置 YAML")
+    parser.add_argument("--registry", type=Path, default=None, help="兼容旧参数：gateway registry YAML")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8200)
     parser.add_argument("--log-level", default="info")
@@ -253,7 +287,7 @@ def main() -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    workers, config = load_gateway_registry(args.registry)
+    workers, config = load_gateway_registry((args.registry or args.config).expanduser())
     router = GatewayRouter(workers, config)
     app = build_app(router)
     uvicorn.run(app, host=args.host, port=args.port)

@@ -1,8 +1,0 @@
-models:
-  type:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-typeV2-mlx
-    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
-    max_tokens: 512
-    temperature: 0.0
-    top_p: 1.0
-    trust_remote_code: true

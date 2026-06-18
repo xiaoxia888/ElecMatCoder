@@ -124,6 +124,9 @@ class PressureProcessor:
         """
         if not value:
             return ""
+        parenthetical_outer = self._normalize_parenthetical_outer(value)
+        if parenthetical_outer:
+            return parenthetical_outer
         normalized = self._normalize_pressure_token(value, allow_prefix=False)
         if normalized:
             return normalized
@@ -183,6 +186,16 @@ class PressureProcessor:
         i = 0
         while i < len(token_matches):
             start, end, raw, normalized = token_matches[i]
+            if i + 1 < len(token_matches):
+                next_start, next_end, _next_raw, next_normalized = token_matches[i + 1]
+                parenthetical_end = self._get_parenthetical_pair_end(source, end, next_start, next_end)
+                if parenthetical_end is not None:
+                    span = (start, parenthetical_end)
+                    raw_parenthetical = source[start:parenthetical_end]
+                    add_hit(raw_parenthetical, f"{normalized}({next_normalized})", span)
+                    i += 2
+                    continue
+
             combo_raw_parts = [raw]
             combo_normalized_parts = [normalized]
             combo_end = end
@@ -244,6 +257,50 @@ class PressureProcessor:
             consumed_spans=consumed_value_spans,
             ordered_items=[{"type": "PRESSURE", "value": str(item["value"])} for item in deduped_items],
         )
+
+    def _get_parenthetical_pair_end(
+        self,
+        source: str,
+        outer_end: int,
+        inner_start: int,
+        inner_end: int,
+    ) -> Optional[int]:
+        left_separator = source[outer_end:inner_start]
+        if not re.fullmatch(r"\s*\(\s*", left_separator):
+            return None
+        right = source[inner_end:]
+        match = re.match(r"\s*\)", right)
+        if not match:
+            return None
+        return inner_end + match.end()
+
+    def _normalize_parenthetical_outer(self, value: str) -> str:
+        source = str(value or "").strip()
+        if not source:
+            return ""
+
+        matches: List[Tuple[int, int, str, str]] = []
+        for match in self.pressure_token_pattern.finditer(source):
+            span = match.span(1)
+            raw = match.group(1)
+            normalized = self._normalize_pressure_token(raw, allow_prefix=False)
+            if normalized:
+                matches.append((span[0], span[1], raw, normalized))
+            if len(matches) >= 2:
+                break
+
+        if len(matches) < 2:
+            return ""
+        outer_start, outer_end, _outer_raw, outer_normalized = matches[0]
+        inner_start, inner_end, _inner_raw, _inner_normalized = matches[1]
+        if outer_start != 0:
+            return ""
+        parenthetical_end = self._get_parenthetical_pair_end(source, outer_end, inner_start, inner_end)
+        if parenthetical_end is None:
+            return ""
+        if source[parenthetical_end:].strip():
+            return ""
+        return outer_normalized
 
     @staticmethod
     def _derive_consumed_spans_from_ordered_items(text: str, ordered_items: List[Dict[str, object]]) -> List[Tuple[int, int]]:
