@@ -51,6 +51,7 @@ class BatchJobStore:
                     created_at REAL,
                     started_at REAL,
                     finished_at REAL,
+                    duration_seconds REAL,
                     updated_at REAL
                 );
                 CREATE TABLE IF NOT EXISTS results (
@@ -64,7 +65,13 @@ class BatchJobStore:
                 CREATE INDEX IF NOT EXISTS idx_jobs_created ON jobs(created_at);
                 """
             )
+            self._ensure_column("jobs", "duration_seconds", "REAL")
             self._conn.commit()
+
+    def _ensure_column(self, table: str, column: str, definition: str) -> None:
+        columns = {row["name"] for row in self._conn.execute(f"PRAGMA table_info({table})").fetchall()}
+        if column not in columns:
+            self._conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
     # ---------- 写 ----------
     def create_job(self, job: Dict[str, Any]) -> None:
@@ -72,8 +79,8 @@ class BatchJobStore:
             self._conn.execute(
                 """INSERT OR REPLACE INTO jobs
                 (job_id,status,total,processed,success_count,review_count,threshold,
-                 max_concurrent,error,items_meta,created_at,started_at,finished_at,updated_at)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                 max_concurrent,error,items_meta,created_at,started_at,finished_at,duration_seconds,updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     job["job_id"],
                     str(job.get("status", "") or ""),
@@ -88,6 +95,7 @@ class BatchJobStore:
                     job.get("created_at"),
                     job.get("started_at"),
                     job.get("finished_at"),
+                    job.get("duration_seconds"),
                     job.get("updated_at"),
                 ),
             )
@@ -114,10 +122,20 @@ class BatchJobStore:
 
     def mark_interrupted_jobs(self) -> None:
         """服务启动时把上次未跑完（非终态）的任务标记为失败，避免出现僵尸"运行中"。"""
+        now = time.time()
         with self._lock:
-            self._conn.execute(
-                "UPDATE jobs SET status='failed', error='服务重启中断' WHERE status IN ('queued','running','cancelling')",
-            )
+            rows = self._conn.execute(
+                "SELECT job_id, started_at FROM jobs WHERE status IN ('queued','running','cancelling')"
+            ).fetchall()
+            for row in rows:
+                started_at = row["started_at"]
+                duration_seconds = max(0.0, now - float(started_at)) if started_at else None
+                self._conn.execute(
+                    """UPDATE jobs
+                       SET status='failed', error='服务重启中断', finished_at=?, duration_seconds=?, updated_at=?
+                       WHERE job_id=?""",
+                    (now, duration_seconds, now, row["job_id"]),
+                )
             self._conn.commit()
 
     # ---------- 读 ----------
@@ -181,6 +199,7 @@ class BatchJobStore:
             "created_at": row["created_at"],
             "started_at": row["started_at"],
             "finished_at": row["finished_at"],
+            "duration_seconds": row["duration_seconds"],
             "updated_at": row["updated_at"],
         }
 

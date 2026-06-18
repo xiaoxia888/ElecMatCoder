@@ -278,6 +278,7 @@ SIZE_FIELD_RULES_TEXT_V3 = """
      * **显式长度强制追加**：只要原文出现明确长度字段 `L=...`、`L:...`、`LG=...`、`LENGTH=...`、`LEN=...`、`长度...`、`总长...`，且同条存在明确主规格 `DN...` 或英制主体值规格，必须将长度追加到 `specification`，格式为 `DN200L3000` 或 `2L3000`；长度单位为 `m/米` 时换算为毫米（如 `L=3m` → `L3000`），单位为 `mm/毫米` 时直接取数值，未写单位时保留数值本身；不得把长度写入 `wall_thickness` 或 `material`。示例：`灰口铸铁, 壁厚5.8mm, L=3m, DN200` → `specification=DN200L3000`。
      * **管子CUT TO长度特例（窄规则）**：当原文出现 `CUT TO`/`CUT-TO` + 数值，且同句存在明确主管规格（`DN...` 或英制主体值规格）时，允许将该数值作为长度追加到 `specification`（`L{数值}`）；不满足上述条件时不得追加，避免泛化到普通管子场景。示例：`PIPE ... CUT TO 1505 DN100` → `specification=DN100L1505`。
      * **PN/尺寸紧邻拆分**：当描述中出现 `PNxx` 后紧邻公称直径数字的结构时，包括 `PNxx-数字`、`PNxx 数字`、`PNxx/DN数字`、`PNxx-DN数字`、`PNxx-数字I/II/III`、`PNxx 数字Ⅰ/Ⅱ/Ⅲ`、`PN16-125/END` 等，若 `PNxx` 为标准公称压力等级写法（如 `PN10/PN16/PN25/PN40` 等），则 `PNxx` 必须写入 `pressure_rating`；其后的数字若为常见公称直径序列值（如 `15/20/25/32/40/50/65/80/100/125/150/...`），必须加 `DN` 补全并写入 `specification`（如 `DN25`、`DN125`）；数字后的 `/END` 不得并入 `pressure_rating`。数字后的 `I/II/III/IV`、`Ⅰ/Ⅱ/Ⅲ/Ⅳ` 若不是材质的一部分，且描述中存在明确规范，则应作为离它最近的规范后缀写入 `standard`，不得并入 `pressure_rating` 或导致 `specification` 为空；例如 `PN16 25Ⅱ;20;GB/T12459-2017` 应输出 `pressure_rating=PN16`、`specification=DN25`、`material=20`、`standard=GB/T12459-2017Ⅱ` 或等价后缀形态。普通独立压力组合如 `PN16/PN25`、`PN16 PN25` 仍整体视为压力信息，不得拆成尺寸。
+     * **法兰短型号排除（硬约束）**：当出现 `WN/SO/BL/PL + 数字-数字 + RF/FF/RTJ` 或近似法兰短型号结构时，前一个数字是规格，后一个数字是压力后缀，不得把后一个数字当作第二尺寸。例如 `WN 250-150 RF` 只能输出规格 `DN250`，不能输出 `DN250xDN150`。
      * **夹套双规格硬约束**：当夹套件描述中出现以 `/` 连接的两组尺寸（如 `DN150x125/DN200x150`）时，必须将两组尺寸按原顺序完整保留到 `specification`，因为 `/` 两侧通常代表外管/内管或主管/夹套两组有效规格，禁止截断为前半段单组尺寸。
 """.strip()
 
@@ -319,7 +320,7 @@ PRESSURE_FIELD_RULES_TEXT_V3 = """
    - **#号方向限制**：只有 `数字#`（如 `300#`、`3000#`）可视为磅级；`#数字` 默认不是磅级，`Buff#300/BUFF #300/抛光#300` 等表面处理等级必须忽略。
    - **Class 数值边界（硬约束）**：只有 `Class`/`CL` 后面紧跟阿拉伯数字压力等级时，才允许写入 `pressure_rating`（如 `Class 150`、`Class3000`、`CL600`）；凡 `Class`/`CL` 后面是罗马数字、字母或其组合（如 `Class I`、`Class Ia`、`CL II`、`Class Ib`），一律不得写入 `pressure_rating`。
    - **Class 等级排除**：当描述中出现 `Class I/II/III/IV/V`、`Class Ia/Ib` 或 `CL I/II/III/IV/V` 这类非数值等级，且未与明确压力数值组合出现时，不得按常规 `pressure_rating` 提取。
-   - 法兰型号后缀识别：当描述中出现 `WN/SO/BL/PL + 规格 + (类型) - 数字 + RF/FF/RTJ` 这类格式时，`-数字` 视为公称压力等级 `PN数字`（如 `WN350(B)-25 RF` → pressure_rating=PN25），不得漏掉；前一段数字是规格/尺寸，不得当作 `CL/C/Class`。
+   - 法兰短型号场景：当出现 `WN/SO/BL/PL + 规格 + (类型) - 数字 + RF/FF/RTJ` 时，前一段数字是尺寸，后一段数字是压力后缀。后缀若是 `150/300/400/600/900/1500/2500/3000`，输出 `C数字`；若是 `10/16/20/25/40/50/63/100/160`，输出 `PN数字`。
    - 与明确工况语句（如“设计压力/工作压力/试验压力”）绑定的数值一律视为工况，不写入 `pressure_rating`；若描述中出现独立压力等级写法 `x.xMPa`（如 `1.0MPa`、`1.6MPa`、`2.5MPa`），可先提取到 `pressure_rating`。
 """.strip()
 
@@ -393,6 +394,7 @@ SIZE_EXAMPLES_TEXT_V3 = """
 - `3"*DN65` → `SIZE_ITEMS=[{"type":"INCH","value":"3"},{"type":"DN","value":"65"}]`, `LENGTH=""`
 - `2 in` → `SIZE_ITEMS=[{"type":"INCH","value":"2"}]`, `LENGTH=""`
 - `8 x 6 in` → `SIZE_ITEMS=[{"type":"INCH","value":"8"},{"type":"INCH","value":"6"}]`, `LENGTH=""`
+- `WN 250-150 RF` → `SIZE_ITEMS=[{"type":"DN","value":"250"}]`, `LENGTH=""`
 - `DN200, L=3m` → `SIZE_ITEMS=[{"type":"DN","value":"200"}]`, `LENGTH="3000"`
 """.strip()
 

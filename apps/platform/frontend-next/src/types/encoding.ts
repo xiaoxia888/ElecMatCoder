@@ -113,7 +113,9 @@ export interface BatchJobSummary {
   max_concurrent?: number
   queue_position?: number | null
   created_at?: number
+  started_at?: number | null
   finished_at?: number | null
+  duration_seconds?: number | null
   items?: Array<{ index?: number; text?: string; project_name?: string }>
   results?: Record<string, EncodingResult>
 }
@@ -140,4 +142,5 @@ export interface TaskInfo {
   review: number
   progress: number
   status: 'idle' | 'running' | 'partial' | 'done'
+  durationSeconds?: number | null
 }

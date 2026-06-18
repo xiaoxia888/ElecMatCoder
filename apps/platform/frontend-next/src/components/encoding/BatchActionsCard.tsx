@@ -24,6 +24,17 @@ const STATUS_META: Record<TaskInfo['status'], { label: string; tag: string; bar:
   done: { label: '已完成', tag: 'bg-successSoft text-success', bar: 'bg-success' },
 }
 
+function formatDuration(durationSeconds?: number | null) {
+  if (!Number.isFinite(durationSeconds) || durationSeconds == null || durationSeconds < 0) return ''
+  const totalSeconds = Math.round(durationSeconds)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  if (hours > 0) return `${hours}时${minutes}分${seconds}秒`
+  if (minutes > 0) return `${minutes}分${seconds}秒`
+  return `${seconds}秒`
+}
+
 export function BatchActionsCard(props: BatchActionsCardProps) {
   const {
     tasks,
@@ -76,6 +87,7 @@ export function BatchActionsCard(props: BatchActionsCardProps) {
             tasks.map((task) => {
               const meta = STATUS_META[task.status]
               const selected = task.id === activeTaskId
+              const durationText = formatDuration(task.durationSeconds)
               return (
                 <button
                   key={task.id}
@@ -98,6 +110,7 @@ export function BatchActionsCard(props: BatchActionsCardProps) {
                     </span>
                     <span>成功 {task.success}</span>
                   </div>
+                  {durationText ? <div className="mt-1 text-[12px] text-muted">耗时 {durationText}</div> : null}
                 </button>
               )
             })

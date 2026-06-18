@@ -214,6 +214,7 @@ def _batch_job_public(job: Dict[str, Any], *, results: Optional[Dict[str, Any]] 
         "created_at": job.get("created_at"),
         "started_at": job.get("started_at"),
         "finished_at": job.get("finished_at"),
+        "duration_seconds": job.get("duration_seconds"),
         "updated_at": job.get("updated_at"),
         "cancel_requested": bool(job.get("cancel_requested")),
         "error": job.get("error", ""),
@@ -288,6 +289,7 @@ def _persist_job_meta(job: Dict[str, Any]) -> None:
             error=str(job.get("error", "") or ""),
             started_at=job.get("started_at"),
             finished_at=job.get("finished_at"),
+            duration_seconds=job.get("duration_seconds"),
             updated_at=job.get("updated_at"),
         )
     except Exception:
@@ -296,8 +298,11 @@ def _persist_job_meta(job: Dict[str, Any]) -> None:
 
 async def _batch_job_mark_finished(job: Dict[str, Any], status: str, error: str = "") -> None:
     job["status"] = status
-    job["updated_at"] = _utc_ts()
-    job["finished_at"] = _utc_ts()
+    finished_at = _utc_ts()
+    job["updated_at"] = finished_at
+    job["finished_at"] = finished_at
+    started_at = job.get("started_at")
+    job["duration_seconds"] = max(0.0, float(finished_at) - float(started_at)) if started_at else None
     job["error"] = str(error or "")
     await asyncio.to_thread(_persist_job_meta, job)
 
@@ -569,6 +574,7 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
         "created_at": _utc_ts(),
         "started_at": None,
         "finished_at": None,
+        "duration_seconds": None,
         "updated_at": _utc_ts(),
         "error": "",
         "subscribers": [],

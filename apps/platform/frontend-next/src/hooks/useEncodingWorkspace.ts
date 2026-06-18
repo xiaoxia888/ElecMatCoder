@@ -24,6 +24,10 @@ export function useEncodingWorkspace() {
   const [dataList, setDataList] = useState<ImportedRow[]>([])
   const [results, setResults] = useState<Record<number, EncodingResult>>({})
   const [taskName, setTaskName] = useState('')
+  const [localDataList, setLocalDataList] = useState<ImportedRow[]>([])
+  const [localResults, setLocalResults] = useState<Record<number, EncodingResult>>({})
+  const [localTaskName, setLocalTaskName] = useState('')
+  const [localCurrentIndex, setLocalCurrentIndex] = useState(-1)
   const [jobs, setJobs] = useState<BatchJobSummary[]>([])
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null)
   const [currentIndex, setCurrentIndex] = useState(-1)
@@ -37,6 +41,11 @@ export function useEncodingWorkspace() {
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
   const eventSourceRef = useRef<EventSource | null>(null)
+  const activeTaskIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    activeTaskIdRef.current = activeTaskId
+  }, [activeTaskId])
 
   useEffect(() => {
     let mounted = true
@@ -110,79 +119,99 @@ export function useEncodingWorkspace() {
         review: Number(job.review_count || 0),
         progress: total > 0 ? Math.round((processed / total) * 100) : 0,
         status,
+        durationSeconds: Number.isFinite(Number(job.duration_seconds)) ? Number(job.duration_seconds) : null,
       }
     })
 
-    if (activeTaskId) {
-      const idx = list.findIndex((t) => t.id === activeTaskId)
+    if (localDataList.length > 0) {
+      const localValues = Object.values(localResults)
+      const localDone = localValues.length
+      list.unshift({
+        id: 'local',
+        name: localTaskName || '当前导入',
+        total: localDataList.length,
+        success: localValues.filter((item) => item.success).length,
+        review: localValues.filter((item) => item.need_review).length,
+        progress: localDataList.length > 0 ? Math.round((localDone / localDataList.length) * 100) : 0,
+        status: localDone === 0 ? 'idle' : localDone >= localDataList.length ? 'done' : 'partial',
+        durationSeconds: null,
+      })
+    }
+
+    const runningTaskId = activeJob?.job_id || null
+    if (runningTaskId) {
+      const idx = list.findIndex((t) => t.id === runningTaskId)
+      const runningTotal = Number(activeJob?.total || 0)
+      const runningProcessed = Number(activeJob?.processed || 0)
+      const runningSuccess = Number(activeJob?.success_count || 0)
+      const runningReview = Number(activeJob?.review_count || 0)
+      const runningProgress = runningTotal > 0 ? Math.round((runningProcessed / runningTotal) * 100) : 0
       if (idx >= 0) {
-        // 后端已有该任务：仅当本地正在运行该批量任务时，才用实时进度覆盖；
-        // 查看已完成/历史任务时保留后端数据，避免切换瞬间本地结果清空导致进度条闪烁
         if (isEncodingBatch) {
           list[idx] = {
             ...list[idx],
-            total: dataList.length || list[idx].total,
-            success: stats.success,
-            review: stats.review,
-            progress,
+            total: runningTotal || list[idx].total,
+            success: runningSuccess,
+            review: runningReview,
+            progress: runningProgress,
             status: 'running',
+            durationSeconds: Number.isFinite(Number(activeJob?.duration_seconds)) ? Number(activeJob?.duration_seconds) : null,
           }
         }
-      } else {
+      } else if (activeTaskId === runningTaskId) {
         // 本地导入、尚未提交为后端任务
-        const total = dataList.length
-        const done = stats.total
+        const total = runningTotal || dataList.length
+        const done = runningProcessed || stats.total
         list.unshift({
-          id: activeTaskId,
+          id: runningTaskId,
           name: taskName || '当前导入',
           total,
-          success: stats.success,
-          review: stats.review,
-          progress: isEncodingBatch ? progress : total > 0 ? Math.round((done / total) * 100) : 0,
+          success: runningSuccess || stats.success,
+          review: runningReview || stats.review,
+          progress: isEncodingBatch ? runningProgress : total > 0 ? Math.round((done / total) * 100) : 0,
           status: isEncodingBatch ? 'running' : done === 0 ? 'idle' : done >= total && total > 0 ? 'done' : 'partial',
+          durationSeconds: Number.isFinite(Number(activeJob?.duration_seconds)) ? Number(activeJob?.duration_seconds) : null,
         })
       }
     }
     // 是否展示中途停止/失败的任务由后端配置（batch_processing.show_terminated_jobs）决定，
     // 前端直接展示后端下发的任务，不再额外过滤
     return list
-  }, [jobs, activeTaskId, dataList.length, stats, isEncodingBatch, progress, taskName])
+  }, [jobs, activeTaskId, activeJob?.job_id, dataList.length, localDataList.length, localResults, localTaskName, stats, isEncodingBatch, progress, taskName])
 
   function clearStream() {
     eventSourceRef.current?.close()
     eventSourceRef.current = null
   }
 
-  function applyJobSnapshot(job: BatchJobSummary) {
+  function applyRunningJobSnapshot(job: BatchJobSummary) {
     const running = isBatchJobRunning(job.status)
     setActiveJob(job)
     setIsEncodingBatch(running)
     if (!running) {
       setIsStoppingBatch(false)
     }
+  }
 
+  function applyViewedJobSnapshot(job: BatchJobSummary) {
     const items = Array.isArray(job.items) ? job.items : []
-    if (items.length > 0) {
-      setDataList(
-        items
-          .map((item, idx) => ({
-            index: Number.isFinite(Number(item.index)) ? Number(item.index) : idx,
-            text: item.text || '',
-            projectName: item.project_name || '',
-            rawRow: {},
-          }))
-          .sort((a, b) => a.index - b.index),
-      )
-    }
+    setDataList(
+      items
+        .map((item, idx) => ({
+          index: Number.isFinite(Number(item.index)) ? Number(item.index) : idx,
+          text: item.text || '',
+          projectName: item.project_name || '',
+          rawRow: {},
+        }))
+        .sort((a, b) => a.index - b.index),
+    )
 
     const nextResults: Record<number, EncodingResult> = {}
     Object.entries(job.results || {}).forEach(([index, result]) => {
       const numeric = Number(index)
       if (Number.isFinite(numeric) && result) nextResults[numeric] = result
     })
-    if (Object.keys(nextResults).length > 0) {
-      setResults((prev) => ({ ...prev, ...nextResults }))
-    }
+    setResults(nextResults)
   }
 
   function subscribeBatchJob(jobId: string) {
@@ -191,25 +220,27 @@ export function useEncodingWorkspace() {
     source.onmessage = (message) => {
       const event = JSON.parse(message.data) as BatchJobEvent
       if (event.type === 'snapshot' && event.snapshot) {
-        applyJobSnapshot(event.snapshot)
+        applyRunningJobSnapshot(event.snapshot)
+        if (activeTaskIdRef.current === jobId) {
+          applyViewedJobSnapshot(event.snapshot)
+        }
         return
       }
-      if (typeof event.index === 'number' && event.result) {
+      if (typeof event.index === 'number' && event.result && activeTaskIdRef.current === jobId) {
         setResults((prev) => ({ ...prev, [event.index!]: event.result! }))
       }
       if (event.snapshot) {
-        const running = isBatchJobRunning(event.snapshot.status)
-        setActiveJob(event.snapshot)
-        setIsEncodingBatch(running)
-        if (!running) {
-          setIsStoppingBatch(false)
-        }
+        applyRunningJobSnapshot(event.snapshot)
       }
       if (event.type === 'end' || event.type === 'cancelled' || event.type === 'failed') {
-        if (event.snapshot) applyJobSnapshot(event.snapshot)
+        if (event.snapshot && activeTaskIdRef.current === jobId) {
+          applyViewedJobSnapshot(event.snapshot)
+        }
         setIsEncodingBatch(false)
         setIsStoppingBatch(false)
-        clearStream()
+        if (eventSourceRef.current === source) {
+          clearStream()
+        }
         refreshJobs()
       }
     }
@@ -227,24 +258,26 @@ export function useEncodingWorkspace() {
   async function loadTask(id: string) {
     if (id === 'local') {
       setActiveTaskId('local')
+      setTaskName(localTaskName)
+      setDataList(localDataList)
+      setResults(localResults)
+      setCurrentIndex(localCurrentIndex)
       return
     }
     if (id === activeTaskId) return
-    // 切换任务前：停掉上一个任务的实时流并清空数据，避免跨任务结果串台
-    clearStream()
     setActiveTaskId(id)
     setResults({})
     setDataList([])
     setCurrentIndex(-1)
     try {
       const res = await api.getBatchJob(id)
-      if (res.job) {
-        applyJobSnapshot(res.job)
-        setCurrentIndex((res.job.items?.length ?? 0) > 0 ? 0 : -1)
-        if (isBatchJobRunning(res.job.status)) {
+      if (!res.job || activeTaskIdRef.current !== id) return
+      applyViewedJobSnapshot(res.job)
+      setCurrentIndex((res.job.items?.length ?? 0) > 0 ? 0 : -1)
+      if (isBatchJobRunning(res.job.status)) {
+        applyRunningJobSnapshot(res.job)
+        if (activeJob?.job_id !== id || !eventSourceRef.current) {
           subscribeBatchJob(id)
-        } else {
-          clearStream()
         }
       }
     } catch (err) {
@@ -254,11 +287,16 @@ export function useEncodingWorkspace() {
 
   function importRows(rows: Record<string, unknown>[], column: string, fileName = '') {
     const normalized = normalizeImportedRows(rows, column)
+    const nextIndex = normalized.length > 0 ? 0 : -1
+    setLocalDataList(normalized)
+    setLocalResults({})
+    setLocalTaskName(fileName)
+    setLocalCurrentIndex(nextIndex)
     setDataList(normalized)
     setResults({})
     setTaskName(fileName)
     setActiveTaskId('local')
-    setCurrentIndex(normalized.length > 0 ? 0 : -1)
+    setCurrentIndex(nextIndex)
     setActiveJob(null)
     setNotice(`已导入 ${normalized.length} 条数据`)
     setError('')
@@ -276,6 +314,9 @@ export function useEncodingWorkspace() {
         project_name: currentItem.projectName || '',
       })
       setResults((prev) => ({ ...prev, [currentItem.index]: result }))
+      if (activeTaskId === 'local') {
+        setLocalResults((prev) => ({ ...prev, [currentItem.index]: result }))
+      }
       setNotice(result.need_review ? '当前样本已编码，结果进入待审核。' : '当前样本编码完成。')
     } catch (err) {
       setError(err instanceof Error ? err.message : '单条编码失败')
@@ -301,8 +342,13 @@ export function useEncodingWorkspace() {
         max_concurrent: maxConcurrent,
       })
       if (job.job?.job_id) {
+        setLocalDataList([])
+        setLocalResults({})
+        setLocalTaskName('')
+        setLocalCurrentIndex(-1)
         setActiveTaskId(job.job.job_id)
-        applyJobSnapshot(job.job)
+        applyRunningJobSnapshot(job.job)
+        applyViewedJobSnapshot(job.job)
         subscribeBatchJob(job.job.job_id)
         refreshJobs()
         setNotice(`批量任务已创建，任务号 ${job.job.job_id.slice(0, 8)}。`)
@@ -319,7 +365,7 @@ export function useEncodingWorkspace() {
     setError('')
     try {
       const res = await api.cancelBatchJob(activeJob.job_id)
-      setActiveJob(res.job)
+      applyRunningJobSnapshot(res.job)
       if (!isBatchJobRunning(res.job?.status)) {
         setIsEncodingBatch(false)
         setIsStoppingBatch(false)
@@ -336,6 +382,9 @@ export function useEncodingWorkspace() {
 
   async function selectItem(index: number) {
     setCurrentIndex(index)
+    if (activeTaskId === 'local') {
+      setLocalCurrentIndex(index)
+    }
     // 服务端任务：点击描述时按需查询该条结果（F12 可独立查看该条请求/响应），并写回缓存
     if (activeTaskId && activeTaskId !== 'local') {
       try {
