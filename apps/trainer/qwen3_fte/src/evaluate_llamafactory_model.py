@@ -1,3 +1,13 @@
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+import time
+from pathlib import Path
+from typing import Any
+
 """
 评测 LoRA 微调模型的结构化抽取效果。
 
@@ -15,6 +25,10 @@
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task code \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-1200-编码
+
+python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
+      --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
       --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-1200-编码
 
   # 编码模型批量评测
@@ -56,15 +70,7 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
   python evaluate_llamafactory_model.py \
       --base-model /path/to/Qwen3-4B
 """
-from __future__ import annotations
 
-import argparse
-import json
-import re
-import sys
-import time
-from pathlib import Path
-from typing import Any
 
 EXTRACT_INSTRUCTION = (
     "你是一个工业管道材料结构化信息提取助手。"
@@ -76,6 +82,8 @@ DEFAULT_INSTRUCTIONS = {
     "extract": EXTRACT_INSTRUCTION,
     "code": CODE_INSTRUCTION,
 }
+
+CODE_FIELDS = ("TYPE", "SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "STANDARD")
 
 
 # ──────────────────────────────────────────────
@@ -184,6 +192,27 @@ def clean_text_output(raw: str) -> str:
         text = re.sub(r"\n?```$", "", text).strip()
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     return lines[0] if lines else text.strip()
+
+
+def normalize_code_input(input_text: str, default_field: str = "TYPE") -> str:
+    """编码模型训练时使用单字段输入；交互输入原始值时自动补齐字段类型。"""
+    text = str(input_text or "").strip()
+    if not text:
+        return text
+
+    has_field_type = re.search(r"字段类型\s*[:：]", text)
+    has_raw_value = re.search(r"原始值\s*[:：]", text)
+    if has_field_type and has_raw_value:
+        return text
+
+    field_pattern = "|".join(CODE_FIELDS)
+    match = re.match(rf"^\s*({field_pattern})\s*[:：]\s*(.+)$", text, flags=re.IGNORECASE | re.DOTALL)
+    if match:
+        field = match.group(1).upper()
+        value = match.group(2).strip()
+        return f"字段类型: {field}\n原始值: {value}"
+
+    return f"字段类型: {default_field.upper()}\n原始值: {text}"
 
 
 def expected_to_text(expected: Any) -> str:
@@ -337,6 +366,7 @@ def interactive_mode(
     *,
     task: str,
     instruction: str,
+    code_field: str = "TYPE",
     max_new_tokens: int = 512,
     temperature: float = 0.0,
     top_p: float = 1.0,
@@ -357,11 +387,13 @@ def interactive_mode(
         if not user_input or user_input.lower() in ("quit", "exit", "q"):
             break
 
+        model_input = normalize_code_input(user_input, code_field) if task == "code" else user_input
+
         t0 = time.time()
         raw_output = generate(
             model,
             tokenizer,
-            user_input,
+            model_input,
             instruction=instruction,
             max_new_tokens=max_new_tokens,
             temperature=temperature,
@@ -378,6 +410,8 @@ def interactive_mode(
                 print(f"[JSON 解析失败] 原始输出:\n{raw_output}")
         else:
             parsed_text = clean_text_output(raw_output)
+            if model_input != user_input:
+                print(f"实际输入:\n{model_input}")
             print(parsed_text)
 
 
@@ -722,6 +756,12 @@ def main() -> None:
         help="评测任务类型。extract=结构化抽取 JSON；code=字段编码纯文本",
     )
     parser.add_argument(
+        "--code-field",
+        choices=CODE_FIELDS,
+        default="TYPE",
+        help="code 交互模式下，直接输入原始值时自动使用的字段类型，默认 TYPE。",
+    )
+    parser.add_argument(
         "--instruction",
         default="",
         help="覆盖默认 system instruction。不传时按 task 使用默认 instruction；样本内 instruction 优先级更高。",
@@ -817,6 +857,7 @@ def main() -> None:
             tokenizer,
             task=args.task,
             instruction=instruction,
+            code_field=args.code_field,
             max_new_tokens=max_new_tokens,
             temperature=args.temperature,
             top_p=args.top_p,

@@ -7,34 +7,10 @@ server:
   host: "0.0.0.0"
   port: 8002
   reload: true
-  # 是否在服务启动时预加载模型（生产环境建议 true）
-  preload_models: false
 
 # ==================== NER识别配置 ====================
 ner:
-  # NER 模型类型
-  # 可选值: bert / qwen3 / globalpointer
-  #   bert:          BERT+CRF 字符级 NER 模型
-  #   qwen3:         Qwen3-4B 微调模型（推荐，直接输出结构化 JSON）
-  #   globalpointer: GlobalPointer NER 模型
-  model_type: "qwen3"
-  
-  # 置信度阈值：低于此值的实体将被忽略
-  confidence_threshold: 0.0
-  
-  # O标签偏置：正值使模型更倾向于预测O（对未知token更保守）
-  # 推荐值：0.5-2.0，值越大越保守
-  # 0.0 = 不调整（原始模型行为）
-  # 1.0 = 轻微保守（新模型推荐值）
-  # 2.0 = 中等保守（可能导致实体被截断）
-  o_bias: 1.0
-  
-  # BERT NER 模型配置
-  bert:
-    model_path: "models/pipe_model"
-    device: "auto"
-  
-  # Qwen3-4B 微调模型配置（推荐）
+  # Qwen3 一阶段结构化抽取配置
   qwen3:
     adapter: "structured_llamafactory"  # structured_llamafactory / legacy
     backend: "hf_lazy_service"                   # ollama / transformers / hf_lazy_service
@@ -150,13 +126,6 @@ ner:
         max_workers: 1
       structural_rules:
         enabled: true # 是否开启尺寸壁厚磅级规则器
-  
-  # GlobalPointer NER 模型配置
-  globalpointer:
-    model_path: "outputs/globalpointer_ner/best_model"
-    threshold: 0.0
-    device: "auto"
-
 # ==================== 编码规则配置 ====================
 encoding:
   # 使用 Qwen3 微调模型统一编码
@@ -164,10 +133,13 @@ encoding:
 
   # LLM 编码配置
   llm:  
-    model_name: "qwen3-4b-q8-coder"
-    backend: "ollama"             # ollama / transformers
-    ollama_url: "http://localhost:11434"
-    model_path: "models/qwen3_pipe"  # transformers 后端时使用
+    model_name: "coder"
+    backend: "mlx_service"
+    service_url: "http://127.0.0.1:8200"
+    timeout: 300
+    num_predict: 512
+    temperature: 0.0
+    top_p: 1.0
 
 # ==================== 语义匹配配置 ====================
 semantic_matching:

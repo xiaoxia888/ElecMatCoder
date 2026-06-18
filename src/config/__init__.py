@@ -87,7 +87,7 @@ def get_semantic_config() -> Dict[str, Any]:
 def get_ner_config() -> Dict[str, Any]:
     """获取NER识别配置"""
     config = get_platform_config()
-    return config.get("ner", {"confidence_threshold": 0.9, "model_path": "models/pipe_model"})
+    return config.get("ner", {})
 
 
 def reload_config():

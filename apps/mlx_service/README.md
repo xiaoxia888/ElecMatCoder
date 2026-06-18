@@ -1,6 +1,6 @@
 # MLX Lazy Model Service
 
-给平台一阶段结构化模型使用的本地 MLX-LM 服务，接口兼容 `apps/hf_lazy_service` 的最小子集。
+给平台一阶段结构化模型和二阶段编码模型使用的本地 MLX-LM 服务，接口兼容 `apps/hf_lazy_service` 的最小子集。
 
 ## 配置文件
 
@@ -37,7 +37,7 @@ deployment:
 
 可选值：
 
-- `single`：单进程，一个服务同时管理 `type` 和 `material-standard`
+- `single`：单进程，一个服务同时管理 `type`、`material-standard` 和 `coder`
 - `gateway_serial`：多 worker + gateway，gateway 全局串行
 - `gateway_parallel`：多 worker + gateway，按 worker 并行
 
@@ -47,7 +47,7 @@ deployment:
 
 ```yaml
 service:
-  max_loaded_models: 2
+  max_loaded_models: 3
   idle_timeout_seconds: 1800
   idle_check_interval_seconds: 60
 ```
@@ -84,6 +84,12 @@ service:
 平台统一访问：
 
 - `http://127.0.0.1:8200`
+
+模型名约定：
+
+- `type`：一阶段种类结构化抽取
+- `material-standard`：一阶段材质/规范结构化抽取
+- `coder`：二阶段字段编码
 
 ## 说明
 

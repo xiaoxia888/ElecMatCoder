@@ -1,11 +1,15 @@
 # TYPE 规则编码表
 # 放基础码和可复用碎片码。
 
+flange_style_codes:
+  FLANGED: F
+  LAP_JOINT: LF
+  LAP_JOINT_FLANGED: LF
+
 body_codes:
   直管: P
   衬里管: P
   衬里复合管: P
-  法兰管: FP
 
   法兰: F
   带颈对焊法兰: F

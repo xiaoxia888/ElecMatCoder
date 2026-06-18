@@ -141,14 +141,17 @@ class Qwen3Predictor:
         backend: str = "ollama",
         device: str = "auto",
         ollama_url: str = "http://localhost:11434",
+        service_url: str = "http://127.0.0.1:8200",
         output_mode: str = "full",
         ollama_num_predict: int = 768,
         ollama_temperature: float = 0.1,
         ollama_top_p: float = 0.9,
         ollama_logprobs_enabled: bool = True,
+        request_timeout: int = 30,
+        stage2_system_prompt: Optional[str] = None,
         type_value_whitelist: Optional[Dict[str, List[str]]] = None,
     ):
-        self.backend = backend
+        self.backend = str(backend or "ollama").strip()
         self.model = None
         self.tokenizer = None
         self.output_mode = output_mode if output_mode in {"full", "decisions_only"} else "full"
@@ -156,6 +159,8 @@ class Qwen3Predictor:
         self.ollama_temperature = float(ollama_temperature)
         self.ollama_top_p = float(ollama_top_p)
         self.ollama_logprobs_enabled = bool(ollama_logprobs_enabled)
+        self.request_timeout = int(request_timeout)
+        self.stage2_system_prompt = stage2_system_prompt
         self.type_value_whitelist = {
             str(k).strip().upper(): {
                 str(v).strip().upper() for v in (values or []) if str(v).strip()
@@ -168,10 +173,20 @@ class Qwen3Predictor:
             else get_stage1_platform_predict_prompt()
         )
 
-        if backend == "ollama":
+        if self.backend == "ollama":
             self.ollama_url = ollama_url
             self.model_name = model_name
             logger.info(f"[Qwen3预测器] Ollama 后端, 模型: {model_name}, 输出模式: {self.output_mode}")
+        elif self.backend in {"mlx_service", "hf_lazy_service"}:
+            self.service_url = service_url.rstrip("/")
+            self.model_name = model_name
+            logger.info(
+                "[Qwen3预测器] %s 后端, 服务: %s, 模型: %s, 输出模式: %s",
+                self.backend,
+                self.service_url,
+                model_name,
+                self.output_mode,
+            )
         else:
             import torch
             from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -368,42 +383,70 @@ class Qwen3Predictor:
         return codes
 
     def encode_with_confidence(self, entities: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """保留第二阶段 LLM 编码辅助能力。"""
-        single: Dict[str, Any] = {}
-        multi: Dict[str, Any] = {}
-        for key, value in entities.items():
-            if key not in self.ENCODABLE_FIELDS or not value:
-                continue
-            if isinstance(value, list):
-                multi[key] = value
-            else:
-                single[key] = value
+        """二阶段字段编码：字段类型 + 原始值 -> 纯文本标准编码。"""
+        return self._encode_single_field_text_with_confidence(entities)
 
+    def _resolve_stage2_system_prompt(self) -> Optional[str]:
+        if self.stage2_system_prompt:
+            return self.stage2_system_prompt
+        if self.backend in {"mlx_service", "hf_lazy_service"}:
+            return None
+        return STAGE2_SYSTEM_PROMPT
+
+    def _encode_single_field_text_with_confidence(self, entities: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         codes: Dict[str, Any] = {}
         confidences: Dict[str, Any] = {}
 
-        if single:
-            result = self._call_model(STAGE2_SYSTEM_PROMPT, json.dumps(single, ensure_ascii=False))
-            if not result.get("_parse_error"):
-                model_conf = result.get("_model_confidence")
-                for key in single.keys():
-                    if key in result:
-                        codes[key] = result[key]
-                        confidences[key] = float(model_conf) if model_conf is not None else None
-
-        for field, values in multi.items():
-            encoded_list = []
-            conf_list = []
-            for value in values:
-                result = self._call_model(STAGE2_SYSTEM_PROMPT, json.dumps({field: value}, ensure_ascii=False))
-                if not result.get("_parse_error"):
-                    encoded_list.append(result.get(field, value))
-                    model_conf = result.get("_model_confidence")
-                    conf_list.append(float(model_conf) if model_conf is not None else None)
-            codes[field] = encoded_list
-            confidences[field] = conf_list
+        for field, value in entities.items():
+            if field not in self.ENCODABLE_FIELDS or not value:
+                continue
+            if isinstance(value, list):
+                encoded_list = []
+                conf_list = []
+                for item in value:
+                    code, confidence = self._encode_one_single_field_text(field, item)
+                    encoded_list.append(code if code else item)
+                    conf_list.append(confidence)
+                codes[field] = encoded_list
+                confidences[field] = conf_list
+            else:
+                code, confidence = self._encode_one_single_field_text(field, value)
+                codes[field] = code if code else value
+                confidences[field] = confidence
 
         return codes, confidences
+
+    def _encode_one_single_field_text(self, field: str, value: Any) -> Tuple[str, Optional[float]]:
+        input_text = f"字段类型: {field}\n原始值: {value}"
+        result = self._call_model(self._resolve_stage2_system_prompt(), input_text)
+        code = self._extract_stage2_code_from_result(result, field)
+        model_conf = result.get("_model_confidence")
+        confidence = float(model_conf) if model_conf is not None else None
+        return code, confidence
+
+    def _extract_stage2_code_from_result(self, result: Dict[str, Any], field: str) -> str:
+        if not isinstance(result, dict):
+            return ""
+
+        for key in (field, f"{field}_CODE", "code", "CODE", "编码"):
+            value = result.get(key)
+            if value is not None:
+                return str(value).strip()
+
+        user_keys = [key for key in result.keys() if not str(key).startswith("_")]
+        if len(user_keys) == 1:
+            value = result.get(user_keys[0])
+            if value is not None:
+                return str(value).strip()
+
+        raw = str(result.get("_raw") or "").strip()
+        if not raw:
+            return ""
+        raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.DOTALL).strip()
+        if raw.startswith("```"):
+            lines = [line for line in raw.splitlines() if not line.strip().startswith("```")]
+            raw = "\n".join(lines).strip()
+        return raw.splitlines()[0].strip()
 
     def _merge_type_geometry_into_body(self, extracted: Dict[str, Any]) -> Dict[str, Any]:
         decisions = extracted.get("decisions")
@@ -439,18 +482,20 @@ class Qwen3Predictor:
     def _extract(self, text: str) -> dict:
         return self._call_model(self.stage1_system_prompt, text)
 
-    def _call_model(self, system_prompt: str, user_content: str) -> dict:
+    def _call_model(self, system_prompt: Optional[str], user_content: str) -> dict:
         if self.backend == "ollama":
             return self._call_ollama(system_prompt, user_content)
+        if self.backend in {"mlx_service", "hf_lazy_service"}:
+            return self._call_model_service(system_prompt, user_content)
         return self._call_transformers(system_prompt, user_content)
 
-    def _call_ollama(self, system_prompt: str, user_content: str) -> dict:
+    def _call_ollama(self, system_prompt: Optional[str], user_content: str) -> dict:
         resp = requests.post(
             f"{self.ollama_url}/api/chat",
             json={
                 "model": self.model_name,
                 "messages": [
-                    {"role": "system", "content": system_prompt},
+                    {"role": "system", "content": system_prompt or STAGE2_SYSTEM_PROMPT},
                     {"role": "user", "content": user_content},
                 ],
                 "stream": False,
@@ -462,7 +507,7 @@ class Qwen3Predictor:
                     "num_predict": self.ollama_num_predict,
                 },
             },
-            timeout=30,
+            timeout=self.request_timeout,
         )
         resp.raise_for_status()
         payload = resp.json()
@@ -471,6 +516,31 @@ class Qwen3Predictor:
         if model_confidence is None and self.ollama_logprobs_enabled:
             raise RuntimeError("Ollama 未返回可用 logprobs，无法计算置信度（严格模式）")
         return self._parse_response(response, model_confidence=model_confidence)
+
+    def _call_model_service(self, system_prompt: Optional[str], user_content: str) -> dict:
+        payload = {
+            "model": self.model_name,
+            "text": user_content,
+            "max_new_tokens": self.ollama_num_predict,
+            "temperature": self.ollama_temperature,
+            "top_p": self.ollama_top_p,
+        }
+        if system_prompt:
+            payload["instruction"] = system_prompt
+        resp = requests.post(
+            f"{self.service_url}/predict",
+            json=payload,
+            timeout=self.request_timeout,
+        )
+        resp.raise_for_status()
+        payload = resp.json()
+        raw_response = str(payload.get("raw_response") or "")
+        parsed_json = payload.get("parsed_json")
+        if isinstance(parsed_json, dict):
+            result = copy.deepcopy(parsed_json)
+            result["_raw"] = raw_response
+            return result
+        return self._parse_response(raw_response, model_confidence=None)
 
     def _compute_ollama_confidence(self, payload: Dict[str, Any]) -> Optional[float]:
         logprobs = payload.get("logprobs")
@@ -495,11 +565,11 @@ class Qwen3Predictor:
         geo = math.exp(sum(math.log(p) for p in probs) / len(probs))
         return float(max(0.0, min(1.0, geo)))
 
-    def _call_transformers(self, system_prompt: str, user_content: str) -> dict:
+    def _call_transformers(self, system_prompt: Optional[str], user_content: str) -> dict:
         import torch
 
         input_text = (
-            f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
+            f"<|im_start|>system\n{system_prompt or STAGE2_SYSTEM_PROMPT}<|im_end|>\n"
             f"<|im_start|>user\n{user_content}<|im_end|>\n"
             f"<|im_start|>assistant\n"
         )

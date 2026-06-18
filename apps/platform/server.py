@@ -40,10 +40,6 @@ from src.domain.pipeline import (
 
 from src.tokenizer_utils.preprocessor import TextPreprocessor
 
-# 导入NER预测器
-from src.bert_ner.predictor import PipePredictor
-
-
 # 导入编码模块
 from src.encoder.pipe_encoder import PipeEncoder, get_pipe_encoder
 from src.encoder.semantic_matcher import get_semantic_matcher
@@ -104,25 +100,6 @@ async def startup_event():
     except Exception:
         logger.exception("批量任务存储初始化清理失败")
 
-    platform_config = get_platform_config()
-    server_config = platform_config.get("server", {})
-    
-    # 根据配置决定是否预加载模型
-    if server_config.get("preload_models", False):
-        logger.info("预加载模型已启用，正在加载...")
-        
-        # 预加载语义匹配器（包含 SentenceTransformer 模型）
-        logger.info("加载语义匹配模型...")
-        get_semantic_matcher()
-        
-        # 预加载管道编码器
-        logger.info("加载管道编码器...")
-        get_pipe_encoder()
-        
-        logger.info("模型预加载完成！")
-    else:
-        logger.info("预加载模型已禁用，将在首次使用时加载")
-
     if _batch_maintenance_enabled() and (
         _batch_job_maintenance_task is None or _batch_job_maintenance_task.done()
     ):
@@ -148,7 +125,6 @@ async def shutdown_event():
 
 _preprocessor = TextPreprocessor()
 _ner_predictor = None
-_ner_model_type: str = "bert"
 _pipe_router = None
 _stage1_structure_checker = Stage1StructureChecker()
 _batch_jobs: Dict[str, Dict[str, Any]] = {}
@@ -883,75 +859,28 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
 
 
 def get_ner_predictor():
-    """获取NER预测器实例（惰性加载，根据配置选择模型）"""
-    global _ner_predictor, _ner_model_type
-    
-    ner_config = get_ner_config()
-    model_type = ner_config.get("model_type", "bert")
-    
-    # 如果模型类型改变，需要重新加载
-    if _ner_predictor is not None and _ner_model_type == model_type:
-        return _ner_predictor
-    
-    if model_type == "qwen3":
-        # 使用 Qwen3-4B 微调模型
-        logger.info("使用 Qwen3 NER 模型")
+    """获取 Qwen3 一阶段预测器实例（惰性加载）。"""
+    global _ner_predictor
 
-        qwen3_config = ner_config.get("qwen3", {})
-        stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
-        router_enabled = bool((stage1_cfg.get("router") or {}).get("enabled", False))
-        stage1_orchestrator_enabled = bool(
-            router_enabled
-            or (stage1_cfg.get("type_models") or {})
-            or (stage1_cfg.get("material_model") or {})
-            or (stage1_cfg.get("standard_model") or {})
-            or (stage1_cfg.get("structural_prompt") or {}).get("enabled", False)
-            or (stage1_cfg.get("structural_rules") or {}).get("enabled", False)
-        )
-        if stage1_orchestrator_enabled:
-            _ner_predictor = _build_routed_qwen3_predictor(qwen3_config)
-        else:
-            _ner_predictor = _build_qwen3_predictor_from_config(qwen3_config)
-        _ner_model_type = "qwen3"
-    elif model_type == "globalpointer":
-        # 使用 GlobalPointer 模型
-        logger.info("使用 GlobalPointer NER 模型")
-        
-        try:
-            from apps.trainer.globalpointer_ner.predict import GlobalPointerPredictor
-        except ImportError as e:
-            logger.error(f"无法导入 GlobalPointer 预测器: {e}")
-            raise RuntimeError("GlobalPointer NER 模型依赖未安装")
-        
-        gp_config = ner_config.get("globalpointer", {})
-        model_path = str(PROJECT_ROOT / gp_config.get("model_path", "outputs/globalpointer_ner/best_model"))
-        threshold = gp_config.get("threshold", 0.0)
-        device = gp_config.get("device", "auto")
-        
-        logger.info(f"加载 GlobalPointer NER 模型: {model_path}, threshold={threshold}")
-        _ner_predictor = GlobalPointerPredictor(
-            model_path=model_path,
-            threshold=threshold,
-            device=device
-        )
-        _ner_model_type = "globalpointer"
+    if _ner_predictor is not None:
+        return _ner_predictor
+
+    logger.info("使用 Qwen3 NER 模型")
+    ner_config = get_ner_config()
+    qwen3_config = ner_config.get("qwen3", {})
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    stage1_orchestrator_enabled = bool(
+        (stage1_cfg.get("router") or {}).get("enabled", False)
+        or (stage1_cfg.get("type_models") or {})
+        or (stage1_cfg.get("material_model") or {})
+        or (stage1_cfg.get("standard_model") or {})
+        or (stage1_cfg.get("structural_prompt") or {}).get("enabled", False)
+        or (stage1_cfg.get("structural_rules") or {}).get("enabled", False)
+    )
+    if stage1_orchestrator_enabled:
+        _ner_predictor = _build_routed_qwen3_predictor(qwen3_config)
     else:
-        # 使用 BERT NER 模型（默认）
-        logger.info("使用 BERT NER 模型")
-        bert_config = ner_config.get("bert", {})
-        model_path = PROJECT_ROOT / bert_config.get("model_path", "models/pipe_model")
-        if not model_path.exists():
-            raise RuntimeError(f"NER模型不存在: {model_path}")
-        
-        # O标签偏置：正值使模型更倾向于预测O（对未知token更保守）
-        o_bias = ner_config.get("o_bias", 0.0)
-        # 设备配置
-        device = bert_config.get("device", "auto")
-        
-        logger.info(f"加载 BERT NER 模型: {model_path}, O标签偏置: {o_bias}, 设备: {device}")
-        _ner_predictor = PipePredictor(str(model_path), device=device, o_bias=o_bias)
-        _ner_model_type = "bert"
-    
+        _ner_predictor = _build_qwen3_predictor_from_config(qwen3_config)
     return _ner_predictor
 
 
@@ -972,12 +901,6 @@ def get_pipe_router():
 
     _pipe_router = build_category_router(router_cfg, project_root=PROJECT_ROOT)
     return _pipe_router
-
-
-def get_ner_confidence_threshold() -> float:
-    """获取NER置信度阈值"""
-    ner_config = get_ner_config()
-    return ner_config.get("confidence_threshold", 0.9)
 
 
 def get_batch_max_concurrent(default_value: int = 2) -> int:

@@ -139,6 +139,29 @@ def _has_any_pressure(pressure_result: RulePressureExtraction) -> bool:
     return bool(pressure_result.pressure_code)
 
 
+def _finalize_pressure_result(
+    pressure_result: RulePressureExtraction,
+    *,
+    clear_conflicted_multi_pressure: bool,
+) -> RulePressureExtraction:
+    if not clear_conflicted_multi_pressure:
+        return pressure_result
+    if not getattr(pressure_result, "conflicted", False):
+        return pressure_result
+    return RulePressureExtraction(
+        values=[],
+        pressure_code="",
+        matched_texts=list(getattr(pressure_result, "matched_texts", []) or []),
+        matched_spans=list(getattr(pressure_result, "matched_spans", []) or []),
+        consumed_spans=[],
+        ordered_items=[],
+        conflicted=True,
+        conflict_reason=str(getattr(pressure_result, "conflict_reason", "") or "multiple_pressure_without_slash"),
+        cleared=True,
+        clear_reason=str(getattr(pressure_result, "conflict_reason", "") or "multiple_pressure_without_slash"),
+    )
+
+
 def _has_unconsumed_residual_spec(
     text: str,
     size_result: RuleSizeExtraction,
@@ -318,12 +341,16 @@ def build_structured_rule_entities(result: RuleExtractionResult, original_text: 
         "THICKNESS": build_structured_thickness_field(result.thickness, original_text=original_text),
         "PRESSURE": result.pressure.pressure_code,
     }
+    pressure_flags: Dict[str, Any] = {}
+    if getattr(result.pressure, "conflicted", False):
+        pressure_flags["conflicted"] = True
+        pressure_flags["conflict_reason"] = str(getattr(result.pressure, "conflict_reason", "") or "")
     if getattr(result.pressure, "cleared", False):
+        pressure_flags["cleared"] = True
+        pressure_flags["clear_reason"] = str(getattr(result.pressure, "clear_reason", "") or "")
+    if pressure_flags:
         payload["_rule_flags"] = {
-            "PRESSURE": {
-                "cleared": True,
-                "clear_reason": str(getattr(result.pressure, "clear_reason", "") or ""),
-            }
+            "PRESSURE": pressure_flags,
         }
     return payload
 
@@ -366,6 +393,11 @@ def extract_size_and_thickness_by_rules(
     )
     pressure_blocked_spans = thickness_blocked_spans + list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans)
     pressure_result = pressure_processor.extract_by_rules(text, blocked_spans=pressure_blocked_spans)
+    if apply_residual_guard:
+        pressure_result = _finalize_pressure_result(
+            pressure_result,
+            clear_conflicted_multi_pressure=True,
+        )
 
     # 主体裸复合规格存在，但规则侧未拿到任何显式/兜底尺寸时，
     # 说明本句整体应让给大模型，壁厚规则结果也一并作废，避免半规则半模型。

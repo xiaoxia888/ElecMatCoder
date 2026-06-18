@@ -69,26 +69,29 @@ function asObj(value: JsonValue | undefined): Record<string, JsonValue> {
   return isObject(value as JsonValue) ? (value as Record<string, JsonValue>) : {}
 }
 
+export function getTypeCategory(result?: EncodingResult | null): string {
+  return s(result?.route_info?.model_category as JsonValue | undefined)
+}
+
 function formatTypeValue(value: JsonValue | undefined): string {
   if (!isObject(value as JsonValue)) return s(value)
   const o = value as Record<string, JsonValue>
   const parts: string[] = []
+
+  const pushUnique = (items: string[]) => {
+    for (const item of items) {
+      const text = item.trim()
+      if (text && !parts.includes(text)) parts.push(text)
+    }
+  }
+
+  pushUnique([s(o.FLANGE_STYLE)])
   const body = s(o.BODY)
   const geo = asObj(o.GEOMETRY)
-  const angle = s(geo.ANGLE)
-  const radius = s(geo.RADIUS)
-  const manu = arr(o.MANU)
-  const conn = arr(o.CONN)
-  const seal = arr(o.SEAL)
-  const ends = arr(o.ENDS)
-  if (angle && body) parts.push(`${angle}度${body}`)
-  else if (body) parts.push(body)
-  else if (angle) parts.push(`${angle}度`)
-  if (radius) parts.push(radius)
-  if (manu.length) parts.push(manu.join(' x '))
-  if (conn.length) parts.push(conn.join(' x '))
-  if (seal.length) parts.push(seal.join(' x '))
-  if (ends.length) parts.push(ends.join(' x '))
+  pushUnique([body, s(geo.ANGLE), s(geo.RADIUS)])
+  pushUnique(arr(o.SEAL))
+  pushUnique([...arr(o.CONN), ...arr(o.ENDS)])
+  pushUnique(arr(o.MANU))
   return parts.join(';')
 }
 

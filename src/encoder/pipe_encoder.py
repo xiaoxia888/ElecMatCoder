@@ -681,37 +681,50 @@ class PipeEncoderBase:
                 return ';'.join(parts)
             return str(value or '').strip()
 
+        return self._flatten_type_encoding_key(type_dict)
+
+    def _flatten_type_encoding_key(self, value: Any, separator: str = ';') -> str:
+        type_dict = self._ensure_type_dict(value)
+        if type_dict is None:
+            return str(value or '').strip()
+
         parts: List[str] = []
 
-        body = type_dict.get('BODY')
-        if isinstance(body, list):
-            parts.extend([str(v).strip() for v in body if str(v).strip()])
-        elif body:
-            parts.extend([p.strip() for p in str(body).split(';') if p.strip()])
-
-        for key in ('SEAL', 'MANU', 'CONN'):
-            if key == 'CONN':
-                raw_sources = []
-                for source_key in ('CONN', 'ENDS'):
-                    source_raw = type_dict.get(source_key)
-                    if source_raw:
-                        raw_sources.extend(source_raw if isinstance(source_raw, list) else [source_raw])
-                raw = raw_sources
-            else:
-                raw = type_dict.get(key)
+        def _extend(raw: Any):
             if not raw:
-                continue
+                return
             values = raw if isinstance(raw, list) else [raw]
             for item in values:
                 item_text = str(item).strip()
                 if item_text:
                     parts.append(item_text)
 
+        _extend(type_dict.get('FLANGE_STYLE'))
+
+        body = type_dict.get('BODY')
+        if isinstance(body, list):
+            _extend(body)
+        elif body:
+            _extend([p.strip() for p in str(body).split(';') if p.strip()])
+
+        geometry = self._get_dict(type_dict.get('GEOMETRY'))
+        _extend(geometry.get('ANGLE'))
+        _extend(geometry.get('RADIUS'))
+        _extend(type_dict.get('SEAL'))
+
+        conn_sources = []
+        for source_key in ('CONN', 'ENDS'):
+            source_raw = type_dict.get(source_key)
+            if source_raw:
+                conn_sources.extend(source_raw if isinstance(source_raw, list) else [source_raw])
+        _extend(conn_sources)
+        _extend(type_dict.get('MANU'))
+
         deduped: List[str] = []
         for part in parts:
             if part not in deduped:
                 deduped.append(part)
-        return ';'.join(deduped)
+        return separator.join(deduped)
 
     def _build_type_encoding_input(
         self,
@@ -758,6 +771,7 @@ class PipeEncoderBase:
                     values.insert(0, code_value)
             return values
         raw_structured = {
+            'FLANGE_STYLE': str(type_dict.get('FLANGE_STYLE') or type_dict.get('flange_style') or '').strip(),
             'BODY': body,
             'GEOMETRY': {
                 'ANGLE': angle,
@@ -805,6 +819,7 @@ class PipeEncoderBase:
     def _filter_type_encoding_input(self, type_input: Dict[str, Any]) -> Dict[str, Any]:
         geometry = self._get_dict(type_input.get('GEOMETRY'))
         filtered_input = {
+            'FLANGE_STYLE': str(type_input.get('FLANGE_STYLE') or type_input.get('flange_style') or '').strip(),
             'BODY': str(type_input.get('BODY') or '').strip(),
             'GEOMETRY': {
                 'ANGLE': str(geometry.get('ANGLE') or '').strip(),
@@ -1976,13 +1991,13 @@ class PipeEncoderBase:
         if not filtered_codes:
             return EncodedFieldResult(field_type='TYPE')
         
-        merged_value = ';'.join(filtered_codes)
-        original_parts = ' | '.join(filtered_displays)
-        
+        type_encoding_input = self._build_type_encoding_input(entities, regex_value_code_map)
+        merged_value = self._flatten_type_encoding_key(type_encoding_input)
+        original_parts = self._flatten_type_encoding_key(type_encoding_input, separator=' | ')
+
         logger.info(f"[TYPE合并] 合并字段: {[f'{f}={d}({c})' for f, d, c in collected_values]}")
         logger.info(f"[TYPE合并] 编码用: '{merged_value}', 显示用: '{original_parts}'")
-        
-        type_encoding_input = self._build_type_encoding_input(entities, regex_value_code_map)
+
         code, confidence = self._encode_type_value(merged_value, type_encoding_input)
         
         return EncodedFieldResult(

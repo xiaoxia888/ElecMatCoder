@@ -31,6 +31,8 @@ class RulePressureExtraction:
     matched_spans: List[Tuple[int, int]]
     consumed_spans: List[Tuple[int, int]] = field(default_factory=list)
     ordered_items: List[Dict[str, str]] = field(default_factory=list)
+    conflicted: bool = False
+    conflict_reason: str = ""
     cleared: bool = False
     clear_reason: str = ""
 
@@ -235,18 +237,6 @@ class PressureProcessor:
             deduped_items.append(item)
             seen_values.add(value)
 
-        if len(deduped_items) >= 2:
-            return RulePressureExtraction(
-                values=[],
-                pressure_code="",
-                matched_texts=matched_texts,
-                matched_spans=matched_spans,
-                consumed_spans=[],
-                ordered_items=[],
-                cleared=True,
-                clear_reason="multiple_pressure_without_slash",
-            )
-
         pressure_code = "/".join(str(item["value"]) for item in deduped_items)
         consumed_value_spans = self._derive_consumed_spans_from_ordered_items(source, deduped_items)
         return RulePressureExtraction(
@@ -256,6 +246,8 @@ class PressureProcessor:
             matched_spans=matched_spans,
             consumed_spans=consumed_value_spans,
             ordered_items=[{"type": "PRESSURE", "value": str(item["value"])} for item in deduped_items],
+            conflicted=len(deduped_items) >= 2,
+            conflict_reason="multiple_pressure_without_slash" if len(deduped_items) >= 2 else "",
         )
 
     def _get_parenthetical_pair_end(

@@ -1,3 +1,4 @@
+import { getTypeCategory } from '@/lib/formatters'
 import { formatPercent } from '@/lib/utils'
 import type { EncodingResult } from '@/types/encoding'
 
@@ -7,6 +8,7 @@ interface CodeResultCardProps {
 
 export function CodeResultCard({ result }: CodeResultCardProps) {
   const percent = Math.max(0, Math.min(100, Number(result?.confidence || 0) * 100))
+  const category = getTypeCategory(result)
 
   return (
     <section className="rounded-xl border border-line bg-white p-4 shadow-panel">
@@ -26,20 +28,16 @@ export function CodeResultCard({ result }: CodeResultCardProps) {
           </div>
         </div>
 
-        {/* 状态 */}
+        {/* 分类 */}
         <div className="border-l border-[#eef1f6] pl-6">
-          <h3 className="mb-3 text-[14px] text-muted">状态</h3>
-          {result ? (
-            <span
-              className={`inline-block rounded-md px-2 py-1 text-[13px] font-medium ${
-                result.need_review ? 'bg-cautionSoft text-caution' : 'bg-successSoft text-success'
-              }`}
-            >
-              {result.need_review ? '需审核' : '通过'}
-            </span>
-          ) : (
-            <span className="text-[14px] text-muted">待识别</span>
-          )}
+          <h3 className="mb-3 text-[14px] text-muted">分类</h3>
+          <span
+            className={`inline-block rounded-md px-2 py-1 text-[13px] font-medium ${
+              category ? 'bg-[#eaf1ff] text-accent' : 'bg-[#f4f6fb] text-muted'
+            }`}
+          >
+            {category || '—'}
+          </span>
         </div>
       </div>
     </section>

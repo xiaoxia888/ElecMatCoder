@@ -17,6 +17,7 @@ class TypeEncodingResult:
     code: str = ""
     resolved: bool = False
     strategy: str = ""
+    flange_style: str = ""
     body: str = ""
     angle: str = ""
     radius: str = ""
@@ -128,14 +129,29 @@ class TypeEncoder:
         return str(value or "").strip().upper()
 
     @staticmethod
+    def _normalize_flange_style(value: Any) -> str:
+        return str(value or "").strip()
+
+    @staticmethod
     def _build_key(parts: Iterable[str]) -> str:
         return ";".join(str(part).strip() for part in parts if str(part).strip())
 
-    def _build_lookup_keys(self, *, body: str, angle: str, radius: str, seal: str, conn: str, manu: str) -> List[str]:
-        key = self._build_key([body, angle, radius, seal, conn, manu])
+    def _build_lookup_keys(
+        self,
+        *,
+        flange_style: str,
+        body: str,
+        angle: str,
+        radius: str,
+        seal: str,
+        conn: str,
+        manu: str,
+    ) -> List[str]:
+        key = self._build_key([flange_style, body, angle, radius, seal, conn, manu])
         return [key] if key else []
 
-    def _resolve_by_rules(self, *, body: str, angle: str, radius: str, seal: str, conn: str, manu: str) -> str:
+    def _resolve_by_rules(self, *, flange_style: str, body: str, angle: str, radius: str, seal: str, conn: str, manu: str) -> str:
+        flange_style_codes = self._get_dict(self.rule_config.get("flange_style_codes"))
         body_codes = self._get_dict(self.rule_config.get("body_codes"))
         geometry_body_codes = self._get_dict(self.rule_config.get("geometry_body_codes"))
         angle_codes = self._get_dict(self.rule_config.get("angle_codes"))
@@ -145,6 +161,12 @@ class TypeEncoder:
         manu_codes = self._get_dict(self.rule_config.get("manu_codes"))
         body_manu_overrides = self._get_dict(self.rule_config.get("body_manu_code_overrides"))
         body_implicit_conn = self._get_dict(self.rule_config.get("body_implicit_conn"))
+        flange_prefix = ""
+
+        if flange_style:
+            flange_prefix = str(flange_style_codes.get(flange_style, "")).strip()
+            if not flange_prefix:
+                return ""
 
         base_code = ""
         if body in geometry_body_codes:
@@ -167,7 +189,8 @@ class TypeEncoder:
         if manu:
             body_override = self._get_dict(body_manu_overrides.get(body))
             if manu in body_override:
-                return str(body_override[manu]).strip()
+                override_code = str(body_override[manu]).strip()
+                return f"{flange_prefix}{override_code}" if override_code else ""
 
         implicit_conn_values = {
             str(item).strip()
@@ -195,9 +218,10 @@ class TypeEncoder:
                 return ""
             manu_suffix = str(manu_codes[manu]).strip()
 
-        return f"{base_code}{seal_suffix}{conn_suffix}{manu_suffix}"
+        return f"{flange_prefix}{base_code}{seal_suffix}{conn_suffix}{manu_suffix}"
 
     def encode(self, type_dict: Dict[str, Any]) -> TypeEncodingResult:
+        flange_style = self._normalize_flange_style(type_dict.get("FLANGE_STYLE", ""))
         body = str(type_dict.get("BODY", "") or "").strip()
         geometry = type_dict.get("GEOMETRY") or {}
         angle = self._normalize_angle(geometry.get("ANGLE", ""))
@@ -209,12 +233,20 @@ class TypeEncoder:
         conn_value = self._first_nonempty(conn)
         manu_value = self._first_nonempty(manu)
 
-        result = TypeEncodingResult(body=body, angle=angle, radius=radius, manu=manu, conn=conn, seal=seal)
+        result = TypeEncodingResult(flange_style=flange_style, body=body, angle=angle, radius=radius, manu=manu, conn=conn, seal=seal)
         if not body:
             result.reason = "empty_body"
             return result
 
-        lookup_keys = self._build_lookup_keys(body=body, angle=angle, radius=radius, seal=seal_value, conn=conn_value, manu=manu_value)
+        lookup_keys = self._build_lookup_keys(
+            flange_style=flange_style,
+            body=body,
+            angle=angle,
+            radius=radius,
+            seal=seal_value,
+            conn=conn_value,
+            manu=manu_value,
+        )
         result.tried_keys = lookup_keys
         for key in lookup_keys:
             code = self.reverse_combo_mapping.get(key)
@@ -234,6 +266,7 @@ class TypeEncoder:
             return result
 
         code = self._resolve_by_rules(
+            flange_style=flange_style,
             body=body,
             angle=angle,
             radius=radius,
@@ -246,7 +279,7 @@ class TypeEncoder:
             result.resolved = True
             result.strategy = "rule_mapping"
             result.reason = "matched_rule_mapping"
-            result.matched_key = self._build_key([body, angle, radius, seal_value, conn_value, manu_value])
+            result.matched_key = self._build_key([flange_style, body, angle, radius, seal_value, conn_value, manu_value])
             return result
 
         result.strategy = "unresolved"

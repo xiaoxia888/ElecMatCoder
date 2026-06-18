@@ -7,7 +7,6 @@ LLM 管道材料编码器
 import logging
 import re
 from typing import Any, Dict, List
-from pathlib import Path
 
 from .pipe_encoder import PipeEncoderBase, EncodedFieldResult
 from .processors import get_type_encoder, get_material_encoder
@@ -29,22 +28,21 @@ class LlmPipeEncoder(PipeEncoderBase):
 
         encoding_config = self.platform_config.get('encoding', {})
         llm_config = encoding_config.get('llm', {})
-        backend = llm_config.get('backend', 'ollama')
+        backend = str(llm_config.get('backend', 'ollama')).strip()
+        if backend != 'mlx_service':
+            raise RuntimeError(f"二阶段编码只支持 mlx_service 后端，当前配置为: {backend}")
 
-        if backend == 'ollama':
-            self.llm_encoder = Qwen3Predictor(
-                model_name=llm_config.get('model_name', 'qwen3-pipe'),
-                backend='ollama',
-                ollama_url=llm_config.get('ollama_url', 'http://localhost:11434'),
-            )
-        else:
-            model_path = llm_config.get('model_path', 'outputs/qwen3_finetune/merged')
-            if not Path(model_path).is_absolute():
-                model_path = str(Path(__file__).parent.parent.parent / model_path)
-            self.llm_encoder = Qwen3Predictor(
-                model_path=model_path,
-                backend='transformers',
-            )
+        self.llm_encoder = Qwen3Predictor(
+            model_name=llm_config.get('model_name', 'coder'),
+            backend='mlx_service',
+            service_url=llm_config.get('service_url', 'http://127.0.0.1:8200'),
+            ollama_num_predict=llm_config.get('num_predict', 512),
+            ollama_temperature=llm_config.get('temperature', 0.0),
+            ollama_top_p=llm_config.get('top_p', 1.0),
+            ollama_logprobs_enabled=False,
+            request_timeout=llm_config.get('timeout', 300),
+            stage2_system_prompt=llm_config.get('instruction'),
+        )
         logger.info(f"编码方法: LLM ({backend})")
         self.backend = backend
 

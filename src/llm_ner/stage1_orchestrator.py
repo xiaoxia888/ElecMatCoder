@@ -283,6 +283,15 @@ class Stage1FieldOrchestrator:
         return None
 
     @staticmethod
+    def _extract_model_category(type_result: Dict[str, Any]) -> str:
+        if not isinstance(type_result, dict):
+            return ""
+        model_output = type_result.get("model_output")
+        if not isinstance(model_output, dict):
+            return ""
+        return str(model_output.get("CATEGORY") or model_output.get("category") or "").strip()
+
+    @staticmethod
     def _extract_field_confidence(model_result: Dict[str, Any], field: str) -> float:
         if not isinstance(model_result, dict):
             return 0.0
@@ -479,6 +488,10 @@ class Stage1FieldOrchestrator:
                     prompt_status="",
                     prompt_error="",
                 )
+
+        model_category = self._extract_model_category(type_result)
+        if model_category:
+            route_payload["model_category"] = model_category
 
         model_output = {
             "decisions": decisions,
