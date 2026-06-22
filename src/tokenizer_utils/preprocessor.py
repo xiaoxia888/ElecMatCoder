@@ -3,6 +3,9 @@
 """
 
 import re
+from pathlib import Path
+
+import yaml
 
 
 class TextPreprocessor:
@@ -46,6 +49,7 @@ class TextPreprocessor:
 
     # 安全可替换的列表分隔符（不包含 "/"，避免破坏 304/316、GB/T 等语义）
     SAFE_LIST_SEPARATORS = "，；、|｜"
+    _COMMON_DN_VALUES: set[int] | None = None
 
     def __init__(self):
         pass
@@ -87,14 +91,20 @@ class TextPreprocessor:
         # 8. 窄范围规格归一化（只修规则层高频脏写法）
         text = self.normalize_pipe_spec_tokens(text)
 
-        # 9. 结构字段局部 OCR/录入纠错（只在强锚点局部片段中生效）
+        # 9. 切开历史字段标签/规格粘连，后续所有模块统一吃同一份 processed_text
+        text = self.normalize_section_labels(text)
+
+        # 10. 切开 DN 与壁厚/壁厚号粘连，避免规则层各自私改文本
+        text = self.normalize_glued_dn_wall_thickness(text)
+
+        # 11. 结构字段局部 OCR/录入纠错（只在强锚点局部片段中生效）
         text = self.normalize_structural_ocr_tokens(text)
 
-        # 10. OCR 纠偏后再次收紧小数点两侧空格：
+        # 12. OCR 纠偏后再次收紧小数点两侧空格：
         # 例如 S-3. Omm -> S-3. 0mm -> S-3.0mm
         text = self.normalize_decimal_spacing(text)
 
-        # 11. 空白压缩
+        # 13. 空白压缩
         text = self.normalize_whitespace(text)
 
         return text
@@ -174,6 +184,63 @@ class TextPreprocessor:
         text = re.sub(r'\s*;\s*', ';', text)
         text = re.sub(r';{2,}', ';', text)
         return text.strip(';')
+
+    @classmethod
+    def _get_common_dn_values(cls) -> set[int]:
+        if cls._COMMON_DN_VALUES is not None:
+            return cls._COMMON_DN_VALUES
+        config_path = Path(__file__).resolve().parent.parent / "encoder" / "config" / "encoder_config.yaml"
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = yaml.safe_load(f) or {}
+            size_config = config.get("size_processing", {}) or {}
+            cls._COMMON_DN_VALUES = {
+                int(v) for v in size_config.get("common_dn_values", []) if str(v).strip()
+            }
+        except Exception:
+            cls._COMMON_DN_VALUES = set()
+        return cls._COMMON_DN_VALUES
+
+    @staticmethod
+    def normalize_section_labels(text: str) -> str:
+        """
+        切开历史表中常见的编号字段标签粘连：
+        - DN50X253.连接方式 -> DN50X25 3.连接方式
+        - 2.规格:DN50X253.连接方式 -> 2.规格:DN50X25 3.连接方式
+
+        只在 `数字.` 后面紧跟中文/英文字段标签并带 `:`/`：` 时切开，
+        不影响 B36.10 这类规范写法。
+        """
+        text = re.sub(
+            r'(?<=[A-Za-z0-9])([1-9])\.(?=[\u4e00-\u9fffA-Za-z][^:：]{0,20}[:：])',
+            r' \1.',
+            text,
+        )
+        text = re.sub(r'(?<=[A-Za-z0-9.])(?=DN\s*\d)', ' ', text, flags=re.IGNORECASE)
+        return text
+
+    @classmethod
+    def normalize_glued_dn_wall_thickness(cls, text: str) -> str:
+        """
+        切开 `DN1506.3mm` / `DN150S-40` 这类 `DN + 壁厚` 粘连：
+        - DN200XDN1506.3mmX7.1mm -> DN200XDN150 6.3mmX7.1mm
+        - DN150×DN40S-10S×SCH40S -> DN150×DN40 S-10S×SCH40S
+
+        这是统一格式化的一部分，不属于尺寸/壁厚规则器自己的私有处理。
+        """
+        common_dn_values = cls._get_common_dn_values()
+        if not common_dn_values:
+            return text
+        dn_tokens = sorted((str(v) for v in common_dn_values), key=len, reverse=True)
+        atomic_dn_group = f"(?>{'|'.join(map(re.escape, dn_tokens))})"
+        decimal_mm_pattern = re.compile(
+            rf'(?i)(DN\s*)({atomic_dn_group})(?=(\d+\.\d+\s*(?:MM|毫米)(?:\b|\s*[xX×/,;)])))'
+        )
+        text = decimal_mm_pattern.sub(r'\1\2 ', text)
+        glued_schedule_pattern = re.compile(
+            rf'(?i)(DN\s*)({atomic_dn_group})(?=((?:S-\d+S?|SCH\d+S?|\d+S)\b))'
+        )
+        return glued_schedule_pattern.sub(r'\1\2 ', text)
 
     @staticmethod
     def normalize_pipe_spec_tokens(text: str) -> str:

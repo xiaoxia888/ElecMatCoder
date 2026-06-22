@@ -187,7 +187,6 @@ class ThicknessProcessor:
         """
         source = str(text or "")
         normalized = source.replace('”', '"').replace('“', '"').replace('″', '"')
-        normalized = self._normalize_section_labels(normalized)
 
         # 0) 明显脏小数串直接交给大模型：
         # 例如 6.31.5D / 12.70.31mm
@@ -224,7 +223,6 @@ class ThicknessProcessor:
                 ordered_items=[],
             )
 
-        normalized = self._normalize_glued_dn_mm(normalized)
         blocked_spans = blocked_spans or []
         explicit = self._extract_explicit_thickness_rules(normalized, blocked_spans)
         if explicit.get("invalid"):
@@ -1421,35 +1419,6 @@ class ThicknessProcessor:
                 "span": (m.start(), m.end()),
             })
         return blocks
-
-    @staticmethod
-    def _normalize_section_labels(text: str) -> str:
-        """切开历史表中粘连的编号字段标签，不影响规范小数点写法。"""
-        text = re.sub(
-            r'(?<=[A-Za-z0-9])([1-9])\.(?=[\u4e00-\u9fffA-Za-z][^:：]{0,20}[:：])',
-            r' \1.',
-            text,
-        )
-        text = re.sub(r'(?<=[A-Za-z0-9.])(?=DN\s*\d)', ' ', text, flags=re.IGNORECASE)
-        return text
-
-    def _normalize_glued_dn_mm(self, text: str) -> str:
-        """
-        切开 `DN1506.3mm` 这类 `DN + 壁厚` 粘连：
-        - DN200XDN1506.3mmX7.1mm -> DN200XDN150 6.3mmX7.1mm
-        - DN150×DN40S-10S×SCH40S -> DN150×DN40 S-10S×SCH40S
-        """
-        if not self._common_dn_values:
-            return text
-        dn_tokens = sorted((str(v) for v in self._common_dn_values), key=len, reverse=True)
-        decimal_mm_pattern = re.compile(
-            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=(\d+\.\d+\s*(?:MM|毫米)(?:\b|\s*[xX×/,;)])))'
-        )
-        text = decimal_mm_pattern.sub(r'\1\2 ', text)
-        glued_schedule_pattern = re.compile(
-            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=((?:S-\d+S?|SCH\d+S?|\d+S)\b))'
-        )
-        return glued_schedule_pattern.sub(r'\1\2 ', text)
 
     def _process_structured_items(self, items: Any) -> str:
         if not isinstance(items, list):

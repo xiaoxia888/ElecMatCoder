@@ -140,6 +140,13 @@ encoding:
     num_predict: 512
     temperature: 0.0
     top_p: 1.0
+    # 二阶段编码兜底模型开关：
+    # 只有这里显式列出的字段，在规则/映射失败后才允许进入兜底编码模型。
+    # 可选字段：TYPE / SIZE / THICKNESS / PRESSURE / MATERIAL / STANDARD
+    fallback_fields:
+      - TYPE
+      - MATERIAL
+      - STANDARD
 
 # ==================== 语义匹配配置 ====================
 semantic_matching:

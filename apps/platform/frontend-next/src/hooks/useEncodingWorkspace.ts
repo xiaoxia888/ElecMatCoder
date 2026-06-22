@@ -214,6 +214,18 @@ export function useEncodingWorkspace() {
     setResults(nextResults)
   }
 
+  async function hydrateTaskFromServer(jobId: string, preferredIndex?: number) {
+    const res = await api.getBatchJob(jobId)
+    if (!res.job || activeTaskIdRef.current !== jobId) return
+    applyViewedJobSnapshot(res.job)
+    setCurrentIndex((prev) => {
+      const total = res.job.items?.length ?? 0
+      if (total <= 0) return -1
+      const nextIndex = typeof preferredIndex === 'number' ? preferredIndex : prev
+      return Number.isFinite(nextIndex) && nextIndex >= 0 && nextIndex < total ? nextIndex : 0
+    })
+  }
+
   function subscribeBatchJob(jobId: string) {
     clearStream()
     const source = new EventSource(`/api/pipe/encode/batch/jobs/${jobId}/stream`)
@@ -221,7 +233,7 @@ export function useEncodingWorkspace() {
       const event = JSON.parse(message.data) as BatchJobEvent
       if (event.type === 'snapshot' && event.snapshot) {
         applyRunningJobSnapshot(event.snapshot)
-        if (activeTaskIdRef.current === jobId) {
+        if (activeTaskIdRef.current === jobId && event.snapshot.results && Object.keys(event.snapshot.results).length > 0) {
           applyViewedJobSnapshot(event.snapshot)
         }
         return
@@ -233,8 +245,8 @@ export function useEncodingWorkspace() {
         applyRunningJobSnapshot(event.snapshot)
       }
       if (event.type === 'end' || event.type === 'cancelled' || event.type === 'failed') {
-        if (event.snapshot && activeTaskIdRef.current === jobId) {
-          applyViewedJobSnapshot(event.snapshot)
+        if (activeTaskIdRef.current === jobId) {
+          void hydrateTaskFromServer(jobId)
         }
         setIsEncodingBatch(false)
         setIsStoppingBatch(false)
@@ -264,7 +276,7 @@ export function useEncodingWorkspace() {
       setCurrentIndex(localCurrentIndex)
       return
     }
-    if (id === activeTaskId) return
+    if (id === activeTaskId && (dataList.length > 0 || Object.keys(results).length > 0)) return
     setActiveTaskId(id)
     setResults({})
     setDataList([])

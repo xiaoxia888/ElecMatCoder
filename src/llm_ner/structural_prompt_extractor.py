@@ -17,6 +17,8 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+from src.tokenizer_utils.preprocessor import TextPreprocessor
+
 from .structural_prompt import (
     get_pressure_system_prompt,
     get_size_length_system_prompt,
@@ -59,6 +61,7 @@ class StructuralPromptExtractor:
         self.thickness_prompt = get_thickness_system_prompt(debug=self.debug, version=self.prompt_version)
         self.pressure_prompt = get_pressure_system_prompt(debug=self.debug, version=self.prompt_version)
         self._last_usage: Dict[str, Any] = {}
+        self.text_preprocessor = TextPreprocessor()
         if not self.model_name:
             raise RuntimeError("缺少配置: ner.structural_prompt.model_name")
 
@@ -358,11 +361,11 @@ class StructuralPromptExtractor:
             return "request_error"
         return "error"
 
-    @staticmethod
-    def _preprocess_text(text: str) -> str:
+    def _preprocess_text(self, text: str) -> str:
         raw = str(text or "")
         if not raw:
             return raw
+        raw = self.text_preprocessor.process(raw)
         # 仅在前一段属于这些 token 时，把连接到 `SCH...` 前面的 `X/x` 统一改为 `*`：
         # - 数字 / 小数
         # - STD / XS / XXS

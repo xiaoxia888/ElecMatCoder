@@ -45,6 +45,11 @@ class LlmPipeEncoder(PipeEncoderBase):
         )
         logger.info(f"编码方法: LLM ({backend})")
         self.backend = backend
+        self.fallback_fields = {
+            str(field).strip().upper()
+            for field in (llm_config.get('fallback_fields') or [])
+            if str(field).strip()
+        }
 
     def _make_encode_meta(self, source: str, confidence: float, reason: str, evidence: Dict[str, Any] | None = None):
         return self._build_processor_encode_confidence(
@@ -53,6 +58,13 @@ class LlmPipeEncoder(PipeEncoderBase):
             reason=reason,
             evidence=evidence or {},
         )
+
+    def _allow_llm_fallback(self, field_type: str) -> bool:
+        return str(field_type or '').strip().upper() in self.fallback_fields
+
+    def _build_fallback_input_text(self, values: List[Any]) -> str:
+        parts = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
+        return ' ; '.join(parts)
 
     def _score_from_model_conf(self, model_conf: float) -> float:
         """将模型 token 级概率映射到字段置信度分数。"""
@@ -209,6 +221,15 @@ class LlmPipeEncoder(PipeEncoderBase):
                 type_value,
             )
 
+        if not self._allow_llm_fallback('TYPE'):
+            self._last_type_encode_meta = self._make_encode_meta(
+                source='fallback_disabled',
+                confidence=0.0,
+                reason='type_mapping_unresolved_fallback_disabled',
+                evidence={'field_type': 'TYPE'},
+            )
+            return "", 0.0
+
         code, similarity, used_model_conf = self._encode_with_llm_meta('TYPE', merged_value)
         self._last_type_encode_meta = self._make_encode_meta(
             source='llm_fallback',
@@ -260,6 +281,22 @@ class LlmPipeEncoder(PipeEncoderBase):
             item,
             material_result.reason,
         )
+        if not self._allow_llm_fallback('MATERIAL'):
+            return {
+                'original': self._flatten_material_item_for_stage2(item),
+                'matched': '',
+                'code': '',
+                'similarity': 0.0,
+                'encode_meta': self._make_encode_meta(
+                    source='fallback_disabled',
+                    confidence=0.0,
+                    reason='material_mapping_unresolved_fallback_disabled',
+                    evidence={'field_type': 'MATERIAL'},
+                ),
+                'is_exact': True,
+                'need_review': True,
+                'candidates': [],
+            }
         return None
 
     def _encode_size_multi(self, values: List[Any], original_text: str = "") -> EncodedFieldResult:
@@ -269,19 +306,44 @@ class LlmPipeEncoder(PipeEncoderBase):
         final_code = merged
         sim = 1.0 if final_code else 0.0
 
+        encode_meta = self._make_encode_meta(
+            source='size_processor',
+            confidence=0.96 if final_code and not size_need_review else (0.72 if final_code else 0.0),
+            reason='size_processor_resolved' if final_code else 'size_processor_failed',
+            evidence={
+                'item_count': len(display_values),
+                'code_present': bool(final_code),
+                'need_review': bool(size_need_review),
+            },
+        )
+
+        if not final_code and self._allow_llm_fallback('SIZE'):
+            fallback_input = self._build_fallback_input_text(values)
+            code, sim, used_model_conf = self._encode_with_llm_meta('SIZE', fallback_input)
+            if code:
+                final_code = code
+                size_need_review = False
+                encode_meta = self._make_encode_meta(
+                    source='llm_fallback',
+                    confidence=sim,
+                    reason='size_processor_failed_llm_used',
+                    evidence={
+                        'item_count': len(display_values),
+                        'used_model_confidence': bool(used_model_conf),
+                    },
+                )
+            else:
+                encode_meta = self._make_encode_meta(
+                    source='llm_fallback',
+                    confidence=0.0,
+                    reason='size_processor_failed_llm_failed',
+                    evidence={'item_count': len(display_values)},
+                )
+
         return EncodedFieldResult(
             field_type='SIZE',
             stage2_input=self._clone_response_value(values[0] if len(values) == 1 else values),
-            encode_confidence_v2=self._make_encode_meta(
-                source='size_processor',
-                confidence=0.96 if final_code and not size_need_review else (0.72 if final_code else 0.0),
-                reason='size_processor_resolved' if final_code else 'size_processor_failed',
-                evidence={
-                    'item_count': len(display_values),
-                    'code_present': bool(final_code),
-                    'need_review': bool(size_need_review),
-                },
-            ),
+            encode_confidence_v2=encode_meta,
             code=final_code, codes=[final_code] if final_code else [],
             similarity=sim if final_code else 0.0,
             is_exact_match=True,
@@ -290,7 +352,14 @@ class LlmPipeEncoder(PipeEncoderBase):
         )
 
     def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
-        return self.thickness_processor.process(value, original_text=original_text)
+        normalized = self.thickness_processor.process(value, original_text=original_text)
+        if normalized:
+            return normalized
+        if not self._allow_llm_fallback('THICKNESS'):
+            return ""
+        fallback_input = self._stringify_field_value(value)
+        code, _, _ = self._encode_with_llm_meta('THICKNESS', fallback_input)
+        return code
 
     @staticmethod
     def _split_thickness_parts(normalized: str) -> List[str]:
@@ -334,6 +403,24 @@ class LlmPipeEncoder(PipeEncoderBase):
         if field_type == 'THICKNESS':
             normalized = self.thickness_processor.process(value)
             if not normalized:
+                if self._allow_llm_fallback('THICKNESS'):
+                    code, sim, used_model_conf = self._encode_with_llm_meta('THICKNESS', value)
+                    return {
+                        'original': value, 'matched': value if code else '', 'code': code,
+                        'similarity': sim if code else 0.0,
+                        'encode_meta': self._make_encode_meta(
+                            source='llm_fallback',
+                            confidence=sim if code else 0.0,
+                            reason='thickness_processor_failed_llm_used' if code else 'thickness_processor_failed_llm_failed',
+                            evidence={
+                                'field_type': 'THICKNESS',
+                                'used_model_confidence': bool(used_model_conf),
+                            },
+                        ),
+                        'is_exact': True,
+                        'need_review': not code,
+                        'candidates': []
+                    }
                 return {
                     'original': value, 'matched': '', 'code': '',
                     'similarity': 0.0, 'is_exact': True, 'need_review': True, 'candidates': []
@@ -355,6 +442,24 @@ class LlmPipeEncoder(PipeEncoderBase):
         if field_type == 'PRESSURE':
             normalized = self._process_pressure(value)
             if not normalized:
+                if self._allow_llm_fallback('PRESSURE'):
+                    code, sim, used_model_conf = self._encode_with_llm_meta('PRESSURE', value)
+                    return {
+                        'original': value, 'matched': value if code else '', 'code': code,
+                        'similarity': sim if code else 0.0,
+                        'encode_meta': self._make_encode_meta(
+                            source='llm_fallback',
+                            confidence=sim if code else 0.0,
+                            reason='pressure_processor_failed_llm_used' if code else 'pressure_processor_failed_llm_failed',
+                            evidence={
+                                'field_type': 'PRESSURE',
+                                'used_model_confidence': bool(used_model_conf),
+                            },
+                        ),
+                        'is_exact': True,
+                        'need_review': not code,
+                        'candidates': []
+                    }
                 return {
                     'original': value, 'matched': '', 'code': '',
                     'similarity': 0.0, 'is_exact': True, 'need_review': True, 'candidates': []
@@ -390,6 +495,20 @@ class LlmPipeEncoder(PipeEncoderBase):
             }
 
         if field_type in ('MATERIAL', 'TYPE'):
+            if not self._allow_llm_fallback(field_type):
+                return {
+                    'original': value, 'matched': value, 'code': '',
+                    'similarity': 0.0,
+                    'encode_meta': self._make_encode_meta(
+                        source='fallback_disabled',
+                        confidence=0.0,
+                        reason=f'{field_type.lower()}_fallback_disabled',
+                        evidence={'field_type': field_type},
+                    ),
+                    'is_exact': True,
+                    'need_review': True,
+                    'candidates': []
+                }
             code, sim, used_model_conf = self._encode_with_llm_meta(field_type, value)
             return {
                 'original': value, 'matched': value, 'code': code,
@@ -424,6 +543,25 @@ class LlmPipeEncoder(PipeEncoderBase):
 
         return {'original': value, 'matched': value, 'code': value,
                 'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': []}
+
+    def _build_thickness_fallback_result(self, values: List[Any]) -> Dict[str, Any]:
+        fallback_input = self._build_fallback_input_text(values)
+        code, sim, used_model_conf = self._encode_with_llm_meta('THICKNESS', fallback_input)
+        return {
+            'code': code,
+            'similarity': sim if code else 0.0,
+            'encode_meta': self._make_encode_meta(
+                source='llm_fallback',
+                confidence=sim if code else 0.0,
+                reason='thickness_processor_failed_llm_used' if code else 'thickness_processor_failed_llm_failed',
+                evidence={
+                    'field_type': 'THICKNESS',
+                    'item_count': len(values),
+                    'used_model_confidence': bool(used_model_conf),
+                },
+            ),
+            'need_review': not code,
+        }
 
     def _process_standard_multi(
         self,
@@ -474,32 +612,45 @@ class LlmPipeEncoder(PipeEncoderBase):
                     },
                 )
             else:
-                encoded, item_similarity, used_model_conf = self._encode_with_llm_meta('STANDARD', formatted)
-                if encoded:
-                    logger.info(
-                        "[STANDARD编码器] unresolved, fallback to LLM: '%s' -> '%s'",
-                        formatted,
-                        encoded,
-                    )
-                    encode_meta = self._make_encode_meta(
-                        source='llm_fallback',
-                        confidence=item_similarity,
-                        reason='standard_processor_unresolved_llm_used',
-                        evidence={
-                            'formatted_present': bool(formatted),
-                            'category': category,
-                            'used_model_confidence': bool(used_model_conf),
-                        },
-                    )
+                if self._allow_llm_fallback('STANDARD'):
+                    encoded, item_similarity, used_model_conf = self._encode_with_llm_meta('STANDARD', formatted)
+                    if encoded:
+                        logger.info(
+                            "[STANDARD编码器] unresolved, fallback to LLM: '%s' -> '%s'",
+                            formatted,
+                            encoded,
+                        )
+                        encode_meta = self._make_encode_meta(
+                            source='llm_fallback',
+                            confidence=item_similarity,
+                            reason='standard_processor_unresolved_llm_used',
+                            evidence={
+                                'formatted_present': bool(formatted),
+                                'category': category,
+                                'used_model_confidence': bool(used_model_conf),
+                            },
+                        )
+                    else:
+                        logger.warning(
+                            "[STANDARD编码器] unresolved and LLM failed: '%s'",
+                            formatted,
+                        )
+                        encode_meta = self._make_encode_meta(
+                            source='llm_fallback',
+                            confidence=0.0,
+                            reason='standard_processor_unresolved_llm_failed',
+                            evidence={
+                                'formatted_present': bool(formatted),
+                                'category': category,
+                            },
+                        )
                 else:
-                    logger.warning(
-                        "[STANDARD编码器] unresolved and LLM failed: '%s'",
-                        formatted,
-                    )
+                    encoded = ""
+                    item_similarity = 0.0
                     encode_meta = self._make_encode_meta(
-                        source='llm_fallback',
+                        source='fallback_disabled',
                         confidence=0.0,
-                        reason='standard_processor_unresolved_llm_failed',
+                        reason='standard_processor_unresolved_fallback_disabled',
                         evidence={
                             'formatted_present': bool(formatted),
                             'category': category,

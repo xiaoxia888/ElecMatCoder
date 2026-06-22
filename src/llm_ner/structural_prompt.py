@@ -279,7 +279,7 @@ SIZE_FIELD_RULES_TEXT_V3 = """
      * **显式长度强制追加**：只要原文出现明确长度字段 `L=...`、`L:...`、`LG=...`、`LENGTH=...`、`LEN=...`、`长度...`、`总长...`，且同条存在明确主规格 `DN...` 或英制主体值规格，必须将长度追加到 `specification`，格式为 `DN200L3000` 或 `2L3000`；长度单位为 `m/米` 时换算为毫米（如 `L=3m` → `L3000`），单位为 `mm/毫米` 时直接取数值，未写单位时保留数值本身；不得把长度写入 `wall_thickness` 或 `material`。示例：`灰口铸铁, 壁厚5.8mm, L=3m, DN200` → `specification=DN200L3000`。
      * **管子CUT TO长度特例（窄规则）**：当原文出现 `CUT TO`/`CUT-TO` + 数值，且同句存在明确主管规格（`DN...` 或英制主体值规格）时，允许将该数值作为长度追加到 `specification`（`L{数值}`）；不满足上述条件时不得追加，避免泛化到普通管子场景。示例：`PIPE ... CUT TO 1505 DN100` → `specification=DN100L1505`。
      * **PN/尺寸紧邻拆分**：当描述中出现 `PNxx` 后紧邻公称直径数字的结构时，包括 `PNxx-数字`、`PNxx 数字`、`PNxx/DN数字`、`PNxx-DN数字`、`PNxx-数字I/II/III`、`PNxx 数字Ⅰ/Ⅱ/Ⅲ`、`PN16-125/END` 等，若 `PNxx` 为标准公称压力等级写法（如 `PN10/PN16/PN25/PN40` 等），则 `PNxx` 必须写入 `pressure_rating`；其后的数字若为常见公称直径序列值（如 `15/20/25/32/40/50/65/80/100/125/150/...`），必须加 `DN` 补全并写入 `specification`（如 `DN25`、`DN125`）；数字后的 `/END` 不得并入 `pressure_rating`。数字后的 `I/II/III/IV`、`Ⅰ/Ⅱ/Ⅲ/Ⅳ` 若不是材质的一部分，且描述中存在明确规范，则应作为离它最近的规范后缀写入 `standard`，不得并入 `pressure_rating` 或导致 `specification` 为空；例如 `PN16 25Ⅱ;20;GB/T12459-2017` 应输出 `pressure_rating=PN16`、`specification=DN25`、`material=20`、`standard=GB/T12459-2017Ⅱ` 或等价后缀形态。普通独立压力组合如 `PN16/PN25`、`PN16 PN25` 仍整体视为压力信息，不得拆成尺寸。
-     * **法兰短型号排除（硬约束）**：当出现 `WN/SO/BL/PL + 数字-数字 + RF/FF/RTJ` 或近似法兰短型号结构时，前一个数字是规格，后一个数字是压力后缀，不得把后一个数字当作第二尺寸。例如 `WN 250-150 RF` 只能输出规格 `DN250`，不能输出 `DN250xDN150`。
+     * **法兰短型号排除（硬约束）**：当出现 `WN/SO/BL/PL + 规格-压力后缀 + RF/FF/RTJ` 或近似法兰短型号结构时，前一个数字是规格，后一个数字是压力后缀，不得把后一个数字当作第二尺寸。这个规则同样适用于带 `DN` 前缀、带 `#`、以及整段粘连的写法，例如 `WN 250-150 RF`、`WN DN80-150 RF`、`WN DN80-150#RF`、`WNDN80-150#RF` 都只能输出规格 `DN250` 或 `DN80`，绝不能输出 `DN250xDN150`、`DN80xDN150`。
      * **夹套双规格硬约束**：当夹套件描述中出现以 `/` 连接的两组尺寸（如 `DN150x125/DN200x150`）时，必须将两组尺寸按原顺序完整保留到 `specification`，因为 `/` 两侧通常代表外管/内管或主管/夹套两组有效规格，禁止截断为前半段单组尺寸。
 """.strip()
 
@@ -305,6 +305,7 @@ THICKNESS_FIELD_RULES_TEXT_V3 = """
    - **异径详细尺寸串（硬约束）**：当描述出现 `外径x壁厚/壁厚 - 外径x壁厚` 或预清洗后的 `DNx壁厚/壁厚 - DNx壁厚` 结构（如 `273x5.0/3.2 - 219.1x2.9`、`DN80x5.6/3.2 - DN50x4.5`）时，必须按原文顺序保留三个壁厚值，`wall_thickness` 输出为 `大端第一壁厚X大端第二壁厚X小端壁厚MM`，禁止截断。
    - **mm 与 SCH 消歧**：`mm` 与 `SCH/S-数字/S数字/STD/XS/XXS/SxxS` 由 `* / x / X / ×` 连接时默认视为复合壁厚；仅当 `mm` 前有明确尺寸标记（`φ`/`OD=`/“外径”/“尺寸”）才当尺寸。
    - **组合壁厚保留**：`SCH40XSCH80`、`STDxXS`、`S40xS80`、`12mm*SCH40S`、`S-40S X S-160` 等组合壁厚必须完整保留整段，连接符 `x/X/×/*` 等价；当异径件或 OLET/支管台类描述中连续出现两个等级壁厚词（如 `SCH 20 SCH 40`、`SCH40 SCH80`、`STD SCH40`）时，也视为两端组合壁厚，必须按原文顺序输出为 `SCH20XSCH40`、`SCH40XSCH80`、`STDXSCH40`，不得只保留后一个或较大的一个。
+   - **壁厚词与压力词粘连消歧（硬约束）**：若出现 `S-40CL300`、`SCH40CL150`、`STDCL3000`、`XS300LB`、`XXS150#` 这类“左侧是壁厚词，右侧是压力词”的粘连写法，必须在语义上拆开理解：左侧仅作为壁厚，右侧仅作为压力。也就是说，这类片段在壁厚结果里只能保留 `S-40`、`SCH40`、`STD`、`XS`、`XXS`，绝不能把压力并进壁厚的结果。
    - **S-STD 消歧（硬约束）**：`S-STD`、`S-XS`、`S-XXS` 均为完整壁厚词；若原文出现 `S-STDXS-STD`，必须按 `S-STD X S-STD` 解析，其中中间 `X` 仅表示两段连接，禁止将其误拆为 `STDxXS` 或 `STD + XS`。示例：`S-STDXS-STD` → `STDXSTD`。
    - **尾部S保留与S等级壁厚**：`10S/20S/40S/80S`、`S10S/S20S/S40S/S80S`、`SCH10S/SCH20S/SCH40S/SCH80S` 中的尾部 `S` 都是壁厚等级的一部分，必须保留；组合壁厚中每一段都必须逐段保留尾部 `S`。
    - **禁止提取衬层厚度当作壁厚。
@@ -397,6 +398,7 @@ SIZE_EXAMPLES_TEXT_V3 = """
 - `8 x 6 in` → `SIZE_ITEMS=[{"type":"INCH","value":"8"},{"type":"INCH","value":"6"}]`, `LENGTH=""`
 - `CS PIPE 1 SCH160 ASTM A106 Gr.B,ASME B36.10M,HPS` → `SIZE_ITEMS=[{"type":"INCH","value":"1"}]`, `LENGTH=""`
 - `WN 250-150 RF` → `SIZE_ITEMS=[{"type":"DN","value":"250"}]`, `LENGTH=""`
+- `WN DN80-150 RF` → `SIZE_ITEMS=[{"type":"DN","value":"80"}]`, `LENGTH=""`
 - `DN200, L=3m` → `SIZE_ITEMS=[{"type":"DN","value":"200"}]`, `LENGTH="3000"`
 """.strip()
 
@@ -407,6 +409,7 @@ THICKNESS_EXAMPLES_TEXT_V3 = """
 - `Φ508X7.9/Φ325X10` → `THICKNESS_ITEMS=[{"type":"MM","value":"7.9"},{"type":"MM","value":"10"}]`
 - `12mm*SCH40S` → `THICKNESS_ITEMS=[{"type":"MM","value":"12"},{"type":"SCHEDULE","value":"SCH40S"}]`
 - `SCH40XSCH80` → `THICKNESS_ITEMS=[{"type":"SCHEDULE","value":"SCH40"},{"type":"SCHEDULE","value":"SCH80"}]`
+- `S-40CL300` → `THICKNESS_ITEMS=[{"type":"SCHEDULE","value":"SCH40"}]`
 """.strip()
 
 

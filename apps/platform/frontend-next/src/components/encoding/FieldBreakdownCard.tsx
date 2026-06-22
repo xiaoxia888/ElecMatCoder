@@ -34,6 +34,13 @@ function getThicknessStage2Note(field: FieldPayload | undefined, fieldType: stri
   return notes.length > 0 ? String(notes[0] ?? '').trim() : ''
 }
 
+function getEncodeSourceTag(field: FieldPayload | undefined) {
+  const code = String(field?.stage2_output?.code ?? '').trim()
+  if (!code) return ''
+  const source = String(field?.encode_confidence_v2?.source ?? '').trim().toLowerCase()
+  return source === 'llm_fallback' ? '模型' : '规则'
+}
+
 export function FieldBreakdownCard({ result }: FieldBreakdownCardProps) {
   return (
     <section className="flex h-full flex-col rounded-xl border border-line bg-white p-4 shadow-panel">
@@ -50,12 +57,21 @@ export function FieldBreakdownCard({ result }: FieldBreakdownCardProps) {
         <tbody className="divide-y divide-[#eef1f6]">
           {FIELD_ORDER.map((fieldType) => {
             const field = result?.fields?.[fieldType]
+            const code = formatFieldCode(field)
+            const sourceTag = getEncodeSourceTag(field)
             return (
               <tr key={fieldType} className="align-top">
                 <td className="px-3 py-2.5 align-top font-medium text-ink">{FIELD_LABELS[fieldType]}</td>
                 <Cell lines={formatFieldStage1Lines(field, fieldType)} />
                 <Cell lines={formatFieldStage2Lines(field, fieldType)} note={getThicknessStage2Note(field, fieldType)} />
-                <td className="px-3 py-2.5 align-top font-mono font-semibold text-accent">{formatFieldCode(field)}</td>
+                <td className="px-3 py-2.5 align-top font-mono font-semibold text-accent">
+                  <span>{code}</span>
+                  {sourceTag ? (
+                    <span className="ml-2 inline-flex rounded-md border border-[#d9e4ff] bg-[#edf3ff] px-2 py-0.5 font-sans text-[11px] font-medium leading-4 text-accent">
+                      {sourceTag}
+                    </span>
+                  ) : null}
+                </td>
               </tr>
             )
           })}

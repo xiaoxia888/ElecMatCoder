@@ -37,11 +37,19 @@ export interface FieldStatus {
   is_exact_match?: boolean | null
 }
 
+export interface EncodeConfidencePayload {
+  source?: string
+  confidence?: number | null
+  reason?: string
+  evidence?: Record<string, unknown>
+}
+
 export interface FieldPayload {
   field_type: string
   stage1_raw: Stage1RawPayload
   stage2_input: Stage2InputPayload
   stage2_output: Stage2OutputPayload
+  encode_confidence_v2?: EncodeConfidencePayload
   confidence_detail?: ConfidenceDetail
   status?: FieldStatus
 }

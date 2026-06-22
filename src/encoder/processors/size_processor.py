@@ -970,8 +970,6 @@ class SizeProcessor:
         """
         source = str(text or "")
         normalized = source.replace('”', '"').replace('“', '"').replace('″', '"')
-        normalized = self._normalize_section_labels(normalized)
-        normalized = self._normalize_glued_dn_mm(normalized)
 
         # 0) 只有当脏小数串实际落在尺寸片段里，才让尺寸规则失效。
         # 例如：
@@ -1867,43 +1865,6 @@ class SizeProcessor:
             "span": match.span(1),
         }
 
-    @staticmethod
-    def _normalize_section_labels(text: str) -> str:
-        """
-        处理历史表中常见的编号字段标签粘连：
-        - DN50X253.连接方式 -> DN50X25 3.连接方式
-        - 2.规格:DN50X253.连接方式 -> 2.规格:DN50X25 3.连接方式
-
-        只在 `数字.` 后面紧跟中文/英文字段标签并带 `:`/`：` 时切开，
-        不影响 B36.10 这类规范写法。
-        """
-        text = re.sub(
-            r'(?<=[A-Za-z0-9])([1-9])\.(?=[\u4e00-\u9fffA-Za-z][^:：]{0,20}[:：])',
-            r' \1.',
-            text,
-        )
-        text = re.sub(r'(?<=[A-Za-z0-9.])(?=DN\s*\d)', ' ', text, flags=re.IGNORECASE)
-        return text
-
-    def _normalize_glued_dn_mm(self, text: str) -> str:
-        """
-        切开 `DN1506.3mm` 这类 `DN + 壁厚` 粘连：
-        - DN200XDN1506.3mmX7.1mm -> DN200XDN150 6.3mmX7.1mm
-        - DN150×DN40S-10S×SCH40S -> DN150×DN40 S-10S×SCH40S
-        仅当 `DN<常见公称直径>` 后面紧跟 `小数mm` 时生效。
-        """
-        if not self._common_dn_values:
-            return text
-        dn_tokens = sorted((str(v) for v in self._common_dn_values), key=len, reverse=True)
-        decimal_mm_pattern = re.compile(
-            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=(\d+\.\d+\s*MM(?:\b|\s*[xX×/,;)])))'
-        )
-        text = decimal_mm_pattern.sub(r'\1\2 ', text)
-        glued_schedule_pattern = re.compile(
-            rf'(?i)(DN\s*)({"|".join(map(re.escape, dn_tokens))})(?=((?:S-\d+S?|SCH\d+S?|\d+S)\b))'
-        )
-        return glued_schedule_pattern.sub(r'\1\2 ', text)
-    
     def process_multi(self, values: Any, original_text: str = "") -> str:
         """
         处理多个尺寸值
