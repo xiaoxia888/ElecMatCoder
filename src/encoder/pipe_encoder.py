@@ -46,6 +46,8 @@ from .processors import get_regex_extractor
 from .processors import get_thickness_table_processor
 
 logger = logging.getLogger(__name__)
+TYPE_RULE_CONFIG = Path(__file__).parent / "config" / "type_rule_mapping.yaml"
+DEFAULT_TYPE_KEY_ORDER = ['FLANGE_STYLE', 'BODY', 'ANGLE', 'RADIUS', 'SEAL', 'CONN', 'MANU']
 
 
 @dataclass
@@ -309,6 +311,7 @@ class PipeEncoderBase:
         
         config_path = Path(__file__).parent / "config" / "encoder_config.yaml"
         self.config = self._load_config(config_path)
+        self.type_rule_config = self._load_config(TYPE_RULE_CONFIG)
 
         confidence_config_path = Path(__file__).parent.parent / "config" / "confidence_config.yaml"
         self.confidence_config = self._load_config(confidence_config_path)
@@ -317,6 +320,11 @@ class PipeEncoderBase:
         self.platform_config = self._load_config(platform_config_path)
         
         self.FIELD_ORDER = self.config.get('field_order', self.DEFAULT_FIELD_ORDER)
+        self.type_key_order = [
+            str(item).strip().upper()
+            for item in (self.type_rule_config.get('type_key_order') or DEFAULT_TYPE_KEY_ORDER)
+            if str(item).strip()
+        ] or list(DEFAULT_TYPE_KEY_ORDER)
         
         self.size_processor = get_size_processor()
         self.standard_processor = get_standard_processor()
@@ -688,37 +696,41 @@ class PipeEncoderBase:
         if type_dict is None:
             return str(value or '').strip()
 
-        parts: List[str] = []
-
         def _extend(raw: Any):
+            collected: List[str] = []
             if not raw:
-                return
+                return collected
             values = raw if isinstance(raw, list) else [raw]
             for item in values:
                 item_text = str(item).strip()
                 if item_text:
-                    parts.append(item_text)
-
-        _extend(type_dict.get('FLANGE_STYLE'))
+                    collected.append(item_text)
+            return collected
 
         body = type_dict.get('BODY')
-        if isinstance(body, list):
-            _extend(body)
-        elif body:
-            _extend([p.strip() for p in str(body).split(';') if p.strip()])
+        body_parts = body if isinstance(body, list) else [p.strip() for p in str(body or '').split(';') if p.strip()]
 
         geometry = self._get_dict(type_dict.get('GEOMETRY'))
-        _extend(geometry.get('ANGLE'))
-        _extend(geometry.get('RADIUS'))
-        _extend(type_dict.get('SEAL'))
 
         conn_sources = []
         for source_key in ('CONN', 'ENDS'):
             source_raw = type_dict.get(source_key)
             if source_raw:
                 conn_sources.extend(source_raw if isinstance(source_raw, list) else [source_raw])
-        _extend(conn_sources)
-        _extend(type_dict.get('MANU'))
+
+        component_map = {
+            'FLANGE_STYLE': _extend(type_dict.get('FLANGE_STYLE')),
+            'BODY': _extend(body_parts),
+            'ANGLE': _extend(geometry.get('ANGLE')),
+            'RADIUS': _extend(geometry.get('RADIUS')),
+            'SEAL': _extend(type_dict.get('SEAL')),
+            'CONN': _extend(conn_sources),
+            'MANU': _extend(type_dict.get('MANU')),
+        }
+
+        parts: List[str] = []
+        for key in self.type_key_order:
+            parts.extend(component_map.get(key, []))
 
         deduped: List[str] = []
         for part in parts:
@@ -729,7 +741,7 @@ class PipeEncoderBase:
     def _build_type_encoding_input(
         self,
         entities: Dict[str, Any],
-        regex_value_code_map: Dict[str, Dict]
+        regex_value_code_map: Dict[str, Any]
     ) -> Dict[str, Any]:
         type_dict = self._ensure_type_dict(entities.get('TYPE')) or {}
         geometry = self._get_dict(type_dict.get('GEOMETRY'))
@@ -744,7 +756,7 @@ class PipeEncoderBase:
 
         radius = str(geometry.get('RADIUS') or '').strip()
         if not radius:
-            radius_info = regex_value_code_map.get('RADIUS', {}) or {}
+            radius_info = self._first_regex_info(regex_value_code_map.get('RADIUS'))
             radius = str(radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS') or '').strip()
 
         def _collect_values(field: str) -> List[str]:
@@ -765,10 +777,11 @@ class PipeEncoderBase:
                         if item_text and item_text not in values:
                             values.append(item_text)
 
-                info = regex_value_code_map.get(source_field, {}) or {}
-                code_value = str(info.get('code') or '').strip()
-                if code_value and code_value not in values:
-                    values.insert(0, code_value)
+                info_list = self._normalize_regex_info_list(regex_value_code_map.get(source_field))
+                for info in reversed(info_list):
+                    code_value = str(info.get('code') or '').strip()
+                    if code_value and code_value not in values:
+                        values.insert(0, code_value)
             return values
         raw_structured = {
             'FLANGE_STYLE': str(type_dict.get('FLANGE_STYLE') or type_dict.get('flange_style') or '').strip(),
@@ -1900,7 +1913,7 @@ class PipeEncoderBase:
     def _process_type_combined(
         self,
         entities: Dict[str, Any],
-        regex_value_code_map: Dict[str, Dict]
+        regex_value_code_map: Dict[str, Any]
     ) -> EncodedFieldResult:
         """合并 TYPE 新结构及规则补提字段，统一编码。"""
         collected_values = []
@@ -1919,7 +1932,7 @@ class PipeEncoderBase:
 
             radius_value = str(geometry.get('RADIUS') or '').strip()
             if not radius_value:
-                radius_info = regex_value_code_map.get('RADIUS', {}) or {}
+                radius_info = self._first_regex_info(regex_value_code_map.get('RADIUS'))
                 radius_value = str(radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS') or '').strip()
             if radius_value:
                 collected_values.append(('RADIUS', radius_value, radius_value))
@@ -1939,7 +1952,7 @@ class PipeEncoderBase:
                 values_to_check = raw_value if isinstance(raw_value, list) else [raw_value]
                 for v in values_to_check:
                     if v and str(v).strip():
-                        info = regex_value_code_map.get(f, {})
+                        info = self._first_regex_info(regex_value_code_map.get(f))
                         code_val = str(info.get('code') or v).strip()
                         collected_values.append((f, str(v).strip(), code_val))
         else:
@@ -1955,7 +1968,7 @@ class PipeEncoderBase:
                             collected_values.append((f, str(raw_value).strip(), str(raw_value).strip()))
                 else:
                     if f in regex_value_code_map:
-                        info = regex_value_code_map[f]
+                        info = self._first_regex_info(regex_value_code_map[f])
                         display_val = info.get('value', '')
                         code_val = info.get('code', '')
                         if code_val:
@@ -2178,38 +2191,111 @@ class PipeEncoderBase:
 
     @staticmethod
     def _split_regex_extractions(regex_all_results):
-        """拆分规则提取结果：仅保留当前仍使用的补提字段。"""
+        """拆分规则提取结果：同标签按原文顺序保留全部命中结果。"""
         other_extractions = {}
         for extraction in regex_all_results:
             if extraction.label not in other_extractions:
-                other_extractions[extraction.label] = {
-                    'value': extraction.value, 'code': extraction.code
-                }
+                other_extractions[extraction.label] = []
+            other_extractions[extraction.label].append({
+                'value': extraction.value,
+                'code': extraction.code,
+            })
         return other_extractions
 
-    def _apply_regex_fallbacks(self, entities: Dict[str, Any], regex_value_code_map: Dict[str, Dict], other_extractions: Dict[str, Dict]):
+    @staticmethod
+    def _merge_unique_values(existing: Any, incoming: List[str]) -> List[str]:
+        merged: List[str] = []
+        existing_values = existing if isinstance(existing, list) else ([existing] if existing not in (None, '', []) else [])
+        for source in (existing_values, incoming):
+            for item in source:
+                text = str(item or '').strip()
+                if text and text not in merged:
+                    merged.append(text)
+        return merged
+
+    @staticmethod
+    def _normalize_regex_info_list(raw_infos: Any) -> List[Dict[str, str]]:
+        if isinstance(raw_infos, list):
+            result: List[Dict[str, str]] = []
+            for item in raw_infos:
+                if not isinstance(item, dict):
+                    continue
+                result.append({
+                    'value': str(item.get('value') or '').strip(),
+                    'code': str(item.get('code') or '').strip(),
+                })
+            return result
+        if isinstance(raw_infos, dict):
+            return [{
+                'value': str(raw_infos.get('value') or '').strip(),
+                'code': str(raw_infos.get('code') or '').strip(),
+            }]
+        return []
+
+    @staticmethod
+    def _first_regex_info(raw_infos: Any) -> Dict[str, str]:
+        infos = PipeEncoder._normalize_regex_info_list(raw_infos)
+        return infos[0] if infos else {}
+
+    def _apply_regex_fallbacks(self, entities: Dict[str, Any], regex_value_code_map: Dict[str, Any], other_extractions: Dict[str, List[Dict[str, str]]]):
         """将规则补提结果回填到实体。"""
-        for label, info in other_extractions.items():
+        for label, infos in other_extractions.items():
+            normalized_infos = self._normalize_regex_info_list(infos)
+            if not normalized_infos:
+                continue
             if label == 'RADIUS':
+                info = normalized_infos[0]
                 self._set_radius_to_type_geometry(entities, info['value'], info['code'])
                 regex_value_code_map[label] = info
             elif label in ('MANU', 'CONN', 'ENDS', 'SEAL'):
-                display_value = self._normalize_regex_display_value(
-                    label,
-                    info.get('value', ''),
-                    info.get('code', ''),
+                display_values: List[str] = []
+                code_values: List[str] = []
+                for info in normalized_infos:
+                    display_value = self._normalize_regex_display_value(
+                        label,
+                        info.get('value', ''),
+                        info.get('code', ''),
+                    )
+                    display_text = str(display_value or info.get('value', '') or '').strip()
+                    code_text = str(info.get('code') or '').strip()
+                    if display_text and display_text not in display_values:
+                        display_values.append(display_text)
+                    if code_text and code_text not in code_values:
+                        code_values.append(code_text)
+
+                merged_values = self._merge_unique_values(
+                    self._get_nested_type_value(entities, label),
+                    display_values,
                 )
-                if display_value and display_value != str(info.get('value', '') or '').strip():
-                    self._set_nested_type_value(entities, label, display_value, overwrite=True)
-                elif not self._get_nested_type_value(entities, label):
-                    self._set_nested_type_value(entities, label, display_value or info.get('value'))
-                regex_value_code_map[label] = {
-                    'value': display_value or info.get('value', ''),
-                    'code': info.get('code', ''),
-                }
+                merged_values = self.regex_extractor.resolve_values(label, merged_values)
+                if merged_values:
+                    self._set_nested_type_value(
+                        entities,
+                        label,
+                        merged_values if len(merged_values) > 1 else merged_values[0],
+                        overwrite=True,
+                    )
+                allowed_identities = {str(item).strip().upper() for item in merged_values if str(item).strip()}
+                filtered_infos = [
+                    info for info in normalized_infos
+                    if (
+                        str(info.get('code') or '').strip().upper() in allowed_identities
+                        or str(info.get('value') or '').strip().upper() in allowed_identities
+                    )
+                ]
+                if filtered_infos:
+                    regex_value_code_map[label] = filtered_infos
+                else:
+                    regex_value_code_map.pop(label, None)
             elif label not in entities or not entities[label]:
-                entities[label] = info['value']
-                regex_value_code_map[label] = info
+                values = [
+                    str(info.get('value') or '').strip()
+                    for info in normalized_infos
+                    if str(info.get('value') or '').strip()
+                ]
+                if values:
+                    entities[label] = values if len(values) > 1 else values[0]
+                regex_value_code_map[label] = normalized_infos if len(normalized_infos) > 1 else normalized_infos[0]
 
     def _validate_fields_against_text(
         self,
@@ -2387,7 +2473,7 @@ class PipeEncoderBase:
         self,
         entities: Dict[str, Any],
         original_text: str,
-        regex_value_code_map: Dict[str, Dict],
+        regex_value_code_map: Dict[str, Any],
     ):
         """基于原文做规则补提。STANDARD 修饰符绑定由标准处理器统一负责。"""
         if not original_text:
@@ -2503,7 +2589,7 @@ class PipeEncoderBase:
         stage1_final_snapshot: Dict[str, Any],
         extract_confidence: Optional[Dict[str, Any]],
         extract_confidence_v2: Optional[Dict[str, Any]],
-        regex_value_code_map: Dict[str, Dict],
+        regex_value_code_map: Dict[str, Any],
         result: PipeEncodingResult,
         type_combined_processed: bool,
         original_text: str = "",
@@ -2583,7 +2669,7 @@ class PipeEncoderBase:
                 continue
 
             if field_type in regex_value_code_map:
-                info = regex_value_code_map[field_type]
+                info = self._first_regex_info(regex_value_code_map[field_type])
                 field_result = EncodedFieldResult(
                     field_type=field_type,
                     stage2_input=copy.deepcopy(info.get('value')),

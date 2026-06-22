@@ -10,6 +10,7 @@ import yaml
 
 TYPE_COMBO_CONFIG = Path(__file__).resolve().parents[1] / "config" / "type_combo_mapping.yaml"
 TYPE_RULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "type_rule_mapping.yaml"
+DEFAULT_TYPE_KEY_ORDER = ["FLANGE_STYLE", "BODY", "ANGLE", "RADIUS", "SEAL", "CONN", "MANU"]
 
 
 @dataclass
@@ -36,8 +37,11 @@ class TypeEncoder:
         self.combo_config = self._load_yaml(self.combo_config_path)
         self.rule_config = self._load_yaml(self.rule_config_path)
         self.reverse_combo_mapping = self._build_reverse_mapping(self.combo_config)
-        self.manu_priority = self.rule_config.get("manu_priority", [])
-        self.conn_priority = self.rule_config.get("conn_priority", [])
+        self.type_key_order = [
+            str(item).strip().upper()
+            for item in (self.rule_config.get("type_key_order") or DEFAULT_TYPE_KEY_ORDER)
+            if str(item).strip()
+        ] or list(DEFAULT_TYPE_KEY_ORDER)
 
     @staticmethod
     def _load_yaml(path: Path) -> Dict[str, Any]:
@@ -79,7 +83,7 @@ class TypeEncoder:
     def _get_dict(value: Any) -> Dict[str, Any]:
         return value if isinstance(value, dict) else {}
 
-    def _pick_by_priority(self, values: Iterable[str], priority: List[str]) -> List[str]:
+    def _dedupe_values(self, values: Iterable[str]) -> List[str]:
         normalized: List[str] = []
         seen = set()
         for value in values:
@@ -87,38 +91,13 @@ class TypeEncoder:
             if text and text not in seen:
                 normalized.append(text)
                 seen.add(text)
-        if not normalized:
-            return []
-        for item in priority:
-            if item in seen:
-                return [item]
-        return normalized[:1]
+        return normalized
 
     def _normalize_manu(self, manu: Iterable[str]) -> List[str]:
-        return self._pick_by_priority(manu, self.manu_priority)
+        return self._dedupe_values(manu)
 
     def _normalize_conn(self, conn: Iterable[str]) -> List[str]:
-        normalized: List[str] = []
-        seen = set()
-        for value in conn:
-            text = str(value).strip()
-            if text and text not in seen:
-                normalized.append(text)
-                seen.add(text)
-        if not normalized:
-            return []
-
-        composite_conn = next(
-            (
-                item for item in normalized
-                if any(marker in item for marker in ('/', '(', ')'))
-            ),
-            ''
-        )
-        if composite_conn:
-            return [composite_conn]
-
-        return self._pick_by_priority(normalized, self.conn_priority)
+        return self._dedupe_values(conn)
 
     @staticmethod
     def _normalize_angle(value: Any) -> str:
@@ -133,8 +112,47 @@ class TypeEncoder:
         return str(value or "").strip()
 
     @staticmethod
-    def _build_key(parts: Iterable[str]) -> str:
-        return ";".join(str(part).strip() for part in parts if str(part).strip())
+    def _flatten_key_parts(parts: Iterable[Any]) -> List[str]:
+        flattened: List[str] = []
+        for part in parts:
+            if part in (None, "", []):
+                continue
+            if isinstance(part, list):
+                for item in part:
+                    text = str(item).strip()
+                    if text:
+                        flattened.append(text)
+                continue
+            text = str(part).strip()
+            if text:
+                flattened.append(text)
+        return flattened
+
+    def _build_key(self, parts: Iterable[Any]) -> str:
+        return ";".join(self._flatten_key_parts(parts))
+
+    def _build_key_from_components(
+        self,
+        *,
+        flange_style: str,
+        body: str,
+        angle: str,
+        radius: str,
+        seal: List[str],
+        conn: List[str],
+        manu: List[str],
+    ) -> str:
+        component_map = {
+            "FLANGE_STYLE": flange_style,
+            "BODY": body,
+            "ANGLE": angle,
+            "RADIUS": radius,
+            "SEAL": seal,
+            "CONN": conn,
+            "MANU": manu,
+        }
+        ordered_parts = [component_map.get(key, "") for key in self.type_key_order]
+        return self._build_key(ordered_parts)
 
     def _build_lookup_keys(
         self,
@@ -143,14 +161,22 @@ class TypeEncoder:
         body: str,
         angle: str,
         radius: str,
-        seal: str,
-        conn: str,
-        manu: str,
+        seal: List[str],
+        conn: List[str],
+        manu: List[str],
     ) -> List[str]:
-        key = self._build_key([flange_style, body, angle, radius, seal, conn, manu])
+        key = self._build_key_from_components(
+            flange_style=flange_style,
+            body=body,
+            angle=angle,
+            radius=radius,
+            seal=seal,
+            conn=conn,
+            manu=manu,
+        )
         return [key] if key else []
 
-    def _resolve_by_rules(self, *, flange_style: str, body: str, angle: str, radius: str, seal: str, conn: str, manu: str) -> str:
+    def _resolve_by_rules(self, *, flange_style: str, body: str, angle: str, radius: str, seal: List[str], conn: List[str], manu: List[str]) -> str:
         flange_style_codes = self._get_dict(self.rule_config.get("flange_style_codes"))
         body_codes = self._get_dict(self.rule_config.get("body_codes"))
         geometry_body_codes = self._get_dict(self.rule_config.get("geometry_body_codes"))
@@ -186,10 +212,11 @@ class TypeEncoder:
             if not base_code:
                 return ""
 
-        if manu:
+        if len(manu) == 1:
             body_override = self._get_dict(body_manu_overrides.get(body))
-            if manu in body_override:
-                override_code = str(body_override[manu]).strip()
+            manu_value = manu[0]
+            if manu_value in body_override:
+                override_code = str(body_override[manu_value]).strip()
                 return f"{flange_prefix}{override_code}" if override_code else ""
 
         implicit_conn_values = {
@@ -197,28 +224,27 @@ class TypeEncoder:
             for item in self._as_list(body_implicit_conn.get(body))
             if str(item).strip()
         }
-        if conn and conn in implicit_conn_values:
-            conn = ""
+        conn = [item for item in conn if item not in implicit_conn_values]
 
-        seal_suffix = ""
-        if seal:
-            if seal not in seal_codes:
+        seal_suffix_parts: List[str] = []
+        for seal_value in seal:
+            if seal_value not in seal_codes:
                 return ""
-            seal_suffix = str(seal_codes[seal]).strip()
+            seal_suffix_parts.append(str(seal_codes[seal_value]).strip())
 
-        conn_suffix = ""
-        if conn:
-            if conn not in conn_codes:
+        conn_suffix_parts: List[str] = []
+        for conn_value in conn:
+            if conn_value not in conn_codes:
                 return ""
-            conn_suffix = str(conn_codes[conn]).strip()
+            conn_suffix_parts.append(str(conn_codes[conn_value]).strip())
 
-        manu_suffix = ""
-        if manu:
-            if manu not in manu_codes:
+        manu_suffix_parts: List[str] = []
+        for manu_value in manu:
+            if manu_value not in manu_codes:
                 return ""
-            manu_suffix = str(manu_codes[manu]).strip()
+            manu_suffix_parts.append(str(manu_codes[manu_value]).strip())
 
-        return f"{flange_prefix}{base_code}{seal_suffix}{conn_suffix}{manu_suffix}"
+        return f"{flange_prefix}{base_code}{''.join(seal_suffix_parts)}{''.join(conn_suffix_parts)}{''.join(manu_suffix_parts)}"
 
     def encode(self, type_dict: Dict[str, Any]) -> TypeEncodingResult:
         flange_style = self._normalize_flange_style(type_dict.get("FLANGE_STYLE", ""))
@@ -228,10 +254,7 @@ class TypeEncoder:
         radius = self._normalize_radius(geometry.get("RADIUS", ""))
         manu = self._normalize_manu(self._as_list(type_dict.get("MANU")))
         conn = self._normalize_conn(self._as_list(type_dict.get("CONN")))
-        seal = self._as_list(type_dict.get("SEAL"))
-        seal_value = self._first_nonempty(seal)
-        conn_value = self._first_nonempty(conn)
-        manu_value = self._first_nonempty(manu)
+        seal = self._dedupe_values(self._as_list(type_dict.get("SEAL")))
 
         result = TypeEncodingResult(flange_style=flange_style, body=body, angle=angle, radius=radius, manu=manu, conn=conn, seal=seal)
         if not body:
@@ -243,9 +266,9 @@ class TypeEncoder:
             body=body,
             angle=angle,
             radius=radius,
-            seal=seal_value,
-            conn=conn_value,
-            manu=manu_value,
+            seal=seal,
+            conn=conn,
+            manu=manu,
         )
         result.tried_keys = lookup_keys
         for key in lookup_keys:
@@ -270,16 +293,24 @@ class TypeEncoder:
             body=body,
             angle=angle,
             radius=radius,
-            seal=seal_value,
-            conn=conn_value,
-            manu=manu_value,
+            seal=seal,
+            conn=conn,
+            manu=manu,
         )
         if code:
             result.code = code
             result.resolved = True
             result.strategy = "rule_mapping"
             result.reason = "matched_rule_mapping"
-            result.matched_key = self._build_key([flange_style, body, angle, radius, seal_value, conn_value, manu_value])
+            result.matched_key = self._build_key_from_components(
+                flange_style=flange_style,
+                body=body,
+                angle=angle,
+                radius=radius,
+                seal=seal,
+                conn=conn,
+                manu=manu,
+            )
             return result
 
         result.strategy = "unresolved"

@@ -1,6 +1,15 @@
 # TYPE 规则编码表
 # 放基础码和可复用碎片码。
 
+type_key_order:
+  - FLANGE_STYLE
+  - BODY
+  - ANGLE
+  - RADIUS
+  - SEAL
+  - CONN
+  - MANU
+
 flange_style_codes:
   FLANGED: F
   LAP_JOINT: LF
@@ -180,26 +189,3 @@ manu_codes:
   HFW: W
   EFW: W
   SMLS: ""
-
-manu_priority:
-  - SMLS
-  - DSAWH
-  - DSAWL
-  - DSAW
-  - SAWH
-  - SAWL
-  - SAW
-  - ERW
-  - HFW
-  - EFW
-  - WELDED
-
-conn_priority:
-  - MNPT
-  - FNPT
-  - MTE
-  - FTE
-  - NPT
-  - THD
-  - SO
-  - SW

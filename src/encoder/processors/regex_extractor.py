@@ -4,8 +4,9 @@
 """
 import re
 import yaml
+from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Tuple, Optional
 from dataclasses import dataclass
 
 
@@ -54,6 +55,7 @@ class RegexExtractor:
         """编译正则表达式模式"""
         self.patterns: Dict[str, List[Tuple[str, re.Pattern]]] = {}
         self.aliases: Dict[str, Dict[str, str]] = {}  # 别名转换映射
+        self.resolution_rules: Dict[str, Dict[str, Any]] = {}
 
         def _has_cjk(text: str) -> bool:
             return bool(re.search(r'[\u4e00-\u9fff]', text))
@@ -124,6 +126,9 @@ class RegexExtractor:
                 aliases = config.get('aliases', {})
                 if aliases:
                     self.aliases[label] = {k.upper(): v.upper() for k, v in aliases.items()}
+                resolution = config.get('resolution', {})
+                if isinstance(resolution, dict) and resolution:
+                    self.resolution_rules[label] = resolution
             else:
                 # 旧格式：直接是关键词列表
                 keywords = config
@@ -134,6 +139,90 @@ class RegexExtractor:
                         re.IGNORECASE
                     )
                     self.patterns[label].append((keyword, pattern))
+
+    @staticmethod
+    def _result_identity(result: ExtractionResult) -> str:
+        text = str(result.code or result.value or "").strip()
+        return text.upper()
+
+    def _apply_resolution_rules(self, results: List[ExtractionResult]) -> List[ExtractionResult]:
+        if not results:
+            return results
+
+        grouped: Dict[str, List[ExtractionResult]] = defaultdict(list)
+        label_order: List[str] = []
+        for result in results:
+            if result.label not in grouped:
+                label_order.append(result.label)
+            grouped[result.label].append(result)
+
+        resolved: List[ExtractionResult] = []
+        for label in label_order:
+            label_results = grouped[label]
+            resolution = self.resolution_rules.get(label) or {}
+            if not resolution:
+                resolved.extend(label_results)
+                continue
+
+            kept = list(label_results)
+            suppress_rules = resolution.get("suppress_rules", [])
+            for rule in suppress_rules:
+                if not isinstance(rule, dict):
+                    continue
+                when_any = {
+                    str(item).strip().upper()
+                    for item in (rule.get("when_any") or [])
+                    if str(item).strip()
+                }
+                when_all = {
+                    str(item).strip().upper()
+                    for item in (rule.get("when_all") or [])
+                    if str(item).strip()
+                }
+                suppress = {
+                    str(item).strip().upper()
+                    for item in (rule.get("suppress") or [])
+                    if str(item).strip()
+                }
+                if not suppress:
+                    continue
+
+                current_identities = {self._result_identity(item) for item in kept}
+                any_hit = not when_any or bool(current_identities & when_any)
+                all_hit = not when_all or when_all.issubset(current_identities)
+                if not (any_hit and all_hit):
+                    continue
+
+                kept = [
+                    item for item in kept
+                    if self._result_identity(item) not in suppress
+                ]
+
+            resolved.extend(kept)
+        return resolved
+
+    def resolve_values(self, label: str, values: List[str]) -> List[str]:
+        """对已有值列表应用同一套 resolution 规则，保持原顺序。"""
+        normalized_values: List[str] = []
+        for value in values:
+            text = str(value or '').strip()
+            if text and text not in normalized_values:
+                normalized_values.append(text)
+        if not normalized_values:
+            return []
+
+        pseudo_results = [
+            ExtractionResult(
+                label=label,
+                value=text,
+                code=text,
+                start=index,
+                end=index + len(text),
+            )
+            for index, text in enumerate(normalized_values)
+        ]
+        resolved = self._apply_resolution_rules(pseudo_results)
+        return [str(item.code or item.value or '').strip() for item in resolved if str(item.code or item.value or '').strip()]
     
     def _normalize_standard_grade(self, value: str) -> str:
         """
@@ -270,8 +359,8 @@ class RegexExtractor:
                         break
             if not is_substring:
                 filtered.append(r)
-        
-        return filtered
+
+        return self._apply_resolution_rules(filtered)
     
     def extract_by_label(self, text: str, label: str, exclude_ranges: List[Tuple[int, int]] = None) -> List[ExtractionResult]:
         """

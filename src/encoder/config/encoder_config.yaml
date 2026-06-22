@@ -289,6 +289,11 @@ regex_extraction:
       DOUBLE-LIP: Double-lip
       DOUBLE LIP: Double-lip
       双唇: Double-lip
+    resolution:
+      suppress_rules:
+        # 命中更具体的环连接面后，压掉泛化 RJ
+        - when_any: [RTJ, FLRJ]
+          suppress: [RJ]
   
   # CONN 连接/端部结构 - 基于 pipe_code_mapping.yaml 中已有的关键词
   CONN:
@@ -319,6 +324,17 @@ regex_extraction:
       承插焊: SW
       插焊: SW
       承插: SW
+    resolution:
+      suppress_rules:
+        # 命中更具体的内/外螺纹后，压掉通用 NPT / THD / FTE / MTE
+        - when_any: [FNPT, MNPT, NPTF, NPTM]
+          suppress: [NPT, THD, FTE, MTE]
+        # 命中 FTE / MTE 时，压掉更泛化的 NPT
+        - when_any: [FTE, MTE]
+          suppress: [NPT, THD]
+        # 命中 NPT 时，不再额外补 THD
+        - when_any: [NPT]
+          suppress: [THD]
   # MANU 工艺 - 基于 pipe_code_mapping.yaml 中已有的关键词
   MANU:
     keywords_loose:
@@ -337,3 +353,10 @@ regex_extraction:
       - 钢板制
     aliases:
       钢板制: WELDED
+    resolution:
+      suppress_rules:
+        # 命中更具体的 SAW 变体后，压掉泛化 SAW
+        - when_any: [DSAWL, DSAWH]
+          suppress: [DSAW]
+        - when_any: [ DSAWL, DSAWH, SAWL, SAWH, LSAW ]
+          suppress: [ SAW ]

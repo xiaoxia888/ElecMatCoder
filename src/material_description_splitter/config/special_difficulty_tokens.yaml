@@ -15,6 +15,7 @@ groups:
     reason: 命中特殊密封/连接描述
     tokens:
       - token: 双唇
+      - token: 突面
       - token: DOUBLE-LIP
       - token: DOUBLE LIP
 
