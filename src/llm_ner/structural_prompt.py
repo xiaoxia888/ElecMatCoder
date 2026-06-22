@@ -259,6 +259,7 @@ SIZE_FIELD_RULES_TEXT_V3 = """
    - 公称直径：DN40、DN100、DN150等
    - **异径规格**：DN300xDN200、250x40等（必须保留两个尺寸）
    - **数字-SCH 规格硬约束**：若出现 `数字-SCH...`、`数字-STD`、`数字-XS`、`数字-XXS`、`数字-S40S` 等“数字-壁厚等级”结构，其中前面的数字视为公称直径，必须提取到 `specification` 并标准化为 `DN数字`；后面的 `SCH/STD/XS/XXS/S40S` 等写入 `wall_thickness`；该前置数字绝不能写入 `material`。例如：`20-SCH40S` → `specification=DN20`，`wall_thickness=SCH40S`
+   - **英制/NPS 单值硬约束**：当描述主体明显是英文管子场景（如出现 `PIPE`、`TUBE`、`CS PIPE`、`SS PIPE`、`SMLS PIPE` 等），且出现“裸整数/分数英制值 + SCH/STD/XS/XXS/SxxS”结构（如 `PIPE 1 SCH160`、`PIPE 3/4 SCH80`、`CS PIPE 2 STD`），若该尺寸值前后没有显式 `DN/OD/φ` 锚点，则该尺寸必须优先视为 `INCH/NPS` 证据，不得改判为 `DN`。例如 `CS PIPE 1 SCH160 ...` 中规格应理解为 `1`（INCH），不是 `DN1`。
    - 螺栓规格：M20x100、M16x90等
    - **重要**：对于异径部件，必须提取两个尺寸，格式为"左x右"，并且**严格按原描述中出现的顺序输出（左到右）**，不要根据大小做排序/纠正
    - **强制约束**：φ60.3Xφ48.3必须提取为"60.3x48.3"，不能只提取一个尺寸
@@ -394,6 +395,7 @@ SIZE_EXAMPLES_TEXT_V3 = """
 - `3"*DN65` → `SIZE_ITEMS=[{"type":"INCH","value":"3"},{"type":"DN","value":"65"}]`, `LENGTH=""`
 - `2 in` → `SIZE_ITEMS=[{"type":"INCH","value":"2"}]`, `LENGTH=""`
 - `8 x 6 in` → `SIZE_ITEMS=[{"type":"INCH","value":"8"},{"type":"INCH","value":"6"}]`, `LENGTH=""`
+- `CS PIPE 1 SCH160 ASTM A106 Gr.B,ASME B36.10M,HPS` → `SIZE_ITEMS=[{"type":"INCH","value":"1"}]`, `LENGTH=""`
 - `WN 250-150 RF` → `SIZE_ITEMS=[{"type":"DN","value":"250"}]`, `LENGTH=""`
 - `DN200, L=3m` → `SIZE_ITEMS=[{"type":"DN","value":"200"}]`, `LENGTH="3000"`
 """.strip()

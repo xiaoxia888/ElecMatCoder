@@ -611,8 +611,17 @@ class StandardProcessor:
 
     @staticmethod
     def _extract_numeric_segments(text: str) -> Tuple[int, ...]:
-        segments = re.findall(r'\d+', str(text or ''))
-        return tuple(int(segment) for segment in segments)
+        """
+        按“数字逐位”提取排序键，而不是把连续数字整体转成整数。
+
+        业务规则要求：同前缀规范按数字一位一位比较。
+        例如：
+        - EN1092-1  -> (1, 0, 9, 2, 1)
+        - EN10222-5 -> (1, 0, 2, 2, 2, 5)
+        则 EN10222-5 应排在 EN1092-1 前。
+        """
+        digits = re.findall(r'\d', str(text or ''))
+        return tuple(int(digit) for digit in digits)
 
     @classmethod
     def _sort_category_bucket(cls, category: str) -> int:
