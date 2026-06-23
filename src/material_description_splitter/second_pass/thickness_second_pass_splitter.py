@@ -30,6 +30,23 @@ class ThicknessSecondPassSplitter:
         decimal = text.split(".", 1)[1].rstrip("0")
         return len(decimal) > 2
 
+    @staticmethod
+    def _dedupe_items(items: list[Any]) -> list[Any]:
+        result: list[Any] = []
+        seen: set[tuple[str, str, tuple[str, ...], str]] = set()
+        for item in items:
+            key = (
+                str(getattr(item, "field", "") or "").strip().upper(),
+                str(getattr(item, "value", "") or "").strip().upper(),
+                tuple(str(v or "").strip().upper() for v in (getattr(item, "values", None) or [])),
+                str(getattr(item, "raw", "") or "").strip().upper(),
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+            result.append(item)
+        return result
+
     def _render_thickness_result(self, thickness_result: Any) -> str:
         texts = self.matcher._normalize_values(thickness_result)
         return " ; ".join(texts)
@@ -77,8 +94,10 @@ class ThicknessSecondPassSplitter:
                 consumed_spans=initial_consumed,
             )
 
-        if len(items) >= 3:
-            item_text = " | ".join(item.raw for item in items)
+        unique_items = self._dedupe_items(items)
+
+        if len(unique_items) >= 3:
+            item_text = " | ".join(item.raw for item in unique_items)
             return ThicknessSecondPassResult(
                 text=clean_text,
                 thickness_result=clean_result,

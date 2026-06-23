@@ -58,6 +58,7 @@ class SizeProcessor:
     _instance: 'SizeProcessor' = None
     _nps_to_dn_mapping: dict = None
     _common_dn_values: set = None
+    _pressure_suffix_values: set = None
     STRUCTURED_SUBTYPES = ("DN", "OD", "INCH")
     LARGE_OD_THRESHOLD_MM = 355.6
     
@@ -72,6 +73,7 @@ class SizeProcessor:
         self._od_candidate_rows = {}
         self._nps_to_dn_mapping = {}
         self._common_dn_values = set()
+        self._pressure_suffix_values = set()
         self._load_od_mapping_for_instance()
         self._load_nps_mapping_for_instance()
 
@@ -118,10 +120,20 @@ class SizeProcessor:
             with open(self.nps_config_path, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
             size_config = config.get('size_processing', {})
+            pressure_config = config.get('pressure_processing', {})
             nps_config = size_config.get('nps_to_dn', {})
             self._nps_to_dn_mapping = {str(k): int(v) for k, v in nps_config.items()}
             self._common_dn_values = {
                 int(v) for v in size_config.get('common_dn_values', [])
+                if str(v).strip()
+            }
+            self._pressure_suffix_values = {
+                str(v).strip()
+                for v in pressure_config.get('class_values', [])
+                if str(v).strip()
+            } | {
+                str(v).strip()
+                for v in pressure_config.get('pn_values', [])
                 if str(v).strip()
             }
         except Exception as e:
@@ -1175,6 +1187,18 @@ class SizeProcessor:
                     return True
             return False
 
+        def _looks_like_flange_pressure_suffix(second_span: Tuple[int, int], second_value: str) -> bool:
+            if not second_value or second_value not in self._pressure_suffix_values:
+                return False
+            right_text = normalized[second_span[1]:]
+            return bool(
+                re.match(
+                    r'^\s*(?:#\s*)?(?:RF|FF|RTJ|RJ|MFM|FM|MF|LM)',
+                    right_text,
+                    re.IGNORECASE,
+                )
+            )
+
         cn_range_pattern = re.compile(
             r'长度\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:MM|mm)?\s*[~\-]\s*(\d+(?:\.\d+)?)\s*(?:MM|mm)?',
             re.IGNORECASE,
@@ -1279,8 +1303,9 @@ class SizeProcessor:
             _add_ordered_item("DN", first_value, m.span(1))
             if "." not in second and self._is_common_dn_integer(second):
                 second_value = self._normalize_number_text(second)
-                _add_unique(dn_values, second_value)
-                _add_ordered_item("DN", second_value, m.span(2))
+                if not _looks_like_flange_pressure_suffix(m.span(2), second_value):
+                    _add_unique(dn_values, second_value)
+                    _add_ordered_item("DN", second_value, m.span(2))
             consumed_pair_spans.append(span)
             _record(m.group(0), span)
 

@@ -415,6 +415,23 @@ class ThicknessProcessor:
         normalized: str,
         blocked_spans: List[Tuple[int, int]],
     ) -> Dict[str, Any]:
+        temperature_parenthetical_pattern = re.compile(
+            r'(?i)'
+            r'(?:'
+            r'SCH[.\s]*(?:XXS|XS|STD|\d+S?)|'
+            r'S-(?:XXS|XS|STD|\d+S?)|'
+            r'S\d+S?|'
+            r'\d+S|'
+            r'(?:THK|T|壁厚)\s*[:：=]?\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|'
+            r'\d+(?:\.\d+)?\s*(?:MM|毫米)'
+            r')'
+            r'(?=\s*\(\s*-?\d+(?:\.\d+)?\s*(?:℃|°C|C)\s*\))'
+        )
+        effective_blocked_spans = list(blocked_spans)
+        effective_blocked_spans.extend(
+            (m.start(), m.end()) for m in temperature_parenthetical_pattern.finditer(normalized)
+        )
+
         schedule_parts: List[str] = []
         mm_parts: List[str] = []
         ordered_items: List[Dict[str, Any]] = []
@@ -432,7 +449,7 @@ class ThicknessProcessor:
                 ordered_items.append(candidate)
 
         def _overlaps_blocked(span: Tuple[int, int]) -> bool:
-            for start, end in blocked_spans:
+            for start, end in effective_blocked_spans:
                 if span[0] < end and start < span[1]:
                     return True
             return False

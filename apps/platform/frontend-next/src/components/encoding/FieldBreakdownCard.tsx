@@ -38,7 +38,7 @@ function getEncodeSourceTag(field: FieldPayload | undefined) {
   const code = String(field?.stage2_output?.code ?? '').trim()
   if (!code) return ''
   const source = String(field?.encode_confidence_v2?.source ?? '').trim().toLowerCase()
-  return source === 'llm_fallback' ? '模型' : '规则'
+  return source === 'llm_fallback' ? '模型' : ''
 }
 
 export function FieldBreakdownCard({ result }: FieldBreakdownCardProps) {
