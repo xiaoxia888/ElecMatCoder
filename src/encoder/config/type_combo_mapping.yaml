@@ -4,6 +4,7 @@
 
 FN:
   - 螺纹法兰;NPT
+  - 螺纹法兰;SCRD
   - 螺纹法兰;NPT;RF
   - 螺纹法兰;FF;NPT
   - 螺纹法兰;LF;NPT
@@ -116,11 +117,13 @@ FFN:
 
 45ELN:
   - 弯头;45;NPT
+  - 弯头;45;SCRD
   - 弯头;45;LR;NPT
   - 弯头;45;1.5D;NPT
 
 90ELN:
   - 弯头;90;NPT
+  - 弯头;90;SCRD
   - 弯头;90;LR;NPT
   - 弯头;90;1.5D;NPT
 
@@ -152,12 +155,17 @@ DCPFN:
 
 DCPN:
   - 双头管箍;NPT
+  - 双头管箍;SCRD
 
 DCPFT:
   - 双头管箍;FTE
 
+FSOJ:
+  - 夹套法兰;RF;SO
+  - 夹套法兰;SO
 RDCPN:
   - 异径双头管箍;NPT
+  - 异径双头管箍;SCRD
 
 RDCPFN:
   - 同心异径双口管箍;FNPT

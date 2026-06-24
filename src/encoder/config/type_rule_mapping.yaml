@@ -35,6 +35,7 @@ body_codes:
   松套法兰: LF
   异径法兰: RF
   孔板对焊法兰: ORF
+  夹套法兰: FJ
   带颈对焊夹套法兰: FJ
   带颈平焊夹套法兰: FSOJ
   夹套盲法兰: BFJ
@@ -144,11 +145,12 @@ seal_codes:
   RTJ: RJ
   MFM: MFM
   LM: LM
-  MF: MF
+  MF: M
   FM: FM
   M: M
   LF: LF
   FLRJ: RJ
+  SERRATED: SERR
 
 conn_codes:
   SO: SO
@@ -162,6 +164,7 @@ conn_codes:
   SW: S
   TBE: N
   GROOVED: G
+  SCRD: N
 
 body_implicit_conn:
   带颈平焊法兰:

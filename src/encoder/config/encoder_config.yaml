@@ -279,6 +279,7 @@ regex_extraction:
       - MF
       - FM
       - LF
+      - SERRATED
     keywords_loose:
       - FLRJ        # Flat Ring Joint 平面环连接面
       - DOUBLE-LIP
@@ -328,13 +329,13 @@ regex_extraction:
       suppress_rules:
         # 命中更具体的内/外螺纹后，压掉通用 NPT / THD / FTE / MTE
         - when_any: [FNPT, MNPT, NPTF, NPTM]
-          suppress: [NPT, THD, FTE, MTE]
+          suppress: [NPT, THD, FTE, MTE, SCRD]
         # 命中 FTE / MTE 时，压掉更泛化的 NPT
         - when_any: [FTE, MTE]
-          suppress: [NPT, THD]
+          suppress: [NPT, THD,SCRD]
         # 命中 NPT 时，不再额外补 THD
         - when_any: [NPT]
-          suppress: [THD]
+          suppress: [THD,SCRD]
   # MANU 工艺 - 基于 pipe_code_mapping.yaml 中已有的关键词
   MANU:
     keywords_loose:

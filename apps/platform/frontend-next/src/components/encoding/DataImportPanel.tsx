@@ -5,7 +5,7 @@ import { parseExcel } from '@/lib/import-export'
 
 interface DataImportPanelProps {
   hasData: boolean
-  onImport: (rows: Record<string, unknown>[], column: string, fileName: string) => void
+  onImport: (rows: Record<string, unknown>[], column: string, fileName: string, projectColumn?: string) => void
 }
 
 export function DataImportPanel({ onImport }: DataImportPanelProps) {
@@ -13,6 +13,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   const [rows, setRows] = useState<Record<string, unknown>[]>([])
   const [columns, setColumns] = useState<string[]>([])
   const [selectedColumn, setSelectedColumn] = useState('')
+  const [selectedProjectColumn, setSelectedProjectColumn] = useState('')
   const [fileName, setFileName] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState('')
@@ -30,10 +31,16 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
       setRows(parsed.rows)
       setColumns(parsed.columns)
       const autoColumn = parsed.columns.find((item) => item.includes('描述')) || parsed.columns[0] || ''
+      const autoProjectColumn = parsed.columns.find((item) => /项目|工程|project/i.test(item)) || ''
       setSelectedColumn(autoColumn)
+      setSelectedProjectColumn(autoProjectColumn)
       setIsDialogOpen(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : '文件解析失败')
+    } finally {
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
     }
   }
 
@@ -43,7 +50,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
 
   function handleConfirmImport() {
     if (!selectedColumn || rows.length === 0) return
-    onImport(rows, selectedColumn, fileName)
+    onImport(rows, selectedColumn, fileName, selectedProjectColumn)
     setIsDialogOpen(false)
   }
 
@@ -119,6 +126,24 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                     onChange={(event) => setSelectedColumn(event.target.value)}
                   >
                     {columns.length === 0 && <option value="">材料描述</option>}
+                    {columns.map((column) => (
+                      <option key={column} value={column}>
+                        {column}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                </div>
+              </div>
+              <div>
+                <div className="mb-2 text-[15px] font-semibold text-ink">项目名称列</div>
+                <div className="relative">
+                  <select
+                    className="h-12 w-full appearance-none rounded-[14px] border border-line bg-white px-4 pr-10 text-sm text-ink outline-none focus:border-accent"
+                    value={selectedProjectColumn}
+                    onChange={(event) => setSelectedProjectColumn(event.target.value)}
+                  >
+                    <option value="">不指定（可选）</option>
                     {columns.map((column) => (
                       <option key={column} value={column}>
                         {column}

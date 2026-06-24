@@ -1,4 +1,4 @@
-import { Boxes } from 'lucide-react'
+import { Boxes, LoaderCircle } from 'lucide-react'
 import { BatchActionsCard } from '@/components/encoding/BatchActionsCard'
 import { CodeResultCard } from '@/components/encoding/CodeResultCard'
 import { DataImportPanel } from '@/components/encoding/DataImportPanel'
@@ -35,67 +35,78 @@ export function EncodingWorkspace() {
       </header>
 
       <div className="min-h-0 flex-1 overflow-hidden bg-canvas px-4 py-3">
-        <div className="grid h-full min-h-0 grid-cols-[300px_minmax(0,1fr)_340px] gap-3">
+        <div className="relative h-full min-h-0">
+          <div className="grid h-full min-h-0 grid-cols-[300px_minmax(0,1fr)_340px] gap-3">
           {/* 第一列：控制区 */}
-          <aside className="flex min-h-0 flex-col gap-3 overflow-hidden">
-            <div className="shrink-0">
-              <DataImportPanel hasData={workspace.dataList.length > 0} onImport={workspace.importRows} />
-            </div>
-            <BatchActionsCard
-              tasks={workspace.tasks}
-              activeTaskId={workspace.activeTaskId}
-              onSelectTask={workspace.selectTask}
-              canStart={workspace.dataList.length > 0}
-              isRunning={workspace.isEncodingBatch}
-              isStopping={workspace.isStoppingBatch}
-              maxConcurrent={workspace.maxConcurrent}
-              defaultMaxConcurrent={workspace.defaultMaxConcurrent}
-              onConcurrentChange={workspace.updateMaxConcurrent}
-              onStartBatch={workspace.createBatchJob}
-              onStopBatch={workspace.cancelBatchJob}
-            />
-            <ExportCard dataList={workspace.dataList} results={workspace.results} />
-          </aside>
-
-          {/* 第二列：详情 */}
-          <main className="flex min-h-0 flex-col gap-3 overflow-hidden">
-            <div className="shrink-0">
-              <DescriptionCard
-                currentItem={workspace.currentItem}
-                currentResult={workspace.currentResult}
-                dataCount={workspace.dataList.length}
-                currentIndex={workspace.currentIndex}
-                isEncodingSingle={workspace.isEncodingSingle}
-                onReencode={workspace.encodeCurrentItem}
-                onPrev={workspace.goPrev}
-                onNext={workspace.goNext}
-                onJump={workspace.goTo}
+            <aside className="flex min-h-0 flex-col gap-3 overflow-hidden">
+              <div className="shrink-0">
+                <DataImportPanel hasData={workspace.dataList.length > 0} onImport={workspace.importRows} />
+              </div>
+              <BatchActionsCard
+                tasks={workspace.tasks}
+                activeTaskId={workspace.activeTaskId}
+                onSelectTask={workspace.selectTask}
+                canStart={workspace.dataList.length > 0}
+                isRunning={workspace.isEncodingBatch}
+                isStopping={workspace.isStoppingBatch}
+                maxConcurrent={workspace.maxConcurrent}
+                defaultMaxConcurrent={workspace.defaultMaxConcurrent}
+                onConcurrentChange={workspace.updateMaxConcurrent}
+                onStartBatch={workspace.createBatchJob}
+                onStopBatch={workspace.cancelBatchJob}
               />
-            </div>
-            <div className="shrink-0">
-              <CodeResultCard result={workspace.currentResult} />
-            </div>
-            <div className="min-h-0 flex-1">
-              <FieldBreakdownCard result={workspace.currentResult} />
-            </div>
-            <div className="shrink-0">
-              <RoutingResultCard result={workspace.currentResult} />
-            </div>
-          </main>
+              <ExportCard dataList={workspace.dataList} results={workspace.results} />
+            </aside>
 
-          {/* 第三列：数据列表 */}
-          <aside className="min-h-0 overflow-hidden">
-            <DataListPanel
-              dataList={workspace.filteredDataList}
-              allItems={workspace.dataList}
-              currentIndex={workspace.currentIndex}
-              filter={workspace.filter}
-              onFilterChange={workspace.setFilter}
-              onSelect={workspace.setCurrentIndex}
-              getItemStatus={workspace.getItemStatus}
-              getItemDifficulty={workspace.getItemDifficulty}
-            />
-          </aside>
+            {/* 第二列：详情 */}
+            <main className="flex min-h-0 flex-col gap-3 overflow-hidden">
+              <div className="shrink-0">
+                <DescriptionCard
+                  currentItem={workspace.currentItem}
+                  currentResult={workspace.currentResult}
+                  dataCount={workspace.dataList.length}
+                  currentIndex={workspace.currentIndex}
+                  isEncodingSingle={workspace.isEncodingSingle}
+                  onReencode={workspace.encodeCurrentItem}
+                  onPrev={workspace.goPrev}
+                  onNext={workspace.goNext}
+                  onJump={workspace.goTo}
+                />
+              </div>
+              <div className="shrink-0">
+                <CodeResultCard result={workspace.currentResult} />
+              </div>
+              <div className="min-h-0 flex-1">
+                <FieldBreakdownCard result={workspace.currentResult} />
+              </div>
+              <div className="shrink-0">
+                <RoutingResultCard result={workspace.currentResult} />
+              </div>
+            </main>
+
+            {/* 第三列：数据列表 */}
+            <aside className="min-h-0 overflow-hidden">
+              <DataListPanel
+                dataList={workspace.filteredDataList}
+                allItems={workspace.dataList}
+                currentIndex={workspace.currentIndex}
+                filter={workspace.filter}
+                onFilterChange={workspace.setFilter}
+                onSelect={workspace.setCurrentIndex}
+                getItemStatus={workspace.getItemStatus}
+                getItemDifficulty={workspace.getItemDifficulty}
+              />
+            </aside>
+          </div>
+
+          {workspace.isTaskLoading && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[20px] bg-white/72 backdrop-blur-[2px]">
+              <div className="flex items-center gap-3 rounded-[16px] border border-line bg-white px-5 py-3 shadow-panel">
+                <LoaderCircle className="h-5 w-5 animate-spin text-accent" />
+                <div className="text-sm font-medium text-ink">正在加载任务数据...</div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

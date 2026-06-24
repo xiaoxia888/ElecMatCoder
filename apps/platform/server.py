@@ -307,6 +307,14 @@ async def _batch_job_mark_finished(job: Dict[str, Any], status: str, error: str 
     await asyncio.to_thread(_persist_job_meta, job)
 
 
+def _refresh_batch_job_runtime(job: Dict[str, Any], *, now: Optional[float] = None) -> None:
+    """刷新运行中任务的耗时，供每条进度更新时复用。"""
+    timestamp = float(now) if now is not None else _utc_ts()
+    job["updated_at"] = timestamp
+    started_at = job.get("started_at")
+    job["duration_seconds"] = max(0.0, timestamp - float(started_at)) if started_at else None
+
+
 async def _run_batch_job(job_id: str) -> None:
     async with _batch_job_lock:
         job = _batch_jobs.get(job_id)
@@ -414,8 +422,9 @@ async def _run_batch_job(job_id: str) -> None:
                         current_job["success_count"] = int(current_job.get("success_count", 0) or 0) + 1
                     if converted and converted.get("need_review"):
                         current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
-                    current_job["updated_at"] = _utc_ts()
+                    _refresh_batch_job_runtime(current_job)
                     snapshot = _batch_job_public(current_job)
+                await asyncio.to_thread(_persist_job_meta, current_job)
                 await _batch_job_emit(job, {
                     "type": "progress",
                     "index": client_index,
@@ -441,8 +450,9 @@ async def _run_batch_job(job_id: str) -> None:
                         return
                     current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
                     current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
-                    current_job["updated_at"] = _utc_ts()
+                    _refresh_batch_job_runtime(current_job)
                     snapshot = _batch_job_public(current_job)
+                await asyncio.to_thread(_persist_job_meta, current_job)
                 await _batch_job_emit(job, {
                     "type": "progress",
                     "index": client_index,
@@ -494,8 +504,9 @@ async def _run_batch_job(job_id: str) -> None:
                     return
                 current_job["success_count"] = final_success_count
                 current_job["review_count"] = final_review_count
-                current_job["updated_at"] = _utc_ts()
+                _refresh_batch_job_runtime(current_job)
                 snapshot = _batch_job_public(current_job)
+            await asyncio.to_thread(_persist_job_meta, current_job)
             await _batch_job_emit(job, {
                 "type": "finalize",
                 "index": client_index,

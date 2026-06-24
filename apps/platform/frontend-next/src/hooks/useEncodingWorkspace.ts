@@ -5,12 +5,18 @@ import { getDifficultyLabel } from '@/lib/formatters'
 import { resolveProjectName } from '@/lib/import-export'
 import type { BatchJobEvent, BatchJobSummary, EncodingResult, ImportedRow, TaskInfo } from '@/types/encoding'
 
-function normalizeImportedRows(rows: Record<string, unknown>[], column: string): ImportedRow[] {
+function normalizeImportedRows(
+  rows: Record<string, unknown>[],
+  column: string,
+  projectColumn?: string,
+): ImportedRow[] {
   return rows
     .map((row, index) => ({
       index,
       text: String(row[column] ?? '').trim(),
-      projectName: resolveProjectName(row),
+      projectName: projectColumn
+        ? String(row[projectColumn] ?? '').trim()
+        : resolveProjectName(row),
       rawRow: row,
     }))
     .filter((item) => item.text)
@@ -37,6 +43,7 @@ export function useEncodingWorkspace() {
   const [isEncodingSingle, setIsEncodingSingle] = useState(false)
   const [isEncodingBatch, setIsEncodingBatch] = useState(false)
   const [isStoppingBatch, setIsStoppingBatch] = useState(false)
+  const [isTaskLoading, setIsTaskLoading] = useState(false)
   const [activeJob, setActiveJob] = useState<BatchJobSummary | null>(null)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
@@ -269,6 +276,7 @@ export function useEncodingWorkspace() {
   // 点击任务卡片：加载该任务的数据（运行中则订阅实时进度）
   async function loadTask(id: string) {
     if (id === 'local') {
+      setIsTaskLoading(false)
       setActiveTaskId('local')
       setTaskName(localTaskName)
       setDataList(localDataList)
@@ -277,10 +285,8 @@ export function useEncodingWorkspace() {
       return
     }
     if (id === activeTaskId && (dataList.length > 0 || Object.keys(results).length > 0)) return
+    setIsTaskLoading(true)
     setActiveTaskId(id)
-    setResults({})
-    setDataList([])
-    setCurrentIndex(-1)
     try {
       const res = await api.getBatchJob(id)
       if (!res.job || activeTaskIdRef.current !== id) return
@@ -294,11 +300,20 @@ export function useEncodingWorkspace() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : '加载任务失败')
+    } finally {
+      if (activeTaskIdRef.current === id) {
+        setIsTaskLoading(false)
+      }
     }
   }
 
-  function importRows(rows: Record<string, unknown>[], column: string, fileName = '') {
-    const normalized = normalizeImportedRows(rows, column)
+  function importRows(
+    rows: Record<string, unknown>[],
+    column: string,
+    fileName = '',
+    projectColumn = '',
+  ) {
+    const normalized = normalizeImportedRows(rows, column, projectColumn || undefined)
     const nextIndex = normalized.length > 0 ? 0 : -1
     setLocalDataList(normalized)
     setLocalResults({})
@@ -313,6 +328,7 @@ export function useEncodingWorkspace() {
     setNotice(`已导入 ${normalized.length} 条数据`)
     setError('')
     clearStream()
+    setIsTaskLoading(false)
   }
 
   async function encodeCurrentItem() {
@@ -479,6 +495,7 @@ export function useEncodingWorkspace() {
     isEncodingSingle,
     isEncodingBatch,
     isStoppingBatch,
+    isTaskLoading,
     activeJob,
     progress,
     tasks,
