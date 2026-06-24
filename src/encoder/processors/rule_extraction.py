@@ -10,6 +10,7 @@ import yaml
 from .pressure_processor import PressureProcessor, RulePressureExtraction
 from .size_processor import RuleSizeExtraction, SizeProcessor
 from .thickness_processor import RuleThicknessExtraction, ThicknessProcessor
+from .weak_fallback_processor import WeakFallbackProcessor
 
 
 _OD_NUMERIC_PAIR_RE = re.compile(
@@ -360,6 +361,7 @@ def extract_size_and_thickness_by_rules(
     size_processor: Optional[SizeProcessor] = None,
     thickness_processor: Optional[ThicknessProcessor] = None,
     pressure_processor: Optional[PressureProcessor] = None,
+    weak_fallback_processor: Optional[WeakFallbackProcessor] = None,
     *,
     apply_residual_guard: bool = True,
 ) -> RuleExtractionResult:
@@ -376,6 +378,10 @@ def extract_size_and_thickness_by_rules(
     size_processor = size_processor or SizeProcessor()
     thickness_processor = thickness_processor or ThicknessProcessor(enable_rule_layered=False)
     pressure_processor = pressure_processor or PressureProcessor()
+    weak_fallback_processor = weak_fallback_processor or WeakFallbackProcessor(
+        size_processor=size_processor,
+        thickness_processor=thickness_processor,
+    )
 
     size_result = size_processor.extract_by_rules(text)
     od_pair_decisions = _classify_od_pair_decisions(str(text or ""), size_result, size_processor)
@@ -389,6 +395,22 @@ def extract_size_and_thickness_by_rules(
     thickness_result = thickness_processor.extract_by_rules(
         text,
         size_context=size_result,
+        blocked_spans=thickness_blocked_spans,
+    )
+    size_result = weak_fallback_processor.apply_size_tail_dn_fallback(
+        text,
+        size_result,
+        blocked_spans=list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans),
+    )
+    thickness_blocked_spans = list(getattr(size_result, "consumed_spans", []) or size_result.matched_spans)
+    for decision in od_pair_decisions:
+        if decision.action == "treat_as_size_pair" and decision.second_value_span not in thickness_blocked_spans:
+            thickness_blocked_spans.append(decision.second_value_span)
+        elif decision.action == "keep_as_thickness" and decision.second_value_span in thickness_blocked_spans:
+            thickness_blocked_spans.remove(decision.second_value_span)
+    thickness_result = weak_fallback_processor.apply_thickness_decimal_mm_fallback(
+        text,
+        thickness_result,
         blocked_spans=thickness_blocked_spans,
     )
     pressure_blocked_spans = thickness_blocked_spans + list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans)

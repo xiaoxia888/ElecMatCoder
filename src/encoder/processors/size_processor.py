@@ -1731,13 +1731,6 @@ class SizeProcessor:
         if dn_values or od_values or inch_values:
             return
 
-        tail_dn_block = self._extract_tail_dn_fallback_block(normalized)
-        if tail_dn_block:
-            dn_value = self._normalize_number_text(tail_dn_block["dn"])
-            _add_unique(dn_values, dn_value)
-            _add_ordered_item("DN", dn_value, tail_dn_block["span"])
-            _record(tail_dn_block["raw"], tail_dn_block["span"])
-
     @staticmethod
     def _has_complex_composite_size(text: str) -> bool:
         """
@@ -1862,20 +1855,26 @@ class SizeProcessor:
     def _extract_tail_dn_fallback_block(self, text: str) -> Optional[Dict[str, Any]]:
         """
         最低优先级兜底：
-        若描述末尾存在一个裸整数，且该整数属于 common_dn_values，
-        则把它视为一个疑似 DN。
+        仅当描述末尾满足以下白名单形态之一时，才把末尾整数视为疑似 DN：
+        1. 字母/汉字 + 至少一个空格 + 数字
+        2. 逗号 + 可选空格 + 数字
 
         例：
         - PIPE / WELDED / ASME B36.19M SCH5S / A312 TP304 / BE / POLISHING 50
+        - 材料描述,DN 200
         """
         if not self._common_dn_values:
             return None
 
-        match = re.search(r'(?<![A-Za-z0-9./])(\d+)\s*$', str(text or ""))
+        source = str(text or "")
+        match = (
+            re.search(r'([A-Za-z\u4e00-\u9fff])\s+(\d+)\s*$', source)
+            or re.search(r'([,，])\s*(\d+)\s*$', source)
+        )
         if not match:
             return None
 
-        raw_value = self._normalize_number_text(match.group(1))
+        raw_value = self._normalize_number_text(match.group(2))
         try:
             numeric_value = int(float(raw_value))
         except Exception:
@@ -1887,7 +1886,7 @@ class SizeProcessor:
         return {
             "raw": match.group(0).strip(),
             "dn": raw_value,
-            "span": match.span(1),
+            "span": match.span(2),
         }
 
     def process_multi(self, values: Any, original_text: str = "") -> str:
