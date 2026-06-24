@@ -1272,9 +1272,9 @@ class SizeProcessor:
 
         dn_pair_mm_pair_pattern = re.compile(
             r'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*DN\s*'
-            r'(' + '|'.join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) + r')'
+            r'(\d+(?:\.\d+)?)'
             r'(?=\d+\.\d+\s*MM(?:\b|\s*[xX×/,;)]))'
-        ) if self._common_dn_values else None
+        )
         consumed_pair_spans: List[Tuple[int, int]] = []
         if dn_pair_mm_pair_pattern:
             for m in dn_pair_mm_pair_pattern.finditer(normalized):
@@ -1310,25 +1310,31 @@ class SizeProcessor:
             _record(m.group(0), span)
 
         dn_pair_pattern = re.compile(
-            rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*(?:DN\s*)?({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})(?!\.\d)(?!\s*(?:MM|毫米))'
+            rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*(?:(?:DN\s*(\d+(?:\.\d+)?))|({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"}))(?!\.\d)(?!\s*(?:MM|毫米))'
         )
         for m in dn_pair_pattern.finditer(normalized):
-            first, second = m.group(1), m.group(2)
+            first = m.group(1)
+            second_strong = m.group(2)
+            second_weak = m.group(3)
             span = (m.start(), m.end())
             if any(start <= span[0] and span[1] <= end for start, end in consumed_pair_spans):
                 continue
             first_value = self._normalize_number_text(first)
             _add_unique(dn_values, first_value)
             _add_ordered_item("DN", first_value, m.span(1))
-            if '.' not in second:
-                second_value = self._normalize_number_text(second)
+            if second_strong and '.' not in second_strong:
+                second_value = self._normalize_number_text(second_strong)
                 _add_unique(dn_values, second_value)
                 _add_ordered_item("DN", second_value, m.span(2))
+            elif second_weak and '.' not in second_weak:
+                second_value = self._normalize_number_text(second_weak)
+                _add_unique(dn_values, second_value)
+                _add_ordered_item("DN", second_value, m.span(3))
             consumed_pair_spans.append(span)
             _record(m.group(0), span)
 
         dn_single_pattern = re.compile(
-            rf'(?i)(?<![A-Z0-9])DN\s*({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})(?!\.\d)'
+            r'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)(?!\.\d)'
         )
         for m in dn_single_pattern.finditer(normalized):
             span = (m.start(), m.end())

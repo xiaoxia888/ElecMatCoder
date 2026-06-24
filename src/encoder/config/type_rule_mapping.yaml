@@ -141,6 +141,7 @@ radius_codes:
 seal_codes:
   RJ: RJ
   RF: ""
+  FLRF: ""
   FF: FF
   RTJ: RJ
   MFM: MFM

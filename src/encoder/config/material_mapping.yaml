@@ -13,8 +13,9 @@ value_mapping:
   - B60
   Q245RCE:
   - Q245RCE
-  PP:
+  FRPP:
   - FRPP
+  - PP
   15CrMoG:
   - 15CrMoG
   15CrMoIII:
@@ -478,7 +479,6 @@ unmapped_values:
 - 16MnD Gr.II
 - 16MnD Gr.I
 - ASTM B564 (UNS N06600)
-- FRPP
 - ASTM A387 Gr.11
 - ASTM B167 N06600
 - S31603/20

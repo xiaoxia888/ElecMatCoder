@@ -533,18 +533,22 @@ class ThicknessProcessor:
         # SCH5/SCH5S、SCH10/SCH10S ... SCH160/SCH160S 对应的弱写法。
         # 这样可以避免把 S3408 这类标准残片误当壁厚。
         weak_schedule_prefixed_token, weak_schedule_s_dash_token, weak_schedule_numeric_suffix_token, weak_schedule_token = self._weak_schedule_patterns()
-        schedule_boundary_conflict_pattern = re.compile(
-            rf'(?i)(?:{sch_token}|{s_dash_token})(?=(?:[0-9]|[A-WYZ]))'
-        )
-        if _mark_invalid_schedule_boundary_conflict(schedule_boundary_conflict_pattern):
-            return {
-                "schedule": [],
-                "mm": [],
-                "ordered_items": [],
-                "matched_texts": [],
-                "matched_spans": [],
-                "invalid": invalid,
-            }
+        schedule_boundary_conflict_patterns = [
+            re.compile(r'(?i)SCH[.\s]*(?>\d+)(?=\d)'),
+            re.compile(r'(?i)SCH[.\s]*(?>\d+)S(?=[A-Za-z])'),
+            re.compile(r'(?i)SCH[.\s]*(?:STD|XS|XXS)(?=[A-Za-z0-9])'),
+            re.compile(r'(?i)S-(?:\d+S?|STD|XS|XXS)(?=[A-Za-z0-9])'),
+        ]
+        for schedule_boundary_conflict_pattern in schedule_boundary_conflict_patterns:
+            if _mark_invalid_schedule_boundary_conflict(schedule_boundary_conflict_pattern):
+                return {
+                    "schedule": [],
+                    "mm": [],
+                    "ordered_items": [],
+                    "matched_texts": [],
+                    "matched_spans": [],
+                    "invalid": invalid,
+                }
 
         schedule_operand = rf'(?:{sch_token}|{s_dash_token}|{weak_schedule_token})(?:\s*\([LS]\))?'
         mm_operand = r'(?:(?:THK|T|壁厚)\s*[:：=]?\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S\s*[:：=]\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S-\d+\.\d+\s*(?:MM|毫米)?|\d+(?:\.\d+)?\s*(?:MM|毫米))(?:\s*\([LS]\))?'
@@ -723,6 +727,9 @@ class ThicknessProcessor:
         # - 一旦命中，后续规则不能再从该片段内部重复提取。
         schedule_left_boundary = r'(?:(?<=^)|(?<=[^A-Za-z])|(?<=[xX×*]))'
         schedule_right_boundary = r'(?=$|[^A-Za-z0-9]|[xX×*/])'
+        single_schedule_left_boundary = r'(?:(?<=^)|(?<=[^A-Za-z]))'
+        sch_numeric_right_boundary = r'(?=$|[^0-9])'
+        sch_numeric_s_right_boundary = r'(?=$|[^A-Za-z])'
         compact_schedule_pair_patterns = [
             re.compile(
                 rf'(?i){schedule_left_boundary}({sch_token}\s*[xX×]\s*{sch_token}){schedule_right_boundary}'
@@ -773,25 +780,34 @@ class ThicknessProcessor:
                 _record(m.group(0), span)
 
         # 2) 强规则：单个 SCH... / S-... token
-        strong_schedule_token_pattern = re.compile(
-            rf'(?i){schedule_left_boundary}(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)){schedule_right_boundary}'
-        )
-        for m in strong_schedule_token_pattern.finditer(normalized):
-            span = (m.start(), m.end())
-            if _overlaps_blocked(span):
-                continue
-            if _overlaps_recorded(span):
-                continue
-            if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
-                continue
-            if _mark_invalid_if_needed(schedule_raw=m.group(0)):
-                continue
-            part = self._convert_single(m.group(0)).strip()
-            if part:
-                _add_unique(schedule_parts, part)
-                _add_ordered("SCHEDULE", part, part, span)
-                consumed_schedule_spans.append(span)
-                _record(m.group(0), span)
+        strong_schedule_token_patterns = [
+            re.compile(
+                rf'(?i){single_schedule_left_boundary}(?:SCH[.\s]*\d+S){sch_numeric_s_right_boundary}'
+            ),
+            re.compile(
+                rf'(?i){single_schedule_left_boundary}(?:SCH[.\s]*\d+){sch_numeric_right_boundary}'
+            ),
+            re.compile(
+                rf'(?i){single_schedule_left_boundary}(?:SCH[.\s]*(?:STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)){schedule_right_boundary}'
+            ),
+        ]
+        for strong_schedule_token_pattern in strong_schedule_token_patterns:
+            for m in strong_schedule_token_pattern.finditer(normalized):
+                span = (m.start(), m.end())
+                if _overlaps_blocked(span):
+                    continue
+                if _overlaps_recorded(span):
+                    continue
+                if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
+                    continue
+                if _mark_invalid_if_needed(schedule_raw=m.group(0)):
+                    continue
+                part = self._convert_single(m.group(0)).strip()
+                if part:
+                    _add_unique(schedule_parts, part)
+                    _add_ordered("SCHEDULE", part, part, span)
+                    consumed_schedule_spans.append(span)
+                    _record(m.group(0), span)
 
         # 3) 弱规则拆分：
         # - XS / XXS / STD：弱 token，但可以在无强 schedule 的情况下直接使用
