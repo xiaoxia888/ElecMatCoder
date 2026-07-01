@@ -65,6 +65,7 @@ class FieldResultPayload:
     stage1_raw: Stage1RawPayload
     stage2_input: Stage2InputPayload
     stage2_output: Stage2OutputPayload
+    encode_confidence_v2: dict[str, Any] = field(default_factory=dict)
     confidence_detail: ConfidenceDetail = field(default_factory=ConfidenceDetail)
     status: FieldStatus = field(default_factory=FieldStatus)
 
@@ -74,6 +75,7 @@ class FieldResultPayload:
             "stage1_raw": self.stage1_raw.to_dict(),
             "stage2_input": self.stage2_input.to_dict(),
             "stage2_output": self.stage2_output.to_dict(),
+            "encode_confidence_v2": dict(self.encode_confidence_v2 or {}),
             "confidence_detail": self.confidence_detail.to_dict(),
             "status": self.status.to_dict(),
         }

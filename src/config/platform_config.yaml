@@ -147,6 +147,9 @@ encoding:
       - TYPE
       - MATERIAL
       - STANDARD
+#      - THICKNESS
+#      - SIZE
+#      - PRESSURE
 
 # ==================== 语义匹配配置 ====================
 semantic_matching:

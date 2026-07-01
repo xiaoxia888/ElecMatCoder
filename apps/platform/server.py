@@ -59,10 +59,36 @@ except ImportError:  # pragma: no cover - 以包方式导入时的兜底
     from apps.platform.batch_store import BatchJobStore
 
 # 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+class _CompactLogFormatter(logging.Formatter):
+    """压缩 logger 名称，减少平台日志横向噪音。"""
+
+    def format(self, record: logging.LogRecord) -> str:
+        name = str(record.name or "")
+        if name == "__main__":
+            record.shortname = "platform"
+        else:
+            parts = [part for part in name.split(".") if part]
+            record.shortname = ".".join(parts[-2:]) if len(parts) >= 2 else name
+        return super().format(record)
+
+
+_root_handler = logging.StreamHandler()
+_root_handler.setFormatter(
+    _CompactLogFormatter(
+        fmt="%(asctime)s | %(levelname)s | %(shortname)s | %(message)s",
+        datefmt="%H:%M:%S",
+    )
 )
+logging.basicConfig(level=logging.INFO, handlers=[_root_handler], force=True)
+
+for _logger_name, _level in (
+    ("uvicorn.access", logging.WARNING),
+    ("httpx", logging.WARNING),
+    ("httpcore", logging.WARNING),
+    ("urllib3", logging.WARNING),
+):
+    logging.getLogger(_logger_name).setLevel(_level)
+
 logger = logging.getLogger(__name__)
 
 H3YUN_REVIEW_TASK_SCHEMA_CODE = "D148357c862f0c8cdfa41418c55cef288f8d83c"

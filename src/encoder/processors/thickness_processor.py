@@ -26,7 +26,7 @@ class ThicknessProcessor:
     # 仅用于最弱的 `S数字` / `S-数字` / `数字S` 规则，避免把标准号残片误识别成壁厚。
     WEAK_SCHEDULE_BASE_VALUES = ("5", "10", "20", "30", "40", "60", "80", "100", "120", "140", "160")
     # 只有这些完整 token 存在合法的 `...S` 形式。
-    WEAK_SCHEDULE_SUFFIX_S_TOKENS = ("5S", "10S", "20S", "40S", "30S", "60S" "80S", "120S", "160S")
+    WEAK_SCHEDULE_SUFFIX_S_TOKENS = ("5S", "10S", "20S", "40S", "30S", "60S", "80S", "120S", "160S")
     
     # 分隔符正则（用于异径规格）
     SEPARATOR_PATTERN = re.compile(r'\s*[xX*×/,]\s*')
@@ -537,7 +537,10 @@ class ThicknessProcessor:
             re.compile(r'(?i)SCH[.\s]*(?>\d+)(?=\d)'),
             re.compile(r'(?i)SCH[.\s]*(?>\d+)S(?=[A-Za-z])'),
             re.compile(r'(?i)SCH[.\s]*(?:STD|XS|XXS)(?=[A-Za-z0-9])'),
-            re.compile(r'(?i)S-(?:\d+S?|STD|XS|XXS)(?=[A-Za-z0-9])'),
+            # 合法的 S-10S / S-40S 不应被误判成粘连脏串；
+            # 对 `S-40CL300` / `S-40PN16` 这类“壁厚词 + 压力词”粘连，交给后续专门规则处理。
+            re.compile(r'(?i)S-\d+(?=(?!(?:CL|CLASS|PN))[A-RT-Za-rt-z])'),
+            re.compile(r'(?i)S-(?:STD|XS|XXS)(?=[A-Za-z0-9])'),
         ]
         for schedule_boundary_conflict_pattern in schedule_boundary_conflict_patterns:
             if _mark_invalid_schedule_boundary_conflict(schedule_boundary_conflict_pattern):
@@ -778,6 +781,31 @@ class ThicknessProcessor:
                     _add_ordered("SCHEDULE", part, part, span)
                 consumed_schedule_spans.append(span)
                 _record(m.group(0), span)
+
+        # 1.5) 强规则：壁厚词与压力词粘连
+        # 例如 S-40CL300 / SCH40CL150 / STDCL3000。
+        glued_schedule_pressure_pattern = re.compile(
+            rf'(?i){single_schedule_left_boundary}'
+            rf'((?:{sch_token}|{s_dash_token}|STD|XS|XXS|{weak_schedule_token}))'
+            rf'(?=(?:\s*CL(?:ASS)?[.\s-]*\d|\s*C\s*\d|\s*PN\s*\d|\s*\d+\s*(?:LBS?|#)))'
+        )
+        for m in glued_schedule_pressure_pattern.finditer(normalized):
+            span = (m.start(1), m.end(1))
+            if _overlaps_blocked(span):
+                continue
+            if _overlaps_recorded(span):
+                continue
+            if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
+                continue
+            raw_value = m.group(1)
+            if _mark_invalid_if_needed(schedule_raw=raw_value):
+                continue
+            part = self._convert_single(raw_value).strip()
+            if part:
+                _add_unique(schedule_parts, part)
+                _add_ordered("SCHEDULE", part, part, span)
+                consumed_schedule_spans.append(span)
+                _record(raw_value, span)
 
         # 2) 强规则：单个 SCH... / S-... token
         strong_schedule_token_patterns = [

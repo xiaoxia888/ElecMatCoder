@@ -80,6 +80,10 @@ YRLT:
 FFN:
   - 螺纹法兰;FNPT
   - 螺纹法兰;RF;FNPT
+NMN:
+  - 单头螺纹短节;MNPT
+NN:
+  - 单头螺纹短节
 
 45ES:
   - 弯头;45;SR

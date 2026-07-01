@@ -317,7 +317,11 @@ class LlmPipeEncoder(PipeEncoderBase):
             },
         )
 
-        if not final_code and self._allow_llm_fallback('SIZE'):
+        has_meaningful_input = any(
+            not self._is_effectively_empty_field_value('SIZE', value)
+            for value in values
+        )
+        if not final_code and has_meaningful_input and self._allow_llm_fallback('SIZE'):
             fallback_input = self._build_fallback_input_text(values)
             code, sim, used_model_conf = self._encode_with_llm_meta('SIZE', fallback_input)
             if code:
@@ -352,6 +356,8 @@ class LlmPipeEncoder(PipeEncoderBase):
         )
 
     def _encode_thickness_value(self, value: Any, original_text: str = "") -> str:
+        if self._is_effectively_empty_field_value('THICKNESS', value):
+            return ""
         normalized = self.thickness_processor.process(value, original_text=original_text)
         if normalized:
             return normalized
@@ -401,6 +407,16 @@ class LlmPipeEncoder(PipeEncoderBase):
                     'similarity': 1.0, 'is_exact': True, 'need_review': False, 'candidates': []}
 
         if field_type == 'THICKNESS':
+            if self._is_effectively_empty_field_value('THICKNESS', value):
+                return {
+                    'original': '',
+                    'matched': '',
+                    'code': '',
+                    'similarity': 1.0,
+                    'is_exact': True,
+                    'need_review': False,
+                    'candidates': [],
+                }
             normalized = self.thickness_processor.process(value)
             if not normalized:
                 if self._allow_llm_fallback('THICKNESS'):
@@ -460,9 +476,25 @@ class LlmPipeEncoder(PipeEncoderBase):
                         'need_review': not code,
                         'candidates': []
                     }
+                raw_value = str(value or '').strip()
                 return {
-                    'original': value, 'matched': '', 'code': '',
-                    'similarity': 0.0, 'is_exact': True, 'need_review': True, 'candidates': []
+                    'original': raw_value,
+                    'matched': raw_value,
+                    'code': raw_value,
+                    'similarity': 0.0,
+                    'encode_meta': self._make_encode_meta(
+                        source='pressure_processor',
+                        confidence=0.0,
+                        reason='pressure_processor_failed_raw_preserved',
+                        evidence={
+                            'field_type': 'PRESSURE',
+                            'fallback_enabled': False,
+                            'code_present': False,
+                        },
+                    ),
+                    'is_exact': True,
+                    'need_review': True,
+                    'candidates': []
                 }
             return {
                 'original': value, 'matched': normalized, 'code': normalized,

@@ -1586,6 +1586,36 @@
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "WN FLG , 316L SS A182-F316L , CL150 , RF , SCH 40S , B16.5 1.5\"",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"带颈对焊法兰\", \"CONN\": [], \"SEAL\": [\"RF\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "WN Flg., GB/T 12228-A105, RF, PN16, HG/T 20592(A), Galvanized , DN80 S-40",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"带颈对焊法兰\", \"CONN\": [], \"SEAL\": [\"RF\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "Welding Neck Flange, ASTM A105, RF, CL150, ASME B16.5, DN50, SCH40",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"带颈对焊法兰\", \"CONN\": [], \"SEAL\": [\"RF\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "SW Flg, ASTM A105, RF, CL300, ASME B16.5, DN25",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"承插焊法兰\", \"CONN\": [\"SW\"], \"SEAL\": [\"RF\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "Threaded Flange, ASTM A105, RF, CL150, NPT, ASME B16.5, DN25",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"螺纹法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"RF\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "WNFLG A105 RF CL150 ASME B16.5 DN50 SCH40",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"带颈对焊法兰\", \"CONN\": [], \"SEAL\": [\"RF\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "45°对焊斜支管台 DN100×20 SCH40S BW S30408 NB/T47010 GB/T19326Ⅰ",
     "output": "{\"CATEGORY\": \"管件\", \"TYPE\": {\"BODY\": \"斜支管台\", \"GEOMETRY\": {\"ANGLE\": \"45\", \"RADIUS\": \"\"}, \"FLANGE_STYLE\": \"\", \"MANU\": [], \"CONN\": []}}"
   },
@@ -2497,12 +2527,12 @@
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLIND 2\" 150LB RF ASTM A105N B16.5",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [], \"SEAL\": [\"RF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [], \"SEAL\": [\"RF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLIND FLANGE",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [], \"SEAL\": []}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [], \"SEAL\": []}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
@@ -2547,7 +2577,7 @@
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL Flange;CL150;NPT;RF;S30403;GB/T4237;HG/T20615;DN100",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"RF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"RF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
@@ -2852,7 +2882,7 @@
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "FLANGEBL,CL2500,RJ,S31603NB/T47010,SH/T3406",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [], \"SEAL\": [\"RJ\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [], \"SEAL\": [\"RJ\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
@@ -3367,47 +3397,47 @@
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLD FLANGE| DN1000 | CL150 | THD;RF;FNPT | S30403 | NB/T47010;HG/T20623(B) |",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"RF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"RF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "1.名称:BL Flange 2.规格型号:THD;RF;MNPT DN100 CL150 3.材质:ASTM A105 4.标准:GB/T12228;HG/T20615",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"RF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"RF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLIND FLANGE;CL150;THD;RF;ASTM A105;GB/T12228;HG/T20623(B);DN700",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"THD\"], \"SEAL\": [\"RF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"THD\"], \"SEAL\": [\"RF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "法兰盖;CL150;FF;ASTM A105;GB/T12228;HG/T20615;DN100",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [], \"SEAL\": [\"FF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [], \"SEAL\": [\"FF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL Flange| DN100 | CL150 | NPT;FF;FNPT | S30403 | GB/T4237;ASME B16.5 |",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"FF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"FF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "1.名称:BLD FLANGE 2.规格型号:THD;FF;MNPT DN300 CL150 3.材质:ASTM A105 4.标准:GB/T12228;SH/T3406",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"FF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"FF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLD FLANGE;PN16;NPT;FF;ASTM A182 F304L;HG/T20592;DN25",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"FF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"FF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLD FLANGEDN250CL300NPTRJFNPTASTMA105SH/T3406",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"RJ\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"RJ\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL Flange| DN200 | CL600 | NPT;RJ;MNPT | ASTM A350 LF2 NACE | SH/T3406 |",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"RJ\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"RJ\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
@@ -3822,57 +3852,57 @@
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "DN800,盲法兰,CL150,THD;FF,Q245R NACE,GB/T713;HG/T20623(B)",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"THD\"], \"SEAL\": [\"FF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"THD\"], \"SEAL\": [\"FF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL FlangeDN25CL150RTJFNPTCS/PTFEASMEB16.5",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"RTJ\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"RTJ\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLD FLANGE| DN50 | CL150 | NPT;RTJ;MNPT | 20 | SH/T3406 |",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"RTJ\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"RTJ\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "DN600,盲法兰,CL150,NPT;RTJ,Q245R NACE,GB/T713;SH/T3408",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"RTJ\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"RTJ\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL FlangeDN20CL300THDMFMFNPTQ245RGB/T713;HG/T20615",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"MFM\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"MFM\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "1.名称:BL Flange 2.规格型号:MFM;MNPT 2\" CL300 3.材质:06Cr19Ni10 4.标准:HG/T20615;NB/T47010",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"MFM\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"MFM\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "DN25,法兰盖,PN40,NPT;MFM,AISI 316L,DIN EN1092-1",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"MFM\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"NPT\"], \"SEAL\": [\"MFM\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLD FLANGEDN40CL150THDLMFNPTASTMA182Gr.F304LASMEB16.5",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"LM\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"LM\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL Flange| DN150 | CL150 | THD;LM;MNPT | ASTM A105 | ASME B16.5 |",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"LM\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"LM\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BL FlangeDN15PN16NPTLFFNPTASTMA182F304HG/T20592",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"LF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"FNPT\"], \"SEAL\": [\"LF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "BLD FLANGE| DN25 | CL150 | THD;LF;MNPT | ASTM A350 Gr.LF2 | ASME B16.5 |",
-    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"LF\"]}}"
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"盲板法兰\", \"CONN\": [\"MNPT\"], \"SEAL\": [\"LF\"]}}"
   },
   {
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
@@ -4558,5 +4588,40 @@
     "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
     "input": "High Frequency Welded Pipe DN80 SCH40 RF CL150 A106-B",
     "output": "{\"CATEGORY\": \"直管\", \"TYPE\": {\"BODY\": \"直管\", \"FLANGE_STYLE\": \"\", \"MANU\": [\"HFW\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "Cap,Oval,SMLS,BW,A234 WPB,ASME B16.9 SCH40 DN450",
+    "output": "{\"CATEGORY\": \"管件\", \"TYPE\": {\"BODY\": \"管帽\", \"GEOMETRY\": {\"ANGLE\": \"\", \"RADIUS\": \"\"}, \"MANU\": [\"SMLS\"], \"CONN\": []}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "PIPE,EFWL,PE,A358 Gr.304 CL1,ASME B36.10M SCH30 DN400",
+    "output": "{\"CATEGORY\": \"直管\", \"TYPE\": {\"BODY\": \"直管\", \"MANU\": [\"EFW\"]}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "Cap,Oval,SMLS,BW,A234 WPB,ASME B16.9 SCH40 DN50",
+    "output": "{\"CATEGORY\": \"管件\", \"TYPE\": {\"BODY\": \"管帽\", \"GEOMETRY\": {\"ANGLE\": \"\", \"RADIUS\": \"\"}, \"MANU\": [\"SMLS\"], \"CONN\": []}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "异径短节,PE(L)-PE(S),SCH80(L)×SCH80(S),NB/T47008,BTA008-4 20# DN40X25",
+    "output": "{\"CATEGORY\": \"管件\", \"TYPE\": {\"BODY\": \"异径短节\", \"GEOMETRY\": {\"ANGLE\": \"\", \"RADIUS\": \"\"}, \"MANU\": [], \"CONN\": []}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "WN Flg,ASME B16.5,ASTM A182 Gr.F316L,RF/BW End,300 Lbs,, Undefined, S-40S DN150",
+    "output": "{\"CATEGORY\": \"法兰\", \"TYPE\": {\"BODY\": \"带颈对焊法兰\", \"SEAL\": [], \"CONN\": []}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "Red Te,ASME B16.9,ASTM A234 Gr.WPB,BW Ends,Seamless,, S-STD, S-40 DN300x250 CL600",
+    "output": "{\"CATEGORY\": \"管件\", \"TYPE\": {\"BODY\": \"异径三通\", \"GEOMETRY\": {\"ANGLE\": \"\", \"RADIUS\": \"\"}, \"MANU\": [\"SMLS\"], \"CONN\": []}}"
+  },
+  {
+    "instruction": "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。",
+    "input": "Half Coup,ASME B16.11,ASTM A105,SW End,-,3000 Lbs,, Undefined, Undefined DN300x40",
+    "output": "{\"CATEGORY\": \"管件\", \"TYPE\": {\"BODY\": \"半管接头\", \"GEOMETRY\": {\"ANGLE\": \"\", \"RADIUS\": \"\"}, \"MANU\": [], \"CONN\": [\"SW\"]}}"
   }
 ]

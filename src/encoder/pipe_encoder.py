@@ -217,6 +217,7 @@ class PipeEncodingResult:
             stage2_output=Stage2OutputPayload(
                 code=str(_field_obj_get(field_data, "code", "") or "").strip(),
             ),
+            encode_confidence_v2=copy.deepcopy(_field_obj_get(field_data, "encode_confidence_v2", {}) or {}),
             confidence_detail=ConfidenceDetail(
                 stage1=_field_obj_get(field_data, "stage1_confidence", None),
                 stage2=_field_obj_get(field_data, "stage2_confidence", None),
@@ -1139,7 +1140,7 @@ class PipeEncoderBase:
         )
 
     def _normalize_field_value_for_stage2(self, field_type: str, value: Any) -> Any:
-        if value in (None, "", []):
+        if self._is_effectively_empty_field_value(field_type, value):
             return ""
         if field_type == 'TYPE':
             return self._flatten_type_value_for_stage2(value)
@@ -1148,6 +1149,27 @@ class PipeEncoderBase:
         if field_type == 'STANDARD':
             return self._flatten_standard_value_for_stage2(value)
         return value
+
+    @classmethod
+    def _has_meaningful_content(cls, value: Any) -> bool:
+        if value in (None, "", [], {}):
+            return False
+        if isinstance(value, dict):
+            return any(cls._has_meaningful_content(v) for v in value.values())
+        if isinstance(value, list):
+            return any(cls._has_meaningful_content(v) for v in value)
+        return bool(str(value).strip())
+
+    @classmethod
+    def _is_effectively_empty_field_value(cls, field_type: str, value: Any) -> bool:
+        field = str(field_type or "").strip().upper()
+        if value in (None, "", [], {}):
+            return True
+        if field in {"SIZE", "THICKNESS"}:
+            return not cls._has_meaningful_content(value)
+        if field == "PRESSURE":
+            return not cls._has_meaningful_content(value)
+        return False
 
     @staticmethod
     def _extract_explicit_thickness_mm_values(value: Any) -> List[float]:

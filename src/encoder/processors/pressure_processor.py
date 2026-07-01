@@ -86,6 +86,9 @@ class PressureProcessor:
         self.lb_pattern = re.compile(
             r"(?i)(?<![A-Z0-9])(\d+)\s*LB(?:S)?(?![A-Z0-9])"
         )
+        self.reverse_cl_pattern = re.compile(
+            r"(?i)(?<![A-Z0-9])(\d+)\s*CL(?![A-Z0-9])"
+        )
         self.hash_pattern = re.compile(
             rf"(?i)(?<![A-Z0-9])({hash_value_pattern})\s*#(?![A-Z0-9])"
         )
@@ -110,6 +113,7 @@ class PressureProcessor:
         self.pressure_token_pattern = re.compile(
             rf"(?i)("
             rf"CL\s*\.?\s*\d+"
+            rf"|\d+\s*CL"
             rf"|CLASS\s*\d+"
             rf"|C\s*(?:{hash_value_pattern})"
             rf"|\d+\s*LB(?:S)?"
@@ -139,12 +143,12 @@ class PressureProcessor:
             for part in parts:
                 normalized_part = self._normalize_pressure_token(part, allow_prefix=False)
                 if not normalized_part:
-                    return str(value).strip().upper()
+                    return ""
                 if normalized_part not in normalized_parts:
                     normalized_parts.append(normalized_part)
             return "/".join(normalized_parts)
 
-        return str(value).strip().upper()
+        return ""
 
     def extract_by_rules(self, text: str, blocked_spans: Optional[List[Tuple[int, int]]] = None) -> RulePressureExtraction:
         source = str(text or "")
@@ -327,6 +331,10 @@ class PressureProcessor:
             value_part = self._normalize_common_numeric(m.group(1), self.class_values, allow_prefix=allow_prefix)
             return f"C{value_part}" if value_part else ""
         m = re.fullmatch(r"(\d+)\s*LB(?:S)?", upper, re.IGNORECASE)
+        if m:
+            value_part = self._normalize_common_numeric(m.group(1), self.class_values, allow_prefix=False)
+            return f"C{value_part}" if value_part else ""
+        m = self.reverse_cl_pattern.fullmatch(upper)
         if m:
             value_part = self._normalize_common_numeric(m.group(1), self.class_values, allow_prefix=False)
             return f"C{value_part}" if value_part else ""

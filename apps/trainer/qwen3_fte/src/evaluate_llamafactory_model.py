@@ -29,7 +29,7 @@ from typing import Any
 
 python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-1200-编码
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2250-种类
 
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -76,10 +76,17 @@ EXTRACT_INSTRUCTION = (
     "你是一个工业管道材料结构化信息提取助手。"
     "请从材料描述中提取结构化信息，并以 JSON 格式返回。"
 )
+STRUCTURAL_INSTRUCTION = (
+    "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，"
+    "并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。"
+    "LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，"
+    "不要输出 JSON 以外的内容。"
+)
 CODE_INSTRUCTION = "你是工业管道材料字段编码助手。请根据字段类型和原始字段值，输出唯一的标准化编码。只输出编码，不要解释。"
 
 DEFAULT_INSTRUCTIONS = {
     "extract": EXTRACT_INSTRUCTION,
+    "structural": STRUCTURAL_INSTRUCTION,
     "code": CODE_INSTRUCTION,
 }
 
@@ -233,24 +240,32 @@ def expected_to_json(expected: Any) -> dict | None:
 # 评测指标
 # ──────────────────────────────────────────────
 
-def _flatten(obj: Any, prefix: str = "") -> dict[str, Any]:
+def _canonical_scalar(value: Any) -> str:
+    if isinstance(value, dict):
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    if isinstance(value, list):
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return str(value) if value is not None else ""
+
+
+def _flatten(obj: Any, prefix: str = "", *, preserve_list_order: bool = False) -> dict[str, Any]:
     """将嵌套 JSON 拍平为 dot-path → value 的映射。"""
     result = {}
     if isinstance(obj, dict):
         for k, v in obj.items():
-            _flatten(v, f"{prefix}{k}.")
-            result.update(_flatten(v, f"{prefix}{k}."))
+            result.update(_flatten(v, f"{prefix}{k}.", preserve_list_order=preserve_list_order))
     elif isinstance(obj, list):
-        result[prefix.rstrip(".")] = sorted([str(x) for x in obj])
+        items = [_canonical_scalar(x) for x in obj]
+        result[prefix.rstrip(".")] = items if preserve_list_order else sorted(items)
     else:
         result[prefix.rstrip(".")] = str(obj) if obj is not None else ""
     return result
 
 
-def compare_record(expected: dict, predicted: dict) -> dict:
+def compare_record(expected: dict, predicted: dict, *, preserve_list_order: bool = False) -> dict:
     """逐字段对比 expected vs predicted，返回详细结果。"""
-    exp_flat = _flatten(expected)
-    pred_flat = _flatten(predicted)
+    exp_flat = _flatten(expected, preserve_list_order=preserve_list_order)
+    pred_flat = _flatten(predicted, preserve_list_order=preserve_list_order)
 
     all_keys = set(exp_flat.keys()) | set(pred_flat.keys())
     # 过滤掉全空的字段
@@ -402,7 +417,7 @@ def interactive_mode(
         elapsed = time.time() - t0
 
         print(f"\n耗时: {elapsed:.2f}s")
-        if task == "extract":
+        if task in {"extract", "structural"}:
             parsed = parse_json_output(raw_output)
             if parsed:
                 print(json.dumps(parsed, ensure_ascii=False, indent=2))
@@ -561,6 +576,7 @@ def batch_mode(
     max_new_tokens: int = 512,
     temperature: float = 0.0,
     top_p: float = 1.0,
+    preserve_list_order: bool = False,
 ) -> None:
     data = json.loads(test_file.read_text(encoding="utf-8"))
     if max_samples:
@@ -603,7 +619,11 @@ def batch_mode(
             status = "PARSE_FAIL"
         else:
             result["json_parse_fail"] = False
-            result["comparison"] = compare_record(expected, predicted)
+            result["comparison"] = compare_record(
+                expected,
+                predicted,
+                preserve_list_order=preserve_list_order,
+            )
             acc = result["comparison"]["field_accuracy"]
             status = f"ACC={acc:.0%}"
             if acc < 1.0:
@@ -690,7 +710,7 @@ def predict_mode(
         )
         elapsed = time.time() - t0
 
-        if task == "extract":
+        if task in {"extract", "structural"}:
             predicted = parse_json_output(raw_output)
             if predicted is None:
                 fail_count += 1
@@ -751,9 +771,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--task",
-        choices=["extract", "code"],
+        choices=["extract", "structural", "code"],
         default="extract",
-        help="评测任务类型。extract=结构化抽取 JSON；code=字段编码纯文本",
+        help="评测任务类型。extract=通用结构化抽取；structural=尺寸/长度/壁厚/磅级抽取；code=字段编码纯文本",
     )
     parser.add_argument(
         "--code-field",
@@ -850,6 +870,7 @@ def main() -> None:
                 max_new_tokens=max_new_tokens,
                 temperature=args.temperature,
                 top_p=args.top_p,
+                preserve_list_order=args.task == "structural",
             )
     else:
         interactive_mode(

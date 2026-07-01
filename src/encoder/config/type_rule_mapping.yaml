@@ -60,6 +60,7 @@ body_codes:
   同心异径短管: RC
   REDUCING COUPLING: RC
   偏心异径管: RE
+  异径短节: RC
   同心异径短节: RC
   偏心异径短节: RE
   同心异径管接头: RC
@@ -84,6 +85,7 @@ body_codes:
   翻边短节: SE
   管箍: CP
   单口管箍: CP
+  单口异径管箍: CP
   双口管箍: DCP
   双头管箍: DCP
   同心双口管箍: DCP
@@ -152,6 +154,7 @@ seal_codes:
   LF: LF
   FLRJ: RJ
   SERRATED: SERR
+  LMFE: LMFE
 
 conn_codes:
   SO: SO
