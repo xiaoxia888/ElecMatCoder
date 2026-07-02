@@ -16,7 +16,6 @@ apps/trainer/qwen3_fte/output/*
 data/
 outputs/
 wheels/
-scripts/
 models/
 checkpoint/
 
