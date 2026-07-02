@@ -25,13 +25,19 @@ ner:
     top_p: 0.9                         # nucleus sampling 截断阈值；仅在 temperature > 0 ，top_p 的值越高，生成的文本越多样、越有创意；值越低，生成的文本越确定、越保守。
     logprobs_enabled: true             # 是否向 Ollama 请求 logprobs 计算置信度；关闭后通常更快，但抽取置信度会退化为 1.0
     stage1:
-      # 阶段一逻辑：
-      # 1. 大模型提示词先做类别路由
-      # 2. TYPE 根据路由结果走不同专项模型
-      # 3. SIZE / THICKNESS / PRESSURE 走结构提示词
-      # 4. MATERIAL 走共享材质模型
-      # 5. STANDARD 走共享规范模型
-      # 2/3/4/5 在后端并行执行
+      # ======================================================
+      # 阶段一配置说明
+      # ======================================================
+      # 1. 每个字段都可以单独指定自己的模型配置，名字保持直观：
+      #    type_models / material_model / standard_model / size_model / thickness_model / pressure_model
+      # 2. backend 表示使用哪条后端路径。
+      # 3. 与 backend 同名的子块，写该后端自己的参数。
+      # 4. share_group 是“共享一次模型调用”的编排开关：
+      #    只有多个字段真的共用同一个 predictor 时才有意义。
+      #    例如 material_model 和 standard_model 共用一个结构化模型，就可以写同一个 share_group。
+      # 5. 对于当前 SIZE / THICKNESS / PRESSURE 的提示词补提路径，
+      #    虽然底层可能是同一个服务，但仍然是分别发起尺寸/壁厚/磅级请求，
+      #    所以这里先不写 share_group，避免配置语义误导。
       router:
         enabled: false #是否开启分类模型，TYPE 走默认模型
         backend: "hybrid"   # rules / openai_compatible / hybrid
@@ -49,83 +55,134 @@ ner:
         category_schema_path: "src/config/pipe_route_categories.json"
         encodable_categories: ["直管", "法兰", "管件"]
       type_models:
-        # 仅 TYPE 使用分类专项模型；未配置覆盖项时默认复用 qwen3 主模型。
+        # TYPE 按大类分模型。
+        # 如果后续某个 TYPE 模型想和别的字段共用一次调用，也可以直接加 share_group。
         直管: 
-          # model_name: "contract-llm-pipe:q4"
           backend: "hf_lazy_service"
-          service_url: "http://127.0.0.1:8200"
-          model_name: "type"
+          hf_lazy_service:
+            service_url: "http://127.0.0.1:8200"
+            model_name: "type"
           # backend: "transformers"
           # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/pipe"
           # device: "mps"
           # temperature: 0.1
         法兰: 
-          # model_name: "contract-llm-flang:q4"
           backend: "hf_lazy_service"
-          service_url: "http://127.0.0.1:8200"
-          model_name: "type"
+          hf_lazy_service:
+            service_url: "http://127.0.0.1:8200"
+            model_name: "type"
           # backend: "transformers"
           # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/flang"
           # device: "mps"
           # temperature: 0.1
         管件: 
-          # model_name: "contract-llm-fittings:q4"
           backend: "hf_lazy_service"
-          service_url: "http://127.0.0.1:8200"
-          model_name: "type"
-
+          hf_lazy_service:
+            service_url: "http://127.0.0.1:8200"
+            model_name: "type"
           # backend: "transformers"
           # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/fittings"
           # device: "mps"
           # temperature: 0.1
 
       material_model: 
-        # model_name: "contract-llm-material:q4"   # 共享材质模型；为空时复用 qwen3 主模型。
+        # MATERIAL 抽取模型。
+        # 与 standard_model 写同一个 share_group，表示两者共用一次调用。
         backend: "hf_lazy_service"
-        service_url: "http://127.0.0.1:8200"
-        model_name: "material-standard"
-        # ollama_url: "http://117.50.186.20:11434"
+        share_group: "material_standard"
+        hf_lazy_service:
+          service_url: "http://127.0.0.1:8200"
+          model_name: "material-standard"
         # backend: "transformers"
         # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/material"
         # device: "mps"
         # temperature: 0.1
 
       standard_model: 
-        # model_name: "contract-llm-standard:q4"   # 共享规范模型；为空时复用 qwen3 主模型。
+        # STANDARD 抽取模型。
+        # 这里与 material_model 共用同一个结构化模型。
         backend: "hf_lazy_service"
-        service_url: "http://127.0.0.1:8200"
-        # service_url: "http://117.50.190.24:8100"
-        model_name: "material-standard"
-        # ollama_url: "http://117.50.186.20:11434"
+        share_group: "material_standard"
+        hf_lazy_service:
+          service_url: "http://127.0.0.1:8200"
+          model_name: "material-standard"
         # backend: "transformers"
         # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/standard"
         # device: "mps"
         # temperature: 0.1
 
-      structural_prompt:
+      size_model:
+        # SIZE 补提模型。
+        # backend=openai_compatible:
+        #   走提示词补提路径。
+        # backend=hf_lazy_service:
+        #   走本地微调结构字段模型路径。
+        # 当 size_model / thickness_model / pressure_model 写相同 share_group 且配置一致时，
+        # 会共用一次结构字段模型调用，返回 SIZE / THICKNESS / PRESSURE 三个结果。
         enabled: true
-        backend: "openai_compatible"         # ollama / openai_compatible
-        model_name: "MiniMax-M2.5-Q5_K_M-00001-of-00005.gguf"
-        base_url: "http://192.168.31.201:8085/v1"
-        api_key: "ollama-local"
-        
-        # model_name: "MiniMax-M2.5"
-        # base_url: "https://api.minimaxi.com/v1"
-        # api_key: "sk-api-TteHVi8mOEK2jkt7zcZbPlLmgupDF57J67_uBNft-7-Tx2kayyWpu-83oZbRbMilctzD8YT_HwPspXJsQuAyG60yjWsCEhXdvethB_8P4vOe51MZ_7NBfRo"
-        # reasoning_split: true
+        backend: "hf_lazy_service"
+        # share_group 相同且配置完全一致时，三字段共享一次模型调用。
+        # 如果 share_group 相同但配置不一致，启动时会直接报错。
+        share_group: "structural_fields"
+        # openai_compatible:
+        #   prompt_version: "v3"
+        #   model_name: "MiniMax-M2.5-Q5_K_M-00001-of-00005.gguf"
+        #   base_url: "http://192.168.31.201:8085/v1"
+        #   api_key: "ollama-local"
+        #   api: "chat_completions"
+        #   timeout: 60
+        #   temperature: 0.0
+        #   max_tokens: 768
+        #   max_workers: 1
+        hf_lazy_service:
+          service_url: "http://127.0.0.1:8200"
+          model_name: "size-thick-pressure"
+          max_new_tokens: 512
+          temperature: 0.0
 
-        # backend: "ollama"
-        # model_name: "qwen3-4b-0407"
-        # ollama_url: "http://localhost:11434"
-        
-        thickness_prompt_version: "v3"       # v1=现有分层提示词；v2=旧版原子厚度提示词；v3=新版三段提示词（size/thickness/pressure 一起切换）
-        api: "chat_completions"              # openai_compatible 可选: chat_completions / openai-completions
-        timeout: 60
-        temperature: 0.0
-        max_tokens: 768
-        max_workers: 1
+      thickness_model:
+        # THICKNESS 补提模型。
+        enabled: true
+        backend: "hf_lazy_service"
+        share_group: "structural_fields"
+        # openai_compatible:
+        #   prompt_version: "v3"
+        #   model_name: "MiniMax-M2.5-Q5_K_M-00001-of-00005.gguf"
+        #   base_url: "http://192.168.31.201:8085/v1"
+        #   api_key: "ollama-local"
+        #   api: "chat_completions"
+        #   timeout: 60
+        #   temperature: 0.0
+        #   max_tokens: 768
+        #   max_workers: 1
+        hf_lazy_service:
+          service_url: "http://127.0.0.1:8200"
+          model_name: "size-thick-pressure"
+          max_new_tokens: 512
+          temperature: 0.0
+
+      pressure_model:
+        # PRESSURE 补提模型。
+        enabled: true
+        backend: "hf_lazy_service"
+        share_group: "structural_fields"
+        # openai_compatible:
+        #   prompt_version: "v3"
+        #   model_name: "MiniMax-M2.5-Q5_K_M-00001-of-00005.gguf"
+        #   base_url: "http://192.168.31.201:8085/v1"
+        #   api_key: "ollama-local"
+        #   api: "chat_completions"
+        #   timeout: 60
+        #   temperature: 0.0
+        #   max_tokens: 768
+        #   max_workers: 1
+        hf_lazy_service:
+          service_url: "http://127.0.0.1:8200"
+          model_name: "size-thick-pressure"
+          max_new_tokens: 512
+          temperature: 0.0
       structural_rules:
-        enabled: true # 是否开启尺寸壁厚磅级规则器
+        enabled: true # 是否开启尺寸 / 壁厚 / 磅级规则器。规则器始终先跑，模型只补缺失字段。
 # ==================== 编码规则配置 ====================
 encoding:
   # 使用 Qwen3 微调模型统一编码

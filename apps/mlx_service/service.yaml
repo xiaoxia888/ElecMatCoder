@@ -7,7 +7,7 @@ deployment:
 
 service:
   # 最多同时保留几个已加载模型。single 模式需要同时管理 type / material-standard / coder 时建议为 3。
-  max_loaded_models: 3
+  max_loaded_models: 4
   # 模型空闲多久后自动卸载。1800 秒 = 30 分钟；设置为 0 可关闭自动休眠。
   idle_timeout_seconds: 1800
   # 后台检查空闲模型的间隔。60 秒表示最多延迟约一分钟触发卸载。
@@ -20,6 +20,7 @@ single:
     - type
     - material-standard
     - coder
+    - size-thick-pressure
 
 workers:
   type_worker:
@@ -67,6 +68,14 @@ models:
   coder:
     model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-coder-mlx
     instruction: "你是工业管道材料字段编码助手。请根据字段类型和原始字段值，输出唯一的标准化编码。只输出编码，不要解释。"
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    trust_remote_code: true
+  
+  size-thick-pressure:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-size-thick-pressure-mlx
+    instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，不要输出 JSON 以外的内容。"
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0

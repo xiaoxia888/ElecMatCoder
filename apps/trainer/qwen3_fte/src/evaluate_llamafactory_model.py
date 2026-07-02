@@ -28,6 +28,12 @@ from typing import Any
       --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-1200-编码
 
 python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
+  --task structural \
+  --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
+  --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-3000-尺寸
+
+
+python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
       --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2250-种类
 

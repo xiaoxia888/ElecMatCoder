@@ -12,13 +12,17 @@ from __future__ import annotations
 import json
 import logging
 import re
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Optional
 
 import requests
 
 from src.tokenizer_utils.preprocessor import TextPreprocessor
 
+from .llm_http_transport import (
+    call_ollama_chat,
+    call_openai_compatible,
+)
+from .structural_field_output_normalizer import StructuralFieldOutputNormalizer
 from .structural_prompt import (
     get_pressure_system_prompt,
     get_size_length_system_prompt,
@@ -31,12 +35,9 @@ logger = logging.getLogger(__name__)
 class StructuralPromptExtractor:
     """Extract SIZE / THICKNESS / PRESSURE with an instruction-following model."""
 
-    SIZE_KEYS = ("DN", "OD", "INCH", "LENGTH")
-    THICKNESS_KEYS = ("MM", "SCHEDULE", "BWG", "INCH")
-    ITEM_TYPES = {
-        "SIZE_ITEMS": set(SIZE_KEYS),
-        "THICKNESS_ITEMS": set(THICKNESS_KEYS),
-    }
+    SIZE_KEYS = StructuralFieldOutputNormalizer.SIZE_KEYS
+    THICKNESS_KEYS = StructuralFieldOutputNormalizer.THICKNESS_KEYS
+    ITEM_TYPES = StructuralFieldOutputNormalizer.ITEM_TYPES
 
     def __init__(self, config: Dict[str, Any], debug: bool = False):
         self.config = config or {}
@@ -55,15 +56,19 @@ class StructuralPromptExtractor:
         self.max_tokens = int(self.config.get("max_tokens", self.config.get("num_predict", 768)))
         self.max_workers = max(1, int(self.config.get("max_workers", 3)))
         self.reasoning_split = bool(self.config.get("reasoning_split", False))
-        self.thickness_prompt_version = str(self.config.get("thickness_prompt_version", "v1")).strip().lower() or "v1"
-        self.prompt_version = self.thickness_prompt_version
+        self.prompt_version = str(
+            self.config.get("prompt_version")
+            or self.config.get("thickness_prompt_version")
+            or "v1"
+        ).strip().lower() or "v1"
+        self.thickness_prompt_version = self.prompt_version
         self.size_length_prompt = get_size_length_system_prompt(debug=self.debug, version=self.prompt_version)
         self.thickness_prompt = get_thickness_system_prompt(debug=self.debug, version=self.prompt_version)
         self.pressure_prompt = get_pressure_system_prompt(debug=self.debug, version=self.prompt_version)
         self._last_usage: Dict[str, Any] = {}
         self.text_preprocessor = TextPreprocessor()
         if not self.model_name:
-            raise RuntimeError("缺少配置: ner.structural_prompt.model_name")
+            raise RuntimeError("缺少结构字段模型配置: model_name")
 
     def extract(self, text: str) -> Dict[str, Any]:
         return self.extract_with_context(text)
@@ -143,14 +148,7 @@ class StructuralPromptExtractor:
 
     @classmethod
     def empty_result(cls) -> Dict[str, Any]:
-        return {
-            "SIZE": {key: [] for key in cls.SIZE_KEYS},
-            "SIZE_ITEMS": [],
-            "LENGTH": "",
-            "THICKNESS": {key: [] for key in cls.THICKNESS_KEYS},
-            "THICKNESS_ITEMS": [],
-            "PRESSURE": "",
-        }
+        return StructuralFieldOutputNormalizer.empty_result()
 
     def _extract_partials(
         self,
@@ -266,10 +264,36 @@ class StructuralPromptExtractor:
         return merged
 
     def _generate(self, system_prompt: str, user_content: str) -> str:
+        stop = ["\n\n输入：", "\n\n【", "\n【"]
         if self.backend == "ollama":
-            return self._generate_ollama(system_prompt, user_content)
+            response = call_ollama_chat(
+                base_url=self.base_url,
+                model_name=self.model_name,
+                system_prompt=system_prompt,
+                user_content=user_content,
+                timeout=self.timeout,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                stop=stop,
+            )
+            self._last_usage = response.usage
+            return response.text
         if self.backend in {"openai_compatible", "openai"}:
-            return self._generate_openai_compatible(system_prompt, user_content)
+            response = call_openai_compatible(
+                base_url=self.base_url,
+                model_name=self.model_name,
+                system_prompt=system_prompt,
+                user_content=user_content,
+                timeout=self.timeout,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                api=self.api,
+                api_key=self.api_key,
+                stop=stop,
+                reasoning_split=self.reasoning_split,
+            )
+            self._last_usage = response.usage
+            return response.text
         raise RuntimeError(f"不支持的结构字段提示词后端: {self.backend}")
 
     @classmethod
@@ -380,106 +404,6 @@ class StructuralPromptExtractor:
         )
         return pattern.sub(lambda m: f"{m.group(1)}*", raw)
 
-    def _generate_ollama(self, system_prompt: str, user_content: str) -> str:
-        resp = requests.post(
-            f"{self.base_url}/api/chat",
-            json={
-                "model": self.model_name,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content},
-                ],
-                "stream": False,
-                "options": {
-                    "temperature": self.temperature,
-                    "num_predict": self.max_tokens,
-                    "stop": ["\n\n输入：", "\n\n【", "\n【"],
-                },
-            },
-            timeout=self.timeout,
-        )
-        resp.raise_for_status()
-        payload = resp.json()
-        self._last_usage = self._extract_usage(payload)
-        return str(payload.get("message", {}).get("content", "")).strip()
-
-    def _generate_openai_compatible(self, system_prompt: str, user_content: str) -> str:
-        headers = {"Content-Type": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
-
-        if self.api == "openai-completions":
-            prompt = (
-                f"{system_prompt}\n\n"
-                f"{user_content}\n\n"
-                "输出：\n"
-            )
-            resp = requests.post(
-                f"{self.base_url}/completions",
-                headers=headers,
-                json={
-                    "model": self.model_name,
-                    "prompt": prompt,
-                    "temperature": self.temperature,
-                    "max_tokens": self.max_tokens,
-                    "stop": ["\n\n输入：", "\n\n【", "\n【"],
-                },
-                timeout=self.timeout,
-            )
-            resp.raise_for_status()
-            payload = resp.json()
-            self._last_usage = self._extract_usage(payload)
-            choices = payload.get("choices") or []
-            return str((choices[0] if choices else {}).get("text", "")).strip()
-
-        resp = requests.post(
-            f"{self.base_url}/chat/completions",
-            headers=headers,
-            json={
-                "model": self.model_name,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content},
-                ],
-                "temperature": self.temperature,
-                "max_tokens": self.max_tokens,
-                "stop": ["\n\n输入：", "\n\n【", "\n【"],
-                **({"reasoning_split": True} if self.reasoning_split else {}),
-            },
-            timeout=self.timeout,
-        )
-        resp.raise_for_status()
-        payload = resp.json()
-        self._last_usage = self._extract_usage(payload)
-
-        choices = payload.get("choices") or []
-        message = (choices[0] if choices else {}).get("message") or {}
-        return str(message.get("content", "")).strip()
-
-    @staticmethod
-    def _extract_usage(payload: Dict[str, Any]) -> Dict[str, Any]:
-        usage = payload.get("usage") or {}
-        if usage:
-            return {
-                "prompt_tokens": int(usage.get("prompt_tokens", 0) or 0),
-                "completion_tokens": int(usage.get("completion_tokens", 0) or 0),
-                "total_tokens": int(usage.get("total_tokens", 0) or 0),
-            }
-
-        # Ollama 常见字段
-        prompt_eval = payload.get("prompt_eval_count")
-        eval_count = payload.get("eval_count")
-        if prompt_eval is not None or eval_count is not None:
-            prompt_tokens = int(prompt_eval or 0)
-            completion_tokens = int(eval_count or 0)
-            return {
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "total_tokens": prompt_tokens + completion_tokens,
-            }
-
-        return {}
-
     @staticmethod
     def _merge_usage_totals(usage_map: Dict[str, Any]) -> Dict[str, int]:
         prompt_tokens = 0
@@ -547,128 +471,20 @@ class StructuralPromptExtractor:
 
     @classmethod
     def _normalize(cls, parsed: Dict[str, Any]) -> Dict[str, Any]:
-        result = cls.empty_result()
-
-        size = parsed.get("SIZE")
-        if isinstance(size, dict):
-            for key in cls.SIZE_KEYS:
-                result["SIZE"][key] = cls._normalize_list(size.get(key))
-        result["SIZE_ITEMS"] = cls._normalize_items(parsed.get("SIZE_ITEMS"), cls.ITEM_TYPES["SIZE_ITEMS"])
-        top_level_length = str(parsed.get("LENGTH", "") or "").strip()
-        result["LENGTH"] = top_level_length
-        if top_level_length:
-            result["SIZE"]["LENGTH"] = cls._normalize_list([top_level_length])
-            if ("LENGTH", top_level_length) not in {
-                (str(item.get("type", "")).strip().upper(), str(item.get("value", "")).strip())
-                for item in result["SIZE_ITEMS"]
-            }:
-                result["SIZE_ITEMS"].append({"type": "LENGTH", "value": top_level_length})
-        if result["SIZE_ITEMS"]:
-            result["SIZE"] = cls._group_items(result["SIZE_ITEMS"], cls.SIZE_KEYS)
-            result["LENGTH"] = result["SIZE"]["LENGTH"][0] if result["SIZE"]["LENGTH"] else top_level_length
-
-        thickness = parsed.get("THICKNESS")
-        if isinstance(thickness, dict):
-            for key in cls.THICKNESS_KEYS:
-                result["THICKNESS"][key] = cls._normalize_list(thickness.get(key))
-        result["THICKNESS_ITEMS"] = cls._normalize_items(
-            parsed.get("THICKNESS_ITEMS"), cls.ITEM_TYPES["THICKNESS_ITEMS"]
-        )
-        if result["THICKNESS_ITEMS"]:
-            result["THICKNESS"] = cls._group_items(result["THICKNESS_ITEMS"], cls.THICKNESS_KEYS)
-
-        pressure = parsed.get("PRESSURE")
-        result["PRESSURE"] = "" if pressure in (None, [], {}) else str(pressure).strip()
-        return result
+        return StructuralFieldOutputNormalizer.normalize(parsed)
 
     @staticmethod
     def _normalize_list(value: Any) -> List[str]:
-        if value in (None, "", []):
-            return []
-        if not isinstance(value, list):
-            value = [value]
-        result: List[str] = []
-        seen = set()
-        for item in value:
-            if item in (None, ""):
-                continue
-            text = str(item).strip()
-            if not text or text in seen:
-                continue
-            seen.add(text)
-            result.append(text)
-        return result
+        return StructuralFieldOutputNormalizer.normalize_list(value)
 
     @classmethod
     def _normalize_items(cls, value: Any, allowed_types: set[str]) -> List[Dict[str, str]]:
-        if value in (None, "", []):
-            return []
-        if not isinstance(value, list):
-            return []
-        result: List[Dict[str, str]] = []
-        seen = set()
-        for item in value:
-            if not isinstance(item, dict):
-                continue
-            item_type = str(item.get("type", "")).strip().upper()
-            item_value = cls._normalize_item_value(item_type, item.get("value", ""))
-            if not item_type or not item_value or item_type not in allowed_types:
-                continue
-            key = (item_type, item_value)
-            if key in seen:
-                continue
-            seen.add(key)
-            result.append({"type": item_type, "value": item_value})
-        return result
+        return StructuralFieldOutputNormalizer.normalize_items(value, allowed_types)
 
     @staticmethod
     def _normalize_item_value(item_type: str, raw_value: Any) -> str:
-        text = str(raw_value or "").strip()
-        if not text:
-            return ""
-
-        kind = str(item_type or "").strip().upper()
-        normalized = text.replace("”", "\"").replace("“", "\"").replace("″", "\"").strip()
-
-        if kind == "DN":
-            matched = re.fullmatch(r'(?i)DN\s*(\d+(?:\.\d+)?)', normalized)
-            if matched:
-                return matched.group(1)
-            return normalized
-
-        if kind == "OD":
-            matched = re.fullmatch(r'(?i)(?:OD|[ΦφФфØø])\s*(\d+(?:\.\d+)?)', normalized)
-            if matched:
-                return matched.group(1)
-            return normalized
-
-        if kind == "INCH":
-            normalized = re.sub(r'(?i)^NPS\s*', '', normalized)
-            if normalized.endswith('"'):
-                normalized = normalized[:-1].strip()
-            return re.sub(r'\s+', '', normalized)
-
-        if kind == "MM":
-            matched = re.fullmatch(r'(\d+(?:\.\d+)?)(?:\s*MM)?', normalized, flags=re.IGNORECASE)
-            if matched:
-                return matched.group(1)
-            return normalized.upper()
-
-        if kind == "BWG":
-            matched = re.fullmatch(r'(?i)(?:BWG\s*)?(\d+(?:\.\d+)?)', normalized)
-            if matched:
-                return matched.group(1)
-            return normalized.upper()
-
-        return normalized.upper() if kind in {"SCHEDULE", "SERIES"} else normalized
+        return StructuralFieldOutputNormalizer.normalize_item_value(item_type, raw_value)
 
     @staticmethod
     def _group_items(items: List[Dict[str, str]], keys: tuple[str, ...]) -> Dict[str, List[str]]:
-        grouped: Dict[str, List[str]] = {key: [] for key in keys}
-        for item in items:
-            item_type = str(item.get("type", "")).strip().upper()
-            item_value = str(item.get("value", "")).strip()
-            if not item_type or not item_value or item_type not in grouped:
-                continue
-            grouped[item_type].append(item_value)
-        return grouped
+        return StructuralFieldOutputNormalizer.group_items(items, keys)

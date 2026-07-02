@@ -104,7 +104,10 @@ class TextPreprocessor:
         # 例如 S-3. Omm -> S-3. 0mm -> S-3.0mm
         text = self.normalize_decimal_spacing(text)
 
-        # 13. 空白压缩
+        # 13. 对强结构 token 做安全切分，避免与前后脏串粘连
+        text = self.normalize_strong_structural_tokens(text)
+
+        # 14. 空白压缩
         text = self.normalize_whitespace(text)
 
         return text
@@ -305,6 +308,67 @@ class TextPreprocessor:
         text = re.sub(r'(?i)\b(SCH[0-9]+S?)\s+([xX×])\s+(S-[0-9]+S?)\b', r'\1\2\3', text)
 
         return text
+
+    @staticmethod
+    def normalize_strong_structural_tokens(text: str) -> str:
+        """
+        对极强结构 token 做安全切分：如果前后与其他内容粘连，则补空格。
+
+        目标：
+        - H2SSCH30×SCH160 -> H2S SCH30×SCH160
+        - XXXDN300X40YYY -> XXX DN300X40 YYY
+        - A105OD88.9X6.3 -> A105 OD88.9X6.3
+
+        这里只切这类结构非常强、歧义很低的 token，不改 token 内部内容。
+        """
+        if not text:
+            return ""
+
+        def _is_wordlike_neighbor(ch: str) -> bool:
+            return ch.isalnum() or ("\u4e00" <= ch <= "\u9fff")
+
+        strong_patterns = (
+            # 尺寸：DN数字x数字 / DN数字
+            re.compile(r'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?'),
+            re.compile(r'(?i)DN\s*\d+(?:\.\d+)?(?!\s*[xX×*]\s*(?:DN\s*)?\d)'),
+            # 尺寸：OD/外径/Φ 数字 x 数字 / 单值
+            re.compile(r'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:(?:OD|外径|Φ)\s*)?\d+(?:\.\d+)?(?:\s*(?:MM|毫米))?'),
+            re.compile(r'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?(?!\s*[xX×*]\s*(?:(?:OD|外径|Φ)\s*)?\d)'),
+            # 壁厚：SCH数字 / SCH数字S / SCH...xSCH...
+            re.compile(r'(?i)SCH[.\s-]*\d+S?\s*[xX×*]\s*SCH[.\s-]*\d+S?'),
+            re.compile(r'(?i)SCH[.\s-]*\d+S?(?!\s*[xX×*]\s*SCH[.\s-]*\d+S?)'),
+            # 壁厚：S-数字 / S-数字S / S-...xS-...
+            re.compile(r'(?i)S-\d+S?\s*[xX×*]\s*S-\d+S?'),
+            re.compile(r'(?i)S-\d+S?(?!\s*[xX×*]\s*S-\d+S?)'),
+        )
+
+        matches: list[tuple[int, int]] = []
+        for pattern in strong_patterns:
+            for match in pattern.finditer(text):
+                start, end = match.span()
+                matches.append((start, end))
+
+        if not matches:
+            return text
+
+        # 同一起点优先保留更长命中的 token，并丢弃被更长 token 覆盖的短命中。
+        matches.sort(key=lambda item: (item[0], -(item[1] - item[0])))
+        selected: list[tuple[int, int]] = []
+        for start, end in matches:
+            if selected and start < selected[-1][1]:
+                continue
+            selected.append((start, end))
+
+        result = text
+        for start, end in reversed(selected):
+            prefix = ""
+            suffix = ""
+            if start > 0 and _is_wordlike_neighbor(result[start - 1]) and not result[start - 1].isspace():
+                prefix = " "
+            if end < len(result) and _is_wordlike_neighbor(result[end]) and not result[end].isspace():
+                suffix = " "
+            result = result[:start] + prefix + result[start:end] + suffix + result[end:]
+        return result
 
     @staticmethod
     def normalize_structural_ocr_tokens(text: str) -> str:

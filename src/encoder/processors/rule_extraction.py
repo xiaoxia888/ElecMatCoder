@@ -17,6 +17,18 @@ _OD_NUMERIC_PAIR_RE = re.compile(
     r'(?i)(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)(\s*MM)?(?!\s*[xX×*]\s*\d)'
 )
 
+_RESIDUAL_SIZE_DN_SINGLE_RE = re.compile(r'(?i)DN\s*(\d+(?:\.\d+)?)')
+_RESIDUAL_SIZE_DN_PAIR_RE = re.compile(r'(?i)DN\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:DN\s*)?(\d+(?:\.\d+)?)')
+_RESIDUAL_SIZE_OD_SINGLE_RE = re.compile(r'(?i)(?:OD|外径|[φΦФф])\s*(\d+(?:\.\d+)?)')
+_RESIDUAL_SIZE_OD_PAIR_RE = re.compile(
+    r'(?i)(?:OD|外径|[φΦФф])\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:(?:OD|外径|[φΦФф])\s*)?(\d+(?:\.\d+)?)'
+)
+
+_RESIDUAL_THICKNESS_SCH_SINGLE_RE = re.compile(r'(?i)(SCH[.\s-]*\d+S?)')
+_RESIDUAL_THICKNESS_SCH_PAIR_RE = re.compile(r'(?i)(SCH[.\s-]*\d+S?)\s*[xX×*]\s*(SCH[.\s-]*\d+S?)')
+_RESIDUAL_THICKNESS_S_DASH_SINGLE_RE = re.compile(r'(?i)(S-\d+S?)')
+_RESIDUAL_THICKNESS_S_DASH_PAIR_RE = re.compile(r'(?i)(S-\d+S?)\s*[xX×*]\s*(S-\d+S?)')
+
 
 @dataclass
 class RuleExtractionResult:
@@ -181,6 +193,68 @@ def _has_unconsumed_residual_spec(
             if _should_ignore_unresolved_match(pattern_index, m.group(0), source, span):
                 continue
             return True
+    return False
+
+
+def _span_consumed(span: tuple[int, int], consumed_spans: List[tuple[int, int]]) -> bool:
+    return any(start < span[1] and span[0] < end for start, end in consumed_spans)
+
+
+def _collect_group_spans(match: re.Match[str], group_indexes: List[int]) -> List[tuple[int, int]]:
+    spans: List[tuple[int, int]] = []
+    for group_index in group_indexes:
+        try:
+            start, end = match.span(group_index)
+        except IndexError:
+            continue
+        if start >= 0 and end >= 0 and start < end:
+            spans.append((start, end))
+    return spans
+
+
+def _has_unconsumed_suspicious_size(
+    text: str,
+    size_result: RuleSizeExtraction,
+) -> bool:
+    source = str(text or "")
+    consumed_spans = list(getattr(size_result, "consumed_spans", []) or size_result.matched_spans)
+    if not consumed_spans:
+        return False
+
+    checks = (
+        (_RESIDUAL_SIZE_DN_PAIR_RE, [1, 2]),
+        (_RESIDUAL_SIZE_OD_PAIR_RE, [1, 2]),
+        (_RESIDUAL_SIZE_DN_SINGLE_RE, [1]),
+        (_RESIDUAL_SIZE_OD_SINGLE_RE, [1]),
+    )
+    for pattern, groups in checks:
+        for match in pattern.finditer(source):
+            for span in _collect_group_spans(match, groups):
+                if not _span_consumed(span, consumed_spans):
+                    return True
+    return False
+
+
+def _has_unconsumed_suspicious_thickness(
+    text: str,
+    thickness_result: RuleThicknessExtraction,
+) -> bool:
+    source = str(text or "")
+    consumed_spans = list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans)
+    if not consumed_spans:
+        return False
+
+    checks = (
+        (_RESIDUAL_THICKNESS_SCH_PAIR_RE, [1, 2]),
+        (_RESIDUAL_THICKNESS_S_DASH_PAIR_RE, [1, 2]),
+        (_RESIDUAL_THICKNESS_SCH_SINGLE_RE, [1]),
+        (_RESIDUAL_THICKNESS_S_DASH_SINGLE_RE, [1]),
+    )
+    for pattern, groups in checks:
+        for match in pattern.finditer(source):
+            for span in _collect_group_spans(match, groups):
+                if not _span_consumed(span, consumed_spans):
+                    return True
     return False
 
 
@@ -431,6 +505,28 @@ def extract_size_and_thickness_by_rules(
         and not size_result.od
         and not size_result.inch
     ):
+        thickness_result = RuleThicknessExtraction(
+            schedule=[],
+            mm=[],
+            thickness_code="",
+            matched_texts=[],
+            matched_spans=[],
+            consumed_spans=[],
+            ordered_items=[],
+        )
+    if apply_residual_guard and _has_any_size(size_result) and _has_unconsumed_suspicious_size(str(text or ""), size_result):
+        size_result = RuleSizeExtraction(
+            dn=[],
+            od=[],
+            inch=[],
+            length=[],
+            size_code="",
+            matched_texts=[],
+            matched_spans=[],
+            consumed_spans=[],
+            ordered_items=[],
+        )
+    if apply_residual_guard and _has_any_thickness(thickness_result) and _has_unconsumed_suspicious_thickness(str(text or ""), thickness_result):
         thickness_result = RuleThicknessExtraction(
             schedule=[],
             mm=[],

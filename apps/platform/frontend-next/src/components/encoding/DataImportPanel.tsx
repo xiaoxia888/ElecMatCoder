@@ -19,6 +19,11 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   const [error, setError] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  const filteredRows = selectedColumn
+    ? rows.filter((row) => String(row[selectedColumn] ?? '').trim() !== '')
+    : rows
+  const filteredOutCount = Math.max(0, rows.length - filteredRows.length)
+
   async function processFile(file: File) {
     if (!/\.(xlsx|xls|csv)$/i.test(file.name)) {
       setError('只支持 .csv / .xlsx / .xls 文件')
@@ -49,8 +54,8 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   }
 
   function handleConfirmImport() {
-    if (!selectedColumn || rows.length === 0) return
-    onImport(rows, selectedColumn, fileName, selectedProjectColumn)
+    if (!selectedColumn || filteredRows.length === 0) return
+    onImport(filteredRows, selectedColumn, fileName, selectedProjectColumn)
     setIsDialogOpen(false)
   }
 
@@ -153,12 +158,20 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 </div>
               </div>
-              <div className="rounded-[14px] bg-[#f7f9fc] px-4 py-3 text-sm text-muted">文件：{fileName}，共 {rows.length} 条数据</div>
+              <div className="rounded-[14px] bg-[#f7f9fc] px-4 py-3 text-sm text-muted">
+                文件：{fileName}，有效 {filteredRows.length} 条数据
+                {filteredOutCount > 0 ? `，已过滤空描述 ${filteredOutCount} 条` : ''}
+              </div>
               <div className="flex justify-end gap-3">
                 <Button variant="outline" className="h-11 rounded-[12px] px-5" onClick={() => setIsDialogOpen(false)}>
                   取消
                 </Button>
-                <Button variant="accent" className="h-11 rounded-[12px] px-5" disabled={!selectedColumn || rows.length === 0} onClick={handleConfirmImport}>
+                <Button
+                  variant="accent"
+                  className="h-11 rounded-[12px] px-5"
+                  disabled={!selectedColumn || filteredRows.length === 0}
+                  onClick={handleConfirmImport}
+                >
                   确认导入
                 </Button>
               </div>

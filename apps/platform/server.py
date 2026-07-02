@@ -629,41 +629,157 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
     return _batch_job_public(job)
 
 
-def _resolve_qwen3_stage1_config(
-    qwen3_config: Dict[str, Any],
-    ner_config: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+def _resolve_qwen3_stage1_config(qwen3_config: Dict[str, Any]) -> Dict[str, Any]:
     """
-    统一解析阶段一配置。
+    统一解析阶段一配置，只认 qwen3.stage1：
 
-    新结构优先：
-    qwen3.stage1.{router,type_models,material_model,standard_model,structural_prompt,structural_rules}
-
-    旧结构兼容：
-    qwen3.router / qwen3.category_models / ner.structural_prompt
+    qwen3.stage1.{
+      router,
+      type_models,
+      material_model,
+      standard_model,
+      size_model,
+      thickness_model,
+      pressure_model,
+      structural_rules
+    }
     """
     qwen3_config = qwen3_config or {}
-    ner_config = ner_config or {}
-
     stage1 = copy.deepcopy(qwen3_config.get("stage1") or {})
-    if not stage1:
-        stage1 = {
-            "router": copy.deepcopy(qwen3_config.get("router") or {}),
-            "type_models": copy.deepcopy(qwen3_config.get("category_models") or {}),
-            "material_model": copy.deepcopy(qwen3_config.get("material_model") or {}),
-            "standard_model": copy.deepcopy(qwen3_config.get("standard_model") or {}),
-            "structural_prompt": copy.deepcopy(ner_config.get("structural_prompt") or {}),
-            "structural_rules": {},
-        }
-    else:
-        stage1.setdefault("router", copy.deepcopy(qwen3_config.get("router") or {}))
-        stage1.setdefault("type_models", copy.deepcopy(qwen3_config.get("category_models") or {}))
-        stage1.setdefault("material_model", copy.deepcopy(qwen3_config.get("material_model") or {}))
-        stage1.setdefault("standard_model", copy.deepcopy(qwen3_config.get("standard_model") or {}))
-        stage1.setdefault("structural_rules", {})
-        if not stage1.get("structural_prompt"):
-            stage1["structural_prompt"] = copy.deepcopy(ner_config.get("structural_prompt") or {})
+    stage1.setdefault("router", {})
+    stage1.setdefault("type_models", {})
+    stage1.setdefault("material_model", {})
+    stage1.setdefault("standard_model", {})
+    stage1.setdefault("size_model", {})
+    stage1.setdefault("thickness_model", {})
+    stage1.setdefault("pressure_model", {})
+    stage1.setdefault("structural_rules", {})
+
+    stage1["type_models"] = {
+        category: _normalize_backend_scoped_model_config(cfg)
+        for category, cfg in (stage1.get("type_models") or {}).items()
+        if isinstance(cfg, dict)
+    }
+    for key in (
+        "material_model",
+        "standard_model",
+        "size_model",
+        "thickness_model",
+        "pressure_model",
+    ):
+        stage1[key] = _normalize_backend_scoped_model_config(stage1.get(key) or {})
     return stage1
+
+
+_MODEL_BACKEND_BLOCK_KEYS = (
+    "hf_lazy_service",
+    "transformers",
+    "ollama",
+    "openai_compatible",
+)
+
+
+def _normalize_backend_scoped_model_config(model_cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    支持如下更易读的配置结构：
+
+    material_model:
+      backend: "hf_lazy_service"
+      share_group: "material_standard"
+      hf_lazy_service:
+        service_url: "http://127.0.0.1:8200"
+        model_name: "material-standard"
+
+    也兼容旧的平铺结构；最终统一拍平成后续代码可直接消费的形式。
+    """
+    cfg = copy.deepcopy(model_cfg or {})
+    if not isinstance(cfg, dict):
+        return {}
+
+    backend = str(cfg.get("backend") or "").strip()
+    normalized = {
+        key: copy.deepcopy(value)
+        for key, value in cfg.items()
+        if key not in _MODEL_BACKEND_BLOCK_KEYS
+    }
+    if backend and isinstance(cfg.get(backend), dict):
+        normalized = _merge_nested_dict(normalized, cfg.get(backend) or {})
+    return normalized
+
+
+def _clean_model_config(model_cfg: Dict[str, Any]) -> Dict[str, Any]:
+    cleaned = copy.deepcopy(model_cfg or {})
+    cleaned.pop("share_group", None)
+    cleaned.pop("enabled", None)
+    return cleaned
+
+
+def _register_shared_model_signature(
+    *,
+    signatures: Dict[str, Dict[str, Any]],
+    share_group: str,
+    config: Dict[str, Any],
+    field_name: str,
+) -> None:
+    if not share_group:
+        return
+    current = _clean_model_config(config)
+    previous = signatures.get(share_group)
+    if previous is None:
+        signatures[share_group] = current
+        return
+    if previous != current:
+        raise RuntimeError(
+            f"stage1 共享模型组“{share_group}”配置不一致，字段“{field_name}”与同组其他字段不能共用一次调用"
+        )
+
+
+def _build_shared_predictor_factory(
+    *,
+    config: Dict[str, Any],
+    share_group: str,
+    signatures: Dict[str, Dict[str, Any]],
+    cache: Dict[str, Any],
+    field_name: str,
+):
+    if share_group:
+        _register_shared_model_signature(
+            signatures=signatures,
+            share_group=share_group,
+            config=config,
+            field_name=field_name,
+        )
+
+        def factory(cfg=copy.deepcopy(config), group=share_group):
+            if group not in cache:
+                cache[group] = _build_qwen3_predictor_from_config(cfg)
+            return cache[group]
+
+        return factory
+
+    def factory(cfg=copy.deepcopy(config)):
+        return _build_qwen3_predictor_from_config(cfg)
+
+    return factory
+
+
+def _resolve_structural_field_model_configs(
+    *,
+    stage1_cfg: Dict[str, Any],
+    base_qwen3_config: Dict[str, Any],
+) -> Dict[str, Dict[str, Any]]:
+    result: Dict[str, Dict[str, Any]] = {}
+
+    for field_name, config_key in (
+        ("SIZE", "size_model"),
+        ("THICKNESS", "thickness_model"),
+        ("PRESSURE", "pressure_model"),
+    ):
+        field_cfg = copy.deepcopy(stage1_cfg.get(config_key) or {})
+        if field_cfg:
+            result[field_name] = _merge_nested_dict(base_qwen3_config, field_cfg)
+
+    return result
 
 
 def _build_qwen3_predictor_from_config(qwen3_config: Dict[str, Any]):
@@ -675,81 +791,12 @@ def _build_qwen3_predictor_from_config(qwen3_config: Dict[str, Any]):
         raise RuntimeError("缺少配置: ner.qwen3.backend")
 
     if adapter == "structured_llamafactory":
-        from src.llm_ner.structured_llamafactory_adapter import StructuredLlamaFactoryPredictor
+        from src.llm_ner.structured_llamafactory_adapter import build_structured_predictor_from_config
 
-        max_new_tokens = qwen3_config.get("num_predict")
-        temperature = qwen3_config.get("temperature")
-        if max_new_tokens is None:
-            raise RuntimeError("缺少配置: ner.qwen3.num_predict")
-        if temperature is None:
-            raise RuntimeError("缺少配置: ner.qwen3.temperature")
-        if backend == "ollama":
-            device = qwen3_config.get("device")
-            if device is None:
-                raise RuntimeError("缺少配置: ner.qwen3.device")
-            model_name = qwen3_config.get("model_name")
-            ollama_url = qwen3_config.get("ollama_url")
-            if not model_name:
-                raise RuntimeError("缺少配置: ner.qwen3.model_name")
-            if not ollama_url:
-                raise RuntimeError("缺少配置: ner.qwen3.ollama_url")
-            logger.info(
-                "加载 Qwen3 结构化一阶段模型: model=%s, backend=%s, adapter=%s",
-                model_name,
-                backend,
-                adapter,
-            )
-            return StructuredLlamaFactoryPredictor(
-                backend="ollama",
-                model_name=model_name,
-                ollama_url=ollama_url,
-                device=device,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-            )
-        if backend == "hf_lazy_service":
-            model_name = qwen3_config.get("model_name")
-            service_url = qwen3_config.get("service_url")
-            if not model_name:
-                raise RuntimeError("缺少配置: ner.qwen3.model_name")
-            if not service_url:
-                raise RuntimeError("缺少配置: ner.qwen3.service_url")
-            logger.info(
-                "加载 Qwen3 结构化一阶段模型: model=%s, backend=%s, adapter=%s, service=%s",
-                model_name,
-                backend,
-                adapter,
-                service_url,
-            )
-            return StructuredLlamaFactoryPredictor(
-                backend="hf_lazy_service",
-                model_name=model_name,
-                service_url=service_url,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-            )
-
-        device = qwen3_config.get("device")
-        if device is None:
-            raise RuntimeError("缺少配置: ner.qwen3.device")
-        configured_model_path = qwen3_config.get("model_path")
-        if not configured_model_path:
-            raise RuntimeError("缺少配置: ner.qwen3.model_path")
-        model_path = str(PROJECT_ROOT / configured_model_path)
-        if Path(configured_model_path).is_absolute():
-            model_path = configured_model_path
-        logger.info(
-            "加载 Qwen3 结构化一阶段模型: 路径=%s, 设备=%s, adapter=%s",
-            model_path,
-            device,
-            adapter,
-        )
-        return StructuredLlamaFactoryPredictor(
-            backend="transformers",
-            model_path=model_path,
-            device=device,
-            max_new_tokens=max_new_tokens,
-            temperature=temperature,
+        return build_structured_predictor_from_config(
+            qwen3_config,
+            model_base_dir=PROJECT_ROOT,
+            log_label="Qwen3结构化一阶段模型",
         )
 
     from src.llm_ner.predictor import Qwen3Predictor
@@ -816,18 +863,15 @@ def _build_qwen3_predictor_from_config(qwen3_config: Dict[str, Any]):
 def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
     from src.llm_ner.stage1_orchestrator import Stage1FieldOrchestrator
 
-    ner_config = get_ner_config()
-    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config)
     router_cfg = copy.deepcopy(stage1_cfg.get("router", {}) or {})
     type_models = copy.deepcopy(stage1_cfg.get("type_models") or {})
     material_model = copy.deepcopy(stage1_cfg.get("material_model") or {})
     standard_model = copy.deepcopy(stage1_cfg.get("standard_model") or {})
-    structural_prompt_cfg = copy.deepcopy(stage1_cfg.get("structural_prompt") or {})
     structural_rules_cfg = copy.deepcopy(stage1_cfg.get("structural_rules") or {})
 
     base_qwen3_config = copy.deepcopy(qwen3_config)
     base_qwen3_config.pop("router", None)
-    base_qwen3_config.pop("category_models", None)
     base_qwen3_config.pop("stage1", None)
 
     router = None
@@ -838,6 +882,8 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
     fallback_category = str(router_cfg.get("fallback_category", "其他管件")).strip() or "其他管件"
 
     shared_default_predictor: Dict[str, Any] = {"instance": None}
+    shared_predictor_cache: Dict[str, Any] = {}
+    shared_signatures: Dict[str, Dict[str, Any]] = {}
 
     def default_factory():
         if shared_default_predictor["instance"] is None:
@@ -849,41 +895,65 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
         if category in {"默认", "default"}:
             continue
         merged_cfg = _merge_nested_dict(base_qwen3_config, override or {})
-        type_factories[category] = (
-            lambda cfg=merged_cfg: _build_qwen3_predictor_from_config(cfg)
+        share_group = str((override or {}).get("share_group") or "").strip()
+        type_factories[category] = _build_shared_predictor_factory(
+            config=merged_cfg,
+            share_group=share_group,
+            signatures=shared_signatures,
+            cache=shared_predictor_cache,
+            field_name=f"TYPE[{category}]",
         )
     if material_model:
         material_cfg = _merge_nested_dict(base_qwen3_config, material_model or {})
-        material_factory = lambda cfg=material_cfg: _build_qwen3_predictor_from_config(cfg)
+        material_factory = _build_shared_predictor_factory(
+            config=material_cfg,
+            share_group=str(material_model.get("share_group") or "").strip(),
+            signatures=shared_signatures,
+            cache=shared_predictor_cache,
+            field_name="MATERIAL",
+        )
     else:
         material_cfg = base_qwen3_config
         material_factory = default_factory
     if standard_model:
         standard_cfg = _merge_nested_dict(base_qwen3_config, standard_model or {})
-        standard_factory = lambda cfg=standard_cfg: _build_qwen3_predictor_from_config(cfg)
+        standard_factory = _build_shared_predictor_factory(
+            config=standard_cfg,
+            share_group=str(standard_model.get("share_group") or "").strip(),
+            signatures=shared_signatures,
+            cache=shared_predictor_cache,
+            field_name="STANDARD",
+        )
     else:
         standard_cfg = base_qwen3_config
         standard_factory = default_factory
 
-    share_material_standard = material_cfg == standard_cfg
+    structural_field_model_configs = _resolve_structural_field_model_configs(
+        stage1_cfg=stage1_cfg,
+        base_qwen3_config=base_qwen3_config,
+    )
 
     def structural_extractor_factory():
-        if not structural_prompt_cfg.get("enabled", False) and not structural_rules_cfg.get("enabled", False):
+        if not structural_field_model_configs and not structural_rules_cfg.get("enabled", False):
             return None
         from src.llm_ner.structural_field_resolver import StructuralFieldResolver
 
         return StructuralFieldResolver.from_configs(
-            prompt_config=structural_prompt_cfg,
+            size_model_config=structural_field_model_configs.get("SIZE"),
+            thickness_model_config=structural_field_model_configs.get("THICKNESS"),
+            pressure_model_config=structural_field_model_configs.get("PRESSURE"),
             rule_config=structural_rules_cfg,
         )
 
     logger.info(
-        "加载路由版 Qwen3 一阶段编排器: router=%s, TYPE覆盖分类数=%s, material_override=%s, standard_override=%s, structural_prompt=%s, structural_rules=%s",
+        "加载路由版 Qwen3 一阶段编排器: router=%s, TYPE覆盖分类数=%s, material_override=%s, standard_override=%s, size_model=%s, thickness_model=%s, pressure_model=%s, structural_rules=%s",
         router_cfg.get("backend", "disabled"),
         len(type_factories),
         bool(material_model),
         bool(standard_model),
-        bool(structural_prompt_cfg.get("enabled", False)),
+        bool(structural_field_model_configs.get("SIZE")),
+        bool(structural_field_model_configs.get("THICKNESS")),
+        bool(structural_field_model_configs.get("PRESSURE")),
         bool(structural_rules_cfg.get("enabled", False)),
     )
     return Stage1FieldOrchestrator(
@@ -892,8 +962,7 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
         type_factories=type_factories,
         material_factory=material_factory,
         standard_factory=standard_factory,
-        share_material_standard=share_material_standard,
-        structural_extractor_factory=structural_extractor_factory if (structural_prompt_cfg.get("enabled", False) or structural_rules_cfg.get("enabled", False)) else None,
+        structural_extractor_factory=structural_extractor_factory if (structural_field_model_configs or structural_rules_cfg.get("enabled", False)) else None,
         fallback_category=fallback_category,
         direct_threshold=float(router_cfg.get("direct_threshold", 0.9)),
         review_threshold=float(router_cfg.get("review_threshold", 0.7)),
@@ -911,13 +980,15 @@ def get_ner_predictor():
     logger.info("使用 Qwen3 NER 模型")
     ner_config = get_ner_config()
     qwen3_config = ner_config.get("qwen3", {})
-    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config)
     stage1_orchestrator_enabled = bool(
         (stage1_cfg.get("router") or {}).get("enabled", False)
         or (stage1_cfg.get("type_models") or {})
         or (stage1_cfg.get("material_model") or {})
         or (stage1_cfg.get("standard_model") or {})
-        or (stage1_cfg.get("structural_prompt") or {}).get("enabled", False)
+        or (stage1_cfg.get("size_model") or {})
+        or (stage1_cfg.get("thickness_model") or {})
+        or (stage1_cfg.get("pressure_model") or {})
         or (stage1_cfg.get("structural_rules") or {}).get("enabled", False)
     )
     if stage1_orchestrator_enabled:
@@ -933,9 +1004,8 @@ def get_pipe_router():
     if _pipe_router is not None:
         return _pipe_router
 
-    ner_config = get_ner_config()
-    qwen3_config = ner_config.get("qwen3", {}) or {}
-    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config, ner_config)
+    qwen3_config = (get_ner_config().get("qwen3", {}) or {})
+    stage1_cfg = _resolve_qwen3_stage1_config(qwen3_config)
     router_cfg = stage1_cfg.get("router", {}) or {}
     if not router_cfg.get("enabled", False):
         return None
@@ -1074,7 +1144,7 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
 def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
     info = copy.deepcopy(route_info) if isinstance(route_info, dict) else {}
     encodable_categories = set(
-        (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {}), get_ner_config()).get("router", {}) or {}).get("encodable_categories")) or [])
+        (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {})).get("router", {}) or {}).get("encodable_categories")) or [])
     )
     selected_category = str(info.get("category") or "").strip()
     if selected_category:
@@ -1229,7 +1299,7 @@ def pipe_route(request: PipeRouteRequest):
 
         route_info = router.route(processed_text)
         encodable_categories = set(
-            (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {}), get_ner_config()).get("router", {}) or {}).get("encodable_categories")) or [])
+            (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {})).get("router", {}) or {}).get("encodable_categories")) or [])
         )
         selected_category = str(route_info.get("category") or "").strip()
         encoding_enabled = selected_category in encodable_categories
@@ -1264,7 +1334,7 @@ async def pipe_batch_route(request: PipeBatchRouteRequest):
             async with semaphore:
                 route_info = await asyncio.to_thread(router.route, processed_text)
             encodable_categories = set(
-                (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {}), get_ner_config()).get("router", {}) or {}).get("encodable_categories")) or [])
+                (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {})).get("router", {}) or {}).get("encodable_categories")) or [])
             )
             selected_category = str(route_info.get("category") or "").strip()
             encoding_enabled = selected_category in encodable_categories

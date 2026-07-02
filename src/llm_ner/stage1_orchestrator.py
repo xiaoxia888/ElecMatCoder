@@ -108,7 +108,6 @@ class Stage1FieldOrchestrator:
         default_type_factory: Callable[[], Any],
         material_factory: Callable[[], Any],
         standard_factory: Callable[[], Any],
-        share_material_standard: bool = False,
         structural_extractor_factory: Optional[Callable[[], Any]] = None,
         fallback_category: str = "其他管件",
         direct_threshold: float = 0.9,
@@ -121,7 +120,6 @@ class Stage1FieldOrchestrator:
         self.default_type_factory = default_type_factory
         self.material_factory = material_factory
         self.standard_factory = standard_factory
-        self.share_material_standard = bool(share_material_standard)
         self.structural_extractor_factory = structural_extractor_factory
         self.fallback_category = fallback_category
         self.direct_threshold = float(direct_threshold)
@@ -240,13 +238,17 @@ class Stage1FieldOrchestrator:
         structural_extractor = self._get_structural_extractor()
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
-            type_future = pool.submit(type_predictor.predict, text)
-            material_future = pool.submit(material_predictor.predict, text)
-            standard_future = (
-                material_future
-                if self.share_material_standard
-                else pool.submit(standard_predictor.predict, text)
-            )
+            predictor_futures: Dict[int, Any] = {}
+
+            def submit_predict(predictor: Any):
+                key = id(predictor)
+                if key not in predictor_futures:
+                    predictor_futures[key] = pool.submit(predictor.predict, text)
+                return predictor_futures[key]
+
+            type_future = submit_predict(type_predictor)
+            material_future = submit_predict(material_predictor)
+            standard_future = submit_predict(standard_predictor)
             structural_future = (
                 pool.submit(structural_extractor.extract, text)
                 if structural_extractor is not None

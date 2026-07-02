@@ -17,16 +17,103 @@ import time
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import requests
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
 logger = logging.getLogger(__name__)
+
+from .llm_http_transport import (
+    call_hf_lazy_service_predict,
+    call_ollama_generate,
+)
 
 INSTRUCTION = (
     "你是一个工业管道材料结构化信息提取助手。"
     "请从材料描述中提取结构化信息，并以 JSON 格式返回。"
 )
+
+
+def build_structured_predictor_from_config(
+    config: Dict[str, Any],
+    *,
+    default_instruction: str | None = None,
+    model_base_dir: str | Path | None = None,
+    log_label: str = "结构化模型",
+) -> "StructuredLlamaFactoryPredictor":
+    cfg = dict(config or {})
+    backend = str(cfg.get("backend", "")).strip()
+    if backend not in {"transformers", "hf_lazy_service", "ollama"}:
+        raise RuntimeError(f"{log_label}后端不支持: {backend}")
+
+    max_new_tokens = int(
+        cfg.get("max_new_tokens")
+        or cfg.get("num_predict")
+        or cfg.get("max_tokens")
+        or 512
+    )
+    temperature = float(cfg.get("temperature", 0.0) or 0.0)
+    instruction = str(cfg.get("instruction") or default_instruction or INSTRUCTION)
+
+    predictor_kwargs: Dict[str, Any] = {
+        "backend": backend,
+        "max_new_tokens": max_new_tokens,
+        "temperature": temperature,
+        "instruction": instruction,
+    }
+
+    if backend == "hf_lazy_service":
+        service_url = str(cfg.get("service_url", "")).strip()
+        model_name = str(cfg.get("model_name", "")).strip()
+        if not service_url:
+            raise RuntimeError(f"{log_label}缺少配置: service_url")
+        if not model_name:
+            raise RuntimeError(f"{log_label}缺少配置: model_name")
+        predictor_kwargs["service_url"] = service_url
+        predictor_kwargs["model_name"] = model_name
+        logger.info(
+            "[%s] HF Lazy Service 后端, 模型: %s, 服务: %s",
+            log_label,
+            model_name,
+            service_url,
+        )
+        return StructuredLlamaFactoryPredictor(**predictor_kwargs)
+
+    if backend == "ollama":
+        ollama_url = str(cfg.get("ollama_url") or cfg.get("base_url") or "").strip()
+        model_name = str(cfg.get("model_name", "")).strip()
+        if not ollama_url:
+            raise RuntimeError(f"{log_label}缺少配置: ollama_url/base_url")
+        if not model_name:
+            raise RuntimeError(f"{log_label}缺少配置: model_name")
+        predictor_kwargs["ollama_url"] = ollama_url
+        predictor_kwargs["model_name"] = model_name
+        predictor_kwargs["device"] = str(cfg.get("device") or "ollama")
+        logger.info(
+            "[%s] Ollama 后端, 模型: %s, 服务: %s",
+            log_label,
+            model_name,
+            ollama_url,
+        )
+        return StructuredLlamaFactoryPredictor(**predictor_kwargs)
+
+    configured_model_path = str(cfg.get("model_path", "")).strip()
+    device = str(cfg.get("device", "")).strip()
+    if not configured_model_path:
+        raise RuntimeError(f"{log_label}缺少配置: model_path")
+    if not device:
+        raise RuntimeError(f"{log_label}缺少配置: device")
+
+    model_path = Path(configured_model_path)
+    if not model_path.is_absolute():
+        base_dir = Path(model_base_dir) if model_base_dir is not None else Path(__file__).resolve().parents[2]
+        model_path = base_dir / configured_model_path
+
+    predictor_kwargs["model_path"] = str(model_path)
+    predictor_kwargs["device"] = device
+    logger.info(
+        "[%s] Transformers 后端, 模型: %s, 设备: %s",
+        log_label,
+        model_path,
+        device,
+    )
+    return StructuredLlamaFactoryPredictor(**predictor_kwargs)
 
 TYPE_CLASS_MAP = {
     "管": "管子", "pipe": "管子", "tube": "管子",
@@ -59,16 +146,16 @@ def _standard_present(standard_value: Any) -> bool:
     return isinstance(standard_value, list) and any(isinstance(item, dict) and _is_non_empty(item.get("BODY")) for item in standard_value)
 
 
-def _build_raw_chatml_prompt(input_text: str) -> str:
+def _build_raw_chatml_prompt(input_text: str, instruction: str) -> str:
     return (
-        f"<|im_start|>system\n{INSTRUCTION}<|im_end|>\n"
+        f"<|im_start|>system\n{instruction}<|im_end|>\n"
         f"<|im_start|>user\n{input_text}<|im_end|>\n"
         f"<|im_start|>assistant\n"
     )
 
 
-def _build_chat_prompt(tokenizer: Any, input_text: str) -> str:
-    return _build_raw_chatml_prompt(input_text)
+def _build_chat_prompt(tokenizer: Any, input_text: str, instruction: str) -> str:
+    return _build_raw_chatml_prompt(input_text, instruction)
 
 
 class StructuredLlamaFactoryPredictor:
@@ -84,6 +171,7 @@ class StructuredLlamaFactoryPredictor:
         max_new_tokens: int,
         temperature: float,
         type_value_whitelist: Optional[Dict[str, list[str]]] = None,
+        instruction: str | None = None,
     ):
         self.backend = backend
         self.model_name = model_name
@@ -91,6 +179,7 @@ class StructuredLlamaFactoryPredictor:
         self.service_url = service_url
         self.max_new_tokens = int(max_new_tokens)
         self.temperature = float(temperature)
+        self.instruction = str(instruction or INSTRUCTION)
         self.type_value_whitelist = {
             str(k).strip().upper(): {
                 str(v).strip().upper() for v in (values or []) if str(v).strip()
@@ -137,6 +226,8 @@ class StructuredLlamaFactoryPredictor:
             f"[结构化适配器] Transformers 后端, 模型: {self.model_path}, 设备: {self.device}"
         )
 
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
         self.tokenizer = AutoTokenizer.from_pretrained(
             str(self.model_path), trust_remote_code=True, padding_side="left"
         )
@@ -155,6 +246,8 @@ class StructuredLlamaFactoryPredictor:
 
     @staticmethod
     def _resolve_device(device: str) -> str:
+        import torch
+
         if device != "auto":
             return device
         if torch.cuda.is_available():
@@ -165,6 +258,8 @@ class StructuredLlamaFactoryPredictor:
 
     @staticmethod
     def _resolve_dtype(device: str):
+        import torch
+
         if device == "cuda":
             return torch.bfloat16
         if device == "mps":
@@ -228,7 +323,9 @@ class StructuredLlamaFactoryPredictor:
         if self.backend == "hf_lazy_service":
             return self._generate_hf_lazy_service(input_text)
 
-        text = _build_chat_prompt(self.tokenizer, input_text)
+        import torch
+
+        text = _build_chat_prompt(self.tokenizer, input_text, self.instruction)
         inputs = self.tokenizer(text, return_tensors="pt").to(self.model.device)
 
         generate_kwargs = {
@@ -255,48 +352,31 @@ class StructuredLlamaFactoryPredictor:
         return self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
     def _generate_ollama(self, input_text: str) -> str:
-        prompt = _build_raw_chatml_prompt(input_text)
-        resp = requests.post(
-            f"{self.ollama_url}/api/generate",
-            json={
-                "model": self.model_name,
-                "prompt": prompt,
-                "raw": True,
-                "stream": False,
-                "format": "json",
-                "options": {
-                    "temperature": self.temperature,
-                    "num_predict": self.max_new_tokens,
-                },
-            },
+        prompt = _build_raw_chatml_prompt(input_text, self.instruction)
+        response = call_ollama_generate(
+            base_url=self.ollama_url,
+            model_name=self.model_name,
+            prompt=prompt,
             timeout=120,
+            temperature=self.temperature,
+            max_new_tokens=self.max_new_tokens,
+            raw=True,
+            format_json=True,
         )
-        resp.raise_for_status()
-        payload = resp.json()
-        return str(payload.get("response", "")).strip()
+        return response.text
 
     def _generate_hf_lazy_service(self, input_text: str) -> str:
-        resp = requests.post(
-            f"{self.service_url.rstrip('/')}/predict",
-            json={
-                "model": self.model_name,
-                "text": input_text,
-                "instruction": INSTRUCTION,
-                "max_new_tokens": self.max_new_tokens,
-                "temperature": self.temperature,
-                "top_p": 0.9 if self.temperature > 0 else 1.0,
-            },
+        response = call_hf_lazy_service_predict(
+            service_url=self.service_url,
+            model_name=self.model_name,
+            text=input_text,
+            instruction=self.instruction,
             timeout=180,
+            max_new_tokens=self.max_new_tokens,
+            temperature=self.temperature,
+            top_p=0.9 if self.temperature > 0 else 1.0,
         )
-        resp.raise_for_status()
-        payload = resp.json()
-        raw = payload.get("raw_response")
-        parsed = payload.get("parsed_json")
-        if isinstance(raw, str) and raw.strip():
-            return raw.strip()
-        if isinstance(parsed, dict):
-            return json.dumps(parsed, ensure_ascii=False)
-        return ""
+        return response.text
 
     @staticmethod
     def _parse_json_output(raw: str) -> Optional[dict]:
