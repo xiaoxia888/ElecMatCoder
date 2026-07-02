@@ -79,17 +79,41 @@ class ThicknessTableProcessor:
 
     def lookup_mm(self, standards: Any, dn: Any, thickness_code: Any) -> str:
         """单值查表：返回毫米值字符串；查不到返回空字符串。"""
+        detail = self.lookup_mm_detail(standards, dn, thickness_code)
+        return detail.get('mm', '')
+
+    def lookup_mm_detail(self, standards: Any, dn: Any, thickness_code: Any) -> Dict[str, str]:
+        """单值查表明细：返回目标规范、实际匹配规范和毫米壁厚。"""
         target = self.map_standard_to_target(standards)
         if not target:
-            return ''
+            return {
+                'target_standard': '',
+                'matched_standard': '',
+                'mm': '',
+                'reason': 'standard_not_mapped',
+            }
 
         dn_key = self._normalize_dn_value(dn)
         code_key = self._normalize_lookup_code(thickness_code)
         if not dn_key or not code_key:
-            return ''
+            return {
+                'target_standard': target,
+                'matched_standard': '',
+                'mm': '',
+                'reason': 'invalid_dn_or_thickness',
+            }
 
-        row = self._lookup_row(target, dn_key, code_key)
-        return row['壁厚'] if row is not None and row.get('壁厚') else ''
+        row, matched_standard = self._lookup_row_detail(target, dn_key, code_key)
+        return {
+            'target_standard': target,
+            'matched_standard': matched_standard,
+            'mm': row['壁厚'] if row is not None and row.get('壁厚') else '',
+            'reason': (
+                'table_row_not_found'
+                if row is None
+                else ('thickness_value_empty' if not row.get('壁厚') else '')
+            ),
+        }
 
     def convert_to_mm_parts(self, standards: Any, dn_values: Any, thickness_values: Any, original_text: str = "") -> List[str]:
         """
@@ -157,22 +181,26 @@ class ThicknessTableProcessor:
         return 'X'.join(parts)
 
     def _lookup_row(self, target: str, dn_key: str, code_key: str) -> Optional[Dict[str, str]]:
+        row, _ = self._lookup_row_detail(target, dn_key, code_key)
+        return row
+
+    def _lookup_row_detail(self, target: str, dn_key: str, code_key: str) -> tuple[Optional[Dict[str, str]], str]:
         df = self._table_df
         if df is None or df.empty:
-            return None
+            return None, ''
 
         # 1) 先按标准简写查
         sub = df[(df['标准简写'] == target) & (df['公称直径'] == dn_key) & (df['壁厚号'] == code_key)]
         if not sub.empty:
-            return sub.iloc[0].to_dict()
+            return sub.iloc[0].to_dict(), target
 
         # 2) 简写没命中，再按适用标准回退（适配 ANSI 等空简写场景）
         for applicable in self.APPLICABLE_STANDARD_FALLBACKS.get(target, []):
             sub = df[(df['适用标准'] == applicable) & (df['公称直径'] == dn_key) & (df['壁厚号'] == code_key)]
             if not sub.empty:
-                return sub.iloc[0].to_dict()
+                return sub.iloc[0].to_dict(), applicable
 
-        return None
+        return None, ''
 
     @staticmethod
     def _normalize_dn_cell(value: Any) -> str:

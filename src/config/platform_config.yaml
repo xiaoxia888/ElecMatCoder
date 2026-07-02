@@ -16,7 +16,7 @@ ner:
     backend: "hf_lazy_service"                   # ollama / transformers / hf_lazy_service
     model_name: "type"            # ollama 后端时使用的模型名
     ollama_url: "http://localhost:11434" # ollama 服务地址
-    service_url: "http://127.0.0.1:8200" # hf_lazy_service 后端时使用的服务地址
+    service_url: "http://192.168.31.201:8200" # hf_lazy_service 后端时使用的服务地址
     model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/outputs/qwen3/contract_llm"     # transformers 后端时使用的模型路径
     device: "auto"                      # transformers 后端设备: auto / cpu / cuda / mps
     output_mode: "full"       # legacy 适配器使用；structured_llamafactory 可忽略
@@ -60,7 +60,7 @@ ner:
         直管: 
           backend: "hf_lazy_service"
           hf_lazy_service:
-            service_url: "http://127.0.0.1:8200"
+            service_url: "http://192.168.31.201:8200"
             model_name: "type"
           # backend: "transformers"
           # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/pipe"
@@ -69,7 +69,7 @@ ner:
         法兰: 
           backend: "hf_lazy_service"
           hf_lazy_service:
-            service_url: "http://127.0.0.1:8200"
+            service_url: "http://192.168.31.201:8200"
             model_name: "type"
           # backend: "transformers"
           # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/flang"
@@ -78,7 +78,7 @@ ner:
         管件: 
           backend: "hf_lazy_service"
           hf_lazy_service:
-            service_url: "http://127.0.0.1:8200"
+            service_url: "http://192.168.31.201:8200"
             model_name: "type"
           # backend: "transformers"
           # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/fittings"
@@ -91,7 +91,7 @@ ner:
         backend: "hf_lazy_service"
         share_group: "material_standard"
         hf_lazy_service:
-          service_url: "http://127.0.0.1:8200"
+          service_url: "http://192.168.31.201:8200"
           model_name: "material-standard"
         # backend: "transformers"
         # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/material"
@@ -104,7 +104,7 @@ ner:
         backend: "hf_lazy_service"
         share_group: "material_standard"
         hf_lazy_service:
-          service_url: "http://127.0.0.1:8200"
+          service_url: "http://192.168.31.201:8200"
           model_name: "material-standard"
         # backend: "transformers"
         # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/standard"
@@ -135,7 +135,7 @@ ner:
         #   max_tokens: 768
         #   max_workers: 1
         hf_lazy_service:
-          service_url: "http://127.0.0.1:8200"
+          service_url: "http://192.168.31.201:8200"
           model_name: "size-thick-pressure"
           max_new_tokens: 512
           temperature: 0.0
@@ -156,7 +156,7 @@ ner:
         #   max_tokens: 768
         #   max_workers: 1
         hf_lazy_service:
-          service_url: "http://127.0.0.1:8200"
+          service_url: "http://192.168.31.201:8200"
           model_name: "size-thick-pressure"
           max_new_tokens: 512
           temperature: 0.0
@@ -177,7 +177,7 @@ ner:
         #   max_tokens: 768
         #   max_workers: 1
         hf_lazy_service:
-          service_url: "http://127.0.0.1:8200"
+          service_url: "http://192.168.31.201:8200"
           model_name: "size-thick-pressure"
           max_new_tokens: 512
           temperature: 0.0
@@ -192,7 +192,7 @@ encoding:
   llm:  
     model_name: "coder"
     backend: "mlx_service"
-    service_url: "http://127.0.0.1:8200"
+    service_url: "http://192.168.31.201:8200"
     timeout: 300
     num_predict: 512
     temperature: 0.0

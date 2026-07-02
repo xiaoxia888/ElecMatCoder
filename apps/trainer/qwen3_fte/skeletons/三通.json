@@ -1,0 +1,27 @@
+{
+  "TYPE": {
+    "BODY": "",
+    "GEOMETRY": {
+      "ANGLE": ""
+    },
+    "MANU": [],
+    "CONN": [],
+    "ENDS": []
+  },
+  "SIZE": {
+    "DN": [],
+    "OD": [],
+    "INCH": [],
+    "LENGTH": []
+  },
+  "THICKNESS": {
+    "MM": [],
+    "SCHEDULE": [],
+    "SERIES": [],
+    "BWG": [],
+    "INCH": []
+  },
+  "PRESSURE": "",
+  "MATERIAL": [],
+  "STANDARD": []
+}

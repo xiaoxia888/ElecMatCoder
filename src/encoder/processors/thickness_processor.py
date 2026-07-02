@@ -90,7 +90,7 @@ class ThicknessProcessor:
         1. prefixed: S10 / S10S / S120 ...
         2. s_dash: S-10 / S-10S / S-120 ...
         3. suffix: 10S / 40S ...
-        4. combined: 三者 + XS/XXS/STD 的合并模式
+        4. combined: 仅弱规则（prefixed + suffix）+ XS/XXS/STD 的合并模式
         """
         base_group = "|".join(re.escape(v) for v in cls.WEAK_SCHEDULE_BASE_VALUES)
         suffix_tokens = tuple(token[:-1] for token in cls.WEAK_SCHEDULE_SUFFIX_S_TOKENS)
@@ -99,7 +99,7 @@ class ThicknessProcessor:
         prefixed = rf'(?:S(?:{suffix_base_group})S|S(?:{base_group}))'
         s_dash = rf'(?:S-(?:{suffix_base_group})S|S-(?:{base_group}))'
         suffix = rf'(?:{suffix_token_group})'
-        combined = rf'(?:{prefixed}|{s_dash}|{suffix}|XS|XXS|STD)'
+        combined = rf'(?:{prefixed}|{suffix}|XS|XXS|STD)'
         return prefixed, s_dash, suffix, combined
 
     def process(self, value: Any, original_text: str = "") -> str:
@@ -240,25 +240,6 @@ class ThicknessProcessor:
         matched_texts = explicit["matched_texts"]
         matched_spans = explicit["matched_spans"]
 
-        self._apply_weak_thickness_fallback(
-            normalized=normalized,
-            blocked_spans=blocked_spans,
-            schedule_parts=schedule_parts,
-            mm_parts=mm_parts,
-            ordered_items=ordered_items,
-            matched_texts=matched_texts,
-            matched_spans=matched_spans,
-        )
-        if self._has_invalid_thickness_items(schedule_parts, mm_parts):
-            return RuleThicknessExtraction(
-                schedule=[],
-                mm=[],
-                thickness_code="",
-                matched_texts=[],
-                matched_spans=[],
-                ordered_items=[],
-            )
-
         if self._has_size_context(size_context):
             self._apply_size_context_glued_schedule_rules(
                 normalized=normalized,
@@ -297,6 +278,25 @@ class ThicknessProcessor:
                     matched_spans=[],
                     ordered_items=[],
                 )
+
+        self._apply_weak_thickness_fallback(
+            normalized=normalized,
+            blocked_spans=blocked_spans,
+            schedule_parts=schedule_parts,
+            mm_parts=mm_parts,
+            ordered_items=ordered_items,
+            matched_texts=matched_texts,
+            matched_spans=matched_spans,
+        )
+        if self._has_invalid_thickness_items(schedule_parts, mm_parts):
+            return RuleThicknessExtraction(
+                schedule=[],
+                mm=[],
+                thickness_code="",
+                matched_texts=[],
+                matched_spans=[],
+                ordered_items=[],
+            )
 
         sorted_ordered_items = sorted(ordered_items, key=lambda x: (x["span"][0], x["span"][1]))
         schedule_parts = [str(item["code"]) for item in sorted_ordered_items if str(item.get("type") or "").upper() == "SCHEDULE"]
@@ -497,7 +497,7 @@ class ThicknessProcessor:
 
             operand = re.sub(r'(?i)\s*\([LS]\)\s*$', '', operand).strip()
 
-            if re.fullmatch(r'(?i)(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|S\d+S?|\d+S|XS|XXS|STD)', operand):
+            if re.fullmatch(r'(?i)(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|XS|XXS|STD)', operand):
                 if _mark_invalid_if_needed(schedule_raw=operand):
                     return None
                 code = self._convert_single(operand).strip()
@@ -553,7 +553,7 @@ class ThicknessProcessor:
                     "invalid": invalid,
                 }
 
-        schedule_operand = rf'(?:{sch_token}|{s_dash_token}|{weak_schedule_token})(?:\s*\([LS]\))?'
+        schedule_operand = rf'(?:{sch_token}|{s_dash_token})(?:\s*\([LS]\))?'
         mm_operand = r'(?:(?:THK|T|壁厚)\s*[:：=]?\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S\s*[:：=]\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S-\d+\.\d+\s*(?:MM|毫米)?|\d+(?:\.\d+)?\s*(?:MM|毫米))(?:\s*\([LS]\))?'
         generic_operand = rf'(?:{schedule_operand}|{mm_operand})'
         generic_two_part_combo_pattern = re.compile(
@@ -741,10 +741,7 @@ class ThicknessProcessor:
                 rf'(?i){schedule_left_boundary}({s_dash_token}\s*[xX×]\s*{s_dash_token}){schedule_right_boundary}'
             ),
             re.compile(
-                rf'(?i){schedule_left_boundary}((?:{sch_token}|{s_dash_token})\s*[xX×]\s*(?:{sch_token}|{s_dash_token}|{weak_schedule_token})){schedule_right_boundary}'
-            ),
-            re.compile(
-                rf'(?i){schedule_left_boundary}((?:{weak_schedule_token})\s*[xX×]\s*(?:{sch_token}|{s_dash_token}|{weak_schedule_token})){schedule_right_boundary}'
+                rf'(?i){schedule_left_boundary}((?:{sch_token}|{s_dash_token})\s*[xX×]\s*(?:{sch_token}|{s_dash_token})){schedule_right_boundary}'
             ),
             # 紧凑拼写：SCH10Sch20S / SCH10SXSCH10S 等，留给 split_concatenated_tokens 做切分。
             re.compile(
@@ -786,7 +783,7 @@ class ThicknessProcessor:
         # 例如 S-40CL300 / SCH40CL150 / STDCL3000。
         glued_schedule_pressure_pattern = re.compile(
             rf'(?i){single_schedule_left_boundary}'
-            rf'((?:{sch_token}|{s_dash_token}|STD|XS|XXS|{weak_schedule_token}))'
+            rf'((?:{sch_token}|{s_dash_token}|STD|XS|XXS))'
             rf'(?=(?:\s*CL(?:ASS)?[.\s-]*\d|\s*C\s*\d|\s*PN\s*\d|\s*\d+\s*(?:LBS?|#)))'
         )
         for m in glued_schedule_pressure_pattern.finditer(normalized):
@@ -868,34 +865,8 @@ class ThicknessProcessor:
                 consumed_schedule_spans.append(span)
                 _record(raw_token, span)
 
-        # 数字S / S整数 是最弱的一层：
-        # 只有在前面没有任何显式壁厚（schedule/mm）时才允许启用，
-        # 避免像 P150S40S 这种编码串里的 150S 越权进入壁厚。
-        if not schedule_parts and not mm_parts:
-            weak_numeric_schedule_pattern = re.compile(
-                rf'(?i)(?<![A-Za-z0-9.])(?:{weak_schedule_prefixed_token}|{weak_schedule_s_dash_token}|{weak_schedule_numeric_suffix_token})(?![A-Za-z0-9.]|\.\d)'
-            )
-            for m in weak_numeric_schedule_pattern.finditer(normalized):
-                span = (m.start(), m.end())
-                if _overlaps_blocked(span):
-                    continue
-                if _overlaps_recorded(span):
-                    continue
-                if any(start < span[1] and span[0] < end for start, end in consumed_schedule_spans):
-                    continue
-                raw_token = m.group(0)
-                # 弱规则候选非法时只跳过该候选，不整条作废。
-                if not self._is_valid_schedule_candidate(raw_token):
-                    continue
-                part = self._convert_single(raw_token).strip()
-                if part:
-                    _add_unique(schedule_parts, part)
-                    _add_ordered("SCHEDULE", part, part, span)
-                    consumed_schedule_spans.append(span)
-                    _record(raw_token, span)
-
         od_schedule_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×*]\s*((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)|\d+S))'
+            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×*]\s*((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)))'
         )
         for m in od_schedule_pattern.finditer(normalized):
             span = (m.start(), m.end())
@@ -1100,20 +1071,25 @@ class ThicknessProcessor:
             _add_ordered("MM", self._normalize_number(block["thickness"]), value, span)
             _record(block["raw"], span)
 
-        dn_decimal_patterns = (
-            re.compile(r'(?i)\bDN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+\.\d+)\b'),
-            re.compile(r'(?i)\bDN\s*\d+(?:\.\d+)?\s*-\s*(\d+\.\d+)\b'),
+        if schedule_parts or mm_parts:
+            return
+
+        weak_schedule_prefixed_token, _, weak_schedule_numeric_suffix_token, _ = self._weak_schedule_patterns()
+        weak_numeric_schedule_pattern = re.compile(
+            rf'(?i)(?<![A-Za-z0-9.])(?:{weak_schedule_prefixed_token}|{weak_schedule_numeric_suffix_token})(?![A-Za-z0-9.]|\.\d)'
         )
-        for pattern in dn_decimal_patterns:
-            for m in pattern.finditer(normalized):
-                second_value_span = m.span(1)
-                if _overlaps_blocked(second_value_span):
-                    continue
-                value = f"{self._normalize_number(m.group(1))}MM"
-                if value not in mm_parts:
-                    _add_unique(mm_parts, value)
-                    _add_ordered("MM", self._normalize_number(m.group(1)), value, second_value_span)
-                    _record(m.group(0), (m.start(), m.end()))
+        for m in weak_numeric_schedule_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if _overlaps_blocked(span):
+                continue
+            raw_token = str(m.group(0) or "").strip().upper()
+            if not self._is_valid_schedule_candidate(raw_token):
+                continue
+            part = self._convert_single(raw_token).strip()
+            if part:
+                _add_unique(schedule_parts, part)
+                _add_ordered("SCHEDULE", part, part, span)
+                _record(raw_token, span)
 
     def _apply_size_context_thickness_rules(
         self,
@@ -1270,13 +1246,9 @@ class ThicknessProcessor:
                     return True
             return False
 
-        weak_schedule_prefixed_token, weak_schedule_s_dash_token, weak_schedule_numeric_suffix_token, _ = self._weak_schedule_patterns()
         schedule_token_pattern = (
             rf'(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|'
             rf'S-(?:\d+S?|STD|XS|XXS)|'
-            rf'{weak_schedule_prefixed_token}|'
-            rf'{weak_schedule_s_dash_token}|'
-            rf'{weak_schedule_numeric_suffix_token}|'
             rf'XS|XXS|STD)'
         )
         separator_prefixed_right_schedule_pattern = re.compile(
