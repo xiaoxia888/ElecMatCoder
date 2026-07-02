@@ -1,1 +1,0 @@
-# GlobalPointer NER
