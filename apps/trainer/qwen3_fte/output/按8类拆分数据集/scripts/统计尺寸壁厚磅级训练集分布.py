@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+python apps/trainer/qwen3_fte/output/按8类拆分数据集/scripts/统计尺寸壁厚磅级训练集分布.py \
+  --input-json /Users/guoxi/Documents/尺寸壁厚磅级C1训练集.json \
+  --output /Users/guoxi/Documents/尺寸壁厚磅级C1训练集统计.xlsx
+  
+"""
 from __future__ import annotations
 
 import argparse

@@ -57,7 +57,7 @@ CODE_COL = "本项目材料代码"
 DESC_COL = "材料描述"
 PROJECT_COL = "项目名称"
 CATEGORY_COL = "材质分类"
-NEW_CODE_COL = "本次生成材料代码"
+NEW_CODE_COL = "匹配材料代码"
 
 OUTPUT_COLUMNS = [CODE_COL, "数量", "编号", PROJECT_COL, CATEGORY_COL, DESC_COL]
 DIFF_SHEET_COLUMNS = [

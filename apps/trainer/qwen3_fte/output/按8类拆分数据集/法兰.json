@@ -63760,6 +63760,61 @@
     }
   },
   {
+    "input": "HUBBED SLIP-ON-WELDING FLANGE CL150(PN20) RF NB/T 47008 20 Galv. SH/T 3406 - DN100",
+    "output": {
+      "CATEGORY":"法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    }
+  },
+  {
+    "input": "HUBBED SLIP-ON-WELDING FLANGE CL150(PN20) RF NB/T 47008 20 Galv. SH/T 3406 - DN150",
+    "output": {
+      "CATEGORY":"法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    }
+  },
+  {
+    "input": "FLANGE CL150(PN20) RF NB/T 47008 20 Galv. SH/T 3406 - DN250",
+    "output": {
+      "CATEGORY":"法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    }
+  },
+  {
+    "input": "SLIP-ON-WELDING FLANGE CL150(PN20) RF NB/T 47008 20 Galv. SH/T 3406 - DN100",
+    "output": {
+      "CATEGORY":"法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    }
+  },
+  {
+    "input": "FLANGE CL150(PN20) RF NB/T 47008 20 Galv. SH/T 3406 - DN150",
+    "output": {
+      "CATEGORY":"法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    }
+  },
+  {
     "input": "FLANGE,GROOVED,A105,GALV,CL150,RF,ASME B16.5 4\"",
     "output": {
       "CATEGORY":"法兰",

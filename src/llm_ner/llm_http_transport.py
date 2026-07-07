@@ -25,11 +25,20 @@ class LlmHttpResponse:
 def extract_usage(payload: Dict[str, Any]) -> Dict[str, int]:
     usage = payload.get("usage") or {}
     if usage:
-        return {
+        result = {
             "prompt_tokens": int(usage.get("prompt_tokens", 0) or 0),
             "completion_tokens": int(usage.get("completion_tokens", 0) or 0),
             "total_tokens": int(usage.get("total_tokens", 0) or 0),
         }
+        if "prompt_cache_hit_tokens" in usage:
+            result["prompt_cache_hit_tokens"] = int(usage.get("prompt_cache_hit_tokens", 0) or 0)
+        if "prompt_cache_miss_tokens" in usage:
+            result["prompt_cache_miss_tokens"] = int(usage.get("prompt_cache_miss_tokens", 0) or 0)
+        if "cache_creation_input_tokens" in usage:
+            result["cache_creation_input_tokens"] = int(usage.get("cache_creation_input_tokens", 0) or 0)
+        if "cache_read_input_tokens" in usage:
+            result["cache_read_input_tokens"] = int(usage.get("cache_read_input_tokens", 0) or 0)
+        return result
 
     prompt_eval = payload.get("prompt_eval_count")
     eval_count = payload.get("eval_count")
@@ -95,6 +104,7 @@ def call_openai_compatible(
     api_key: str = "",
     stop: Sequence[str] | None = None,
     reasoning_split: bool = False,
+    extra_body: Dict[str, Any] | None = None,
 ) -> LlmHttpResponse:
     headers = {"Content-Type": "application/json"}
     if api_key:
@@ -111,6 +121,7 @@ def call_openai_compatible(
                 "temperature": temperature,
                 "max_tokens": max_tokens,
                 **({"stop": list(stop)} if stop else {}),
+                **(extra_body or {}),
             },
             timeout=timeout,
         )
@@ -133,6 +144,7 @@ def call_openai_compatible(
             "max_tokens": max_tokens,
             **({"stop": list(stop)} if stop else {}),
             **({"reasoning_split": True} if reasoning_split else {}),
+            **(extra_body or {}),
         },
         timeout=timeout,
     )

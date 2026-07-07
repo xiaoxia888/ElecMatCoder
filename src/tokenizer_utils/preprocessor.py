@@ -107,7 +107,10 @@ class TextPreprocessor:
         # 13. 对强结构 token 做安全切分，避免与前后脏串粘连
         text = self.normalize_strong_structural_tokens(text)
 
-        # 14. 空白压缩
+        # 14. 删除容易被误判为壁厚的工程标准短语
+        text = self.remove_non_thickness_standard_phrases(text)
+
+        # 15. 空白压缩
         text = self.normalize_whitespace(text)
 
         return text
@@ -526,3 +529,26 @@ class TextPreprocessor:
     def normalize_whitespace(text: str) -> str:
         """压缩空白字符，保留单个空格。"""
         return re.sub(r'\s+', ' ', text).strip()
+
+    @staticmethod
+    def remove_non_thickness_standard_phrases(text: str) -> str:
+        """
+        删除容易被误判为壁厚的工程标准短语。
+
+        这些短语在实际描述里通常表示工程标准/企业标准，
+        不是壁厚信息，例如：ENR STD、MFR STD。
+        """
+        if not text:
+            return ""
+
+        patterns = (
+            r"(?i)\bMNF\s+STD\b",
+            r"(?i)\bMFR\s+STD\b",
+            r"(?i)\bMFRS\s+STD\b",
+            r"(?i)\bENR\s+STD\b",
+        )
+
+        for pattern in patterns:
+            text = re.sub(pattern, " ", text)
+
+        return text

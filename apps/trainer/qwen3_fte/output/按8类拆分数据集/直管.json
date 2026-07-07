@@ -10425,7 +10425,7 @@
     "output": {
       "CATEGORY":"直管",
       "TYPE": {
-        "BODY": "直管",
+        "BODY": "仪表管",
         "MANU": [
           "SMLS"
         ]
@@ -10498,6 +10498,18 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "仪表管 76×3.0 304 GB/T 14976-2012",
+    "output": {
+      "CATEGORY":"直管",
+      "TYPE": {
+        "BODY": "仪表管",
         "MANU": [
           "SMLS"
         ]
@@ -15039,16 +15051,6 @@
         "MANU": [
           "SMLS"
         ]
-      }
-    }
-  },
-  {
-    "input": "PIPE UNION,MSS SP-83,CL. 3000,A182 F304,FNPT,DN20",
-    "output": {
-      "CATEGORY":"直管",
-      "TYPE": {
-        "BODY": "直管",
-        "MANU": []
       }
     }
   },
@@ -25866,6 +25868,18 @@
   },
   {
     "input": "不锈无缝钢管 10 2205 仪表管 Φ10X1.5 2205 GB/T14976",
+    "output": {
+      "CATEGORY":"直管",
+      "TYPE": {
+        "BODY": "仪表管",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 10 2205 直管 Φ10X1.5 2205 GB/T14976",
     "output": {
       "CATEGORY":"直管",
       "TYPE": {

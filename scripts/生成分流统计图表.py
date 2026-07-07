@@ -13,10 +13,11 @@ import pandas as pd
 
 DIFFICULTY_COL_CANDIDATES = (
     "分流最终难度（0=困难，1=中等，2=简单）",
+    "excel2_分流最终难度（0=困难，1=中等，2=简单）",
     "分流最终难度（0=困难，1=简单，2=二次简单）",
     "分流最终难度",
 )
-PROJECT_COL_CANDIDATES = ("项目名称",)
+PROJECT_COL_CANDIDATES = ("项目名称","项目简称")
 CORRECT_COL_CANDIDATES = ("是否正确", "是否匹配正确", "是否编码正确", "是否审核正确")
 
 LEVEL_LABELS = {0: "困难", 1: "中等", 2: "简单"}

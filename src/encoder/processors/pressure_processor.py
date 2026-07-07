@@ -76,18 +76,25 @@ class PressureProcessor:
         hash_value_pattern = "|".join(
             sorted((re.escape(v) for v in self.class_values), key=len, reverse=True)
         )
-        # CL / CLASS：只认数字等级，天然过滤 Class I / Class II
+        pn_value_pattern = "|".join(
+            sorted((re.escape(v) for v in self.pn_values), key=len, reverse=True)
+        )
+
+        # CL / CLASS / PN 分两类：
+        # 1. 严格边界：左右都按完整 token 判断。
+        # 2. 粘连边界：允许 B16.5CL150RF / B16.5PN2.5RF 这类场景，
+        #    但数字部分必须命中配置中的常见磅级白名单。
         self.cl_pattern = re.compile(
-            r"(?i)(?<![A-Z0-9])CL\s*\.?\s*(\d+)(?![A-Z0-9])"
+            rf"(?i)(?:(?<![A-Z0-9])CL\s*\.?\s*(\d+)(?![A-Z0-9])|(?<![A-Z])CL\s*\.?\s*({hash_value_pattern})(?!\d))"
         )
         self.class_pattern = re.compile(
-            r"(?i)(?<![A-Z0-9])CLASS\s*(\d+)(?![A-Z0-9])"
+            rf"(?i)(?:(?<![A-Z0-9])CLASS\s*(\d+)(?![A-Z0-9])|(?<![A-Z])CLASS\s*({hash_value_pattern})(?!\d))"
         )
         self.lb_pattern = re.compile(
             r"(?i)(?<![A-Z0-9])(\d+)\s*LB(?:S)?(?![A-Z0-9])"
         )
         self.reverse_cl_pattern = re.compile(
-            r"(?i)(?<![A-Z0-9])(\d+)\s*CL(?![A-Z0-9])"
+            rf"(?i)(?:(?<![A-Z0-9])(\d+)\s*CL(?![A-Z0-9])|(?<![A-Z])({hash_value_pattern})\s*CL(?=(?:RF|FF|RTJ|RJ|\s|,|，|;|/|\)|$)))"
         )
         self.hash_pattern = re.compile(
             rf"(?i)(?<![A-Z0-9])({hash_value_pattern})\s*#(?![A-Z0-9])"
@@ -96,7 +103,7 @@ class PressureProcessor:
             rf"(?i)(?<![A-Z0-9])C\s*({hash_value_pattern})(?![A-Z0-9])"
         )
         self.pn_pattern = re.compile(
-            r"(?i)(?<![A-Z0-9])PN\s*(\d+(?:\.\d+)?)"
+            rf"(?i)(?:(?<![A-Z0-9])PN\s*(\d+(?:\.\d+)?)(?![A-Z0-9])|(?<![A-Z])PN\s*({pn_value_pattern})(?!\d))"
         )
 
         # MPa / BAR 只认独立压力 token；比较符、FV/6Bar 这类场景在命中后再排除
@@ -112,13 +119,17 @@ class PressureProcessor:
         self.comparison_chars = set("><=≤≥")
         self.pressure_token_pattern = re.compile(
             rf"(?i)("
-            rf"CL\s*\.?\s*\d+"
-            rf"|\d+\s*CL"
-            rf"|CLASS\s*\d+"
+            rf"(?<![A-Z0-9])CL\s*\.?\s*\d+(?![A-Z0-9])"
+            rf"|(?<![A-Z])CL\s*\.?\s*(?:{hash_value_pattern})(?!\d)"
+            rf"|(?<![A-Z0-9])\d+\s*CL(?![A-Z0-9])"
+            rf"|(?<![A-Z])(?:{hash_value_pattern})\s*CL(?=(?:RF|FF|RTJ|RJ|\s|,|，|;|/|\)|$))"
+            rf"|(?<![A-Z0-9])CLASS\s*\d+(?![A-Z0-9])"
+            rf"|(?<![A-Z])CLASS\s*(?:{hash_value_pattern})(?!\d)"
             rf"|C\s*(?:{hash_value_pattern})"
             rf"|\d+\s*LB(?:S)?"
             rf"|(?:{hash_value_pattern})\s*#"
-            rf"|PN\s*\d+(?:\.\d+)?"
+            rf"|(?<![A-Z0-9])PN\s*\d+(?:\.\d+)?(?![A-Z0-9])"
+            rf"|(?<![A-Z])PN\s*(?:{pn_value_pattern})(?!\d)"
             rf"|\d+(?:\.\d+)?\s*MPA"
             rf"|\d+(?:\.\d+)?\s*BAR"
             rf")"

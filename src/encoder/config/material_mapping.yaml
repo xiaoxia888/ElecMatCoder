@@ -11,6 +11,8 @@ value_mapping:
   - B60ZN
   B60:
   - B60
+  灰口铸铁:
+  - GI
   Q245RCE:
   - Q245RCE
   FRPP:

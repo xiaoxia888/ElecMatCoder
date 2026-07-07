@@ -97412,23 +97412,6 @@
     }
   },
   {
-    "input": "PIPE UNION / MSS SP-83 / CL. 3000 / A182 F304 / FNPT DN20",
-    "output": {
-      "CATEGORY":"管件",
-      "TYPE": {
-        "BODY": "活接头",
-        "GEOMETRY": {
-          "ANGLE": "",
-          "RADIUS": ""
-        },
-        "MANU": [],
-        "CONN": [
-          "FNPT"
-        ]
-      }
-    }
-  },
-  {
     "input": "UNION A105N/GALV. CL.3000 SCRD MSS SP-83 DN50x50",
     "output": {
       "CATEGORY":"管件",
