@@ -92,6 +92,28 @@ def _has_structural_anchor(text: str, field: str) -> bool:
     return False
 
 
+def _summarize_stage1_structural_field(value: Any) -> Any:
+    if isinstance(value, dict):
+        result: Dict[str, Any] = {}
+        for key, item in value.items():
+            if str(key).startswith("_"):
+                continue
+            if item not in (None, "", [], {}):
+                result[key] = item
+        return result
+    return value
+
+
+def _non_empty_structural_reason(source: str, default_reason: str) -> str:
+    if source == "finetuned_structural_model":
+        return "finetuned_model_extraction"
+    if source == "complex_prompt_extraction":
+        return "complex_prompt_extraction"
+    if source == "rule_extraction":
+        return "rule_extraction"
+    return default_reason
+
+
 class Stage1FieldOrchestrator:
     """
     阶段一统一编排器：
@@ -356,7 +378,10 @@ class Stage1FieldOrchestrator:
             return {
                 "source": source,
                 "confidence": round(min(0.95, confidence), 4),
-                "reason": "explicit_pattern_match" if explicit_anchor else "implicit_pattern_match",
+                "reason": _non_empty_structural_reason(
+                    source,
+                    "explicit_pattern_match" if explicit_anchor else "implicit_pattern_match",
+                ),
                 "evidence": {
                     "field_present": True,
                     "item_count": item_count,
@@ -381,7 +406,10 @@ class Stage1FieldOrchestrator:
             return {
                 "source": source,
                 "confidence": round(min(0.95, confidence), 4),
-                "reason": "explicit_pattern_match" if explicit_anchor else "contextual_pattern_match",
+                "reason": _non_empty_structural_reason(
+                    source,
+                    "explicit_pattern_match" if explicit_anchor else "contextual_pattern_match",
+                ),
                 "evidence": {
                     "field_present": True,
                     "item_count": item_count,
@@ -396,7 +424,10 @@ class Stage1FieldOrchestrator:
             return {
                 "source": source,
                 "confidence": round(min(0.95, confidence), 4),
-                "reason": "explicit_pressure_anchor" if explicit_anchor else "contextual_pressure_match",
+                "reason": _non_empty_structural_reason(
+                    source,
+                    "explicit_pressure_anchor" if explicit_anchor else "contextual_pressure_match",
+                ),
                 "evidence": {
                     "field_present": True,
                     "explicit_anchor": explicit_anchor,
@@ -490,6 +521,14 @@ class Stage1FieldOrchestrator:
                     prompt_status="",
                     prompt_error="",
                 )
+            logger.debug(
+                "[结构字段最终] sources=%s, SIZE=%s, THICKNESS=%s, PRESSURE=%s, complex_trigger=%s",
+                structural_sources,
+                _summarize_stage1_structural_field(decisions.get("SIZE")),
+                _summarize_stage1_structural_field(decisions.get("THICKNESS")),
+                decisions.get("PRESSURE"),
+                structural_result.get("_complex_structural_trigger") or {},
+            )
 
         model_category = self._extract_model_category(type_result)
         if model_category:

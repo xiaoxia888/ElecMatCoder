@@ -61,6 +61,7 @@ export interface EncodingResult {
   success: boolean
   need_review: boolean
   confidence?: number
+  material_category?: string
   fields: Record<string, FieldPayload>
   route_info?: Record<string, unknown> | null
   routing?: {

@@ -93,6 +93,7 @@ class EncodedFieldResult:
 class PipeEncodingResult:
     """管道材料编码结果"""
     original_text: str
+    material_category: str = ""
     fields: Dict[str, EncodedFieldResult] = field(default_factory=dict)
     final_code: str = ""
     success: bool = False
@@ -134,6 +135,7 @@ class PipeEncodingResult:
             need_review=bool(self.need_review),
             confidence=round(float(self.confidence or 0.0), 4),
             fields=fields,
+            material_category=str(self.material_category or "").strip(),
             route_info=copy.deepcopy(route_info) if isinstance(route_info, dict) else None,
             errors=list(self.errors or []),
             warnings=list(self.warnings or []),
@@ -2647,6 +2649,104 @@ class PipeEncoderBase:
 
         return modifier_map
 
+    @staticmethod
+    def _is_straight_pipe_material_category(material_category: Any) -> bool:
+        return str(material_category or "").strip() == "直管"
+
+    @staticmethod
+    def _is_mm_thickness_text(value: Any) -> bool:
+        text = str(value or "").strip().upper()
+        return bool(re.fullmatch(r'(?:THK\s*=\s*)?\d+(?:\.\d+)?\s*MM', text))
+
+    @classmethod
+    def _is_schedule_thickness_text(cls, value: Any) -> bool:
+        text = str(value or "").strip().upper()
+        return bool(cls._THICKNESS_TOKEN_RE.fullmatch(text))
+
+    @classmethod
+    def _prune_straight_pipe_thickness_to_mm(cls, value: Any) -> tuple[Any, bool]:
+        """
+        直管编码策略：同一壁厚字段里同时存在 SCHEDULE 和 MM 时，二阶段只送 MM。
+
+        这是编码前业务裁剪，不改变一阶段原始识别。
+        """
+        if value in (None, "", [], {}):
+            return value, False
+
+        if isinstance(value, dict):
+            mm_values = cls._clone_response_value(value.get("MM") or [])
+            schedule_values = cls._clone_response_value(value.get("SCHEDULE") or [])
+            items = value.get("_ITEMS")
+            mm_items: list[dict[str, Any]] = []
+            has_schedule_item = False
+            if isinstance(items, list):
+                for item in items:
+                    if not isinstance(item, dict):
+                        continue
+                    item_type = str(item.get("type") or "").strip().upper()
+                    if item_type == "MM":
+                        mm_items.append(cls._clone_response_value(item))
+                    elif item_type == "SCHEDULE":
+                        has_schedule_item = True
+
+            has_mm = bool(mm_values) or bool(mm_items)
+            has_schedule = bool(schedule_values) or has_schedule_item
+            if not (has_mm and has_schedule):
+                return value, False
+
+            if not mm_values and mm_items:
+                mm_values = [
+                    str(item.get("value") or "").strip()
+                    for item in mm_items
+                    if str(item.get("value") or "").strip()
+                ]
+            pruned: dict[str, Any] = {"MM": mm_values}
+            if mm_items:
+                pruned["_ITEMS"] = mm_items
+            return pruned, True
+
+        if isinstance(value, list):
+            classified: list[tuple[str, Any]] = []
+            has_mm = False
+            has_schedule = False
+            for item in value:
+                if isinstance(item, dict):
+                    pruned_item, changed = cls._prune_straight_pipe_thickness_to_mm(item)
+                    item_has_mm = changed or bool(item.get("MM"))
+                    item_has_schedule = bool(item.get("SCHEDULE"))
+                    if item_has_mm:
+                        has_mm = True
+                    if item_has_schedule:
+                        has_schedule = True
+                    classified.append(("MM" if changed else "OTHER", pruned_item))
+                    continue
+                if cls._is_mm_thickness_text(item):
+                    has_mm = True
+                    classified.append(("MM", item))
+                elif cls._is_schedule_thickness_text(item):
+                    has_schedule = True
+                    classified.append(("SCHEDULE", item))
+                else:
+                    classified.append(("OTHER", item))
+            if not (has_mm and has_schedule):
+                return value, False
+            pruned_list = [item for kind, item in classified if kind == "MM"]
+            if not pruned_list:
+                return value, False
+            return pruned_list[0] if len(pruned_list) == 1 else pruned_list, True
+
+        text = str(value or "").strip()
+        if not text:
+            return value, False
+        parts = [part.strip() for part in re.split(r'\s*[xX×*/,]\s*', text) if part.strip()]
+        if len(parts) <= 1:
+            return value, False
+        mm_parts = [part for part in parts if cls._is_mm_thickness_text(part)]
+        schedule_parts = [part for part in parts if cls._is_schedule_thickness_text(part)]
+        if not (mm_parts and schedule_parts):
+            return value, False
+        return "X".join(mm_parts), True
+
     def _encode_fields(
         self,
         entities: Dict[str, Any],
@@ -2658,6 +2758,7 @@ class PipeEncoderBase:
         result: PipeEncodingResult,
         type_combined_processed: bool,
         original_text: str = "",
+        material_category: str = "",
     ):
         """按字段顺序编码并写入结果对象。"""
         for field_type in self.FIELD_ORDER:
@@ -2705,6 +2806,14 @@ class PipeEncoderBase:
                     raw_value,
                     entities.get('THICKNESS'),
                 )
+                thickness_pruned_to_mm = False
+            elif (
+                field_type == 'THICKNESS'
+                and self._is_straight_pipe_material_category(material_category)
+            ):
+                raw_value, thickness_pruned_to_mm = self._prune_straight_pipe_thickness_to_mm(raw_value)
+            else:
+                thickness_pruned_to_mm = False
 
             raw_value = self._normalize_field_value_for_stage2(field_type, raw_value)
             if not raw_value:
@@ -2758,6 +2867,10 @@ class PipeEncoderBase:
                 field_result = self._process_standard_multi(values, modifier_map, original_text=original_text)
             else:
                 field_result = self._process_field_multi(field_type, values, original_text=original_text)
+                if field_type == 'THICKNESS' and thickness_pruned_to_mm:
+                    note = "当前材料分类为直管，SCHEDULE与MM同时存在时二阶段仅使用MM壁厚"
+                    if note not in field_result.notes:
+                        field_result.notes.append(note)
 
             if field_type in {'SIZE', 'THICKNESS', 'PRESSURE'} and not field_result.code:
                 logger.warning(
@@ -2894,6 +3007,7 @@ class PipeEncoderBase:
         extract_confidence: Optional[Dict[str, Any]] = None,
         extract_confidence_v2: Optional[Dict[str, Any]] = None,
         stage1_raw_snapshot: Optional[Dict[str, Any]] = None,
+        material_category: str = "",
     ) -> PipeEncodingResult:
         """
         编码材料实体
@@ -2905,7 +3019,10 @@ class PipeEncoderBase:
         Returns:
             编码结果
         """
-        result = PipeEncodingResult(original_text=original_text)
+        result = PipeEncodingResult(
+            original_text=original_text,
+            material_category=str(material_category or "").strip(),
+        )
         
         if not entities:
             result.errors.append("输入实体为空")
@@ -2972,6 +3089,7 @@ class PipeEncoderBase:
             result,
             type_combined_processed,
             original_text=original_text,
+            material_category=result.material_category,
         )
 
         self._apply_thickness_mm_conversion(result)

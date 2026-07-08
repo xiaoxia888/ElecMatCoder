@@ -183,6 +183,32 @@ ner:
           temperature: 0.0
       structural_rules:
         enabled: true # 是否开启尺寸 / 壁厚 / 磅级规则器。规则器始终先跑，模型只补缺失字段。
+      complex_structural_prompt:
+        # 夹套 / 衬层 / 复合层结构的尺寸、壁厚、磅级提示词路径。
+        # 只要命中下面配置的关键词，或命中代码内置的复杂结构形态规则，就优先走该路径。
+        enabled: true
+        backend: "openai_compatible"
+        provider: "deepseek"
+        base_url: "https://api.deepseek.com"
+        api_key: "sk-6f2ca9f62f59439596756e25479291f6"
+        model_name: "deepseek-v4-flash"
+        temperature: 0.0
+        max_tokens: 1536
+        timeout: 60
+        trigger_keywords:
+          - "夹套"
+          - "JACKET"
+          - "JACKETED"
+          - "衬里"
+          - "衬层"
+          - "衬四氟"
+          - "紧衬"
+          - "松衬"
+          - "LINED"
+          - "LINING"
+          - "内管"
+          - "外管"
+          - "FRP/PVC"
 # ==================== 编码规则配置 ====================
 encoding:
   # 使用 Qwen3 微调模型统一编码

@@ -9,6 +9,7 @@ class StructuralFieldOutputNormalizer:
 
     SIZE_KEYS = ("DN", "OD", "INCH", "LENGTH")
     THICKNESS_KEYS = ("MM", "SCHEDULE", "BWG", "INCH")
+    ROLE_KEYS = {"BASE", "LINING", "INNER", "OUTER"}
     ITEM_TYPES = {
         "SIZE_ITEMS": set(SIZE_KEYS),
         "THICKNESS_ITEMS": set(THICKNESS_KEYS),
@@ -28,14 +29,25 @@ class StructuralFieldOutputNormalizer:
     @classmethod
     def normalize(cls, parsed: Dict[str, Any]) -> Dict[str, Any]:
         result = cls.empty_result()
+        structure_kind = cls.normalize_structure_kind(parsed.get("STRUCTURE_KIND"))
+        complex_meta: Dict[str, Any] = {}
 
         size = parsed.get("SIZE")
         if isinstance(size, dict):
             for key in cls.SIZE_KEYS:
                 result["SIZE"][key] = cls.normalize_list(size.get(key))
 
+        raw_size_items = parsed.get("SIZE_ITEMS")
+        size_items_with_role = cls.normalize_items_with_role(
+            raw_size_items,
+            cls.ITEM_TYPES["SIZE_ITEMS"],
+        )
+        if size_items_with_role:
+            complex_meta["SIZE_ITEMS_WITH_ROLE"] = size_items_with_role
         result["SIZE_ITEMS"] = cls.normalize_items(
-            parsed.get("SIZE_ITEMS"),
+            cls.fold_complex_items(size_items_with_role, structure_kind)
+            if size_items_with_role
+            else raw_size_items,
             cls.ITEM_TYPES["SIZE_ITEMS"],
         )
         top_level_length = cls.normalize_item_value("LENGTH", parsed.get("LENGTH", ""))
@@ -56,8 +68,17 @@ class StructuralFieldOutputNormalizer:
             for key in cls.THICKNESS_KEYS:
                 result["THICKNESS"][key] = cls.normalize_list(thickness.get(key))
 
+        raw_thickness_items = parsed.get("THICKNESS_ITEMS")
+        thickness_items_with_role = cls.normalize_items_with_role(
+            raw_thickness_items,
+            cls.ITEM_TYPES["THICKNESS_ITEMS"],
+        )
+        if thickness_items_with_role:
+            complex_meta["THICKNESS_ITEMS_WITH_ROLE"] = thickness_items_with_role
         result["THICKNESS_ITEMS"] = cls.normalize_items(
-            parsed.get("THICKNESS_ITEMS"),
+            cls.fold_complex_items(thickness_items_with_role, structure_kind)
+            if thickness_items_with_role
+            else raw_thickness_items,
             cls.ITEM_TYPES["THICKNESS_ITEMS"],
         )
         if result["THICKNESS_ITEMS"]:
@@ -65,7 +86,16 @@ class StructuralFieldOutputNormalizer:
 
         pressure = parsed.get("PRESSURE")
         result["PRESSURE"] = "" if pressure in (None, [], {}) else str(pressure).strip()
+        if structure_kind:
+            complex_meta["STRUCTURE_KIND"] = structure_kind
+        if complex_meta:
+            result["_complex_structure"] = complex_meta
         return result
+
+    @staticmethod
+    def normalize_structure_kind(value: Any) -> str:
+        text = str(value or "").strip().upper()
+        return text if text in {"NORMAL", "LINED", "JACKETED"} else ""
 
     @staticmethod
     def normalize_list(value: Any) -> List[str]:
@@ -107,6 +137,112 @@ class StructuralFieldOutputNormalizer:
             result.append({"type": item_type, "value": item_value})
         return result
 
+    @classmethod
+    def normalize_items_with_role(cls, value: Any, allowed_types: set[str]) -> List[Dict[str, str]]:
+        if value in (None, "", []):
+            return []
+        if not isinstance(value, list):
+            return []
+        result: List[Dict[str, str]] = []
+        seen = set()
+        for item in value:
+            if not isinstance(item, dict):
+                continue
+            item_type = str(item.get("type", "")).strip().upper()
+            item_value = cls.normalize_item_value(item_type, item.get("value", ""))
+            item_role = str(item.get("role", "") or "").strip().upper()
+            if not item_type or not item_value or item_type not in allowed_types:
+                continue
+            if item_role not in cls.ROLE_KEYS:
+                item_role = ""
+            key = (item_role, item_type, item_value)
+            if key in seen:
+                continue
+            seen.add(key)
+            payload = {"type": item_type, "value": item_value}
+            if item_role:
+                payload["role"] = item_role
+            result.append(payload)
+        return result
+
+    @classmethod
+    def fold_complex_items(cls, items: List[Dict[str, str]], structure_kind: str) -> List[Dict[str, str]]:
+        if not items:
+            return []
+        if structure_kind == "LINED":
+            return cls._fold_lined_items(items)
+        if structure_kind == "JACKETED":
+            return cls._fold_jacketed_items(items)
+        return [{"type": item["type"], "value": item["value"]} for item in items]
+
+    @staticmethod
+    def _append_unique(values: List[str], value: str) -> None:
+        if value and value not in values:
+            values.append(value)
+
+    @classmethod
+    def _fold_lined_items(cls, items: List[Dict[str, str]]) -> List[Dict[str, str]]:
+        result: List[Dict[str, str]] = []
+        pending_base_by_type: Dict[str, str] = {}
+
+        for item in items:
+            item_type = item["type"]
+            item_value = item["value"]
+            role = str(item.get("role", "") or "").upper()
+
+            if role == "BASE":
+                existing = pending_base_by_type.get(item_type)
+                if existing:
+                    result.append({"type": item_type, "value": existing})
+                pending_base_by_type[item_type] = item_value
+                continue
+
+            if role == "LINING":
+                base_value = pending_base_by_type.pop(item_type, "")
+                if base_value:
+                    result.append({"type": item_type, "value": f"{base_value}/{item_value}"})
+                else:
+                    result.append({"type": item_type, "value": item_value})
+                continue
+
+            pending = pending_base_by_type.pop(item_type, "")
+            if pending:
+                result.append({"type": item_type, "value": pending})
+            result.append({"type": item_type, "value": item_value})
+
+        for item_type, item_value in pending_base_by_type.items():
+            result.append({"type": item_type, "value": item_value})
+        return result
+
+    @classmethod
+    def _fold_jacketed_items(cls, items: List[Dict[str, str]]) -> List[Dict[str, str]]:
+        result: List[Dict[str, str]] = []
+        current_role = ""
+        current_type = ""
+        current_values: List[str] = []
+
+        def flush() -> None:
+            nonlocal current_role, current_type, current_values
+            if current_type and current_values:
+                result.append({"type": current_type, "value": "x".join(current_values)})
+            current_role = ""
+            current_type = ""
+            current_values = []
+
+        for item in items:
+            item_type = item["type"]
+            item_value = item["value"]
+            role = str(item.get("role", "") or "").upper()
+            group_role = role if role in {"INNER", "OUTER"} else "BASE"
+            if current_values and (group_role != current_role or item_type != current_type):
+                flush()
+            current_role = group_role
+            current_type = item_type
+            cls._append_unique(current_values, item_value)
+
+        flush()
+        return result
+
     @staticmethod
     def normalize_item_value(item_type: str, raw_value: Any) -> str:
         text = str(raw_value or "").strip()
@@ -135,6 +271,11 @@ class StructuralFieldOutputNormalizer:
             return re.sub(r"\s+", "", normalized)
 
         if kind in {"MM", "LENGTH"}:
+            if kind == "MM" and re.fullmatch(
+                r"\d+(?:\.\d+)?(?:\s*[xX×*/]\s*\d+(?:\.\d+)?)+",
+                normalized,
+            ):
+                return re.sub(r"\s+", "", normalized.replace("×", "x").replace("*", "x").replace("X", "x"))
             matched = re.fullmatch(r"(\d+(?:\.\d+)?)(?:\s*MM)?", normalized, flags=re.IGNORECASE)
             if matched:
                 return matched.group(1)

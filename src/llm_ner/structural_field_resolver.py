@@ -4,6 +4,7 @@ import copy
 import logging
 from typing import Any, Dict, Optional
 
+from src.llm_ner.complex_structural_trigger import ComplexStructuralTrigger
 from src.encoder.processors.rule_extraction import (
     build_structured_rule_entities,
     extract_size_and_thickness_by_rules,
@@ -37,6 +38,43 @@ def _clean_model_config(config: Dict[str, Any]) -> Dict[str, Any]:
     cleaned.pop("enabled", None)
     cleaned.pop("share_group", None)
     return cleaned
+
+
+def _build_complex_prompt_config(config: Dict[str, Any]) -> Dict[str, Any]:
+    cfg = copy.deepcopy(config or {})
+    if not cfg.get("enabled", False):
+        return cfg
+    cfg.setdefault("backend", "openai_compatible")
+    cfg.setdefault("api", "chat_completions")
+    cfg.setdefault("temperature", 0.0)
+    cfg.setdefault("max_tokens", 1536)
+    cfg.setdefault("timeout", 60)
+    cfg.setdefault("prompt_version", "lined_jacketed_v1")
+    cfg.setdefault("thinking_mode", "disabled")
+    cfg.setdefault("reasoning_effort", "high")
+    cfg.setdefault("max_workers", 1)
+    return cfg
+
+
+def _summarize_prompt_diagnostics(value: Any, *, max_len: int = 800) -> Any:
+    if not isinstance(value, dict):
+        return value
+    summarized: Dict[str, Any] = {}
+    for key, item in value.items():
+        text = str(item)
+        summarized[key] = text if len(text) <= max_len else text[:max_len] + "...[truncated]"
+    return summarized
+
+
+def _summarize_structural_result(value: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "SIZE_ITEMS": value.get("SIZE_ITEMS") or [],
+        "LENGTH": value.get("LENGTH") or "",
+        "THICKNESS_ITEMS": value.get("THICKNESS_ITEMS") or [],
+        "PRESSURE": value.get("PRESSURE") or "",
+        "sources": value.get("_sources") or {},
+        "complex_structure": value.get("_complex_structure") or {},
+    }
 
 
 def _flatten_config_keys(config: Dict[str, Any], prefix: str = "") -> Dict[str, Any]:
@@ -101,6 +139,10 @@ def _uses_prompt_orchestrator(config: Dict[str, Any]) -> bool:
     return False
 
 
+def _structural_extractor_source(config: Dict[str, Any]) -> str:
+    return "prompt_extraction" if _uses_prompt_orchestrator(config) else "finetuned_structural_model"
+
+
 class StructuralFieldResolver:
     """
     结构字段统一决策器。
@@ -118,10 +160,19 @@ class StructuralFieldResolver:
         *,
         extractor_groups: Optional[list[Dict[str, Any]]] = None,
         rule_config: Optional[Dict[str, Any]] = None,
+        complex_prompt_config: Optional[Dict[str, Any]] = None,
     ):
         self.extractor_groups = list(extractor_groups or [])
         self.rule_config = copy.deepcopy(rule_config or {})
         self.rules_enabled = bool(self.rule_config.get("enabled", False))
+        self.complex_prompt_config = _build_complex_prompt_config(complex_prompt_config or {})
+        self.complex_prompt_enabled = bool(self.complex_prompt_config.get("enabled", False))
+        self.complex_trigger = (
+            ComplexStructuralTrigger.from_config(self.complex_prompt_config)
+            if self.complex_prompt_enabled
+            else None
+        )
+        self._complex_extractor: Optional[Any] = None
 
     @classmethod
     def from_configs(
@@ -131,6 +182,7 @@ class StructuralFieldResolver:
         thickness_model_config: Optional[Dict[str, Any]] = None,
         pressure_model_config: Optional[Dict[str, Any]] = None,
         rule_config: Optional[Dict[str, Any]] = None,
+        complex_prompt_config: Optional[Dict[str, Any]] = None,
     ) -> "StructuralFieldResolver":
         from .structural_field_model_extractor import StructuralFieldModelExtractor
         from .structural_prompt_extractor import StructuralPromptExtractor
@@ -179,14 +231,77 @@ class StructuralFieldResolver:
                     {
                         "fields": list(grouped["fields"]),
                         "extractor": extractor_cls(extractor_config),
+                        "source": _structural_extractor_source(extractor_config),
                     }
                 )
-        return cls(extractor_groups=extractor_groups, rule_config=rule_config)
+        return cls(
+            extractor_groups=extractor_groups,
+            rule_config=rule_config,
+            complex_prompt_config=complex_prompt_config,
+        )
+
+    def _get_complex_extractor(self) -> Any:
+        if not self.complex_prompt_enabled:
+            return None
+        if self._complex_extractor is None:
+            from .structural_prompt_extractor import StructuralPromptExtractor
+
+            self._complex_extractor = StructuralPromptExtractor(self.complex_prompt_config)
+        return self._complex_extractor
+
+    def _extract_complex_prompt(self, raw_text: str, trigger_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        extractor = self._get_complex_extractor()
+        if extractor is None:
+            return None
+        try:
+            result = extractor.extract_with_context(
+                raw_text,
+                context=None,
+                run_size_length=True,
+                run_thickness=True,
+                run_pressure=True,
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("[复杂结构提示词] 调用失败，回退普通结构字段路径: %s", exc)
+            return None
+        if not isinstance(result, dict):
+            return None
+        has_value = (
+            not _is_size_empty_for_rule_fallback(result.get("SIZE"))
+            or not _is_thickness_empty_for_rule_fallback(result.get("THICKNESS"))
+            or not _is_pressure_empty_for_rule_fallback(result.get("PRESSURE"))
+        )
+        if not has_value:
+            logger.warning(
+                "[复杂结构提示词] 命中触发但未抽取到结构字段，回退普通结构字段路径: "
+                "trigger=%s, status=%s, errors=%s",
+                trigger_info,
+                _summarize_prompt_diagnostics(result.get("_status") or {}),
+                _summarize_prompt_diagnostics(result.get("_errors") or {}),
+            )
+            return None
+        result["_sources"] = {
+            "SIZE": "complex_prompt_extraction",
+            "THICKNESS": "complex_prompt_extraction",
+            "PRESSURE": "complex_prompt_extraction",
+        }
+        result["_complex_structural_trigger"] = trigger_info
+        return result
 
     def extract(self, text: str) -> Optional[Dict[str, Any]]:
         raw_text = str(text or "")
         if not raw_text.strip():
             return None
+
+        if self.complex_trigger is not None:
+            trigger = self.complex_trigger.match(raw_text)
+            if trigger is not None:
+                logger.debug("[结构字段路径] 命中复杂结构触发，优先走复杂提示词: %s", trigger.to_dict())
+                complex_result = self._extract_complex_prompt(raw_text, trigger.to_dict())
+                if complex_result is not None:
+                    logger.debug("[结构字段路径] 使用复杂提示词结果: %s", _summarize_structural_result(complex_result))
+                    return complex_result
+                logger.debug("[结构字段路径] 复杂提示词无可用结果，继续普通结构字段路径")
 
         rule_structural: Optional[Dict[str, Any]] = None
         sources: Dict[str, str] = {}
@@ -196,6 +311,7 @@ class StructuralFieldResolver:
             rule_structural = build_structured_rule_entities(rule_result, original_text=raw_text)
             for field in ("SIZE", "THICKNESS", "PRESSURE"):
                 sources[field] = "rule_extraction"
+            logger.debug("[结构字段路径] 规则器结果: %s", _summarize_structural_result(rule_structural))
 
         if not self.extractor_groups:
             if rule_structural is None:
@@ -205,6 +321,7 @@ class StructuralFieldResolver:
             merged["_raw"] = ""
             merged["_status"] = {}
             merged["_errors"] = {}
+            logger.debug("[结构字段路径] 最终使用规则器结果: %s", _summarize_structural_result(merged))
             return merged
 
         if rule_structural is None:
@@ -218,6 +335,7 @@ class StructuralFieldResolver:
             sources = {}
 
             for group in self.extractor_groups:
+                group_source = str(group.get("source") or "prompt_extraction")
                 partial_result = group["extractor"].extract_with_context(
                     raw_text,
                     context=field_context,
@@ -242,19 +360,20 @@ class StructuralFieldResolver:
                 if "SIZE" in group["fields"] and not _is_size_empty_for_rule_fallback(partial_result.get("SIZE")):
                     model_structural["SIZE"] = _copy_structural_field(partial_result.get("SIZE"))
                     field_context["SIZE"] = _copy_structural_field(partial_result.get("SIZE"))
-                    sources["SIZE"] = "prompt_extraction"
+                    sources["SIZE"] = group_source
                 if "THICKNESS" in group["fields"] and not _is_thickness_empty_for_rule_fallback(partial_result.get("THICKNESS")):
                     model_structural["THICKNESS"] = _copy_structural_field(partial_result.get("THICKNESS"))
                     field_context["THICKNESS"] = _copy_structural_field(partial_result.get("THICKNESS"))
-                    sources["THICKNESS"] = "prompt_extraction"
+                    sources["THICKNESS"] = group_source
                 if "PRESSURE" in group["fields"] and not _is_pressure_empty_for_rule_fallback(partial_result.get("PRESSURE")):
                     model_structural["PRESSURE"] = _copy_structural_field(partial_result.get("PRESSURE"))
                     field_context["PRESSURE"] = _copy_structural_field(partial_result.get("PRESSURE"))
-                    sources["PRESSURE"] = "prompt_extraction"
+                    sources["PRESSURE"] = group_source
 
             if not any(key in model_structural for key in ("SIZE", "THICKNESS", "PRESSURE")):
                 return None
             model_structural["_sources"] = sources
+            logger.debug("[结构字段路径] 无规则器，最终使用模型/提示词结果: %s", _summarize_structural_result(model_structural))
             return model_structural
 
         size_value = rule_structural.get("SIZE")
@@ -276,6 +395,7 @@ class StructuralFieldResolver:
             merged["_raw"] = ""
             merged["_status"] = {}
             merged["_errors"] = {}
+            logger.debug("[结构字段路径] 规则器字段完整，无需模型补提: %s", _summarize_structural_result(merged))
             return merged
 
         field_context = _build_field_context(size_value, thickness_value, pressure_value)
@@ -284,10 +404,12 @@ class StructuralFieldResolver:
             "_status": {},
             "_errors": {},
             "_usage": {},
+            "_field_sources": {},
         }
 
         for group in self.extractor_groups:
             fields = set(group.get("fields") or [])
+            group_source = str(group.get("source") or "prompt_extraction")
             run_size = need_size_model and "SIZE" in fields
             run_thickness = need_thickness_model and "THICKNESS" in fields
             run_pressure = need_pressure_model and "PRESSURE" in fields
@@ -318,12 +440,15 @@ class StructuralFieldResolver:
             if run_size and not _is_size_empty_for_rule_fallback(partial_result.get("SIZE")):
                 model_structural["SIZE"] = _copy_structural_field(partial_result.get("SIZE"))
                 field_context["SIZE"] = _copy_structural_field(partial_result.get("SIZE"))
+                model_structural["_field_sources"]["SIZE"] = group_source
             if run_thickness and not _is_thickness_empty_for_rule_fallback(partial_result.get("THICKNESS")):
                 model_structural["THICKNESS"] = _copy_structural_field(partial_result.get("THICKNESS"))
                 field_context["THICKNESS"] = _copy_structural_field(partial_result.get("THICKNESS"))
+                model_structural["_field_sources"]["THICKNESS"] = group_source
             if run_pressure and not _is_pressure_empty_for_rule_fallback(partial_result.get("PRESSURE")):
                 model_structural["PRESSURE"] = _copy_structural_field(partial_result.get("PRESSURE"))
                 field_context["PRESSURE"] = _copy_structural_field(partial_result.get("PRESSURE"))
+                model_structural["_field_sources"]["PRESSURE"] = group_source
 
         merged = copy.deepcopy(rule_structural)
         merged["_raw"] = str(model_structural.get("_raw", "") or "")
@@ -331,22 +456,23 @@ class StructuralFieldResolver:
         merged["_errors"] = copy.deepcopy(model_structural.get("_errors", {}) or {})
 
         if need_size_model:
-            sources["SIZE"] = "prompt_extraction"
             prompt_size = model_structural.get("SIZE")
             if not _is_size_empty_for_rule_fallback(prompt_size):
                 merged["SIZE"] = _copy_structural_field(prompt_size)
+                sources["SIZE"] = model_structural.get("_field_sources", {}).get("SIZE", "finetuned_structural_model")
 
         if need_thickness_model:
-            sources["THICKNESS"] = "prompt_extraction"
             prompt_thickness = model_structural.get("THICKNESS")
             if not _is_thickness_empty_for_rule_fallback(prompt_thickness):
                 merged["THICKNESS"] = _copy_structural_field(prompt_thickness)
+                sources["THICKNESS"] = model_structural.get("_field_sources", {}).get("THICKNESS", "finetuned_structural_model")
 
         if need_pressure_model:
-            sources["PRESSURE"] = "prompt_extraction"
             prompt_pressure = model_structural.get("PRESSURE")
             if not _is_pressure_empty_for_rule_fallback(prompt_pressure):
                 merged["PRESSURE"] = _copy_structural_field(prompt_pressure)
+                sources["PRESSURE"] = model_structural.get("_field_sources", {}).get("PRESSURE", "finetuned_structural_model")
 
         merged["_sources"] = sources
+        logger.debug("[结构字段路径] 规则器+模型补提合并结果: %s", _summarize_structural_result(merged))
         return merged

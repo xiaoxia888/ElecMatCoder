@@ -385,6 +385,7 @@ async def _run_batch_job(job_id: str) -> None:
                 need_review=False,
                 confidence=0.0,
                 fields={},
+                material_category=_get_material_category_from_type_model(predict_result),
                 route_info=route_info,
                 errors=[],
                 warnings=[],
@@ -408,11 +409,11 @@ async def _run_batch_job(job_id: str) -> None:
                 extract_confidence,
                 extract_confidence_v2,
                 stage1_snapshot.raw_values,
+                _get_material_category_from_type_model(predict_result),
             )
 
-        converted = _convert_pipe_result(result)
+        converted = _convert_pipe_result(result, route_info=route_info)
         converted["processed_text"] = processed_text
-        converted["route_info"] = route_info
         converted["stage1"] = stage1
         converted = attach_routing(converted)
         return converted
@@ -641,7 +642,8 @@ def _resolve_qwen3_stage1_config(qwen3_config: Dict[str, Any]) -> Dict[str, Any]
       size_model,
       thickness_model,
       pressure_model,
-      structural_rules
+      structural_rules,
+      complex_structural_prompt
     }
     """
     qwen3_config = qwen3_config or {}
@@ -654,6 +656,7 @@ def _resolve_qwen3_stage1_config(qwen3_config: Dict[str, Any]) -> Dict[str, Any]
     stage1.setdefault("thickness_model", {})
     stage1.setdefault("pressure_model", {})
     stage1.setdefault("structural_rules", {})
+    stage1.setdefault("complex_structural_prompt", {})
 
     stage1["type_models"] = {
         category: _normalize_backend_scoped_model_config(cfg)
@@ -666,6 +669,7 @@ def _resolve_qwen3_stage1_config(qwen3_config: Dict[str, Any]) -> Dict[str, Any]
         "size_model",
         "thickness_model",
         "pressure_model",
+        "complex_structural_prompt",
     ):
         stage1[key] = _normalize_backend_scoped_model_config(stage1.get(key) or {})
     return stage1
@@ -869,6 +873,7 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
     material_model = copy.deepcopy(stage1_cfg.get("material_model") or {})
     standard_model = copy.deepcopy(stage1_cfg.get("standard_model") or {})
     structural_rules_cfg = copy.deepcopy(stage1_cfg.get("structural_rules") or {})
+    complex_structural_prompt_cfg = copy.deepcopy(stage1_cfg.get("complex_structural_prompt") or {})
 
     base_qwen3_config = copy.deepcopy(qwen3_config)
     base_qwen3_config.pop("router", None)
@@ -934,7 +939,11 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
     )
 
     def structural_extractor_factory():
-        if not structural_field_model_configs and not structural_rules_cfg.get("enabled", False):
+        if (
+            not structural_field_model_configs
+            and not structural_rules_cfg.get("enabled", False)
+            and not complex_structural_prompt_cfg.get("enabled", False)
+        ):
             return None
         from src.llm_ner.structural_field_resolver import StructuralFieldResolver
 
@@ -943,10 +952,11 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
             thickness_model_config=structural_field_model_configs.get("THICKNESS"),
             pressure_model_config=structural_field_model_configs.get("PRESSURE"),
             rule_config=structural_rules_cfg,
+            complex_prompt_config=complex_structural_prompt_cfg,
         )
 
     logger.info(
-        "加载路由版 Qwen3 一阶段编排器: router=%s, TYPE覆盖分类数=%s, material_override=%s, standard_override=%s, size_model=%s, thickness_model=%s, pressure_model=%s, structural_rules=%s",
+        "加载路由版 Qwen3 一阶段编排器: router=%s, TYPE覆盖分类数=%s, material_override=%s, standard_override=%s, size_model=%s, thickness_model=%s, pressure_model=%s, structural_rules=%s, complex_structural_prompt=%s",
         router_cfg.get("backend", "disabled"),
         len(type_factories),
         bool(material_model),
@@ -955,6 +965,7 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
         bool(structural_field_model_configs.get("THICKNESS")),
         bool(structural_field_model_configs.get("PRESSURE")),
         bool(structural_rules_cfg.get("enabled", False)),
+        bool(complex_structural_prompt_cfg.get("enabled", False)),
     )
     return Stage1FieldOrchestrator(
         router=router,
@@ -962,7 +973,11 @@ def _build_routed_qwen3_predictor(qwen3_config: Dict[str, Any]):
         type_factories=type_factories,
         material_factory=material_factory,
         standard_factory=standard_factory,
-        structural_extractor_factory=structural_extractor_factory if (structural_field_model_configs or structural_rules_cfg.get("enabled", False)) else None,
+        structural_extractor_factory=structural_extractor_factory if (
+            structural_field_model_configs
+            or structural_rules_cfg.get("enabled", False)
+            or complex_structural_prompt_cfg.get("enabled", False)
+        ) else None,
         fallback_category=fallback_category,
         direct_threshold=float(router_cfg.get("direct_threshold", 0.9)),
         review_threshold=float(router_cfg.get("review_threshold", 0.7)),
@@ -990,6 +1005,7 @@ def get_ner_predictor():
         or (stage1_cfg.get("thickness_model") or {})
         or (stage1_cfg.get("pressure_model") or {})
         or (stage1_cfg.get("structural_rules") or {}).get("enabled", False)
+        or (stage1_cfg.get("complex_structural_prompt") or {}).get("enabled", False)
     )
     if stage1_orchestrator_enabled:
         _ner_predictor = _build_routed_qwen3_predictor(qwen3_config)
@@ -1117,6 +1133,7 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
             need_review=False,
             confidence=0.0,
             fields={},
+            material_category=_get_material_category_from_type_model(predict_result),
             route_info=route_info,
             errors=[],
             warnings=[],
@@ -1135,6 +1152,7 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
         predict_result.get("extract_confidence", {}) or {},
         stage1_meta,
         stage1.raw_values,
+        _get_material_category_from_type_model(predict_result),
     )
     converted = _convert_pipe_result(result, processed_text=processed_text, route_info=route_info)
     converted["stage1"] = stage1.to_dict()
@@ -1155,6 +1173,25 @@ def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
         info.setdefault("encoding_enabled", True)
         info.setdefault("skip_encoding_reason", "")
     return info
+
+
+def _get_material_category_from_type_model(predict_result: Any) -> str:
+    """material_category 只取 TYPE 模型返回的分类，不从路由分类或 TYPE BODY 关键词推导。"""
+    if not isinstance(predict_result, dict):
+        return ""
+    route_info = predict_result.get("route_info")
+    if isinstance(route_info, dict):
+        category = str(route_info.get("model_category") or "").strip()
+        if category:
+            return category
+
+    model_output = predict_result.get("model_output")
+    if not isinstance(model_output, dict):
+        return ""
+    type_output = model_output.get("_TYPE_MODEL_OUTPUT")
+    if isinstance(type_output, dict):
+        return str(type_output.get("CATEGORY") or type_output.get("category") or "").strip()
+    return ""
 
 
 # ============================================================

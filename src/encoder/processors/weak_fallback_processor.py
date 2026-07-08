@@ -18,7 +18,8 @@ class WeakFallbackProcessor:
     """统一承接尺寸/壁厚的最弱兜底规则。"""
 
     DECIMAL_MM_FALLBACK_PATTERN = re.compile(
-        r'(?i)(?<![A-Za-z0-9])(\d+\.\d+)\s*(MM|毫米)\b'
+        # 弱兜底不能从 B16.5.1000mm 这类标准号/脏粘连串的第二段小数开始截取。
+        r'(?i)(?<![A-Za-z0-9.])(\d+\.\d+)\s*(MM|毫米)\b'
     )
 
     def __init__(
@@ -119,6 +120,9 @@ class WeakFallbackProcessor:
             span = (match.start(), match.end())
             value_span = match.span(1)
             if _overlaps_blocked(value_span):
+                continue
+            decimal_part = str(match.group(1)).split(".", 1)[1]
+            if len(decimal_part) > 2:
                 continue
             try:
                 numeric_value = float(match.group(1))

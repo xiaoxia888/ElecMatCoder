@@ -339,7 +339,13 @@ class TextPreprocessor:
         def _is_wordlike_neighbor(ch: str) -> bool:
             return ch.isalnum() or ("\u4e00" <= ch <= "\u9fff")
 
-        schedule_token = r'(?:SCH[.\s-]*\d+S?|S-\d+S?|S\d+S?|\d+S|XXS|XS|STD)'
+        weak_schedule_base = r'(?:5|10|20|30|40|60|80|100|120|140|160)'
+        weak_schedule_suffix_s = r'(?:5S|10S|20S|30S|40S|60S|80S|120S|160S)'
+        s_dash_schedule_token = rf'S-{weak_schedule_base}S?(?!-)'
+        schedule_token = (
+            rf'(?:SCH[.\s-]*\d+S?|{s_dash_schedule_token}|'
+            rf'S{weak_schedule_base}S?|{weak_schedule_suffix_s}|XXS|XS|STD)'
+        )
         strong_patterns = (
             # 尺寸：DN数字x数字 / DN数字
             re.compile(r'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?'),
@@ -350,8 +356,8 @@ class TextPreprocessor:
             # 壁厚：SCH数字 / SCH数字S / SCH...xSCH...
             re.compile(rf'(?i){schedule_token}\s*[xX×*]\s*{schedule_token}'),
             re.compile(rf'(?i)SCH[.\s-]*\d+S?(?!\s*[xX×*]\s*{schedule_token})'),
-            # 壁厚：S-数字 / S-数字S / S-...xS-...
-            re.compile(rf'(?i)S-\d+S?(?!\s*[xX×*]\s*{schedule_token})'),
+            # 壁厚：S-数字 / S-数字S / S-...xS-...；仅支持常见 schedule 号，避免 CS-1 被切成 C S-1。
+            re.compile(rf'(?i){s_dash_schedule_token}(?!\s*[xX×*]\s*{schedule_token})'),
         )
 
         matches: list[tuple[int, int]] = []

@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 """Prompts for prompt-based structural extraction."""
 
+from pathlib import Path
+
+
+def _load_external_prompt(relative_path: str, fallback: str) -> str:
+    path = Path(__file__).resolve().parents[2] / relative_path
+    if not path.is_file():
+        return fallback
+    text = path.read_text(encoding="utf-8").strip()
+    return text or fallback
+
 SIZE_LENGTH_SYSTEM_PROMPT = """你是工业管道材料描述的结构化抽取器。
 
 任务：只从输入原文中抽取尺寸和长度信息。
@@ -478,6 +488,93 @@ PRESSURE_SYSTEM_PROMPT_V3 = "\n\n".join([
 ])
 
 
+COMPLEX_STRUCTURAL_COMMON_TEXT = """
+你正在处理夹套、衬层、复合层或内外管结构的工业管道材料描述。
+只抽取本任务要求的字段，不抽取材质、标准、种类。
+只能依据原文出现的信息输出，不得按经验补 DN、外径、壁厚或压力。
+保持原文出现顺序输出数组项；不要额外输出 role、structure_kind、reason 等字段。
+如果某个数值无法判断属于本任务字段，宁可不输出。
+""".strip()
+
+
+COMPLEX_SIZE_LENGTH_SYSTEM_PROMPT = "\n\n".join([
+    "你是工业管道材料描述的结构化抽取器。",
+    "任务：只从输入原文中抽取尺寸和长度信息。",
+    "输出必须是严格 JSON，不要解释，不要 Markdown。",
+    COMPLEX_STRUCTURAL_COMMON_TEXT,
+    """
+尺寸规则：
+- 只输出 `DN`、`OD`、`INCH` 三种尺寸类型，以及顶层 `LENGTH`。
+- `DN100`、`DN100xDN50`、`DN125x80/DN100x150` 中的 DN 数值按原文顺序输出为 `DN`。
+- `φ114x6.3/φ168.3x7.1`、`60.3x3.91(2.5)` 中，`x` 左侧的管径数值输出为 `OD`，右侧厚度不进入尺寸。
+- `IN:`、`OUT:`、`内管`、`外管` 只是帮助判断当前是内外结构，不要作为输出字段。
+- 夹套结构的内管/外管尺寸、衬层结构的本体尺寸都按原文顺序输出，不要重排。
+- `L=`、`LEN=`、`LENGTH=`、`长度=` 表示长度，统一输出毫米数字；米要换算成毫米；范围长度取上限。
+- 压力等级、壁厚、材质牌号、标准号、年份不是尺寸。
+""".strip(),
+    """请严格按照以下JSON格式返回：
+{
+  "SIZE_ITEMS": [
+    {"type": "DN", "value": "100"}
+  ],
+  "LENGTH": ""
+}""",
+])
+
+
+COMPLEX_THICKNESS_SYSTEM_PROMPT = "\n\n".join([
+    "你是工业管道材料描述的结构化抽取器。",
+    "任务：只从输入原文中抽取壁厚信息。",
+    "输出必须是严格 JSON，不要解释，不要 Markdown。",
+    COMPLEX_STRUCTURAL_COMMON_TEXT,
+    """
+壁厚规则：
+- 只输出 `MM`、`SCHEDULE`、`BWG`、`INCH`。
+- `φ114x6.3/φ168.3x7.1` 中，两个 `x` 右侧数值都是壁厚，按原文顺序输出 `6.3`、`7.1`。
+- `60.3x3.91(2.5)` 中，`3.91` 是本体壁厚，`2.5` 是括号内衬层厚度，按原文顺序输出两个 `MM` 原子值。
+- `12MM+3MM`、`18MM+3MM` 中，两个数值都是壁厚，按原文顺序输出两个 `MM` 原子值。
+- `PVC THK=8.0mm FRP THK=10.0mm` 中，两个 `THK` 值都是壁厚，按原文顺序输出。
+- `SCH160xXXS`、`SCH10SXSCH10S`、`S-40SXS-40` 这类组合壁厚，按原文顺序输出各自的 `SCHEDULE` 原子值。
+- 衬层结构可能没有给出衬层厚度；如果只出现本体壁厚，只输出本体壁厚，不要猜衬层厚度。
+- DN、OD、长度、压力等级、材质牌号、标准号不是壁厚。
+""".strip(),
+    """请严格按照以下JSON格式返回：
+{
+  "THICKNESS_ITEMS": [
+    {"type": "MM", "value": "6.0"}
+  ]
+}""",
+])
+
+
+COMPLEX_PRESSURE_SYSTEM_PROMPT = "\n\n".join([
+    "你是工业管道材料描述的结构化抽取器。",
+    "任务：只从输入原文中抽取压力等级/磅级信息。",
+    "输出必须是严格 JSON，不要解释，不要 Markdown。",
+    COMPLEX_STRUCTURAL_COMMON_TEXT,
+    """
+压力规则：
+- 只抽取明确压力表达：`PN16`、`PN20`、`CL150`、`CLASS3000`、`300LB`、`300#`、`1.6MPa`、`16bar`。
+- 保持原体系，不要把 `CL150` 改成 `PN20`，也不要把 `PN16` 改成 `CL150`。
+- `ClassI`、`Class II`、`I系列`、`II系列` 不是压力等级。
+- 尺寸、壁厚、材质牌号、标准号不是压力。
+""".strip(),
+    """请严格按照以下JSON格式返回：
+{
+  "PRESSURE": ""
+}""",
+])
+
+COMPLEX_SIZE_LENGTH_SYSTEM_PROMPT = _load_external_prompt(
+    "src/llm_ner/prompt/size_extraction_structured_rules_v1.txt",
+    COMPLEX_SIZE_LENGTH_SYSTEM_PROMPT,
+)
+COMPLEX_THICKNESS_SYSTEM_PROMPT = _load_external_prompt(
+    "src/llm_ner/prompt/thickness_extraction_structured_rules_v1.txt",
+    COMPLEX_THICKNESS_SYSTEM_PROMPT,
+)
+
+
 STRUCTURAL_DEBUG_SUFFIX = """
 
 【DEBUG 输出模式】
@@ -491,13 +588,19 @@ STRUCTURAL_DEBUG_SUFFIX = """
 
 
 def get_size_length_system_prompt(debug: bool = False, version: str = "v1") -> str:
-    prompt = SIZE_LENGTH_SYSTEM_PROMPT_V3 if str(version or "").strip().lower() == "v3" else SIZE_LENGTH_SYSTEM_PROMPT
+    normalized = str(version or "").strip().lower()
+    if normalized in {"lined_jacketed_v1", "complex_lined_jacketed_v1"}:
+        prompt = COMPLEX_SIZE_LENGTH_SYSTEM_PROMPT
+    else:
+        prompt = SIZE_LENGTH_SYSTEM_PROMPT_V3 if normalized == "v3" else SIZE_LENGTH_SYSTEM_PROMPT
     return prompt + STRUCTURAL_DEBUG_SUFFIX if debug else prompt
 
 
 def get_thickness_system_prompt(debug: bool = False, version: str = "v1") -> str:
     normalized = str(version or "").strip().lower() or "v1"
-    if normalized == "v3":
+    if normalized in {"lined_jacketed_v1", "complex_lined_jacketed_v1"}:
+        prompt = COMPLEX_THICKNESS_SYSTEM_PROMPT
+    elif normalized == "v3":
         prompt = THICKNESS_SYSTEM_PROMPT_V3
     elif normalized in {"v2", "thickness_v2", "legacy_v2"}:
         prompt = THICKNESS_SYSTEM_PROMPT_V2
@@ -507,7 +610,11 @@ def get_thickness_system_prompt(debug: bool = False, version: str = "v1") -> str
 
 
 def get_pressure_system_prompt(debug: bool = False, version: str = "v1") -> str:
-    prompt = PRESSURE_SYSTEM_PROMPT_V3 if str(version or "").strip().lower() == "v3" else PRESSURE_SYSTEM_PROMPT
+    normalized = str(version or "").strip().lower()
+    if normalized in {"lined_jacketed_v1", "complex_lined_jacketed_v1"}:
+        prompt = COMPLEX_PRESSURE_SYSTEM_PROMPT
+    else:
+        prompt = PRESSURE_SYSTEM_PROMPT_V3 if normalized == "v3" else PRESSURE_SYSTEM_PROMPT
     return prompt + STRUCTURAL_DEBUG_SUFFIX if debug else prompt
 
 

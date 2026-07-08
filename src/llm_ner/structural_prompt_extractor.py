@@ -50,12 +50,19 @@ class StructuralPromptExtractor:
             or "http://localhost:11434"
         ).rstrip("/")
         self.api = str(self.config.get("api", "chat_completions")).strip()
+        self.provider = self._infer_provider(
+            str(self.config.get("provider", "") or ""),
+            self.base_url,
+            self.model_name,
+        )
         self.api_key = str(self.config.get("api_key", "")).strip()
         self.timeout = float(self.config.get("timeout", 60))
         self.temperature = float(self.config.get("temperature", 0.0))
         self.max_tokens = int(self.config.get("max_tokens", self.config.get("num_predict", 768)))
         self.max_workers = max(1, int(self.config.get("max_workers", 3)))
         self.reasoning_split = bool(self.config.get("reasoning_split", False))
+        self.thinking_mode = str(self.config.get("thinking_mode", "auto") or "auto").strip().lower()
+        self.reasoning_effort = str(self.config.get("reasoning_effort", "") or "").strip()
         self.prompt_version = str(
             self.config.get("prompt_version")
             or self.config.get("thickness_prompt_version")
@@ -241,6 +248,7 @@ class StructuralPromptExtractor:
 
     def _merge_partials(self, partials: Dict[str, str]) -> Dict[str, Any]:
         merged: Dict[str, Any] = {
+            "STRUCTURE_KIND": "",
             "SIZE_ITEMS": [],
             "THICKNESS_ITEMS": [],
             "PRESSURE": "",
@@ -252,6 +260,7 @@ class StructuralPromptExtractor:
                 if raw:
                     logger.warning("[结构字段提示词][%s] JSON解析失败: %s", name, raw[:200])
                 continue
+            self._merge_structure_kind(merged, parsed.get("STRUCTURE_KIND"))
             if name == "size_length":
                 if isinstance(parsed.get("SIZE_ITEMS"), list):
                     merged["SIZE_ITEMS"] = parsed.get("SIZE_ITEMS") or []
@@ -262,6 +271,16 @@ class StructuralPromptExtractor:
             elif name == "pressure":
                 merged["PRESSURE"] = str(parsed.get("PRESSURE", "") or "").strip()
         return merged
+
+    @staticmethod
+    def _merge_structure_kind(merged: Dict[str, Any], value: Any) -> None:
+        incoming = str(value or "").strip().upper()
+        if incoming not in {"NORMAL", "LINED", "JACKETED"}:
+            return
+        priority = {"": 0, "NORMAL": 1, "LINED": 2, "JACKETED": 3}
+        current = str(merged.get("STRUCTURE_KIND") or "").strip().upper()
+        if priority.get(incoming, 0) >= priority.get(current, 0):
+            merged["STRUCTURE_KIND"] = incoming
 
     def _generate(self, system_prompt: str, user_content: str) -> str:
         stop = ["\n\n输入：", "\n\n【", "\n【"]
@@ -291,10 +310,38 @@ class StructuralPromptExtractor:
                 api_key=self.api_key,
                 stop=stop,
                 reasoning_split=self.reasoning_split,
+                extra_body=self._build_provider_extra_body(),
             )
             self._last_usage = response.usage
             return response.text
         raise RuntimeError(f"不支持的结构字段提示词后端: {self.backend}")
+
+    @staticmethod
+    def _infer_provider(provider: str, base_url: str, model_name: str) -> str:
+        explicit = str(provider or "").strip().lower()
+        if explicit and explicit != "auto":
+            return explicit
+        url = str(base_url or "").lower()
+        model = str(model_name or "").lower()
+        if "deepseek" in url or "deepseek" in model:
+            return "deepseek"
+        if "minimax" in url or model.startswith("minimax-"):
+            return "minimax"
+        return "generic"
+
+    def _build_provider_extra_body(self) -> Dict[str, Any]:
+        body: Dict[str, Any] = {}
+        if self.provider in {"deepseek", "minimax"}:
+            if self.reasoning_effort:
+                body["reasoning_effort"] = self.reasoning_effort
+            if self.thinking_mode and self.thinking_mode != "auto":
+                body["thinking"] = {"type": self.thinking_mode}
+            return body
+        if self.reasoning_effort:
+            body["reasoning_effort"] = self.reasoning_effort
+        if self.thinking_mode and self.thinking_mode not in {"", "auto"}:
+            body["thinking"] = self.thinking_mode
+        return body
 
     @classmethod
     def _extract_context_size_items(cls, context: Optional[Dict[str, Any]]) -> List[Dict[str, str]]:
