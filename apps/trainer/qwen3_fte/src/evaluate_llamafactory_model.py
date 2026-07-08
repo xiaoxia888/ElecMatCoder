@@ -19,7 +19,7 @@ from typing import Any
   # 交互模式
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2581-材质规范
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2500-材质规范
 
   # 编码模型交互模式
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \

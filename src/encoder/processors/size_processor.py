@@ -1816,6 +1816,10 @@ class SizeProcessor:
                 thk = float(m.group(2))
             except ValueError:
                 continue
+            # 裸 `数字 x 数字` 在没有 OD/φ 等锚点时风险很高。
+            # 只有当左值至少是右值的 15 倍时，才允许按 `外径 x 壁厚` 解释。
+            if thk <= 0 or od / thk < 15:
+                continue
             blocks.append({
                 "od": od,
                 "thickness": thk,

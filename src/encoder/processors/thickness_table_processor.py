@@ -21,6 +21,7 @@ from __future__ import annotations
 import logging
 import math
 import re
+from decimal import Decimal, InvalidOperation, ROUND_DOWN
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -443,21 +444,25 @@ class ThicknessTableProcessor:
 
     @staticmethod
     def mm_values_equivalent(left: Any, right: Any, tolerance: float = 1e-6) -> bool:
-        def _to_number(raw: Any) -> Optional[float]:
+        def _to_decimal(raw: Any) -> Optional[Decimal]:
             text = str(raw or "").strip().upper()
             if text.endswith("MM"):
                 text = text[:-2]
             if not text:
                 return None
             try:
-                return float(text)
-            except (TypeError, ValueError):
+                return Decimal(text)
+            except (InvalidOperation, TypeError, ValueError):
                 return None
 
-        left_num = _to_number(left)
-        right_num = _to_number(right)
+        left_num = _to_decimal(left)
+        right_num = _to_decimal(right)
         if left_num is None or right_num is None:
             return False
+        left_one_decimal = left_num.quantize(Decimal("0.1"), rounding=ROUND_DOWN)
+        right_one_decimal = right_num.quantize(Decimal("0.1"), rounding=ROUND_DOWN)
+        if left_one_decimal == right_one_decimal:
+            return True
         return math.isclose(left_num, right_num, rel_tol=tolerance, abs_tol=tolerance)
 
 

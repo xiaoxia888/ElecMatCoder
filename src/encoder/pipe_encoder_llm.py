@@ -223,12 +223,12 @@ class LlmPipeEncoder(PipeEncoderBase):
 
         if not self._allow_llm_fallback('TYPE'):
             self._last_type_encode_meta = self._make_encode_meta(
-                source='fallback_disabled',
+                source='raw_preserved',
                 confidence=0.0,
-                reason='type_mapping_unresolved_fallback_disabled',
+                reason='type_mapping_unresolved_raw_preserved',
                 evidence={'field_type': 'TYPE'},
             )
-            return "", 0.0
+            return merged_value, 0.0
 
         code, similarity, used_model_conf = self._encode_with_llm_meta('TYPE', merged_value)
         self._last_type_encode_meta = self._make_encode_meta(
@@ -282,15 +282,16 @@ class LlmPipeEncoder(PipeEncoderBase):
             material_result.reason,
         )
         if not self._allow_llm_fallback('MATERIAL'):
+            original = self._flatten_material_item_for_stage2(item)
             return {
-                'original': self._flatten_material_item_for_stage2(item),
-                'matched': '',
-                'code': '',
+                'original': original,
+                'matched': original,
+                'code': original,
                 'similarity': 0.0,
                 'encode_meta': self._make_encode_meta(
-                    source='fallback_disabled',
+                    source='raw_preserved',
                     confidence=0.0,
-                    reason='material_mapping_unresolved_fallback_disabled',
+                    reason='material_mapping_unresolved_raw_preserved',
                     evidence={'field_type': 'MATERIAL'},
                 ),
                 'is_exact': True,
@@ -529,12 +530,12 @@ class LlmPipeEncoder(PipeEncoderBase):
         if field_type in ('MATERIAL', 'TYPE'):
             if not self._allow_llm_fallback(field_type):
                 return {
-                    'original': value, 'matched': value, 'code': '',
+                    'original': value, 'matched': value, 'code': value,
                     'similarity': 0.0,
                     'encode_meta': self._make_encode_meta(
-                        source='fallback_disabled',
+                        source='raw_preserved',
                         confidence=0.0,
-                        reason=f'{field_type.lower()}_fallback_disabled',
+                        reason=f'{field_type.lower()}_raw_preserved',
                         evidence={'field_type': field_type},
                     ),
                     'is_exact': True,
@@ -625,6 +626,7 @@ class LlmPipeEncoder(PipeEncoderBase):
         for std in expanded:
             formatted = sp._format_standard(std)
             category = sp._classify_standard(formatted)
+            item_need_review = False
 
             encoded = sp._encode_standard(formatted)
             if encoded:
@@ -677,12 +679,13 @@ class LlmPipeEncoder(PipeEncoderBase):
                             },
                         )
                 else:
-                    encoded = ""
+                    encoded = formatted or std
                     item_similarity = 0.0
+                    item_need_review = True
                     encode_meta = self._make_encode_meta(
-                        source='fallback_disabled',
+                        source='raw_preserved',
                         confidence=0.0,
-                        reason='standard_processor_unresolved_fallback_disabled',
+                        reason='standard_processor_unresolved_raw_preserved',
                         evidence={
                             'formatted_present': bool(formatted),
                             'category': category,
@@ -696,6 +699,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'category_key': category,
                 'similarity': item_similarity,
                 'encode_meta': encode_meta,
+                'need_review': item_need_review,
             })
 
         detail = sp.process_standards_with_detail(merged_standards, original_text=original_text)
@@ -734,7 +738,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'standard_grade': detail_item.get('standard_grade', ''),
                 'standard_method': detail_item.get('standard_method', ''),
                 'standard_appendix': detail_item.get('standard_appendix', ''),
-                'similarity': resolved_item.get('similarity', 1.0), 'is_exact': True, 'need_review': False,
+                'similarity': resolved_item.get('similarity', 1.0), 'is_exact': True, 'need_review': bool(resolved_item.get('need_review')),
                 'candidates': [], 'category': sp.CATEGORY_LABELS.get(detail_item.get('category', 'unknown'), ''), 'encode_meta': resolved_item.get('encode_meta')
             })
         chosen_by_base = {}
@@ -750,6 +754,7 @@ class LlmPipeEncoder(PipeEncoderBase):
             elif item.get('grade') and not chosen_by_base[base_code].get('grade'):
                 chosen_by_base[base_code] = item
         final_code = ''.join(chosen_by_base[base].get('code', '') for base in base_order)
+        any_need_review = any(bool(item.get('need_review')) for item in items)
 
         stage2_standard_inputs = []
         for idx, body in enumerate(values):
@@ -769,7 +774,7 @@ class LlmPipeEncoder(PipeEncoderBase):
             encode_confidence_v2=self._aggregate_item_encode_confidence(items, fallback_source='standard_processor'),
             code=final_code,
             codes=[item['code'] for item in items],
-            similarity=min((item['similarity'] for item in items), default=1.0), is_exact_match=True, need_review=False,
+            similarity=min((item['similarity'] for item in items), default=1.0), is_exact_match=True, need_review=any_need_review,
             candidates=[],
             detail_items=items
         )

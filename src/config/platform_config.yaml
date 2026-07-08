@@ -203,7 +203,7 @@ encoding:
     fallback_fields:
       - TYPE
       - MATERIAL
-      - STANDARD
+      # - STANDARD
 #      - THICKNESS
 #      - SIZE
 #      - PRESSURE

@@ -497,7 +497,11 @@ class ThicknessProcessor:
 
             operand = re.sub(r'(?i)\s*\([LS]\)\s*$', '', operand).strip()
 
-            if re.fullmatch(r'(?i)(?:SCH[.\s]*(?:\d+S?|STD|XS|XXS)|S-(?:\d+S?|STD|XS|XXS)|XS|XXS|STD)', operand):
+            if re.fullmatch(
+                rf'(?i)(?:{sch_token}|{s_dash_token}|{weak_schedule_prefixed_token}|'
+                rf'{weak_schedule_s_dash_token}|{weak_schedule_numeric_suffix_token}|XS|XXS|STD)',
+                operand,
+            ):
                 if _mark_invalid_if_needed(schedule_raw=operand):
                     return None
                 code = self._convert_single(operand).strip()
@@ -535,7 +539,10 @@ class ThicknessProcessor:
         weak_schedule_prefixed_token, weak_schedule_s_dash_token, weak_schedule_numeric_suffix_token, weak_schedule_token = self._weak_schedule_patterns()
         schedule_boundary_conflict_patterns = [
             re.compile(r'(?i)SCH[.\s]*(?>\d+)(?=\d)'),
-            re.compile(r'(?i)SCH[.\s]*(?>\d+)S(?=[A-Za-z])'),
+            re.compile(
+                r'(?i)SCH[.\s]*(?>\d+)S'
+                r'(?=(?![xX]\s*(?:SCH[.\s]*(?:XXS|XS|STD|\d+S?)|S-(?:XXS|XS|STD|\d+S?)|XS|XXS|STD|\d+S?))[A-Za-z])'
+            ),
             re.compile(r'(?i)SCH[.\s]*(?:STD|XS|XXS)(?=[A-Za-z0-9])'),
             # 合法的 S-10S / S-40S 不应被误判成粘连脏串；
             # 对 `S-40CL300` / `S-40PN16` 这类“壁厚词 + 压力词”粘连，交给后续专门规则处理。
@@ -553,7 +560,13 @@ class ThicknessProcessor:
                     "invalid": invalid,
                 }
 
-        schedule_operand = rf'(?:{sch_token}|{s_dash_token})(?:\s*\([LS]\))?'
+        # 组合壁厚里允许 SCH / S- / S / 数字S / special token 混合：
+        # 例如 SCH160xXXS / 40Sx40S / S40xS40 / S-40SXS-40 / XXSxXS。
+        schedule_operand = (
+            rf'(?:{sch_token}|{s_dash_token}|{weak_schedule_prefixed_token}|'
+            rf'{weak_schedule_s_dash_token}|{weak_schedule_numeric_suffix_token}|XS|XXS|STD)'
+            rf'(?:\s*\([LS]\))?'
+        )
         mm_operand = r'(?:(?:THK|T|壁厚)\s*[:：=]?\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S\s*[:：=]\s*\d+(?:\.\d+)?\s*(?:MM|毫米)?|S-\d+\.\d+\s*(?:MM|毫米)?|\d+(?:\.\d+)?\s*(?:MM|毫米))(?:\s*\([LS]\))?'
         generic_operand = rf'(?:{schedule_operand}|{mm_operand})'
         generic_two_part_combo_pattern = re.compile(
@@ -668,7 +681,8 @@ class ThicknessProcessor:
         )
         for m in dn_pair_dual_mm_pattern.finditer(normalized):
             span = (m.start(), m.end())
-            if _overlaps_blocked(span):
+            value_spans = [m.span(1), m.span(2)]
+            if any(_overlaps_blocked(value_span) for value_span in value_spans):
                 continue
             if _overlaps_recorded(span):
                 continue
@@ -714,7 +728,8 @@ class ThicknessProcessor:
             )
             for m in dn_pair_mm_pair_pattern.finditer(normalized):
                 span = (m.start(), m.end())
-                if _overlaps_blocked(span):
+                value_spans = [m.span(2), m.span(3)]
+                if any(_overlaps_blocked(value_span) for value_span in value_spans):
                     continue
                 if _mark_invalid_if_needed(mm_raw=m.group(2)) or _mark_invalid_if_needed(mm_raw=m.group(3)):
                     continue
@@ -1007,7 +1022,7 @@ class ThicknessProcessor:
         )
         for m in dn_pair_trailing_mm_pattern.finditer(normalized):
             span = (m.start(), m.end())
-            if _overlaps_blocked(span):
+            if _overlaps_blocked(m.span(1)):
                 continue
             if any(span[0] < end and start < span[1] for start, end in matched_spans):
                 continue
@@ -1138,7 +1153,7 @@ class ThicknessProcessor:
         # 尺寸右侧 x 厚度值：DN20x5.6mm / OD219.1X4.00 / 6"x10mm
         size_spans = list(getattr(size_context, "consumed_spans", None) or getattr(size_context, "matched_spans", []) or [])
         right_mm_pattern = re.compile(
-            r'(?i)^\s*[xX×*]\s*(?:(\d+(?:\.\d+)?)\s*(MM|毫米)|(\d+\.\d+)(?![\dA-Za-z]))'
+            r'(?i)^\s*[xX×*]\s*(?:(\d+(?:\.\d+)?)\s*(MM|毫米)|(\d+\.\d+)(?![\d.]))'
         )
         for size_start, size_end in size_spans:
             if not (0 <= size_end < len(normalized)):
@@ -1402,8 +1417,8 @@ class ThicknessProcessor:
         pattern = re.compile(
             r'(?<![A-Za-z0-9])'
             r'(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+\.\d+)'
-            r'(?!\s*")\s*(?:MM|毫米)?(?:[A-Z]{1,6})?'
-            r'(?=$|[^A-Za-z0-9])',
+            r'(?!\s*")\s*(?:MM|毫米)?'
+            r'(?=$|[^0-9])',
             re.IGNORECASE,
         )
         blocks: List[Dict[str, Any]] = []
@@ -1416,6 +1431,10 @@ class ThicknessProcessor:
                 od = float(m.group(1))
                 thk = float(m.group(2))
             except ValueError:
+                continue
+            # 裸 `数字 x 数字` 在没有 OD/φ 等锚点时风险很高。
+            # 只有当左值至少是右值的 15 倍时，才允许按 `外径 x 壁厚` 解释。
+            if thk <= 0 or od / thk < 15:
                 continue
             blocks.append({
                 "od": od,

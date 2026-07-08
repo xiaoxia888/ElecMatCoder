@@ -13,6 +13,13 @@ value_mapping:
   - B60
   灰口铸铁:
   - GI
+  A1063PE:
+  - A1063PE
+  L360M:
+  - L360M
+  - L360M/X52M
+  '321':
+  - '321'
   Q245RCE:
   - Q245RCE
   FRPP:
@@ -43,6 +50,7 @@ value_mapping:
   - CS20
   20/PTFE:
   - 20/PTFE
+  - 20PTFE
   - PTFE/20
   - PTFE/20#
   - 20#/PTFE
@@ -53,6 +61,7 @@ value_mapping:
   - PE/20
   20/EAA:
   - 20/EAA
+  - 20EAA
   20G:
   - 20G
   20GL:
@@ -305,6 +314,8 @@ value_mapping:
   - ASTM A182 F11
   - F11
   F22:
+  - F22
+  - A182 F22
   - ASTM A182 F22
   - ASTM A182 F22-CL3
   F5:

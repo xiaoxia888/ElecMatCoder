@@ -1,0 +1,922 @@
+[
+  {
+    "input": "高温用合金钢管 DN200-SCH80 1-1/4Cr-1/2Mo ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "高温用合金钢管 DN150-SCH40 1 1/4Cr-1/2Mo ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "管子,PE,SMLS,1-1/4Cr-1/2Mo,ASME B36.10M,DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "管子,PE,SMLS,1 1/4Cr-1/2Mo,ASME B36.10M,DN300",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "无缝钢管 1-1/4Cr-1/2Mo DN350 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "无缝钢管 ASME B36.10M DN400 1 1/4Cr-1/2Mo",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,BE,SMLS,1-1/4Cr-1/2Mo,ASME B36.10M DN450",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,SMLS,ASME B36.10M,1 1/4Cr-1/2Mo,BE,DN500",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "合金钢管 1-1/4Cr-1/2Mo ASME B36.10M 100%RT DN600",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "合金钢管 100%RT ASME B36.10M DN700 1 1/4Cr-1/2Mo",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "高铬不锈钢管 DN50-SCH40 410 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "高铬不锈钢管 DN80-SCH80 410 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "管子,PE,SMLS,410,ASME B36.10M,DN100",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "管子,BE,SMLS,410,ASME B36.10M,DN150",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "无缝钢管 410 DN200 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "无缝钢管 ASME B36.10M DN250 410",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,SMLS,ASME B36.10M,410,DN300",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,PE,SMLS,410,ASME B36.10M DN350",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "高铬钢管 410 ASME B36.10M 100%RT DN400",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "高铬钢管 100%RT ASME B36.10M DN450 410",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1 1/4Cr-1/2Mo+410 ASME B36.10M 100%RT 12+3MM DN1050",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1-1/4Cr-1/2Mo+410 ASME B36.10M 100%RT 12+3MM DN1050",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1 1/4Cr-1/2Mo/410 ASME B36.10M 12+3MM DN1050",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1-1/4Cr-1/2Mo/410 ASME B36.10M 12+3MM DN1050",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE ASME B36.10M 1 1/4Cr-1/2Mo+410 12+3MM DN900",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE ASME B36.10M 1-1/4Cr-1/2Mo+410 12+3MM DN800",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE DN700 1 1/4Cr-1/2Mo+410 ASME B36.10M 10+2MM",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE DN650 1-1/4Cr-1/2Mo+410 ASME B36.10M 10+2MM",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined SMLS 1 1/4Cr-1/2Mo+410 ASME B36.10M BE DN600",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined SMLS 1-1/4Cr-1/2Mo+410 ASME B36.10M BE DN500",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1 1/4Cr-1/2Mo+410 DN450 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1-1/4Cr-1/2Mo+410 DN400 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE ASME B36.10M DN350 1 1/4Cr-1/2Mo/410",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE ASME B36.10M DN300 1-1/4Cr-1/2Mo/410",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里管 PIPE,Lined BE 1 1/4Cr-1/2Mo+410 ASME B36.10M DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里管 PIPE,Lined BE 1-1/4Cr-1/2Mo+410 ASME B36.10M DN200",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里钢管 1 1/4Cr-1/2Mo+410 ASME B36.10M 8+2MM DN150",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里钢管 1-1/4Cr-1/2Mo+410 ASME B36.10M 8+2MM DN125",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里钢管 DN100 1 1/4Cr-1/2Mo+410 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里钢管 DN80 1-1/4Cr-1/2Mo+410 ASME B36.10M",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1 1/4Cr-1/2Mo+410 HG/T20553 II ASME B36.10M DN1050",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1-1/4Cr-1/2Mo+410 HG/T20553 II ASME B36.10M DN900",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "HG/T20553 II PIPE,Lined BE 1 1/4Cr-1/2Mo/410 ASME B36.10M DN800",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "HG/T20553 II PIPE,Lined BE 1-1/4Cr-1/2Mo/410 ASME B36.10M DN700",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "HG/T20553 II; PIPE,Lined BE 1 1/4Cr-1/2Mo+410 ASME B36.10M 12+3MM DN600",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "HG/T20553 II; PIPE,Lined BE 1-1/4Cr-1/2Mo+410 ASME B36.10M 12+3MM DN500",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里直管 HG/T20553 II 1 1/4Cr-1/2Mo+410 ASME B36.10M DN450",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里直管 HG/T20553 II 1-1/4Cr-1/2Mo+410 ASME B36.10M DN400",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "HGT20553II"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1 1/4Cr-1/2Mo+410 SH/T3405 ASME B36.10M DN350",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "SHT3405"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE,Lined BE 1-1/4Cr-1/2Mo+410 SH/T3405 ASME B36.10M DN300",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "SHT3405"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3405 PIPE,Lined BE 1 1/4Cr-1/2Mo/410 ASME B36.10M DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "SHT3405"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3405 PIPE,Lined BE 1-1/4Cr-1/2Mo/410 ASME B36.10M DN200",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "1-1/4Cr-1/2Mo/410"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "SHT3405"
+        },
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    },
+    "来源": "数据增强"
+  }
+]

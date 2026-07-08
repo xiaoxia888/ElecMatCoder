@@ -98,19 +98,28 @@ class TextPreprocessor:
         text = self.normalize_glued_dn_wall_thickness(text)
 
         # 11. 结构字段局部 OCR/录入纠错（只在强锚点局部片段中生效）
-        text = self.normalize_structural_ocr_tokens(text)
+        # text = self.normalize_structural_ocr_tokens(text)
 
-        # 12. OCR 纠偏后再次收紧小数点两侧空格：
+        # 12. 材质 token 局部 OCR/录入纠错（只修高置信脏写法）
+        text = self.normalize_material_ocr_tokens(text)
+
+        # 13. 种类别名/短写归一化（只修高置信历史简称）
+        text = self.normalize_type_alias_tokens(text)
+
+        # 14. 删除连接方式噪声词，避免干扰尺寸/壁厚等结构字段
+        # text = self.remove_connection_noise_tokens(text)
+
+        # 15. OCR 纠偏后再次收紧小数点两侧空格：
         # 例如 S-3. Omm -> S-3. 0mm -> S-3.0mm
         text = self.normalize_decimal_spacing(text)
 
-        # 13. 对强结构 token 做安全切分，避免与前后脏串粘连
+        # 16. 对强结构 token 做安全切分，避免与前后脏串粘连
         text = self.normalize_strong_structural_tokens(text)
 
-        # 14. 删除容易被误判为壁厚的工程标准短语
+        # 17. 删除容易被误判为壁厚的工程标准短语
         text = self.remove_non_thickness_standard_phrases(text)
 
-        # 15. 空白压缩
+        # 18. 空白压缩
         text = self.normalize_whitespace(text)
 
         return text
@@ -330,6 +339,7 @@ class TextPreprocessor:
         def _is_wordlike_neighbor(ch: str) -> bool:
             return ch.isalnum() or ("\u4e00" <= ch <= "\u9fff")
 
+        schedule_token = r'(?:SCH[.\s-]*\d+S?|S-\d+S?|S\d+S?|\d+S|XXS|XS|STD)'
         strong_patterns = (
             # 尺寸：DN数字x数字 / DN数字
             re.compile(r'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?'),
@@ -338,11 +348,10 @@ class TextPreprocessor:
             re.compile(r'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:(?:OD|外径|Φ)\s*)?\d+(?:\.\d+)?(?:\s*(?:MM|毫米))?'),
             re.compile(r'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?(?!\s*[xX×*]\s*(?:(?:OD|外径|Φ)\s*)?\d)'),
             # 壁厚：SCH数字 / SCH数字S / SCH...xSCH...
-            re.compile(r'(?i)SCH[.\s-]*\d+S?\s*[xX×*]\s*SCH[.\s-]*\d+S?'),
-            re.compile(r'(?i)SCH[.\s-]*\d+S?(?!\s*[xX×*]\s*SCH[.\s-]*\d+S?)'),
+            re.compile(rf'(?i){schedule_token}\s*[xX×*]\s*{schedule_token}'),
+            re.compile(rf'(?i)SCH[.\s-]*\d+S?(?!\s*[xX×*]\s*{schedule_token})'),
             # 壁厚：S-数字 / S-数字S / S-...xS-...
-            re.compile(r'(?i)S-\d+S?\s*[xX×*]\s*S-\d+S?'),
-            re.compile(r'(?i)S-\d+S?(?!\s*[xX×*]\s*S-\d+S?)'),
+            re.compile(rf'(?i)S-\d+S?(?!\s*[xX×*]\s*{schedule_token})'),
         )
 
         matches: list[tuple[int, int]] = []
@@ -523,6 +532,122 @@ class TextPreprocessor:
         # 磅级：PNi6、CL3OO、Class3OO0、15OLB、15O#
         text = apply_pressure_like(text)
 
+        return text
+
+    @staticmethod
+    def normalize_material_ocr_tokens(text: str) -> str:
+        """
+        只修高置信材质/特殊要求 token 的 OCR 误写。
+
+        当前仅覆盖：
+        - Ga1V / GA1V -> GaLV / GALV
+        - Ga1V. / GA1V. -> GaLV. / GALV.
+
+        说明：
+        - 这是 `GALV` 中字母 `L` 被 OCR 误成数字 `1` 的高频脏写法。
+        - 只修完整 token，避免误伤普通单词和型号串。
+        """
+        if not text:
+            return ""
+
+        def repl(match: re.Match[str]) -> str:
+            token = match.group(0)
+            suffix = ""
+            if token.endswith("."):
+                suffix = "."
+                token = token[:-1]
+
+            if token.isupper():
+                normalized = "GALV"
+            elif token.islower():
+                normalized = "galv"
+            elif token.startswith("Ga"):
+                normalized = "GaLV"
+            else:
+                normalized = "GALV"
+            return normalized + suffix
+
+        return re.sub(r"(?i)\bga1v\.?\b", repl, text)
+
+    @staticmethod
+    def normalize_type_alias_tokens(text: str) -> str:
+        """
+        归一化高频历史简称/短写种类词。
+
+        当前仅覆盖：
+        - 无偏头 -> 无缝偏心大小头
+        - 无缝偏大 -> 无缝偏心大小头
+        - 偏心头 -> 偏心大小头
+        - SW弯头 -> 承插焊弯头
+
+        说明：
+        - 这些写法是历史描述里的高频简称，语义比较稳定。
+        - 左右边界按 alias 首尾字符类型自动推断：
+          - 首字符是汉字 -> 左边不能是汉字
+          - 首字符是英文字母 -> 左边不能是英文字母
+          - 首字符是数字 -> 左边不能是数字
+          - 尾字符同理
+        - 若 alias 含英文字母，则自动忽略大小写。
+        - 多个 alias 有包含关系时，按“最长优先”匹配，避免短词抢占长词。
+        """
+        if not text:
+            return ""
+
+        replacements = (
+            ("无缝偏大", "无缝偏心大小头"),
+            ("无偏头", "无缝偏心大小头"),
+            ("偏心头", "偏心大小头"),
+            ("SW弯头", "承插焊弯头"),
+            ("偏头", "偏心大小头"),
+            ("偏大", "偏心大小头"),
+            ("CAP", "管帽"),
+            ("TEE", "三通"),
+            ("BW Olet", "对焊支管台"),
+            ("RTS", "异径三通"),
+            ("RK", "同心异径管"),
+            ("WOL-90", "90度对焊支管台"),
+            ("WOL-45", "45度对焊支管台"),
+            
+        )
+
+        def _char_boundary(kind_char: str, *, is_left: bool) -> str:
+            if "\u4e00" <= kind_char <= "\u9fff":
+                return r"(?<![\u4e00-\u9fff])" if is_left else r"(?![\u4e00-\u9fff])"
+            if re.match(r"[A-Za-z]", kind_char):
+                return r"(?<![A-Za-z])" if is_left else r"(?![A-Za-z])"
+            if kind_char.isdigit():
+                return r"(?<!\d)" if is_left else r"(?!\d)"
+            return ""
+
+        normalized_rules = sorted(replacements, key=lambda item: len(str(item[0] or "")), reverse=True)
+
+        for source, target in normalized_rules:
+            if not source or not target:
+                continue
+            left_boundary = _char_boundary(source[0], is_left=True)
+            right_boundary = _char_boundary(source[-1], is_left=False)
+            flags = re.IGNORECASE if re.search(r"[A-Za-z]", source) else 0
+            pattern = re.compile(
+                left_boundary + "(" + re.escape(source) + ")" + right_boundary,
+                flags,
+            )
+            text = pattern.sub(target, text)
+
+        return text
+
+    @staticmethod
+    def remove_connection_noise_tokens(text: str) -> str:
+        """
+        删除只表示连接方式、但容易干扰结构字段的噪声词。
+
+        - 中文 `对焊` 直接删除。
+        - 英文 `BW` 只在左右都不是英文字母时删除，避免误伤 BWG / ABW / BWN。
+        """
+        if not text:
+            return ""
+
+        text = text.replace("对焊", " ")
+        text = re.sub(r"(?i)(?<![A-Za-z])BW(?![A-Za-z])(?:\s*[-_/]\s*)?", " ", text)
         return text
 
     @staticmethod

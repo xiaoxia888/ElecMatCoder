@@ -26,8 +26,27 @@ _RESIDUAL_SIZE_OD_PAIR_RE = re.compile(
 
 _RESIDUAL_THICKNESS_SCH_SINGLE_RE = re.compile(r'(?i)(SCH[.\s-]*\d+S?)')
 _RESIDUAL_THICKNESS_SCH_PAIR_RE = re.compile(r'(?i)(SCH[.\s-]*\d+S?)\s*[xX×*]\s*(SCH[.\s-]*\d+S?)')
+_RESIDUAL_THICKNESS_SCH_FAMILY_PAIR_RE = re.compile(
+    r'(?i)(SCH[.\s-]*\d+S?)\s*[/xX×*]\s*((?:SCH[.\s-]*)?\d+S?)'
+)
 _RESIDUAL_THICKNESS_S_DASH_SINGLE_RE = re.compile(r'(?i)(S-\d+S?)')
 _RESIDUAL_THICKNESS_S_DASH_PAIR_RE = re.compile(r'(?i)(S-\d+S?)\s*[xX×*]\s*(S-\d+S?)')
+_RESIDUAL_THICKNESS_S_DASH_FAMILY_PAIR_RE = re.compile(
+    r'(?i)(S-\d+S?)\s*[/xX×*]\s*((?:S-)?\d+S?)'
+)
+_RESIDUAL_THICKNESS_DN_PAIR_DUAL_MM_SLASH_RE = re.compile(
+    r'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?\s*[xX×*]\s*(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)'
+)
+_RESIDUAL_THICKNESS_BARE_OD_THK_BLOCK_RE = re.compile(
+    r'(?<![A-Za-z0-9])'
+    r'(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+\.\d+)'
+    r'(?!\s*")\s*(?:MM|毫米)?'
+    r'(?=$|[^0-9])',
+    re.IGNORECASE,
+)
+_RESIDUAL_DECIMAL_SLASH_PAIR_RE = re.compile(
+    r'(?<![A-Za-z0-9./])(\d+\.\d+)\s*/\s*(\d+\.\d+)(?![A-Za-z0-9./])'
+)
 
 
 @dataclass
@@ -185,6 +204,17 @@ def _has_unconsumed_residual_spec(
     consumed_spans += list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans)
     consumed_spans += list(getattr(pressure_result, "consumed_spans", []) or pressure_result.matched_spans)
     source = str(text or "")
+
+    # 对十进制斜杠双值做子 span 级检查，避免 6.5 已消费后把 6.5/5.5 整段误判为“已处理”。
+    for m in _RESIDUAL_DECIMAL_SLASH_PAIR_RE.finditer(source):
+        unresolved_group_spans = [
+            span
+            for span in _collect_group_spans(m, [1, 2])
+            if not _span_consumed(span, consumed_spans)
+        ]
+        if unresolved_group_spans:
+            return True
+
     for pattern_index, pattern in enumerate(_UNRESOLVED_SPEC_PATTERNS):
         for m in pattern.finditer(source):
             span = m.span(0)
@@ -245,7 +275,11 @@ def _has_unconsumed_suspicious_thickness(
         return False
 
     checks = (
+        (_RESIDUAL_THICKNESS_DN_PAIR_DUAL_MM_SLASH_RE, [1, 2]),
+        (_RESIDUAL_THICKNESS_BARE_OD_THK_BLOCK_RE, [2]),
+        (_RESIDUAL_THICKNESS_SCH_FAMILY_PAIR_RE, [1, 2]),
         (_RESIDUAL_THICKNESS_SCH_PAIR_RE, [1, 2]),
+        (_RESIDUAL_THICKNESS_S_DASH_FAMILY_PAIR_RE, [1, 2]),
         (_RESIDUAL_THICKNESS_S_DASH_PAIR_RE, [1, 2]),
         (_RESIDUAL_THICKNESS_SCH_SINGLE_RE, [1]),
         (_RESIDUAL_THICKNESS_S_DASH_SINGLE_RE, [1]),
@@ -471,11 +505,13 @@ def extract_size_and_thickness_by_rules(
         size_context=size_result,
         blocked_spans=thickness_blocked_spans,
     )
-    size_result = weak_fallback_processor.apply_size_tail_dn_fallback(
-        text,
-        size_result,
-        blocked_spans=list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans),
-    )
+    # 暂时禁用“末尾裸整数 -> 疑似 DN”的最弱尺寸兜底。
+    # 这条规则容易把尾部材质（如 20# / BW 20 / 304 末尾数字）误判成尺寸。
+    # size_result = weak_fallback_processor.apply_size_tail_dn_fallback(
+    #     text,
+    #     size_result,
+    #     blocked_spans=list(getattr(thickness_result, "consumed_spans", []) or thickness_result.matched_spans),
+    # )
     thickness_blocked_spans = list(getattr(size_result, "consumed_spans", []) or size_result.matched_spans)
     for decision in od_pair_decisions:
         if decision.action == "treat_as_size_pair" and decision.second_value_span not in thickness_blocked_spans:
