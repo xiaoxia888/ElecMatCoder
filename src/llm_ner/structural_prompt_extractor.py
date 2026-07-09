@@ -352,13 +352,9 @@ class StructuralPromptExtractor:
             if normalized:
                 return normalized
         if isinstance(structured, dict):
-            collected: List[Dict[str, str]] = []
-            for key in cls.SIZE_KEYS:
-                if key == "LENGTH":
-                    continue
-                for value in cls._normalize_list(structured.get(key)):
-                    collected.append({"type": key, "value": str(value)})
-            return cls._normalize_items(collected, cls.ITEM_TYPES["SIZE_ITEMS"])
+            normalized = cls._normalize_items(structured.get("_ITEMS"), cls.ITEM_TYPES["SIZE_ITEMS"])
+            if normalized:
+                return normalized
         return []
 
     @classmethod
@@ -370,11 +366,9 @@ class StructuralPromptExtractor:
             if normalized:
                 return normalized
         if isinstance(structured, dict):
-            collected: List[Dict[str, str]] = []
-            for key in cls.THICKNESS_KEYS:
-                for value in cls._normalize_list(structured.get(key)):
-                    collected.append({"type": key, "value": str(value)})
-            return cls._normalize_items(collected, cls.ITEM_TYPES["THICKNESS_ITEMS"])
+            normalized = cls._normalize_items(structured.get("_ITEMS"), cls.ITEM_TYPES["THICKNESS_ITEMS"])
+            if normalized:
+                return normalized
         return []
 
     @staticmethod
@@ -531,7 +525,3 @@ class StructuralPromptExtractor:
     @staticmethod
     def _normalize_item_value(item_type: str, raw_value: Any) -> str:
         return StructuralFieldOutputNormalizer.normalize_item_value(item_type, raw_value)
-
-    @staticmethod
-    def _group_items(items: List[Dict[str, str]], keys: tuple[str, ...]) -> Dict[str, List[str]]:
-        return StructuralFieldOutputNormalizer.group_items(items, keys)

@@ -21,7 +21,6 @@ from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
-from ..domain.common import OrderedValueItem
 from ..domain.material import MaterialItem
 from ..domain.pipeline import (
     ConfidenceDetail,
@@ -271,7 +270,7 @@ def _field_obj_get(field_obj: Any, key: str, default: Any = None) -> Any:
 
 
 def _to_ordered_items(items: Any) -> list[dict[str, str]]:
-    """将历史 `_ITEMS` 收敛成统一原子项列表。"""
+    """将 `_ITEMS` 收敛成统一原子项列表。"""
     result: list[dict[str, str]] = []
     for item in items if isinstance(items, list) else []:
         if not isinstance(item, dict):
@@ -280,7 +279,11 @@ def _to_ordered_items(items: Any) -> list[dict[str, str]]:
         item_value = str(item.get("value", "") or "").strip()
         if not item_type or not item_value:
             continue
-        result.append(OrderedValueItem(type=item_type, value=item_value).to_dict())
+        ordered_item = {"type": item_type, "value": item_value}
+        item_role = str(item.get("role", "") or "").strip().upper()
+        if item_role:
+            ordered_item = {"role": item_role, **ordered_item}
+        result.append(ordered_item)
     return result
 
 
@@ -1213,9 +1216,6 @@ class PipeEncoderBase:
                 if str(item.get('type', '')).strip().upper() != 'MM':
                     continue
                 _append_num(item.get('value'))
-            for item in value.get('MM') or []:
-                raw = item.get('value') if isinstance(item, dict) else item
-                _append_num(raw)
             return result
 
         _append_num(value)
@@ -2476,7 +2476,17 @@ class PipeEncoderBase:
         size_dn_rule = self.evidence_rules_cfg.get('size_dn_requires_anchor') or {}
         if size_dn_rule.get('enabled', False):
             size_dict = entities.get('SIZE') if isinstance(entities.get('SIZE'), dict) else {}
-            dn_values = _normalize_verification_values(size_dict.get('DN')) if size_dict else []
+            dn_values: List[str] = []
+            if size_dict:
+                items = size_dict.get('_ITEMS')
+                if isinstance(items, list) and items:
+                    dn_values = [
+                        str(item.get('value') or '').strip()
+                        for item in items
+                        if isinstance(item, dict)
+                        and str(item.get('type') or '').strip().upper() == 'DN'
+                        and str(item.get('value') or '').strip()
+                    ]
             if dn_values:
                 dn_anchor_pattern = size_dn_rule.get('dn_anchor_pattern', r'(?i)\bDN\s*\d')
                 if not re.search(dn_anchor_pattern, original_text or ''):
@@ -2674,9 +2684,13 @@ class PipeEncoderBase:
             return value, False
 
         if isinstance(value, dict):
-            mm_values = cls._clone_response_value(value.get("MM") or [])
-            schedule_values = cls._clone_response_value(value.get("SCHEDULE") or [])
             items = value.get("_ITEMS")
+            if isinstance(items, list) and any(
+                isinstance(item, dict)
+                and str(item.get("role") or "").strip().upper() == "LINING"
+                for item in items
+            ):
+                return value, False
             mm_items: list[dict[str, Any]] = []
             has_schedule_item = False
             if isinstance(items, list):
@@ -2689,18 +2703,12 @@ class PipeEncoderBase:
                     elif item_type == "SCHEDULE":
                         has_schedule_item = True
 
-            has_mm = bool(mm_values) or bool(mm_items)
-            has_schedule = bool(schedule_values) or has_schedule_item
+            has_mm = bool(mm_items)
+            has_schedule = has_schedule_item
             if not (has_mm and has_schedule):
                 return value, False
 
-            if not mm_values and mm_items:
-                mm_values = [
-                    str(item.get("value") or "").strip()
-                    for item in mm_items
-                    if str(item.get("value") or "").strip()
-                ]
-            pruned: dict[str, Any] = {"MM": mm_values}
+            pruned: dict[str, Any] = {}
             if mm_items:
                 pruned["_ITEMS"] = mm_items
             return pruned, True
@@ -2712,8 +2720,15 @@ class PipeEncoderBase:
             for item in value:
                 if isinstance(item, dict):
                     pruned_item, changed = cls._prune_straight_pipe_thickness_to_mm(item)
-                    item_has_mm = changed or bool(item.get("MM"))
-                    item_has_schedule = bool(item.get("SCHEDULE"))
+                    item_items = item.get("_ITEMS")
+                    item_has_mm = changed or (
+                        isinstance(item_items, list)
+                        and any(isinstance(x, dict) and str(x.get("type") or "").strip().upper() == "MM" for x in item_items)
+                    )
+                    item_has_schedule = (
+                        isinstance(item_items, list)
+                        and any(isinstance(x, dict) and str(x.get("type") or "").strip().upper() == "SCHEDULE" for x in item_items)
+                    )
                     if item_has_mm:
                         has_mm = True
                     if item_has_schedule:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
 
 @dataclass
@@ -11,6 +11,11 @@ class OrderedValueItem:
     type: str
     # 原子项值，如 450 / 8 / S80。
     value: str
+    # 结构角色，如 BASE / LINING / INNER / OUTER；普通管子管件为空。
+    role: str = ""
 
     def to_dict(self) -> dict[str, str]:
-        return asdict(self)
+        payload = {"type": self.type, "value": self.value}
+        if self.role:
+            payload = {"role": self.role, **payload}
+        return payload

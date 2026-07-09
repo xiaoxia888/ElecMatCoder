@@ -74,10 +74,34 @@ class SizeSurfaceMatcher:
 
         items: list[ParsedSizeItem] = []
 
-        dn_values = [self._clean_number(v) for v in self._ensure_list(size_result.get("DN")) if self._clean_number(v)]
-        od_values = [self._clean_number(v) for v in self._ensure_list(size_result.get("OD")) if self._clean_number(v)]
-        inch_values = [self._normalize_inch_value(v) for v in self._ensure_list(size_result.get("INCH")) if self._normalize_inch_value(v)]
-        length_values = [self._clean_number(v) for v in self._ensure_list(size_result.get("LENGTH")) if self._clean_number(v)]
+        dn_values: list[str] = []
+        od_values: list[str] = []
+        inch_values: list[str] = []
+        length_values: list[str] = []
+        raw_items = size_result.get("_ITEMS")
+        if not isinstance(raw_items, list):
+            return []
+        for item in raw_items:
+            if not isinstance(item, dict):
+                continue
+            item_type = str(item.get("type") or "").strip().upper()
+            item_value = str(item.get("value") or "").strip()
+            if item_type == "DN":
+                value = self._clean_number(item_value)
+                if value:
+                    dn_values.append(value)
+            elif item_type == "OD":
+                value = self._clean_number(item_value)
+                if value:
+                    od_values.append(value)
+            elif item_type == "INCH":
+                value = self._normalize_inch_value(item_value)
+                if value:
+                    inch_values.append(value)
+            elif item_type == "LENGTH":
+                value = self._clean_number(item_value)
+                if value:
+                    length_values.append(value)
 
         if len(dn_values) >= 2:
             left, right = dn_values[0], dn_values[1]
@@ -141,72 +165,6 @@ class SizeSurfaceMatcher:
                 )
             )
 
-        if items:
-            return items
-
-        raw_items = size_result.get("_ITEMS")
-        if not isinstance(raw_items, list):
-            return []
-        for item in raw_items:
-            if not isinstance(item, dict):
-                continue
-            item_type = str(item.get("type") or "").strip().upper()
-            item_value = str(item.get("value") or "").strip()
-            if not item_type or not item_value:
-                continue
-            if item_type == "DN":
-                value = self._clean_number(item_value)
-                if value and "." not in value:
-                    items.append(
-                        ParsedSizeItem(
-                            field="DN",
-                            raw=f"DN: {value}",
-                            value=value,
-                            values=[value],
-                            anchored_patterns=[(f"DN{value}", self._compile_dn_pattern(value))],
-                            bare_values=[value],
-                        )
-                    )
-            elif item_type == "OD":
-                value = self._clean_number(item_value)
-                if value:
-                    items.append(
-                        ParsedSizeItem(
-                            field="OD",
-                            raw=f"OD: {value}",
-                            value=value,
-                            values=[value],
-                            anchored_patterns=[(f"OD{value}", self._compile_od_pattern(value))],
-                            bare_values=[value],
-                        )
-                    )
-            elif item_type == "INCH":
-                value = self._normalize_inch_value(item_value)
-                if value:
-                    raw = f"INCH: {value} in"
-                    items.append(
-                        ParsedSizeItem(
-                            field="INCH",
-                            raw=raw,
-                            value=value,
-                            values=[value],
-                            anchored_patterns=self._build_single_inch_patterns(raw, value),
-                            bare_values=[value],
-                        )
-                    )
-            elif item_type == "LENGTH":
-                value = self._clean_number(item_value)
-                if value:
-                    items.append(
-                        ParsedSizeItem(
-                            field="LENGTH",
-                            raw=f"LENGTH: {value}MM",
-                            value=value,
-                            values=[value],
-                            anchored_patterns=self._build_length_patterns(value),
-                            bare_values=self._build_length_fallback_values(value),
-                        )
-                    )
         return items
 
     def match_anchored(self, text: str, item: ParsedSizeItem) -> list[SizeSurfaceHit]:

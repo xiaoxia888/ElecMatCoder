@@ -75,11 +75,11 @@ class StructuralFieldModelExtractor:
             result["_raw"] = ""
 
         if not run_size_length:
-            result["SIZE"] = {key: [] for key in self.SIZE_KEYS}
+            result["SIZE"] = {"_ITEMS": []}
             result["SIZE_ITEMS"] = []
             result["LENGTH"] = ""
         if not run_thickness:
-            result["THICKNESS"] = {key: [] for key in self.THICKNESS_KEYS}
+            result["THICKNESS"] = {"_ITEMS": []}
             result["THICKNESS_ITEMS"] = []
         if not run_pressure:
             result["PRESSURE"] = ""
@@ -104,7 +104,3 @@ class StructuralFieldModelExtractor:
     @staticmethod
     def _normalize_item_value(item_type: str, raw_value: Any) -> str:
         return StructuralFieldOutputNormalizer.normalize_item_value(item_type, raw_value)
-
-    @staticmethod
-    def _group_items(items: List[Dict[str, str]], keys: tuple[str, ...]) -> Dict[str, List[str]]:
-        return StructuralFieldOutputNormalizer.group_items(items, keys)

@@ -474,19 +474,9 @@ class ThicknessProcessor:
             return False
 
         def _mark_invalid_if_needed(mm_raw: Optional[str] = None, schedule_raw: Optional[str] = None) -> bool:
-            nonlocal invalid
             if mm_raw and not self._is_valid_mm_candidate(mm_raw):
-                invalid = True
                 return True
             if schedule_raw and not self._is_valid_schedule_candidate(schedule_raw):
-                invalid = True
-                return True
-            return False
-
-        def _mark_invalid_schedule_boundary_conflict(pattern: re.Pattern[str]) -> bool:
-            nonlocal invalid
-            if pattern.search(normalized):
-                invalid = True
                 return True
             return False
 
@@ -537,29 +527,6 @@ class ThicknessProcessor:
         # SCH5/SCH5S、SCH10/SCH10S ... SCH160/SCH160S 对应的弱写法。
         # 这样可以避免把 S3408 这类标准残片误当壁厚。
         weak_schedule_prefixed_token, weak_schedule_s_dash_token, weak_schedule_numeric_suffix_token, weak_schedule_token = self._weak_schedule_patterns()
-        schedule_boundary_conflict_patterns = [
-            re.compile(r'(?i)SCH[.\s]*(?>\d+)(?=\d)'),
-            re.compile(
-                r'(?i)SCH[.\s]*(?>\d+)S'
-                r'(?=(?![xX]\s*(?:SCH[.\s]*(?:XXS|XS|STD|\d+S?)|S-(?:XXS|XS|STD|\d+S?)|XS|XXS|STD|\d+S?))[A-Za-z])'
-            ),
-            re.compile(r'(?i)SCH[.\s]*(?:STD|XS|XXS)(?=[A-Za-z0-9])'),
-            # 合法的 S-10S / S-40S 不应被误判成粘连脏串；
-            # 对 `S-40CL300` / `S-40PN16` 这类“壁厚词 + 压力词”粘连，交给后续专门规则处理。
-            re.compile(r'(?i)S-\d+(?=(?!(?:CL|CLASS|PN))[A-RT-Za-rt-z])'),
-            re.compile(r'(?i)S-(?:STD|XS|XXS)(?=[A-Za-z0-9])'),
-        ]
-        for schedule_boundary_conflict_pattern in schedule_boundary_conflict_patterns:
-            if _mark_invalid_schedule_boundary_conflict(schedule_boundary_conflict_pattern):
-                return {
-                    "schedule": [],
-                    "mm": [],
-                    "ordered_items": [],
-                    "matched_texts": [],
-                    "matched_spans": [],
-                    "invalid": invalid,
-                }
-
         # 组合壁厚里允许 SCH / S- / S / 数字S / special token 混合：
         # 例如 SCH160xXXS / 40Sx40S / S40xS40 / S-40SXS-40 / XXSxXS。
         schedule_operand = (
@@ -1449,6 +1416,7 @@ class ThicknessProcessor:
             return ""
 
         parts: List[str] = []
+        pending_base = ""
         for item in items:
             if not isinstance(item, dict):
                 continue
@@ -1457,8 +1425,32 @@ class ThicknessProcessor:
             if raw_value in (None, ""):
                 continue
             normalized = self._normalize_structured_part(subtype, raw_value)
-            if normalized and normalized not in parts:
+            if not normalized:
+                continue
+
+            role = str(item.get("role", "") or "").strip().upper()
+            if role == "BASE":
+                if pending_base and pending_base not in parts:
+                    parts.append(pending_base)
+                pending_base = normalized
+                continue
+            if role == "LINING":
+                if pending_base:
+                    layered = f"{pending_base}/{normalized}"
+                    if layered not in parts:
+                        parts.append(layered)
+                    pending_base = ""
+                elif normalized not in parts:
+                    parts.append(normalized)
+                continue
+
+            if pending_base and pending_base not in parts:
+                parts.append(pending_base)
+                pending_base = ""
+            if normalized not in parts:
                 parts.append(normalized)
+        if pending_base and pending_base not in parts:
+            parts.append(pending_base)
         return 'X'.join(parts)
 
     def _normalize_structured_part(self, subtype: str, item: Any) -> str:

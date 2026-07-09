@@ -503,62 +503,65 @@ class SizeProcessor:
         converted_items: List[Dict[str, Any]] = []
         od_fallback_items: List[Dict[str, Any]] = []
         mm_context = self._extract_mm_context(value)
+        ordered_items = value.get("_ITEMS")
 
-        for item in self._ensure_list(value.get("DN")):
-            raw = item.get("value") if isinstance(item, dict) else item
-            raw_text = str(raw or "").strip()
-            dn = self._extract_numeric_value(item)
-            if dn is None:
-                continue
-            dn_items.append({
-                "subtype": "DN",
-                "raw": raw_text,
-                "encode_value": float(dn),
-                "dn_value": float(dn),
-            })
+        if isinstance(ordered_items, list) and ordered_items:
+            od_idx = 0
+            for item in ordered_items:
+                if not isinstance(item, dict):
+                    continue
+                subtype = str(item.get("type") or "").strip().upper()
+                raw = item.get("value")
+                raw_text = str(raw or "").strip()
+                if not raw_text:
+                    continue
+                if subtype == "DN":
+                    dn = self._extract_numeric_value(raw)
+                    if dn is not None:
+                        dn_items.append({
+                            "subtype": "DN",
+                            "raw": raw_text,
+                            "encode_value": float(dn),
+                            "dn_value": float(dn),
+                        })
+                elif subtype == "OD":
+                    od = self._extract_numeric_value(raw)
+                    if od is None:
+                        continue
+                    dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, od_idx))
+                    od_idx += 1
+                    if dn is not None:
+                        converted_items.append({
+                            "subtype": "OD",
+                            "raw": raw_text,
+                            "encode_value": float(dn),
+                            "dn_value": float(dn),
+                        })
+                    else:
+                        od_fallback_items.append({
+                            "subtype": "OD",
+                            "raw": raw_text,
+                            "encode_value": float(od),
+                            "dn_value": None,
+                        })
+                elif subtype == "INCH":
+                    dn = self._nps_to_dn(raw_text)
+                    if dn is not None:
+                        converted_items.append({
+                            "subtype": "INCH",
+                            "raw": raw_text,
+                            "encode_value": float(dn),
+                            "dn_value": float(dn),
+                        })
 
-        for idx, item in enumerate(self._ensure_list(value.get("OD"))):
-            raw = item.get("value") if isinstance(item, dict) else item
-            raw_text = str(raw or "").strip()
-            od = self._extract_numeric_value(item)
-            if od is None:
-                continue
-            dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, idx))
-            if dn is not None:
-                converted_items.append({
-                    "subtype": "OD",
-                    "raw": raw_text,
-                    "encode_value": float(dn),
-                    "dn_value": float(dn),
-                })
-            else:
-                od_fallback_items.append({
-                    "subtype": "OD",
-                    "raw": raw_text,
-                    "encode_value": float(od),
-                    "dn_value": None,
-                })
+            if dn_items:
+                return dn_items
+            if converted_items:
+                return converted_items
+            if od_fallback_items:
+                return od_fallback_items
+            return []
 
-        for item in self._ensure_list(value.get("INCH")):
-            raw = item.get("value") if isinstance(item, dict) else item
-            raw_text = str(raw or "").strip()
-            if not raw_text:
-                continue
-            dn = self._nps_to_dn(raw_text)
-            if dn is not None:
-                converted_items.append({
-                    "subtype": "INCH",
-                    "raw": raw_text,
-                    "encode_value": float(dn),
-                    "dn_value": float(dn),
-                })
-
-        if dn_items:
-            return dn_items
-        if converted_items:
-            return converted_items
-        if od_fallback_items:
-            return od_fallback_items
         return []
 
     def _extract_length_prefix(self, value: Any, original_text: str = "") -> str:
@@ -598,8 +601,11 @@ class SizeProcessor:
             return f"L{self._normalize_length_value(m.group(1), m.group(2) or '')}"
 
         if isinstance(value, dict):
-            items = self._ensure_list(value.get("LENGTH"))
-            for item in items:
+            for item in self._ensure_list(value.get("_ITEMS")):
+                if not isinstance(item, dict):
+                    continue
+                if str(item.get("type") or "").strip().upper() != "LENGTH":
+                    continue
                 prefix = _from_text(_raw_item_text(item))
                 if prefix:
                     return prefix
@@ -649,38 +655,6 @@ class SizeProcessor:
         ordered_values = self._collect_ordered_item_values(value)
         if ordered_values:
             return self._sort_sizes(ordered_values), False
-
-        explicit_dn_values: List[float] = []
-        converted_values: List[float] = []
-        od_fallback_values: List[float] = []
-        mm_context = self._extract_mm_context(value)
-
-        for item in self._ensure_list(value.get("DN")):
-            dn = self._extract_numeric_value(item)
-            if dn is not None:
-                explicit_dn_values.append(float(dn))
-
-        for idx, item in enumerate(self._ensure_list(value.get("OD"))):
-            od = self._extract_numeric_value(item)
-            if od is None:
-                continue
-            dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, idx))
-            if dn is not None:
-                converted_values.append(float(dn))
-            else:
-                od_fallback_values.append(float(od))
-
-        for item in self._ensure_list(value.get("INCH")):
-            raw = item.get("value") if isinstance(item, dict) else item
-            dn = self._nps_to_dn(str(raw).strip()) if raw not in (None, "") else None
-            if dn is not None:
-                converted_values.append(float(dn))
-
-        explicit_dn = self._sort_sizes(explicit_dn_values)
-        if explicit_dn:
-            explicit_dn_set = set(explicit_dn)
-            need_review = any(v not in explicit_dn_set for v in converted_values) or bool(od_fallback_values)
-            return explicit_dn, need_review
 
         merged = self._sort_sizes([float(item["encode_value"]) for item in self._build_positioned_size_items(value, original_text=original_text)])
         return merged, False

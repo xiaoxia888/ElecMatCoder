@@ -18,10 +18,10 @@ class StructuralFieldOutputNormalizer:
     @classmethod
     def empty_result(cls) -> Dict[str, Any]:
         return {
-            "SIZE": {key: [] for key in cls.SIZE_KEYS},
+            "SIZE": {"_ITEMS": []},
             "SIZE_ITEMS": [],
             "LENGTH": "",
-            "THICKNESS": {key: [] for key in cls.THICKNESS_KEYS},
+            "THICKNESS": {"_ITEMS": []},
             "THICKNESS_ITEMS": [],
             "PRESSURE": "",
         }
@@ -32,11 +32,6 @@ class StructuralFieldOutputNormalizer:
         structure_kind = cls.normalize_structure_kind(parsed.get("STRUCTURE_KIND"))
         complex_meta: Dict[str, Any] = {}
 
-        size = parsed.get("SIZE")
-        if isinstance(size, dict):
-            for key in cls.SIZE_KEYS:
-                result["SIZE"][key] = cls.normalize_list(size.get(key))
-
         raw_size_items = parsed.get("SIZE_ITEMS")
         size_items_with_role = cls.normalize_items_with_role(
             raw_size_items,
@@ -44,29 +39,27 @@ class StructuralFieldOutputNormalizer:
         )
         if size_items_with_role:
             complex_meta["SIZE_ITEMS_WITH_ROLE"] = size_items_with_role
-        result["SIZE_ITEMS"] = cls.normalize_items(
-            cls.fold_complex_items(size_items_with_role, structure_kind)
+        result["SIZE_ITEMS"] = (
+            size_items_with_role
             if size_items_with_role
-            else raw_size_items,
-            cls.ITEM_TYPES["SIZE_ITEMS"],
+            else cls.normalize_items(raw_size_items, cls.ITEM_TYPES["SIZE_ITEMS"])
         )
         top_level_length = cls.normalize_item_value("LENGTH", parsed.get("LENGTH", ""))
         result["LENGTH"] = top_level_length
         if top_level_length:
-            result["SIZE"]["LENGTH"] = cls.normalize_list([top_level_length])
             if ("LENGTH", top_level_length) not in {
                 (str(item.get("type", "")).strip().upper(), str(item.get("value", "")).strip())
                 for item in result["SIZE_ITEMS"]
             }:
                 result["SIZE_ITEMS"].append({"type": "LENGTH", "value": top_level_length})
         if result["SIZE_ITEMS"]:
-            result["SIZE"] = cls.group_items(result["SIZE_ITEMS"], cls.SIZE_KEYS)
-            result["LENGTH"] = result["SIZE"]["LENGTH"][0] if result["SIZE"]["LENGTH"] else top_level_length
-
-        thickness = parsed.get("THICKNESS")
-        if isinstance(thickness, dict):
-            for key in cls.THICKNESS_KEYS:
-                result["THICKNESS"][key] = cls.normalize_list(thickness.get(key))
+            result["SIZE"] = cls.group_ordered_items_only(result["SIZE_ITEMS"], cls.SIZE_KEYS)
+            length_values = [
+                str(item.get("value") or "").strip()
+                for item in result["SIZE_ITEMS"]
+                if str(item.get("type") or "").strip().upper() == "LENGTH" and str(item.get("value") or "").strip()
+            ]
+            result["LENGTH"] = length_values[0] if length_values else top_level_length
 
         raw_thickness_items = parsed.get("THICKNESS_ITEMS")
         thickness_items_with_role = cls.normalize_items_with_role(
@@ -75,14 +68,13 @@ class StructuralFieldOutputNormalizer:
         )
         if thickness_items_with_role:
             complex_meta["THICKNESS_ITEMS_WITH_ROLE"] = thickness_items_with_role
-        result["THICKNESS_ITEMS"] = cls.normalize_items(
-            cls.fold_complex_items(thickness_items_with_role, structure_kind)
+        result["THICKNESS_ITEMS"] = (
+            thickness_items_with_role
             if thickness_items_with_role
-            else raw_thickness_items,
-            cls.ITEM_TYPES["THICKNESS_ITEMS"],
+            else cls.normalize_items(raw_thickness_items, cls.ITEM_TYPES["THICKNESS_ITEMS"])
         )
         if result["THICKNESS_ITEMS"]:
-            result["THICKNESS"] = cls.group_items(result["THICKNESS_ITEMS"], cls.THICKNESS_KEYS)
+            result["THICKNESS"] = cls.group_ordered_items_only(result["THICKNESS_ITEMS"], cls.THICKNESS_KEYS)
 
         pressure = parsed.get("PRESSURE")
         result["PRESSURE"] = "" if pressure in (None, [], {}) else str(pressure).strip()
@@ -145,6 +137,7 @@ class StructuralFieldOutputNormalizer:
             return []
         result: List[Dict[str, str]] = []
         seen = set()
+        has_any_role = False
         for item in value:
             if not isinstance(item, dict):
                 continue
@@ -153,17 +146,18 @@ class StructuralFieldOutputNormalizer:
             item_role = str(item.get("role", "") or "").strip().upper()
             if not item_type or not item_value or item_type not in allowed_types:
                 continue
-            if item_role not in cls.ROLE_KEYS:
-                item_role = ""
-            key = (item_role, item_type, item_value)
+            has_role = item_role in cls.ROLE_KEYS
+            if has_role:
+                has_any_role = True
+            key = (item_role if has_role else "", item_type, item_value)
             if key in seen:
                 continue
             seen.add(key)
             payload = {"type": item_type, "value": item_value}
-            if item_role:
-                payload["role"] = item_role
+            if has_role:
+                payload = {"role": item_role, **payload}
             result.append(payload)
-        return result
+        return result if has_any_role else []
 
     @classmethod
     def fold_complex_items(cls, items: List[Dict[str, str]], structure_kind: str) -> List[Dict[str, str]]:
@@ -290,12 +284,16 @@ class StructuralFieldOutputNormalizer:
         return normalized.upper() if kind in {"SCHEDULE", "SERIES"} else normalized
 
     @staticmethod
-    def group_items(items: List[Dict[str, str]], keys: tuple[str, ...]) -> Dict[str, List[str]]:
-        grouped: Dict[str, List[str]] = {key: [] for key in keys}
+    def group_ordered_items_only(items: List[Dict[str, str]], keys: tuple[str, ...]) -> Dict[str, List[str]]:
+        ordered_items: List[Dict[str, str]] = []
         for item in items:
             item_type = str(item.get("type", "")).strip().upper()
             item_value = str(item.get("value", "")).strip()
-            if not item_type or not item_value or item_type not in grouped:
+            if not item_type or not item_value or item_type not in keys:
                 continue
-            grouped[item_type].append(item_value)
-        return grouped
+            ordered_item = {"type": item_type, "value": item_value}
+            item_role = str(item.get("role", "") or "").strip().upper()
+            if item_role in StructuralFieldOutputNormalizer.ROLE_KEYS:
+                ordered_item = {"role": item_role, **ordered_item}
+            ordered_items.append(ordered_item)
+        return {"_ITEMS": ordered_items} if ordered_items else {}

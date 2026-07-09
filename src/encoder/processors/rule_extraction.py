@@ -171,6 +171,33 @@ def _has_any_pressure(pressure_result: RulePressureExtraction) -> bool:
     return bool(pressure_result.pressure_code)
 
 
+def _has_size_signal(size_result: RuleSizeExtraction) -> bool:
+    return bool(
+        _has_any_size(size_result)
+        or getattr(size_result, "matched_texts", None)
+        or getattr(size_result, "matched_spans", None)
+        or getattr(size_result, "consumed_spans", None)
+    )
+
+
+def _has_thickness_signal(thickness_result: RuleThicknessExtraction) -> bool:
+    return bool(
+        _has_any_thickness(thickness_result)
+        or getattr(thickness_result, "matched_texts", None)
+        or getattr(thickness_result, "matched_spans", None)
+        or getattr(thickness_result, "consumed_spans", None)
+    )
+
+
+def _has_pressure_signal(pressure_result: RulePressureExtraction) -> bool:
+    return bool(
+        _has_any_pressure(pressure_result)
+        or getattr(pressure_result, "matched_texts", None)
+        or getattr(pressure_result, "matched_spans", None)
+        or getattr(pressure_result, "consumed_spans", None)
+    )
+
+
 def _finalize_pressure_result(
     pressure_result: RulePressureExtraction,
     *,
@@ -287,8 +314,24 @@ def _has_unconsumed_suspicious_thickness(
     for pattern, groups in checks:
         for match in pattern.finditer(source):
             for span in _collect_group_spans(match, groups):
+                candidate = source[span[0]:span[1]]
+                if not _is_valid_residual_thickness_candidate(candidate):
+                    continue
                 if not _span_consumed(span, consumed_spans):
                     return True
+    return False
+
+
+def _is_valid_residual_thickness_candidate(candidate: str) -> bool:
+    text = str(candidate or "").strip()
+    if not text:
+        return False
+    upper = text.upper()
+    if re.search(r'(?i)(?:SCH|S-|STD|XS|XXS|\d+S$)', upper):
+        return ThicknessProcessor._is_valid_schedule_candidate(text)
+    numeric = re.search(r'\d+(?:\.\d+)?', text)
+    if numeric:
+        return ThicknessProcessor._is_valid_mm_candidate(numeric.group(0))
     return False
 
 
@@ -298,9 +341,9 @@ def _should_clear_due_to_residual_spec(
     thickness_result: RuleThicknessExtraction,
     pressure_result: RulePressureExtraction,
 ) -> bool:
-    if not _has_any_size(size_result):
+    if not _has_size_signal(size_result):
         return False
-    if not (_has_any_thickness(thickness_result) or _has_any_pressure(pressure_result)):
+    if not (_has_thickness_signal(thickness_result) or _has_pressure_signal(pressure_result)):
         return False
     return _has_unconsumed_residual_spec(str(text or ""), size_result, thickness_result, pressure_result)
 
@@ -400,12 +443,7 @@ def _augment_size_result_with_size_pair_echo(size_result: RuleSizeExtraction, te
 
 
 def build_structured_size_field(result: RuleSizeExtraction, original_text: str = "") -> Dict[str, Any]:
-    field: Dict[str, Any] = {
-        "DN": list(result.dn),
-        "OD": list(result.od),
-        "INCH": list(result.inch),
-        "LENGTH": list(result.length),
-    }
+    field: Dict[str, Any] = {}
     items: List[Dict[str, str]] = []
     if result.ordered_items:
         items = [{"type": str(item["type"]), "value": str(item["value"])} for item in result.ordered_items]
@@ -424,13 +462,7 @@ def build_structured_size_field(result: RuleSizeExtraction, original_text: str =
 
 
 def build_structured_thickness_field(result: RuleThicknessExtraction, original_text: str = "") -> Dict[str, Any]:
-    field: Dict[str, Any] = {
-        "MM": [v.replace("MM", "") for v in result.mm],
-        "SCHEDULE": list(result.schedule),
-        "INCH": [],
-        "SERIES": [],
-        "BWG": [],
-    }
+    field: Dict[str, Any] = {}
     items: List[Dict[str, str]] = []
     if result.ordered_items:
         items = [{"type": str(item["type"]), "value": str(item["value"])} for item in result.ordered_items]

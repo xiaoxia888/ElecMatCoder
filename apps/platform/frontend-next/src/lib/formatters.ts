@@ -36,9 +36,11 @@ export function valueToText(value: JsonValue | undefined, joiner = '；'): strin
       const orderedText = orderedItems
         .map((item) => {
           if (isObject(item)) {
+            const role = item.role ? String(item.role) : ''
             const type = item.type ? String(item.type) : ''
             const itemValue = item.value ? String(item.value) : ''
-            return [type, itemValue].filter(Boolean).join(': ')
+            const label = [role, type].filter(Boolean).join(' ')
+            return [label, itemValue].filter(Boolean).join(': ')
           }
           return valueToText(item, joiner)
         })
@@ -58,7 +60,7 @@ export function valueToText(value: JsonValue | undefined, joiner = '；'): strin
   return '—'
 }
 
-// ===== 字段自然展示（复刻旧前端逻辑，不再用 KEY: value 对象形式）=====
+// ===== 字段自然展示 =====
 function s(value: JsonValue | undefined): string {
   return value == null ? '' : String(value).trim()
 }
@@ -131,21 +133,21 @@ function formatPressureValue(value: JsonValue | undefined): string {
 function formatSizeThk(fieldType: string, value: JsonValue | undefined): string {
   if (!isObject(value as JsonValue)) return s(value)
   const o = value as Record<string, JsonValue>
-  const order = fieldType === 'SIZE' ? ['DN', 'OD', 'INCH', 'LENGTH'] : ['MM', 'INCH', 'SCHEDULE', 'SERIES', 'BWG']
-  const keys = [
-    ...order.filter((k) => Object.prototype.hasOwnProperty.call(o, k)),
-    ...Object.keys(o).filter((k) => !order.includes(k) && !k.startsWith('_') && typeof o[k] !== 'object'),
-  ]
-  return keys
-    .map((k) => {
-      const vals = (Array.isArray(o[k]) ? (o[k] as JsonValue[]) : [o[k]])
-        .map((x) => (isObject(x as JsonValue) ? '' : s(x)))
-        .filter(Boolean)
-        .join(' x ')
-      return vals ? `${k}: ${vals}` : ''
-    })
-    .filter(Boolean)
-    .join(' ; ')
+  const orderedItems = o.ordered_items
+  if (Array.isArray(orderedItems)) {
+    return orderedItems
+      .map((item) => {
+        if (!isObject(item)) return s(item)
+        const itemObj = item as Record<string, JsonValue>
+        const role = s(itemObj.role)
+        const type = s(itemObj.type)
+        const itemValue = s(itemObj.value)
+        return itemValue ? `${role} ${type}: ${itemValue}`.trim() : ''
+      })
+      .filter(Boolean)
+      .join(' | ')
+  }
+  return ''
 }
 
 // 单行文本

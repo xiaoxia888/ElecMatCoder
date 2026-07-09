@@ -114,14 +114,18 @@ class Stage1StructureChecker:
             is_structurally_complete=not required_missing_fields,
             structured_fields={
                 "SIZE": {
-                    "DN": list(rule_result.size.dn),
-                    "OD": list(rule_result.size.od),
-                    "INCH": list(rule_result.size.inch),
-                    "LENGTH": list(rule_result.size.length),
+                    "_ITEMS": [
+                        {"type": str(item.get("type") or "").upper(), "value": str(item.get("value") or "")}
+                        for item in rule_result.size.ordered_items
+                        if str(item.get("type") or "").strip() and str(item.get("value") or "").strip()
+                    ],
                 },
                 "THICKNESS": {
-                    "MM": [str(value).replace("MM", "") for value in rule_result.thickness.mm],
-                    "SCHEDULE": list(rule_result.thickness.schedule),
+                    "_ITEMS": [
+                        {"type": str(item.get("type") or "").upper(), "value": str(item.get("value") or "").replace("MM", "")}
+                        for item in rule_result.thickness.ordered_items
+                        if str(item.get("type") or "").strip() and str(item.get("value") or "").strip()
+                    ],
                     "PRESENCE_SOURCE": (
                         "strict_rule"
                         if strict_thickness_present

@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 def _is_size_empty_for_rule_fallback(value: Any) -> bool:
     if not isinstance(value, dict):
         return True
-    return not any(value.get(key) for key in ("DN", "OD", "INCH"))
+    return not bool(value.get("_ITEMS"))
 
 
 def _is_thickness_empty_for_rule_fallback(value: Any) -> bool:
     if not isinstance(value, dict):
         return True
-    return not any(value.get(key) for key in ("MM", "SCHEDULE", "BWG", "INCH"))
+    return not bool(value.get("_ITEMS"))
 
 
 def _is_pressure_empty_for_rule_fallback(value: Any) -> bool:

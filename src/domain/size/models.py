@@ -23,11 +23,9 @@ class SizeValue:
     thickness_mm_context: list[float] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, object]:
-        return {
-            "DN": list(self.dn),
-            "OD": list(self.od),
-            "INCH": list(self.inch),
-            "LENGTH": list(self.length),
+        payload: dict[str, object] = {
             "ordered_items": [item.to_dict() for item in self.ordered_items],
-            "thickness_mm_context": list(self.thickness_mm_context),
         }
+        if self.thickness_mm_context:
+            payload["thickness_mm_context"] = list(self.thickness_mm_context)
+        return payload

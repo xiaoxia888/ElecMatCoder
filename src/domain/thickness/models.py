@@ -24,10 +24,5 @@ class ThicknessValue:
 
     def to_dict(self) -> dict[str, object]:
         return {
-            "MM": list(self.mm),
-            "INCH": list(self.inch),
-            "SCHEDULE": list(self.schedule),
-            "SERIES": list(self.series),
-            "BWG": list(self.bwg),
             "ordered_items": [item.to_dict() for item in self.ordered_items],
         }
