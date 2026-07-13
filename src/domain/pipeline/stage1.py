@@ -8,6 +8,16 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
+def _is_empty_structural_prompt_field(field: str, value: Any) -> bool:
+    if field in {"SIZE", "THICKNESS"}:
+        return not isinstance(value, dict) or not any(
+            item not in (None, "", [], {}) for item in value.values()
+        )
+    if field == "PRESSURE":
+        return value in (None, "", [], {})
+    return value in (None, "", [], {})
+
+
 @dataclass
 class Stage1Snapshot:
     """一阶段统一快照，显式区分原始输出与送入编码的统一决策。"""
@@ -141,8 +151,9 @@ class Stage1DecisionNormalizer:
             structural_output = model_output.get("_STRUCTURAL_PROMPT")
             if isinstance(structural_output, dict):
                 for field in ("SIZE", "THICKNESS", "PRESSURE"):
-                    if structural_output.get(field) not in (None, "", [], {}):
-                        raw_values[field] = copy.deepcopy(structural_output.get(field))
+                    field_value = structural_output.get(field)
+                    if not _is_empty_structural_prompt_field(field, field_value):
+                        raw_values[field] = copy.deepcopy(field_value)
 
         for field, value in decisions.items():
             if field.startswith("_"):

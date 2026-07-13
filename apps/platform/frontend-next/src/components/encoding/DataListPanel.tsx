@@ -22,6 +22,7 @@ const DIFF_STYLE: Record<string, string> = {
 const STATUS_STYLE: Record<string, string> = {
   review: 'bg-cautionSoft text-caution',
   success: 'bg-successSoft text-success',
+  failed: 'bg-dangerSoft text-danger',
 }
 
 export function DataListPanel(props: DataListPanelProps) {
@@ -76,7 +77,7 @@ export function DataListPanel(props: DataListPanelProps) {
           const difficulty = getItemDifficulty(item.index)
           const selected = currentIndex === item.index
           // 未识别（pending）不显示状态；难度同理仅在已识别时显示
-          const statusLabel = status === 'review' ? '待审' : status === 'success' ? '已通过' : ''
+          const statusLabel = status === 'review' ? '待审' : status === 'success' ? '已通过' : status === 'failed' ? '运行失败' : ''
           const showDifficulty = status !== 'pending' && difficulty && difficulty !== '待定'
           return (
             <button

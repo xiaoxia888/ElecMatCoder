@@ -6705,7 +6705,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -6721,7 +6721,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -26280,7 +26280,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -26296,7 +26296,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -40566,7 +40566,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -40582,7 +40582,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -84572,7 +84572,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -102404,7 +102404,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -102420,7 +102420,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },
@@ -102436,7 +102436,7 @@
         },
         "MANU": [],
         "CONN": [],
-        "FLANGE_STYLE": "FLANGED"
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED"
       }
     }
   },

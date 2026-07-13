@@ -166,10 +166,37 @@ class TextPreprocessor:
         - 12. 70 -> 12.70
         - 12 .70 -> 12.70
         - 12 . 70 -> 12.70
+
+        限制：
+        - 同一数字 token 中只能有一个小数点，避免 16.5. 4474 被合并。
+        - 小数点后最多 2 位，避免把标准号后接长数字/长度粘成小数。
         """
         if not text:
             return ""
-        return re.sub(r'(?<=\d)\s*\.\s*(?=\d)', '.', text)
+
+        token_chars = set("0123456789. ")
+
+        def _replace(match: re.Match[str]) -> str:
+            start, end = match.span()
+            token_start = start
+            while token_start > 0 and text[token_start - 1] in token_chars:
+                token_start -= 1
+            token_end = end
+            while token_end < len(text) and text[token_end] in token_chars:
+                token_end += 1
+
+            token = text[token_start:token_end]
+            compact = re.sub(r"\s+", "", token)
+            if compact.count(".") != 1:
+                return match.group(0)
+
+            dot_index = compact.find(".")
+            fractional = compact[dot_index + 1:]
+            if len(fractional) > 2:
+                return match.group(0)
+            return "."
+
+        return re.sub(r'(?<=\d)\s*\.\s*(?=\d)', _replace, text)
 
     @staticmethod
     def normalize_diameter_prefix(text: str) -> str:
@@ -613,6 +640,14 @@ class TextPreprocessor:
             ("RK", "同心异径管"),
             ("WOL-90", "90度对焊支管台"),
             ("WOL-45", "45度对焊支管台"),
+            ("LJ Flg", "松套法兰"),
+            ("WN Flg", "带颈对焊法兰"),
+            ("Flg WN", "带颈对焊法兰"),
+            ("LJFlg", "松套法兰"),
+            ("WNFlg", "带颈对焊法兰"),
+            ("FlgWN", "带颈对焊法兰"),
+            ("G1aV", "GALV"),
+            
             
         )
 

@@ -35,6 +35,17 @@ class ParsedSizeItem:
 
 
 class SizeSurfaceMatcher:
+    @staticmethod
+    def _extract_ordered_items(value: object) -> list[dict[str, object]]:
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, dict)]
+        if not isinstance(value, dict):
+            return []
+        items = value.get("_ITEMS")
+        if not isinstance(items, list) or not items:
+            items = value.get("ordered_items")
+        return [item for item in items if isinstance(item, dict)] if isinstance(items, list) else []
+
     def parse_size_items(self, size_result: object, size_code: str = "") -> list[ParsedSizeItem]:
         structured_items = self._extract_structured_items(size_result)
         if structured_items:
@@ -69,21 +80,16 @@ class SizeSurfaceMatcher:
         return self._dedupe_items(fallback_items)
 
     def _extract_structured_items(self, size_result: object) -> list[ParsedSizeItem]:
-        if not isinstance(size_result, dict):
-            return []
-
         items: list[ParsedSizeItem] = []
+        raw_items = self._extract_ordered_items(size_result)
+        if not raw_items:
+            return []
 
         dn_values: list[str] = []
         od_values: list[str] = []
         inch_values: list[str] = []
         length_values: list[str] = []
-        raw_items = size_result.get("_ITEMS")
-        if not isinstance(raw_items, list):
-            return []
         for item in raw_items:
-            if not isinstance(item, dict):
-                continue
             item_type = str(item.get("type") or "").strip().upper()
             item_value = str(item.get("value") or "").strip()
             if item_type == "DN":
@@ -455,6 +461,8 @@ class SizeSurfaceMatcher:
                 return result
 
             items = size_result.get("_ITEMS")
+            if not isinstance(items, list) or not items:
+                items = size_result.get("ordered_items")
             if isinstance(items, list) and items:
                 fallback: list[str] = []
                 for item in items:

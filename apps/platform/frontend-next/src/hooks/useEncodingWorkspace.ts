@@ -86,7 +86,10 @@ export function useEncodingWorkspace() {
   const filteredDataList = useMemo(() => {
     if (filter === 'all') return dataList
     if (filter === 'review') {
-      return dataList.filter((item) => results[item.index]?.need_review)
+      return dataList.filter((item) => {
+        const result = results[item.index]
+        return Boolean(result?.success && result.need_review)
+      })
     }
     return dataList.filter((item) => getDifficultyLabel(results[item.index]) === '困难')
   }, [dataList, filter, results])
@@ -100,7 +103,7 @@ export function useEncodingWorkspace() {
       total: values.length,
       // 只要编码成功就算成功（含需审核）
       success: values.filter((item) => item.success).length,
-      review: values.filter((item) => item.need_review).length,
+      review: values.filter((item) => item.success && item.need_review).length,
     }
   }, [results])
 
@@ -138,7 +141,7 @@ export function useEncodingWorkspace() {
         name: localTaskName || '当前导入',
         total: localDataList.length,
         success: localValues.filter((item) => item.success).length,
-        review: localValues.filter((item) => item.need_review).length,
+        review: localValues.filter((item) => item.success && item.need_review).length,
         progress: localDataList.length > 0 ? Math.round((localDone / localDataList.length) * 100) : 0,
         status: localDone === 0 ? 'idle' : localDone >= localDataList.length ? 'done' : 'partial',
         durationSeconds: null,
@@ -470,6 +473,7 @@ export function useEncodingWorkspace() {
   function getItemStatus(index: number) {
     const result = results[index]
     if (!result) return 'pending'
+    if (!result.success) return 'failed'
     if (result.need_review) return 'review'
     if (result.success) return 'success'
     return 'pending'

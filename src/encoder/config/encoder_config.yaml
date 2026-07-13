@@ -317,7 +317,7 @@ regex_extraction:
       - SCRD
     no_boundary:
       - 插焊
-      - 承插
+      # - 承插
       - 承插焊      # 无边界匹配，可从"国标锻钢制承插焊"中提取
     patterns:
       - 'BLE\s*[/xX]\s*TSE\s*\(MNPT\)'

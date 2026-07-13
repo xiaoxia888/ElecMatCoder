@@ -278,6 +278,7 @@ common_types:
       - STRAIGHT TEE
       - TEE STRAIGHT
       - TEE
+      - 三通
     block_if_matches:
       - TS
       - TW

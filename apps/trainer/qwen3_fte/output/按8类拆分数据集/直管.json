@@ -4100,7 +4100,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
-        "FLANGE_STYLE": "FLANGED",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
         "MANU": []
       }
     }
@@ -4111,6 +4111,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
         "MANU": []
       }
     }
@@ -13127,7 +13128,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
-        "FLANGE_STYLE": "FLANGED",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
         "MANU": []
       }
     }
@@ -13138,7 +13139,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
-        "FLANGE_STYLE": "FLANGED",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
         "MANU": []
       }
     }
@@ -30051,5 +30052,47 @@
         "MANU": ["EFW"]
       }
     }
+  },
+  [
+  {
+    "input": "钢衬聚四氟乙烯管 RF 1.6MPa HG/T20592(B) HG/T20538-16 DN250 20/PTFE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "钢衬聚四氟乙烯管 RF 1.6MPa HG/T20592(B) HG/T20538-16 DN200 20/PTFE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "钢衬聚四氟乙烯管 SMLS RF 1.6MPa HG/T20592(B) HG/T20538-16 DN150 20/PTFE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "MANU": ["SMLS"]
+      }
+    }
+  },
+  {
+    "input": "钢衬聚四氟乙烯管 SMLS RF 1.6MPa HG/T20592(B) HG/T20538-16 DN300 20/PTFE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "MANU": ["SMLS"]
+      }
+    }
   }
+]
 ]

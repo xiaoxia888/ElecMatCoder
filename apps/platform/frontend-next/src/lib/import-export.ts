@@ -20,20 +20,28 @@ const EXPORT_FIELDS: Array<{ key: string; label: string }> = [
 ]
 
 // 按导出列顺序构造一行数据（CSV / Excel 共用）
-function buildExportRecord(item: ImportedRow, result: EncodingResult): Record<string, string | number> {
-  const difficultyLevel = getDifficultyLevel(result)
+function buildExportRecord(item: ImportedRow, result?: EncodingResult): Record<string, string | number> {
+  const isRecognized = Boolean(result?.success)
+  const difficultyLevel = isRecognized ? getDifficultyLevel(result) : null
   const record: Record<string, string | number> = {
     序号: item.index + 1,
     项目名称: item.projectName || '',
     原始描述: item.text,
-    原始总编码: result.final_code,
-    是否需审核: result.need_review ? '是' : '否',
-    总置信度: formatPercent(result.confidence),
+    原始总编码: isRecognized ? (result?.final_code || '') : '',
+    是否需审核: isRecognized ? (result?.need_review ? '是' : '否') : '',
+    总置信度: isRecognized ? formatPercent(result?.confidence) : '',
     [DIFFICULTY_HEADER]: difficultyLevel ?? '',
-    分流原因: getRouteReason(result),
+    分流原因: isRecognized ? getRouteReason(result) : '',
+  }
+  if (!isRecognized) {
+    EXPORT_FIELDS.forEach(({ label }) => {
+      record[`${label}_原始结果`] = ''
+      record[`${label}_原始编码`] = ''
+    })
+    return record
   }
   EXPORT_FIELDS.forEach(({ key, label }) => {
-    const field = result.fields?.[key] as FieldPayload | undefined
+    const field = result?.fields?.[key] as FieldPayload | undefined
     // 取二阶段实际输入作为字段值（回退到一阶段原始识别），与最终编码对齐
     const fieldValue = field?.stage2_input?.value ?? field?.stage1_raw?.value
     record[`${label}_原始结果`] = field ? blankDash(formatFieldValue(key, fieldValue)) : ''
@@ -42,12 +50,8 @@ function buildExportRecord(item: ImportedRow, result: EncodingResult): Record<st
   return record
 }
 
-function getRecognizedRecords(dataList: ImportedRow[], results: Record<number, EncodingResult>) {
-  return dataList.flatMap((item) => {
-    const result = results[item.index]
-    if (!result?.success || !String(result.final_code || '').trim()) return []
-    return [buildExportRecord(item, result)]
-  })
+function getExportRecords(dataList: ImportedRow[], results: Record<number, EncodingResult>) {
+  return dataList.map((item) => buildExportRecord(item, results[item.index]))
 }
 
 function getExportHeaders(): string[] {
@@ -81,7 +85,7 @@ export async function parseExcel(file: File): Promise<ParsedImportPayload> {
 }
 
 export function exportResultsToCsv(dataList: ImportedRow[], results: Record<number, EncodingResult>) {
-  const records = getRecognizedRecords(dataList, results)
+  const records = getExportRecords(dataList, results)
   const headers = getExportHeaders()
   const escape = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`
   const lines = [headers.map(escape).join(',')]
@@ -92,7 +96,7 @@ export function exportResultsToCsv(dataList: ImportedRow[], results: Record<numb
 }
 
 export function exportResultsToExcel(dataList: ImportedRow[], results: Record<number, EncodingResult>) {
-  const rows = getRecognizedRecords(dataList, results)
+  const rows = getExportRecords(dataList, results)
   const headers = getExportHeaders()
   const sheet = XLSX.utils.json_to_sheet(rows, { header: headers })
   const book = XLSX.utils.book_new()

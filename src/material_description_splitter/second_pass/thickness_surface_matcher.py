@@ -34,6 +34,17 @@ class ParsedThicknessItem:
 
 
 class ThicknessSurfaceMatcher:
+    @staticmethod
+    def _extract_ordered_items(value: object) -> list[dict[str, object]]:
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, dict)]
+        if not isinstance(value, dict):
+            return []
+        items = value.get("_ITEMS")
+        if not isinstance(items, list) or not items:
+            items = value.get("ordered_items")
+        return [item for item in items if isinstance(item, dict)] if isinstance(items, list) else []
+
     def parse_thickness_items(self, thickness_result: object, thickness_code: str = "") -> list[ParsedThicknessItem]:
         texts = self._expand_texts(self._normalize_values(thickness_result))
         if not texts:
@@ -196,6 +207,8 @@ class ThicknessSurfaceMatcher:
     def _normalize_values(value: object) -> list[str]:
         if isinstance(value, dict):
             items = value.get("_ITEMS")
+            if not isinstance(items, list) or not items:
+                items = value.get("ordered_items")
             if isinstance(items, list) and items:
                 result: list[str] = []
                 for item in items:

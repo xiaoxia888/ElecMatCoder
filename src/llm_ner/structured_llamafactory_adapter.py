@@ -286,7 +286,11 @@ class StructuredLlamaFactoryPredictor:
 
         parsed = self._parse_json_output(raw)
         if parsed is None:
-            logger.warning("[结构化适配器] JSON解析失败")
+            logger.warning(
+                "[结构化适配器] JSON解析失败, raw_len=%s, raw_preview=%r",
+                len(str(raw or "")),
+                str(raw or "")[:500],
+            )
             return {
                 "text": text,
                 "tokens": [],
@@ -297,6 +301,7 @@ class StructuredLlamaFactoryPredictor:
                 "extract_confidence_v2": {},
                 "model_raw_response": raw,
             }
+        logger.debug("[结构化适配器] JSON解析成功, keys=%s", list(parsed.keys()) if isinstance(parsed, dict) else type(parsed))
 
         structured = self._normalize_model_output(parsed)
         type_class = self._infer_type_class(structured)

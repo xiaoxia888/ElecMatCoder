@@ -372,6 +372,22 @@ def _match_value_to_dn(raw_value: str, dn_value: str, size_processor: SizeProces
     return converted_dn is not None and str(int(converted_dn)) == dn_text
 
 
+def _looks_like_explicit_od_wall_thickness(first_value: str, second_value: str) -> bool:
+    try:
+        od = float(str(first_value or "").strip())
+        thickness = float(str(second_value or "").strip())
+    except (TypeError, ValueError):
+        return False
+
+    if od <= 0 or thickness <= 0:
+        return False
+    if thickness >= od:
+        return False
+    if thickness > 80:
+        return False
+    return od / thickness >= 3
+
+
 def _classify_od_pair_decisions(text: str, size_result: RuleSizeExtraction, size_processor: SizeProcessor) -> List[OdPairDecision]:
     source = str(text or "")
     dn_values = [str(v) for v in (getattr(size_result, "dn", []) or [])]
@@ -393,6 +409,8 @@ def _classify_od_pair_decisions(text: str, size_result: RuleSizeExtraction, size
             second_matches = _match_value_to_dn(second_value, dn_values[1], size_processor)
             action = "treat_as_size_pair" if (first_matches and second_matches) else "keep_as_thickness"
         elif is_decimal:
+            action = "keep_as_thickness"
+        elif _looks_like_explicit_od_wall_thickness(first_value, second_value):
             action = "keep_as_thickness"
         else:
             action = "ambiguous_clear"
@@ -416,6 +434,10 @@ def _augment_size_result_with_size_pair_echo(size_result: RuleSizeExtraction, te
     ordered_items = list(size_result.ordered_items)
 
     for decision in decisions:
+        if decision.action == "keep_as_thickness":
+            if decision.second_value_span not in consumed_spans:
+                consumed_spans.append(decision.second_value_span)
+            continue
         if decision.action != "treat_as_size_pair":
             continue
         second_od = str(decision.second_value).strip()

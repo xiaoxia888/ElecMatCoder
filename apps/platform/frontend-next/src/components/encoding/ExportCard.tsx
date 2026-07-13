@@ -8,6 +8,7 @@ interface ExportCardProps {
 }
 
 export function ExportCard({ dataList, results }: ExportCardProps) {
+  const hasData = dataList.length > 0
   const hasResults = Object.keys(results).length > 0
 
   const btn =
@@ -18,11 +19,11 @@ export function ExportCard({ dataList, results }: ExportCardProps) {
       <h2 className="text-[15px] font-bold text-ink">数据导出</h2>
       <p className="mb-3 mt-1 text-[12px] text-muted">导出当前任务编码结果及相关数据</p>
       <div className="space-y-2">
-        <button type="button" className={btn} onClick={() => exportResultsToCsv(dataList, results)} disabled={!hasResults}>
+        <button type="button" className={btn} onClick={() => exportResultsToCsv(dataList, results)} disabled={!hasData}>
           <FileText className="h-4 w-4 text-muted" />
           导出 CSV
         </button>
-        <button type="button" className={btn} onClick={() => exportResultsToExcel(dataList, results)} disabled={!hasResults}>
+        <button type="button" className={btn} onClick={() => exportResultsToExcel(dataList, results)} disabled={!hasData}>
           <FileSpreadsheet className="h-4 w-4 text-success" />
           导出 Excel
         </button>

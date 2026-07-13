@@ -312,6 +312,8 @@ value_mapping:
   - E235
   F11:
   - ASTM A182 F11
+  - A182 F11
+  - A182F11
   - F11
   F22:
   - F22
@@ -368,7 +370,18 @@ value_mapping:
   - ASTM A420 Gr.20
   GL:
   - 搪玻璃
-
+  C276:
+  - '276'
+  - C276
+  - N10276
+  - B564(N10276)
+  - B564 N10276
+  - B366-WPHC276(N10276)
+  - B366-WPHC276-S
+  20/304:
+   - 20/304
+   - 20/S30408
+   
 special_req_suffix:
   CE:
   - CE
