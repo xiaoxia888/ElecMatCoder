@@ -647,7 +647,7 @@ class TextPreprocessor:
             ("WNFlg", "带颈对焊法兰"),
             ("FlgWN", "带颈对焊法兰"),
             ("G1aV", "GALV"),
-            
+            ("FSW", "承插焊法兰"),
             
         )
 

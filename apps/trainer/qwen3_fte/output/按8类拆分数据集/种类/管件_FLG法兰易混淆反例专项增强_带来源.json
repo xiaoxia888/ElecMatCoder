@@ -1,0 +1,1762 @@
+[
+  {
+    "input": "WELDOLET, ASTM A182 F316L, MSS SP-97, BW, SCH40, DN15xDN40",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20xDN50 | WELD OLET | BW | S30408 | MSS SP-97 | XS",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:DN25xDN80 3.材质:ASTM A105 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;20;对焊支管台;DN40xDN100;BW;STD",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, A350 LF2, MSS SP-97, BW, 8.0mm, DN50xDN150",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80xDN200 | WELD OLET | BW | ASTM A182 F304 | MSS SP-97 | SCH80",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:DN100xDN15 3.材质:06Cr19Ni10 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;A694 F65;对焊支管台;DN150xDN20;BW;SCH40",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, ASTM A182 F316L, MSS SP-97, BW, XS, DN200xDN25",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\"xDN40 | WELD OLET | BW | S30408 | MSS SP-97 | SCH10S",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:1.5\"xDN50 3.材质:ASTM A105 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;20;对焊支管台;2\"xDN80;BW;8.0mm",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, A350 LF2, MSS SP-97, BW, SCH80, 4\"xDN100",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\"xDN150 | WELD OLET | BW | ASTM A182 F304 | MSS SP-97 | S-40S",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:DN15xDN200 3.材质:06Cr19Ni10 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;A694 F65;对焊支管台;DN20xDN15;BW;XS",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, ASTM A182 F316L, MSS SP-97, BW, SCH10S, DN25xDN20",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40xDN25 | WELD OLET | BW | S30408 | MSS SP-97 | STD",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:DN50xDN40 3.材质:ASTM A105 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;20;对焊支管台;DN80xDN50;BW;SCH80",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, A350 LF2, MSS SP-97, BW, S-40S, DN100xDN80",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150xDN100 | WELD OLET | BW | ASTM A182 F304 | MSS SP-97 | SCH40",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:DN200xDN150 3.材质:06Cr19Ni10 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;A694 F65;对焊支管台;1\"xDN200;BW;SCH10S",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, ASTM A182 F316L, MSS SP-97, BW, STD, 1.5\"xDN15",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\"xDN20 | WELD OLET | BW | S30408 | MSS SP-97 | 8.0mm",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:4\"xDN25 3.材质:ASTM A105 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;20;对焊支管台;6\"xDN40;BW;S-40S",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELDOLET, A350 LF2, MSS SP-97, BW, SCH40, DN15xDN50",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20xDN80 | WELD OLET | BW | ASTM A182 F304 | MSS SP-97 | XS",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:BW OLET 2.规格:DN25xDN100 3.材质:06Cr19Ni10 4.连接:BW 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;A694 F65;对焊支管台;DN40xDN150;BW;STD",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, ASTM A182 F316L, SW, CL3000, MSS SP-97, 4\"xDN150",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\"xDN200 | SW OLET | SW | CL3000 | S30408 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:DN15xDN15 3.连接:SW 4.材质:ASTM A105 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;CL150;承插焊支管台;SW;20;DN20xDN20",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, A350 LF2, SW, CL3000, MSS SP-97, DN25xDN25",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40xDN40 | SW OLET | SW | CL3000 | ASTM A182 F304 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:DN50xDN50 3.连接:SW 4.材质:06Cr19Ni10 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;CL600;承插焊支管台;SW;A694 F65;DN80xDN80",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, ASTM A182 F316L, SW, CL3000, MSS SP-97, DN100xDN100",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150xDN150 | SW OLET | SW | CL3000 | S30408 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:DN200xDN200 3.连接:SW 4.材质:ASTM A105 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;PN25;承插焊支管台;SW;20;1\"xDN15",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, A350 LF2, SW, CL3000, MSS SP-97, 1.5\"xDN20",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\"xDN25 | SW OLET | SW | CL3000 | ASTM A182 F304 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:4\"xDN40 3.连接:SW 4.材质:06Cr19Ni10 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;CL150;承插焊支管台;SW;A694 F65;6\"xDN50",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, ASTM A182 F316L, SW, CL3000, MSS SP-97, DN15xDN80",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20xDN100 | SW OLET | SW | CL3000 | S30408 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:DN25xDN150 3.连接:SW 4.材质:ASTM A105 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;CL600;承插焊支管台;SW;20;DN40xDN200",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, A350 LF2, SW, CL3000, MSS SP-97, DN50xDN15",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80xDN20 | SW OLET | SW | CL3000 | ASTM A182 F304 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:DN100xDN25 3.连接:SW 4.材质:06Cr19Ni10 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;PN25;承插焊支管台;SW;A694 F65;DN150xDN40",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, ASTM A182 F316L, SW, CL3000, MSS SP-97, DN200xDN50",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\"xDN80 | SW OLET | SW | CL3000 | S30408 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:1.5\"xDN100 3.连接:SW 4.材质:ASTM A105 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;CL150;承插焊支管台;SW;20;2\"xDN150",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKOLET, A350 LF2, SW, CL3000, MSS SP-97, 4\"xDN200",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\"xDN15 | SW OLET | SW | CL3000 | ASTM A182 F304 | MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET OLET 2.规格:DN15xDN20 3.连接:SW 4.材质:06Cr19Ni10 5.标准:MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "MSS SP-97;CL600;承插焊支管台;SW;A694 F65;DN20xDN25",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "承插焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, ASTM A182 F316L, SW, CL3000, ASME B16.11, 1.5\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | 90°弯头 | SW | CL3000 | S30408 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:4\" 3.连接:SW 4.材质:ASTM A105 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;CL600;20;6\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, A350 LF2, SW, CL3000, ASME B16.11, DN15",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | 90°弯头 | SW | CL3000 | ASTM A182 F304 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:DN25 3.连接:SW 4.材质:06Cr19Ni10 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;PN25;A694 F65;DN40",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, ASTM A182 F316L, SW, CL3000, ASME B16.11, DN50",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | 90°弯头 | SW | CL3000 | S30408 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:DN100 3.连接:SW 4.材质:ASTM A105 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;CL150;20;DN150",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, A350 LF2, SW, CL3000, ASME B16.11, DN200",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\" | 90°弯头 | SW | CL3000 | ASTM A182 F304 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:1.5\" 3.连接:SW 4.材质:06Cr19Ni10 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;CL600;A694 F65;2\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, ASTM A182 F316L, SW, CL3000, ASME B16.11, 4\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | 90°弯头 | SW | CL3000 | S30408 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:DN15 3.连接:SW 4.材质:ASTM A105 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;PN25;20;DN20",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, A350 LF2, SW, CL3000, ASME B16.11, DN25",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | 90°弯头 | SW | CL3000 | ASTM A182 F304 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:DN50 3.连接:SW 4.材质:06Cr19Ni10 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;CL150;A694 F65;DN80",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, ASTM A182 F316L, SW, CL3000, ASME B16.11, DN100",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | 90°弯头 | SW | CL3000 | S30408 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:DN200 3.连接:SW 4.材质:ASTM A105 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;CL600;20;1\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "45 DEG ELBOW, A350 LF2, SW, CL3000, ASME B16.11, 1.5\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": "LR"
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | 90°弯头 | SW | CL3000 | ASTM A182 F304 | ASME B16.11",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:ELBOW 45DEG 2.规格:4\" 3.连接:SW 4.材质:06Cr19Ni10 5.标准:GB/T14383",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "45",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T14383;90 DEGREE ELBOW;FORGED;SW;PN25;A694 F65;6\"",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "弯头",
+        "GEOMETRY": {
+          "ANGLE": "90",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": [
+          "SW"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  }
+]

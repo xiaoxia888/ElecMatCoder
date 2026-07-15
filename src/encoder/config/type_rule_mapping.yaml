@@ -6,8 +6,8 @@ type_key_order:
   - BODY
   - ANGLE
   - RADIUS
-  - SEAL
   - CONN
+  - SEAL
   - MANU
 
 flange_style_codes:
@@ -89,9 +89,9 @@ body_codes:
   单头短节: N
   双头短节: DN
   翻边短节: SE
-  管箍: CP
-  单口管箍: CP
-  单口异径管箍: CP
+  管箍: HC
+  单口管箍: HC
+  单口异径管箍: HC
   双口管箍: DCP
   双头管箍: DCP
   同心双口管箍: DCP

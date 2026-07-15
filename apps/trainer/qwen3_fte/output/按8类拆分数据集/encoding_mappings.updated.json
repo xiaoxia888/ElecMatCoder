@@ -5525,6 +5525,10 @@
         "八字盲板;M",
         "八字盲板;MF"
       ],
+      "FTHSERR": [
+        "螺纹法兰;RF;SERRATED;THD",
+        "螺纹法兰;THD;RF;SERRATED"
+      ],
       "90EL": [
         "90-DEG ELB0W LR",
         "90 DEGREE ELBOW",

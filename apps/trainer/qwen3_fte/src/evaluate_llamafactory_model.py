@@ -34,8 +34,9 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
 
 
 python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
+      --task type \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2250-种类
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2170-种类
 
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -96,7 +97,30 @@ DEFAULT_INSTRUCTIONS = {
     "code": CODE_INSTRUCTION,
 }
 
+TYPE_INSTRUCTION_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "prompt"
+    / "type_extraction_sft_instruction_v1.txt"
+)
+
 CODE_FIELDS = ("TYPE", "SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "STANDARD")
+
+
+def resolve_instruction(task: str, override: str = "") -> tuple[str, Path | None]:
+    """按任务读取 system instruction，命令行显式覆盖始终优先。"""
+    custom_instruction = str(override or "").strip()
+    if custom_instruction:
+        return custom_instruction, None
+
+    if task == "type":
+        if not TYPE_INSTRUCTION_PATH.is_file():
+            raise FileNotFoundError(f"种类模型提示词文件不存在: {TYPE_INSTRUCTION_PATH}")
+        instruction = TYPE_INSTRUCTION_PATH.read_text(encoding="utf-8").strip()
+        if not instruction:
+            raise ValueError(f"种类模型提示词文件为空: {TYPE_INSTRUCTION_PATH}")
+        return instruction, TYPE_INSTRUCTION_PATH
+
+    return DEFAULT_INSTRUCTIONS[task], None
 
 
 # ──────────────────────────────────────────────
@@ -423,7 +447,7 @@ def interactive_mode(
         elapsed = time.time() - t0
 
         print(f"\n耗时: {elapsed:.2f}s")
-        if task in {"extract", "structural"}:
+        if task in {"extract", "type", "structural"}:
             parsed = parse_json_output(raw_output)
             if parsed:
                 print(json.dumps(parsed, ensure_ascii=False, indent=2))
@@ -716,7 +740,7 @@ def predict_mode(
         )
         elapsed = time.time() - t0
 
-        if task in {"extract", "structural"}:
+        if task in {"extract", "type", "structural"}:
             predicted = parse_json_output(raw_output)
             if predicted is None:
                 fail_count += 1
@@ -777,9 +801,12 @@ def main() -> None:
     )
     parser.add_argument(
         "--task",
-        choices=["extract", "structural", "code"],
+        choices=["extract", "type", "structural", "code"],
         default="extract",
-        help="评测任务类型。extract=通用结构化抽取；structural=尺寸/长度/壁厚/磅级抽取；code=字段编码纯文本",
+        help=(
+            "评测任务类型。extract=通用结构化抽取；type=种类抽取（自动读取种类提示词文件）；"
+            "structural=尺寸/长度/壁厚/磅级抽取；code=字段编码纯文本"
+        ),
     )
     parser.add_argument(
         "--code-field",
@@ -830,7 +857,9 @@ def main() -> None:
     )
 
     args = parser.parse_args()
-    instruction = str(args.instruction or "").strip() or DEFAULT_INSTRUCTIONS[args.task]
+    instruction, instruction_path = resolve_instruction(args.task, args.instruction)
+    if instruction_path:
+        print(f"种类模型提示词: {instruction_path}")
     max_new_tokens = args.max_new_tokens
     if max_new_tokens is None:
         max_new_tokens = 64 if args.task == "code" else 512

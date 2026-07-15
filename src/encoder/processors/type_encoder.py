@@ -154,6 +154,80 @@ class TypeEncoder:
         ordered_parts = [component_map.get(key, "") for key in self.type_key_order]
         return self._build_key(ordered_parts)
 
+    def _build_code_from_components(
+        self,
+        *,
+        flange_style: str,
+        body: str,
+        angle: str,
+        radius: str,
+        seal: List[str],
+        conn: List[str],
+        manu: List[str],
+        flange_style_codes: Dict[str, Any],
+        body_codes: Dict[str, Any],
+        geometry_body_codes: Dict[str, Any],
+        angle_codes: Dict[str, Any],
+        radius_codes: Dict[str, Any],
+        seal_codes: Dict[str, Any],
+        conn_codes: Dict[str, Any],
+        manu_codes: Dict[str, Any],
+    ) -> str:
+        flange_style_code = str(flange_style_codes.get(flange_style, "")).strip() if flange_style else ""
+        if flange_style and not flange_style_code:
+            return ""
+
+        if body in geometry_body_codes:
+            if not angle or angle not in angle_codes:
+                return ""
+            body_code = str(geometry_body_codes[body]).strip()
+            angle_code = str(angle_codes[angle]).strip()
+            if radius:
+                if radius not in radius_codes:
+                    return ""
+                radius_code = str(radius_codes[radius]).strip()
+            else:
+                radius_code = ""
+        else:
+            body_code = str(body_codes.get(body, "")).strip()
+            if not body_code:
+                return ""
+            angle_code = ""
+            radius_code = ""
+
+        seal_code_parts: List[str] = []
+        for seal_value in seal:
+            if seal_value not in seal_codes:
+                return ""
+            seal_code_parts.append(str(seal_codes[seal_value]).strip())
+
+        conn_code_parts: List[str] = []
+        for conn_value in conn:
+            if conn_value not in conn_codes:
+                return ""
+            conn_code_parts.append(str(conn_codes[conn_value]).strip())
+
+        manu_code_parts: List[str] = []
+        for manu_value in manu:
+            if manu_value not in manu_codes:
+                return ""
+            manu_code_parts.append(str(manu_codes[manu_value]).strip())
+
+        component_code_map = {
+            "FLANGE_STYLE": [flange_style_code] if flange_style_code else [],
+            "BODY": [body_code] if body_code else [],
+            "ANGLE": [angle_code] if angle_code else [],
+            "RADIUS": [radius_code] if radius_code else [],
+            "SEAL": seal_code_parts,
+            "CONN": conn_code_parts,
+            "MANU": manu_code_parts,
+        }
+
+        ordered_code_parts: List[str] = []
+        for key in self.type_key_order:
+            ordered_code_parts.extend(component_code_map.get(key, []))
+        return "".join(ordered_code_parts)
+
     def _build_lookup_keys(
         self,
         *,
@@ -226,25 +300,23 @@ class TypeEncoder:
         }
         conn = [item for item in conn if item not in implicit_conn_values]
 
-        seal_suffix_parts: List[str] = []
-        for seal_value in seal:
-            if seal_value not in seal_codes:
-                return ""
-            seal_suffix_parts.append(str(seal_codes[seal_value]).strip())
-
-        conn_suffix_parts: List[str] = []
-        for conn_value in conn:
-            if conn_value not in conn_codes:
-                return ""
-            conn_suffix_parts.append(str(conn_codes[conn_value]).strip())
-
-        manu_suffix_parts: List[str] = []
-        for manu_value in manu:
-            if manu_value not in manu_codes:
-                return ""
-            manu_suffix_parts.append(str(manu_codes[manu_value]).strip())
-
-        return f"{flange_prefix}{base_code}{''.join(seal_suffix_parts)}{''.join(conn_suffix_parts)}{''.join(manu_suffix_parts)}"
+        return self._build_code_from_components(
+            flange_style=flange_style,
+            body=body,
+            angle=angle,
+            radius=radius,
+            seal=seal,
+            conn=conn,
+            manu=manu,
+            flange_style_codes=flange_style_codes,
+            body_codes=body_codes,
+            geometry_body_codes=geometry_body_codes,
+            angle_codes=angle_codes,
+            radius_codes=radius_codes,
+            seal_codes=seal_codes,
+            conn_codes=conn_codes,
+            manu_codes=manu_codes,
+        )
 
     def encode(self, type_dict: Dict[str, Any]) -> TypeEncodingResult:
         flange_style = self._normalize_flange_style(type_dict.get("FLANGE_STYLE", ""))

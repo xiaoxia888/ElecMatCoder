@@ -20,11 +20,11 @@ llamafactory-cli train \
       --warmup_ratio 0.03 \
       --max_grad_norm 1.0 \
       --logging_steps 20 \
-      --save_steps 500 \
+      --save_steps 200 \
       --packing False \
       --train_on_prompt False \
       --report_to none \
-      --output_dir saves/type_8b_lora/train_merged/种类-0629 \
+      --output_dir saves/type_8b_lora/train_merged/种类-0714\
       --bf16 True \
       --plot_loss True \
       --trust_remote_code True \
@@ -36,7 +36,7 @@ llamafactory-cli train \
       --lora_dropout 0.05 \
       --lora_target q_proj,v_proj,k_proj,o_proj,up_proj,down_proj,gate_proj \
       --eval_strategy steps \
-      --eval_steps 500 \
+      --eval_steps 200 \
       --per_device_eval_batch_size 2 \
       --load_best_model_at_end True \
       --metric_for_best_model eval_loss \

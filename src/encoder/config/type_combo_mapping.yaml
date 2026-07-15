@@ -1,6 +1,5 @@
 # TYPE 组合编码表
 # 仅保留歧义项、特殊项、或不适合通用规则生成的组合。
-# key 顺序固定：BODY;ANGLE;RADIUS;SEAL;CONN;MANU
 
 FN:
   - 螺纹法兰;NPT
@@ -18,6 +17,12 @@ FTH:
   - 螺纹法兰;THD;RF
   - 螺纹法兰;RF;THD
   - 螺纹法兰;THD
+
+FTHSERR:
+  - 螺纹法兰;SERRATED
+  - 螺纹法兰;THD;SERRATED
+  - 螺纹法兰;THD;RF;SERRATED
+  - 螺纹法兰;RF;SERRATED;THD
 
 T:
   - 三通;90

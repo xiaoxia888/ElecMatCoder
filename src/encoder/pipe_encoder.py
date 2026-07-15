@@ -2660,10 +2660,6 @@ class PipeEncoderBase:
         return modifier_map
 
     @staticmethod
-    def _is_straight_pipe_material_category(material_category: Any) -> bool:
-        return str(material_category or "").strip() == "直管"
-
-    @staticmethod
     def _is_mm_thickness_text(value: Any) -> bool:
         text = str(value or "").strip().upper()
         return bool(re.fullmatch(r'(?:THK\s*=\s*)?\d+(?:\.\d+)?\s*MM', text))
@@ -2673,10 +2669,31 @@ class PipeEncoderBase:
         text = str(value or "").strip().upper()
         return bool(cls._THICKNESS_TOKEN_RE.fullmatch(text))
 
+    @staticmethod
+    def _is_same_size_code(size_code: Any) -> bool:
+        encoded = str(size_code or "").strip().upper()
+        if not encoded:
+            return False
+
+        parts = [part for part in re.split(r'[X×*/]+', encoded) if part]
+        if len(parts) < 2:
+            return True
+
+        def extract_number(text: str) -> float | None:
+            match = re.search(r'(\d+(?:\.\d+)?)', text)
+            return float(match.group(1)) if match else None
+
+        nums = [extract_number(part) for part in parts]
+        nums = [num for num in nums if num is not None]
+        if len(nums) >= 2:
+            return len(set(nums)) == 1
+
+        return len(set(parts)) == 1
+
     @classmethod
-    def _prune_straight_pipe_thickness_to_mm(cls, value: Any) -> tuple[Any, bool]:
+    def _prune_same_size_thickness_to_mm(cls, value: Any) -> tuple[Any, bool]:
         """
-        直管编码策略：同一壁厚字段里同时存在 SCHEDULE 和 MM 时，二阶段只送 MM。
+        同径编码策略：同一壁厚字段里同时存在 SCHEDULE 和 MM 时，二阶段只送 MM。
 
         这是编码前业务裁剪，不改变一阶段原始识别。
         """
@@ -2719,7 +2736,7 @@ class PipeEncoderBase:
             has_schedule = False
             for item in value:
                 if isinstance(item, dict):
-                    pruned_item, changed = cls._prune_straight_pipe_thickness_to_mm(item)
+                    pruned_item, changed = cls._prune_same_size_thickness_to_mm(item)
                     item_items = item.get("_ITEMS")
                     item_has_mm = changed or (
                         isinstance(item_items, list)
@@ -2822,11 +2839,13 @@ class PipeEncoderBase:
                     entities.get('THICKNESS'),
                 )
                 thickness_pruned_to_mm = False
-            elif (
-                field_type == 'THICKNESS'
-                and self._is_straight_pipe_material_category(material_category)
-            ):
-                raw_value, thickness_pruned_to_mm = self._prune_straight_pipe_thickness_to_mm(raw_value)
+            elif field_type == 'THICKNESS':
+                size_field = result.fields.get('SIZE')
+                size_code = getattr(size_field, 'code', '') if size_field else ''
+                if self._is_same_size_code(size_code):
+                    raw_value, thickness_pruned_to_mm = self._prune_same_size_thickness_to_mm(raw_value)
+                else:
+                    thickness_pruned_to_mm = False
             else:
                 thickness_pruned_to_mm = False
 
@@ -2883,7 +2902,7 @@ class PipeEncoderBase:
             else:
                 field_result = self._process_field_multi(field_type, values, original_text=original_text)
                 if field_type == 'THICKNESS' and thickness_pruned_to_mm:
-                    note = "当前材料分类为直管，SCHEDULE与MM同时存在时二阶段仅使用MM壁厚"
+                    note = "当前尺寸最终编码为同径，SCHEDULE与MM同时存在时二阶段仅使用MM壁厚"
                     if note not in field_result.notes:
                         field_result.notes.append(note)
 

@@ -1,0 +1,1991 @@
+{
+  "mode": "automatic_stratified",
+  "prompt_path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/prompt/type_extraction_sft_instruction_v1.txt",
+  "skeleton_dir": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/skeletons",
+  "requested_val_ratio": 0.1,
+  "seed": 20260714,
+  "source_load": {
+    "files": {
+      "法兰": {
+        "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/法兰.json",
+        "loaded_rows": 7974,
+        "nested_arrays_flattened": 0,
+        "category_override_count": 0
+      },
+      "直管": {
+        "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/直管.json",
+        "loaded_rows": 2620,
+        "nested_arrays_flattened": 1,
+        "category_override_count": 0
+      },
+      "管件": {
+        "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/管件.json",
+        "loaded_rows": 8818,
+        "nested_arrays_flattened": 0,
+        "category_override_count": 0
+      }
+    },
+    "category_overrides": []
+  },
+  "source_deduplication": {
+    "input_rows": 19412,
+    "output_rows": 19291,
+    "rows_removed_total": 121,
+    "exact_duplicate_rows_removed": 121,
+    "conflict_rows_removed": 0,
+    "conflict_group_count": 0,
+    "conflict_groups": []
+  },
+  "explicit_validation": {},
+  "automatic_split_detail": {
+    "法兰": {
+      "body_strata": 22,
+      "target_rows": 797,
+      "selected_rows": 797,
+      "body_quotas": [
+        {
+          "body": "8字盲板",
+          "total": 723,
+          "val": 72,
+          "ratio": 0.099585
+        },
+        {
+          "body": "固定法兰",
+          "total": 8,
+          "val": 1,
+          "ratio": 0.125
+        },
+        {
+          "body": "夹套法兰",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "夹套盲法兰",
+          "total": 84,
+          "val": 8,
+          "ratio": 0.095238
+        },
+        {
+          "body": "孔板对焊法兰",
+          "total": 42,
+          "val": 4,
+          "ratio": 0.095238
+        },
+        {
+          "body": "对焊法兰",
+          "total": 104,
+          "val": 10,
+          "ratio": 0.096154
+        },
+        {
+          "body": "带颈对焊夹套法兰",
+          "total": 140,
+          "val": 14,
+          "ratio": 0.1
+        },
+        {
+          "body": "带颈对焊法兰",
+          "total": 1945,
+          "val": 194,
+          "ratio": 0.099743
+        },
+        {
+          "body": "带颈平焊夹套法兰",
+          "total": 131,
+          "val": 13,
+          "ratio": 0.099237
+        },
+        {
+          "body": "带颈平焊法兰",
+          "total": 1089,
+          "val": 109,
+          "ratio": 0.100092
+        },
+        {
+          "body": "异径夹套法兰",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "异径板式法兰",
+          "total": 1,
+          "val": 0,
+          "ratio": 0.0
+        },
+        {
+          "body": "异径法兰",
+          "total": 81,
+          "val": 8,
+          "ratio": 0.098765
+        },
+        {
+          "body": "承插焊法兰",
+          "total": 791,
+          "val": 79,
+          "ratio": 0.099874
+        },
+        {
+          "body": "插板",
+          "total": 120,
+          "val": 12,
+          "ratio": 0.1
+        },
+        {
+          "body": "松套法兰",
+          "total": 153,
+          "val": 15,
+          "ratio": 0.098039
+        },
+        {
+          "body": "板式平焊松套法兰",
+          "total": 6,
+          "val": 1,
+          "ratio": 0.166667
+        },
+        {
+          "body": "板式平焊法兰",
+          "total": 121,
+          "val": 12,
+          "ratio": 0.099174
+        },
+        {
+          "body": "法兰",
+          "total": 978,
+          "val": 98,
+          "ratio": 0.100204
+        },
+        {
+          "body": "盲板法兰",
+          "total": 969,
+          "val": 97,
+          "ratio": 0.100103
+        },
+        {
+          "body": "螺纹法兰",
+          "total": 432,
+          "val": 43,
+          "ratio": 0.099537
+        },
+        {
+          "body": "衬里法兰",
+          "total": 48,
+          "val": 5,
+          "ratio": 0.104167
+        }
+      ],
+      "covered_tags": [
+        "BODY:8字盲板",
+        "BODY:固定法兰",
+        "BODY:夹套法兰",
+        "BODY:夹套盲法兰",
+        "BODY:孔板对焊法兰",
+        "BODY:对焊法兰",
+        "BODY:带颈对焊夹套法兰",
+        "BODY:带颈对焊法兰",
+        "BODY:带颈平焊夹套法兰",
+        "BODY:带颈平焊法兰",
+        "BODY:异径夹套法兰",
+        "BODY:异径法兰",
+        "BODY:承插焊法兰",
+        "BODY:插板",
+        "BODY:松套法兰",
+        "BODY:板式平焊松套法兰",
+        "BODY:板式平焊法兰",
+        "BODY:法兰",
+        "BODY:盲板法兰",
+        "BODY:螺纹法兰",
+        "BODY:衬里法兰",
+        "CATEGORY:法兰",
+        "CONN:FNPT",
+        "CONN:GROOVED",
+        "CONN:MNPT",
+        "CONN:NPT",
+        "CONN:THD",
+        "FORM:BLIND",
+        "FORM:FLANGE",
+        "FORM:FLG",
+        "FORM:LAP_JOINT",
+        "FORM:PIPE",
+        "FORM:REDUCER",
+        "FORM:SO",
+        "FORM:SW",
+        "FORM:WELDED",
+        "FORM:WN",
+        "FORM:法兰",
+        "LANG:EN",
+        "LANG:MIXED",
+        "SEAL:FF",
+        "SEAL:FLRF",
+        "SEAL:FLRJ",
+        "SEAL:FM",
+        "SEAL:FRJ",
+        "SEAL:LF",
+        "SEAL:LM",
+        "SEAL:M",
+        "SEAL:MF",
+        "SEAL:MFM",
+        "SEAL:RF",
+        "SEAL:RJ",
+        "SEAL:RTJ",
+        "SEAL:SERRATED"
+      ]
+    },
+    "直管": {
+      "body_strata": 3,
+      "target_rows": 261,
+      "selected_rows": 261,
+      "body_quotas": [
+        {
+          "body": "仪表管",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "夹套钢管",
+          "total": 12,
+          "val": 1,
+          "ratio": 0.083333
+        },
+        {
+          "body": "直管",
+          "total": 2595,
+          "val": 259,
+          "ratio": 0.099807
+        }
+      ],
+      "covered_tags": [
+        "BODY:仪表管",
+        "BODY:夹套钢管",
+        "BODY:直管",
+        "CATEGORY:直管",
+        "FLANGE_STYLE:FLANGED",
+        "FLANGE_STYLE:LAP_JOINT_FLANGED",
+        "FORM:ELBOW",
+        "FORM:FLANGE",
+        "FORM:FLG",
+        "FORM:LAP_JOINT",
+        "FORM:PIPE",
+        "FORM:SMLS",
+        "FORM:SO",
+        "FORM:SW",
+        "FORM:WELDED",
+        "FORM:法兰",
+        "LANG:EN",
+        "LANG:MIXED",
+        "LANG:ZH",
+        "MANU:DASW",
+        "MANU:DSAW",
+        "MANU:DSAWH",
+        "MANU:DSAWL",
+        "MANU:EFW",
+        "MANU:ERW",
+        "MANU:HFW",
+        "MANU:SAW",
+        "MANU:SAWH",
+        "MANU:SAWL",
+        "MANU:SMLS",
+        "MANU:WELDED"
+      ]
+    },
+    "管件": {
+      "body_strata": 92,
+      "target_rows": 871,
+      "selected_rows": 871,
+      "body_quotas": [
+        {
+          "body": "BEND",
+          "total": 40,
+          "val": 4,
+          "ratio": 0.1
+        },
+        {
+          "body": "Bend",
+          "total": 2,
+          "val": 1,
+          "ratio": 0.5
+        },
+        {
+          "body": "COUPLING COLLAR",
+          "total": 6,
+          "val": 1,
+          "ratio": 0.166667
+        },
+        {
+          "body": "FULL COUPLING",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "Y型三通",
+          "total": 37,
+          "val": 3,
+          "ratio": 0.081081
+        },
+        {
+          "body": "Y型异径三通",
+          "total": 12,
+          "val": 1,
+          "ratio": 0.083333
+        },
+        {
+          "body": "Y型斜三通",
+          "total": 2,
+          "val": 1,
+          "ratio": 0.5
+        },
+        {
+          "body": "Y型等径三通",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "三通",
+          "total": 432,
+          "val": 43,
+          "ratio": 0.099537
+        },
+        {
+          "body": "仪表三通",
+          "total": 26,
+          "val": 2,
+          "ratio": 0.076923
+        },
+        {
+          "body": "偏心双口管箍",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "偏心异径双口管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "偏心异径接头",
+          "total": 9,
+          "val": 1,
+          "ratio": 0.111111
+        },
+        {
+          "body": "偏心异径短节",
+          "total": 121,
+          "val": 12,
+          "ratio": 0.099174
+        },
+        {
+          "body": "偏心异径管",
+          "total": 716,
+          "val": 71,
+          "ratio": 0.099162
+        },
+        {
+          "body": "偏心异径管接头",
+          "total": 2,
+          "val": 1,
+          "ratio": 0.5
+        },
+        {
+          "body": "偏心异径管箍",
+          "total": 7,
+          "val": 1,
+          "ratio": 0.142857
+        },
+        {
+          "body": "偏心等径管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "偏心管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "六角头管塞",
+          "total": 8,
+          "val": 1,
+          "ratio": 0.125
+        },
+        {
+          "body": "剖分异径三通",
+          "total": 24,
+          "val": 2,
+          "ratio": 0.083333
+        },
+        {
+          "body": "剖分等径三通",
+          "total": 12,
+          "val": 1,
+          "ratio": 0.083333
+        },
+        {
+          "body": "剖分等径四通",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "加强管嘴",
+          "total": 90,
+          "val": 9,
+          "ratio": 0.1
+        },
+        {
+          "body": "加强管接头",
+          "total": 50,
+          "val": 5,
+          "ratio": 0.1
+        },
+        {
+          "body": "半管接头",
+          "total": 104,
+          "val": 10,
+          "ratio": 0.096154
+        },
+        {
+          "body": "单丝头",
+          "total": 13,
+          "val": 1,
+          "ratio": 0.076923
+        },
+        {
+          "body": "单口管箍",
+          "total": 76,
+          "val": 7,
+          "ratio": 0.092105
+        },
+        {
+          "body": "单头管箍",
+          "total": 73,
+          "val": 7,
+          "ratio": 0.09589
+        },
+        {
+          "body": "单头螺纹短节",
+          "total": 20,
+          "val": 1,
+          "ratio": 0.05
+        },
+        {
+          "body": "单承口管盖",
+          "total": 1,
+          "val": 0,
+          "ratio": 0.0
+        },
+        {
+          "body": "卡箍接头",
+          "total": 13,
+          "val": 1,
+          "ratio": 0.076923
+        },
+        {
+          "body": "双丝头",
+          "total": 6,
+          "val": 1,
+          "ratio": 0.166667
+        },
+        {
+          "body": "双口管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "双头管箍",
+          "total": 51,
+          "val": 5,
+          "ratio": 0.098039
+        },
+        {
+          "body": "双头螺纹短节",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "同径双口管箍",
+          "total": 6,
+          "val": 1,
+          "ratio": 0.166667
+        },
+        {
+          "body": "同心双口管箍",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "同心异径双口管箍",
+          "total": 31,
+          "val": 3,
+          "ratio": 0.096774
+        },
+        {
+          "body": "同心异径接头",
+          "total": 50,
+          "val": 5,
+          "ratio": 0.1
+        },
+        {
+          "body": "同心异径短节",
+          "total": 119,
+          "val": 11,
+          "ratio": 0.092437
+        },
+        {
+          "body": "同心异径管",
+          "total": 723,
+          "val": 72,
+          "ratio": 0.099585
+        },
+        {
+          "body": "同心异径管接头",
+          "total": 11,
+          "val": 1,
+          "ratio": 0.090909
+        },
+        {
+          "body": "同心异径管箍",
+          "total": 35,
+          "val": 3,
+          "ratio": 0.085714
+        },
+        {
+          "body": "同心等径管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "同心管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "圆形丝堵",
+          "total": 2,
+          "val": 1,
+          "ratio": 0.5
+        },
+        {
+          "body": "夹套剖分等径三通",
+          "total": 1,
+          "val": 0,
+          "ratio": 0.0
+        },
+        {
+          "body": "夹套同心异径管",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "夹套异径三通",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "夹套弯头",
+          "total": 8,
+          "val": 1,
+          "ratio": 0.125
+        },
+        {
+          "body": "夹套等径三通",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "对焊支管台",
+          "total": 363,
+          "val": 36,
+          "ratio": 0.099174
+        },
+        {
+          "body": "带颈平焊法兰",
+          "total": 1,
+          "val": 0,
+          "ratio": 0.0
+        },
+        {
+          "body": "异径三通",
+          "total": 1185,
+          "val": 118,
+          "ratio": 0.099578
+        },
+        {
+          "body": "异径双口管箍",
+          "total": 4,
+          "val": 1,
+          "ratio": 0.25
+        },
+        {
+          "body": "异径双头管箍",
+          "total": 7,
+          "val": 1,
+          "ratio": 0.142857
+        },
+        {
+          "body": "异径四通",
+          "total": 13,
+          "val": 1,
+          "ratio": 0.076923
+        },
+        {
+          "body": "异径弯头",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "异径接头",
+          "total": 16,
+          "val": 1,
+          "ratio": 0.0625
+        },
+        {
+          "body": "异径斜三通",
+          "total": 84,
+          "val": 8,
+          "ratio": 0.095238
+        },
+        {
+          "body": "异径短节",
+          "total": 54,
+          "val": 5,
+          "ratio": 0.092593
+        },
+        {
+          "body": "异径管",
+          "total": 24,
+          "val": 2,
+          "ratio": 0.083333
+        },
+        {
+          "body": "异径管接头",
+          "total": 17,
+          "val": 1,
+          "ratio": 0.058824
+        },
+        {
+          "body": "异径管箍",
+          "total": 24,
+          "val": 2,
+          "ratio": 0.083333
+        },
+        {
+          "body": "弯头",
+          "total": 1663,
+          "val": 166,
+          "ratio": 0.09982
+        },
+        {
+          "body": "弯管",
+          "total": 6,
+          "val": 1,
+          "ratio": 0.166667
+        },
+        {
+          "body": "快速接头",
+          "total": 28,
+          "val": 2,
+          "ratio": 0.071429
+        },
+        {
+          "body": "承插焊支管台",
+          "total": 222,
+          "val": 22,
+          "ratio": 0.099099
+        },
+        {
+          "body": "插板",
+          "total": 76,
+          "val": 7,
+          "ratio": 0.092105
+        },
+        {
+          "body": "支管台",
+          "total": 301,
+          "val": 30,
+          "ratio": 0.099668
+        },
+        {
+          "body": "斜三通",
+          "total": 72,
+          "val": 7,
+          "ratio": 0.097222
+        },
+        {
+          "body": "斜支管台",
+          "total": 63,
+          "val": 6,
+          "ratio": 0.095238
+        },
+        {
+          "body": "方头管塞",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "方形丝堵",
+          "total": 3,
+          "val": 1,
+          "ratio": 0.333333
+        },
+        {
+          "body": "波纹金属软管",
+          "total": 2,
+          "val": 1,
+          "ratio": 0.5
+        },
+        {
+          "body": "波纹非金属软管",
+          "total": 1,
+          "val": 0,
+          "ratio": 0.0
+        },
+        {
+          "body": "活接头",
+          "total": 17,
+          "val": 1,
+          "ratio": 0.058824
+        },
+        {
+          "body": "清管三通",
+          "total": 20,
+          "val": 2,
+          "ratio": 0.1
+        },
+        {
+          "body": "短节",
+          "total": 84,
+          "val": 8,
+          "ratio": 0.095238
+        },
+        {
+          "body": "等径三通",
+          "total": 691,
+          "val": 69,
+          "ratio": 0.099855
+        },
+        {
+          "body": "等径双口管箍",
+          "total": 11,
+          "val": 1,
+          "ratio": 0.090909
+        },
+        {
+          "body": "等径四通",
+          "total": 6,
+          "val": 1,
+          "ratio": 0.166667
+        },
+        {
+          "body": "管塞",
+          "total": 5,
+          "val": 1,
+          "ratio": 0.2
+        },
+        {
+          "body": "管帽",
+          "total": 370,
+          "val": 37,
+          "ratio": 0.1
+        },
+        {
+          "body": "管接头",
+          "total": 11,
+          "val": 1,
+          "ratio": 0.090909
+        },
+        {
+          "body": "管箍",
+          "total": 17,
+          "val": 1,
+          "ratio": 0.058824
+        },
+        {
+          "body": "翻边短节",
+          "total": 40,
+          "val": 4,
+          "ratio": 0.1
+        },
+        {
+          "body": "螺纹支管台",
+          "total": 76,
+          "val": 7,
+          "ratio": 0.092105
+        },
+        {
+          "body": "螺纹管帽",
+          "total": 17,
+          "val": 1,
+          "ratio": 0.058824
+        },
+        {
+          "body": "补强板开口焊",
+          "total": 105,
+          "val": 10,
+          "ratio": 0.095238
+        },
+        {
+          "body": "金属软管",
+          "total": 1,
+          "val": 0,
+          "ratio": 0.0
+        }
+      ],
+      "covered_tags": [
+        "ANGLE:DECIMAL",
+        "ANGLE:PRESENT",
+        "ANGLE:UNCOMMON",
+        "BODY:BEND",
+        "BODY:Bend",
+        "BODY:COUPLING COLLAR",
+        "BODY:FULL COUPLING",
+        "BODY:Y型三通",
+        "BODY:Y型异径三通",
+        "BODY:Y型斜三通",
+        "BODY:Y型等径三通",
+        "BODY:三通",
+        "BODY:仪表三通",
+        "BODY:偏心双口管箍",
+        "BODY:偏心异径双口管箍",
+        "BODY:偏心异径接头",
+        "BODY:偏心异径短节",
+        "BODY:偏心异径管",
+        "BODY:偏心异径管接头",
+        "BODY:偏心异径管箍",
+        "BODY:偏心等径管箍",
+        "BODY:偏心管箍",
+        "BODY:六角头管塞",
+        "BODY:剖分异径三通",
+        "BODY:剖分等径三通",
+        "BODY:剖分等径四通",
+        "BODY:加强管嘴",
+        "BODY:加强管接头",
+        "BODY:半管接头",
+        "BODY:单丝头",
+        "BODY:单口管箍",
+        "BODY:单头管箍",
+        "BODY:单头螺纹短节",
+        "BODY:卡箍接头",
+        "BODY:双丝头",
+        "BODY:双口管箍",
+        "BODY:双头管箍",
+        "BODY:双头螺纹短节",
+        "BODY:同径双口管箍",
+        "BODY:同心双口管箍",
+        "BODY:同心异径双口管箍",
+        "BODY:同心异径接头",
+        "BODY:同心异径短节",
+        "BODY:同心异径管",
+        "BODY:同心异径管接头",
+        "BODY:同心异径管箍",
+        "BODY:同心等径管箍",
+        "BODY:同心管箍",
+        "BODY:圆形丝堵",
+        "BODY:夹套同心异径管",
+        "BODY:夹套异径三通",
+        "BODY:夹套弯头",
+        "BODY:夹套等径三通",
+        "BODY:对焊支管台",
+        "BODY:异径三通",
+        "BODY:异径双口管箍",
+        "BODY:异径双头管箍",
+        "BODY:异径四通",
+        "BODY:异径弯头",
+        "BODY:异径接头",
+        "BODY:异径斜三通",
+        "BODY:异径短节",
+        "BODY:异径管",
+        "BODY:异径管接头",
+        "BODY:异径管箍",
+        "BODY:弯头",
+        "BODY:弯管",
+        "BODY:快速接头",
+        "BODY:承插焊支管台",
+        "BODY:插板",
+        "BODY:支管台",
+        "BODY:斜三通",
+        "BODY:斜支管台",
+        "BODY:方头管塞",
+        "BODY:方形丝堵",
+        "BODY:波纹金属软管",
+        "BODY:活接头",
+        "BODY:清管三通",
+        "BODY:短节",
+        "BODY:等径三通",
+        "BODY:等径双口管箍",
+        "BODY:等径四通",
+        "BODY:管塞",
+        "BODY:管帽",
+        "BODY:管接头",
+        "BODY:管箍",
+        "BODY:翻边短节",
+        "BODY:螺纹支管台",
+        "BODY:螺纹管帽",
+        "BODY:补强板开口焊",
+        "CATEGORY:管件",
+        "CONN:FNPT",
+        "CONN:FTE",
+        "CONN:MNPT",
+        "CONN:MTE",
+        "CONN:NPT",
+        "CONN:SW",
+        "CONN:TBE",
+        "CONN:THD",
+        "CONN:TSE",
+        "FLANGE_STYLE:FLANGED",
+        "FLANGE_STYLE:LAP_JOINT_FLANGED",
+        "FORM:ELBOW",
+        "FORM:FLANGE",
+        "FORM:FLG",
+        "FORM:LAP_JOINT",
+        "FORM:OLET",
+        "FORM:PIPE",
+        "FORM:REDUCER",
+        "FORM:SMLS",
+        "FORM:SO",
+        "FORM:SW",
+        "FORM:TEE",
+        "FORM:WELDED",
+        "FORM:法兰",
+        "LANG:EN",
+        "LANG:MIXED",
+        "MANU:EFW",
+        "MANU:SMLS",
+        "MANU:WELDED",
+        "RADIUS:1.5D",
+        "RADIUS:10D",
+        "RADIUS:1D",
+        "RADIUS:3D",
+        "RADIUS:50D",
+        "RADIUS:5D",
+        "RADIUS:LR",
+        "RADIUS:SR",
+        "RADIUS:短半径"
+      ]
+    }
+  },
+  "total_source_rows_after_dedup": 19291,
+  "train_rows": 17362,
+  "val_rows": 1929,
+  "actual_val_ratio": 0.099995,
+  "train_val_description_overlap": 0,
+  "category_summary": {
+    "法兰": {
+      "source_rows": 7974,
+      "train_rows": 7177,
+      "val_rows": 797,
+      "actual_val_ratio": 0.09995,
+      "body_coverage": [
+        {
+          "tag": "BODY:8字盲板",
+          "total": 723,
+          "train": 651,
+          "val": 72
+        },
+        {
+          "tag": "BODY:固定法兰",
+          "total": 8,
+          "train": 7,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套法兰",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套盲法兰",
+          "total": 84,
+          "train": 76,
+          "val": 8
+        },
+        {
+          "tag": "BODY:孔板对焊法兰",
+          "total": 42,
+          "train": 38,
+          "val": 4
+        },
+        {
+          "tag": "BODY:对焊法兰",
+          "total": 104,
+          "train": 94,
+          "val": 10
+        },
+        {
+          "tag": "BODY:带颈对焊夹套法兰",
+          "total": 140,
+          "train": 126,
+          "val": 14
+        },
+        {
+          "tag": "BODY:带颈对焊法兰",
+          "total": 1945,
+          "train": 1751,
+          "val": 194
+        },
+        {
+          "tag": "BODY:带颈平焊夹套法兰",
+          "total": 131,
+          "train": 118,
+          "val": 13
+        },
+        {
+          "tag": "BODY:带颈平焊法兰",
+          "total": 1089,
+          "train": 980,
+          "val": 109
+        },
+        {
+          "tag": "BODY:异径夹套法兰",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径板式法兰",
+          "total": 1,
+          "train": 1,
+          "val": 0
+        },
+        {
+          "tag": "BODY:异径法兰",
+          "total": 81,
+          "train": 73,
+          "val": 8
+        },
+        {
+          "tag": "BODY:承插焊法兰",
+          "total": 791,
+          "train": 712,
+          "val": 79
+        },
+        {
+          "tag": "BODY:插板",
+          "total": 120,
+          "train": 108,
+          "val": 12
+        },
+        {
+          "tag": "BODY:松套法兰",
+          "total": 153,
+          "train": 138,
+          "val": 15
+        },
+        {
+          "tag": "BODY:板式平焊松套法兰",
+          "total": 6,
+          "train": 5,
+          "val": 1
+        },
+        {
+          "tag": "BODY:板式平焊法兰",
+          "total": 121,
+          "train": 109,
+          "val": 12
+        },
+        {
+          "tag": "BODY:法兰",
+          "total": 978,
+          "train": 880,
+          "val": 98
+        },
+        {
+          "tag": "BODY:盲板法兰",
+          "total": 969,
+          "train": 872,
+          "val": 97
+        },
+        {
+          "tag": "BODY:螺纹法兰",
+          "total": 432,
+          "train": 389,
+          "val": 43
+        },
+        {
+          "tag": "BODY:衬里法兰",
+          "total": 48,
+          "train": 43,
+          "val": 5
+        }
+      ],
+      "expression_coverage": [
+        {
+          "tag": "FORM:BLIND",
+          "total": 1453,
+          "train": 1299,
+          "val": 154
+        },
+        {
+          "tag": "FORM:FLANGE",
+          "total": 2462,
+          "train": 2200,
+          "val": 262
+        },
+        {
+          "tag": "FORM:FLG",
+          "total": 343,
+          "train": 304,
+          "val": 39
+        },
+        {
+          "tag": "FORM:LAP_JOINT",
+          "total": 148,
+          "train": 133,
+          "val": 15
+        },
+        {
+          "tag": "FORM:PIPE",
+          "total": 14,
+          "train": 10,
+          "val": 4
+        },
+        {
+          "tag": "FORM:REDUCER",
+          "total": 35,
+          "train": 31,
+          "val": 4
+        },
+        {
+          "tag": "FORM:SO",
+          "total": 1076,
+          "train": 966,
+          "val": 110
+        },
+        {
+          "tag": "FORM:SW",
+          "total": 673,
+          "train": 604,
+          "val": 69
+        },
+        {
+          "tag": "FORM:WELDED",
+          "total": 1108,
+          "train": 992,
+          "val": 116
+        },
+        {
+          "tag": "FORM:WN",
+          "total": 1745,
+          "train": 1568,
+          "val": 177
+        },
+        {
+          "tag": "FORM:法兰",
+          "total": 4876,
+          "train": 4383,
+          "val": 493
+        },
+        {
+          "tag": "LANG:EN",
+          "total": 2416,
+          "train": 2168,
+          "val": 248
+        },
+        {
+          "tag": "LANG:MIXED",
+          "total": 5558,
+          "train": 5009,
+          "val": 549
+        }
+      ],
+      "missing_body_tags_in_val": [
+        "BODY:异径板式法兰"
+      ],
+      "missing_body_tags_in_train": []
+    },
+    "直管": {
+      "source_rows": 2610,
+      "train_rows": 2349,
+      "val_rows": 261,
+      "actual_val_ratio": 0.1,
+      "body_coverage": [
+        {
+          "tag": "BODY:仪表管",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套钢管",
+          "total": 12,
+          "train": 11,
+          "val": 1
+        },
+        {
+          "tag": "BODY:直管",
+          "total": 2595,
+          "train": 2336,
+          "val": 259
+        }
+      ],
+      "expression_coverage": [
+        {
+          "tag": "FORM:ELBOW",
+          "total": 2,
+          "train": 1,
+          "val": 1
+        },
+        {
+          "tag": "FORM:FLANGE",
+          "total": 79,
+          "train": 68,
+          "val": 11
+        },
+        {
+          "tag": "FORM:FLG",
+          "total": 26,
+          "train": 23,
+          "val": 3
+        },
+        {
+          "tag": "FORM:LAP_JOINT",
+          "total": 70,
+          "train": 62,
+          "val": 8
+        },
+        {
+          "tag": "FORM:PIPE",
+          "total": 2381,
+          "train": 2142,
+          "val": 239
+        },
+        {
+          "tag": "FORM:SMLS",
+          "total": 1535,
+          "train": 1379,
+          "val": 156
+        },
+        {
+          "tag": "FORM:SO",
+          "total": 14,
+          "train": 12,
+          "val": 2
+        },
+        {
+          "tag": "FORM:SW",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "FORM:WELDED",
+          "total": 700,
+          "train": 623,
+          "val": 77
+        },
+        {
+          "tag": "FORM:法兰",
+          "total": 132,
+          "train": 117,
+          "val": 15
+        },
+        {
+          "tag": "LANG:EN",
+          "total": 681,
+          "train": 613,
+          "val": 68
+        },
+        {
+          "tag": "LANG:MIXED",
+          "total": 1928,
+          "train": 1736,
+          "val": 192
+        },
+        {
+          "tag": "LANG:ZH",
+          "total": 1,
+          "train": 0,
+          "val": 1
+        }
+      ],
+      "missing_body_tags_in_val": [],
+      "missing_body_tags_in_train": []
+    },
+    "管件": {
+      "source_rows": 8707,
+      "train_rows": 7836,
+      "val_rows": 871,
+      "actual_val_ratio": 0.100034,
+      "body_coverage": [
+        {
+          "tag": "BODY:BEND",
+          "total": 40,
+          "train": 36,
+          "val": 4
+        },
+        {
+          "tag": "BODY:Bend",
+          "total": 2,
+          "train": 1,
+          "val": 1
+        },
+        {
+          "tag": "BODY:COUPLING COLLAR",
+          "total": 6,
+          "train": 5,
+          "val": 1
+        },
+        {
+          "tag": "BODY:FULL COUPLING",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:Y型三通",
+          "total": 37,
+          "train": 34,
+          "val": 3
+        },
+        {
+          "tag": "BODY:Y型异径三通",
+          "total": 12,
+          "train": 11,
+          "val": 1
+        },
+        {
+          "tag": "BODY:Y型斜三通",
+          "total": 2,
+          "train": 1,
+          "val": 1
+        },
+        {
+          "tag": "BODY:Y型等径三通",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:三通",
+          "total": 432,
+          "train": 389,
+          "val": 43
+        },
+        {
+          "tag": "BODY:仪表三通",
+          "total": 26,
+          "train": 24,
+          "val": 2
+        },
+        {
+          "tag": "BODY:偏心双口管箍",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:偏心异径双口管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:偏心异径接头",
+          "total": 9,
+          "train": 8,
+          "val": 1
+        },
+        {
+          "tag": "BODY:偏心异径短节",
+          "total": 121,
+          "train": 109,
+          "val": 12
+        },
+        {
+          "tag": "BODY:偏心异径管",
+          "total": 716,
+          "train": 645,
+          "val": 71
+        },
+        {
+          "tag": "BODY:偏心异径管接头",
+          "total": 2,
+          "train": 1,
+          "val": 1
+        },
+        {
+          "tag": "BODY:偏心异径管箍",
+          "total": 7,
+          "train": 6,
+          "val": 1
+        },
+        {
+          "tag": "BODY:偏心等径管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:偏心管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:六角头管塞",
+          "total": 8,
+          "train": 7,
+          "val": 1
+        },
+        {
+          "tag": "BODY:剖分异径三通",
+          "total": 24,
+          "train": 22,
+          "val": 2
+        },
+        {
+          "tag": "BODY:剖分等径三通",
+          "total": 12,
+          "train": 11,
+          "val": 1
+        },
+        {
+          "tag": "BODY:剖分等径四通",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:加强管嘴",
+          "total": 90,
+          "train": 81,
+          "val": 9
+        },
+        {
+          "tag": "BODY:加强管接头",
+          "total": 50,
+          "train": 45,
+          "val": 5
+        },
+        {
+          "tag": "BODY:半管接头",
+          "total": 104,
+          "train": 94,
+          "val": 10
+        },
+        {
+          "tag": "BODY:单丝头",
+          "total": 13,
+          "train": 12,
+          "val": 1
+        },
+        {
+          "tag": "BODY:单口管箍",
+          "total": 76,
+          "train": 69,
+          "val": 7
+        },
+        {
+          "tag": "BODY:单头管箍",
+          "total": 73,
+          "train": 66,
+          "val": 7
+        },
+        {
+          "tag": "BODY:单头螺纹短节",
+          "total": 20,
+          "train": 19,
+          "val": 1
+        },
+        {
+          "tag": "BODY:单承口管盖",
+          "total": 1,
+          "train": 1,
+          "val": 0
+        },
+        {
+          "tag": "BODY:卡箍接头",
+          "total": 13,
+          "train": 12,
+          "val": 1
+        },
+        {
+          "tag": "BODY:双丝头",
+          "total": 6,
+          "train": 5,
+          "val": 1
+        },
+        {
+          "tag": "BODY:双口管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:双头管箍",
+          "total": 51,
+          "train": 46,
+          "val": 5
+        },
+        {
+          "tag": "BODY:双头螺纹短节",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:同径双口管箍",
+          "total": 6,
+          "train": 5,
+          "val": 1
+        },
+        {
+          "tag": "BODY:同心双口管箍",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:同心异径双口管箍",
+          "total": 31,
+          "train": 28,
+          "val": 3
+        },
+        {
+          "tag": "BODY:同心异径接头",
+          "total": 50,
+          "train": 45,
+          "val": 5
+        },
+        {
+          "tag": "BODY:同心异径短节",
+          "total": 119,
+          "train": 108,
+          "val": 11
+        },
+        {
+          "tag": "BODY:同心异径管",
+          "total": 723,
+          "train": 651,
+          "val": 72
+        },
+        {
+          "tag": "BODY:同心异径管接头",
+          "total": 11,
+          "train": 10,
+          "val": 1
+        },
+        {
+          "tag": "BODY:同心异径管箍",
+          "total": 35,
+          "train": 32,
+          "val": 3
+        },
+        {
+          "tag": "BODY:同心等径管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:同心管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:圆形丝堵",
+          "total": 2,
+          "train": 1,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套剖分等径三通",
+          "total": 1,
+          "train": 1,
+          "val": 0
+        },
+        {
+          "tag": "BODY:夹套同心异径管",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套异径三通",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套弯头",
+          "total": 8,
+          "train": 7,
+          "val": 1
+        },
+        {
+          "tag": "BODY:夹套等径三通",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:对焊支管台",
+          "total": 363,
+          "train": 327,
+          "val": 36
+        },
+        {
+          "tag": "BODY:带颈平焊法兰",
+          "total": 1,
+          "train": 1,
+          "val": 0
+        },
+        {
+          "tag": "BODY:异径三通",
+          "total": 1185,
+          "train": 1067,
+          "val": 118
+        },
+        {
+          "tag": "BODY:异径双口管箍",
+          "total": 4,
+          "train": 3,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径双头管箍",
+          "total": 7,
+          "train": 6,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径四通",
+          "total": 13,
+          "train": 12,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径弯头",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径接头",
+          "total": 16,
+          "train": 15,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径斜三通",
+          "total": 84,
+          "train": 76,
+          "val": 8
+        },
+        {
+          "tag": "BODY:异径短节",
+          "total": 54,
+          "train": 49,
+          "val": 5
+        },
+        {
+          "tag": "BODY:异径管",
+          "total": 24,
+          "train": 22,
+          "val": 2
+        },
+        {
+          "tag": "BODY:异径管接头",
+          "total": 17,
+          "train": 16,
+          "val": 1
+        },
+        {
+          "tag": "BODY:异径管箍",
+          "total": 24,
+          "train": 22,
+          "val": 2
+        },
+        {
+          "tag": "BODY:弯头",
+          "total": 1663,
+          "train": 1497,
+          "val": 166
+        },
+        {
+          "tag": "BODY:弯管",
+          "total": 6,
+          "train": 5,
+          "val": 1
+        },
+        {
+          "tag": "BODY:快速接头",
+          "total": 28,
+          "train": 26,
+          "val": 2
+        },
+        {
+          "tag": "BODY:承插焊支管台",
+          "total": 222,
+          "train": 200,
+          "val": 22
+        },
+        {
+          "tag": "BODY:插板",
+          "total": 76,
+          "train": 69,
+          "val": 7
+        },
+        {
+          "tag": "BODY:支管台",
+          "total": 301,
+          "train": 271,
+          "val": 30
+        },
+        {
+          "tag": "BODY:斜三通",
+          "total": 72,
+          "train": 65,
+          "val": 7
+        },
+        {
+          "tag": "BODY:斜支管台",
+          "total": 63,
+          "train": 57,
+          "val": 6
+        },
+        {
+          "tag": "BODY:方头管塞",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:方形丝堵",
+          "total": 3,
+          "train": 2,
+          "val": 1
+        },
+        {
+          "tag": "BODY:波纹金属软管",
+          "total": 2,
+          "train": 1,
+          "val": 1
+        },
+        {
+          "tag": "BODY:波纹非金属软管",
+          "total": 1,
+          "train": 1,
+          "val": 0
+        },
+        {
+          "tag": "BODY:活接头",
+          "total": 17,
+          "train": 16,
+          "val": 1
+        },
+        {
+          "tag": "BODY:清管三通",
+          "total": 20,
+          "train": 18,
+          "val": 2
+        },
+        {
+          "tag": "BODY:短节",
+          "total": 84,
+          "train": 76,
+          "val": 8
+        },
+        {
+          "tag": "BODY:等径三通",
+          "total": 691,
+          "train": 622,
+          "val": 69
+        },
+        {
+          "tag": "BODY:等径双口管箍",
+          "total": 11,
+          "train": 10,
+          "val": 1
+        },
+        {
+          "tag": "BODY:等径四通",
+          "total": 6,
+          "train": 5,
+          "val": 1
+        },
+        {
+          "tag": "BODY:管塞",
+          "total": 5,
+          "train": 4,
+          "val": 1
+        },
+        {
+          "tag": "BODY:管帽",
+          "total": 370,
+          "train": 333,
+          "val": 37
+        },
+        {
+          "tag": "BODY:管接头",
+          "total": 11,
+          "train": 10,
+          "val": 1
+        },
+        {
+          "tag": "BODY:管箍",
+          "total": 17,
+          "train": 16,
+          "val": 1
+        },
+        {
+          "tag": "BODY:翻边短节",
+          "total": 40,
+          "train": 36,
+          "val": 4
+        },
+        {
+          "tag": "BODY:螺纹支管台",
+          "total": 76,
+          "train": 69,
+          "val": 7
+        },
+        {
+          "tag": "BODY:螺纹管帽",
+          "total": 17,
+          "train": 16,
+          "val": 1
+        },
+        {
+          "tag": "BODY:补强板开口焊",
+          "total": 105,
+          "train": 95,
+          "val": 10
+        },
+        {
+          "tag": "BODY:金属软管",
+          "total": 1,
+          "train": 1,
+          "val": 0
+        }
+      ],
+      "expression_coverage": [
+        {
+          "tag": "FORM:ELBOW",
+          "total": 1552,
+          "train": 1390,
+          "val": 162
+        },
+        {
+          "tag": "FORM:FLANGE",
+          "total": 48,
+          "train": 40,
+          "val": 8
+        },
+        {
+          "tag": "FORM:FLG",
+          "total": 34,
+          "train": 26,
+          "val": 8
+        },
+        {
+          "tag": "FORM:LAP_JOINT",
+          "total": 29,
+          "train": 22,
+          "val": 7
+        },
+        {
+          "tag": "FORM:OLET",
+          "total": 765,
+          "train": 687,
+          "val": 78
+        },
+        {
+          "tag": "FORM:PIPE",
+          "total": 458,
+          "train": 403,
+          "val": 55
+        },
+        {
+          "tag": "FORM:REDUCER",
+          "total": 2684,
+          "train": 2413,
+          "val": 271
+        },
+        {
+          "tag": "FORM:SMLS",
+          "total": 3018,
+          "train": 2703,
+          "val": 315
+        },
+        {
+          "tag": "FORM:SO",
+          "total": 5,
+          "train": 1,
+          "val": 4
+        },
+        {
+          "tag": "FORM:SW",
+          "total": 1294,
+          "train": 1155,
+          "val": 139
+        },
+        {
+          "tag": "FORM:TEE",
+          "total": 2516,
+          "train": 2261,
+          "val": 255
+        },
+        {
+          "tag": "FORM:WELDED",
+          "total": 881,
+          "train": 779,
+          "val": 102
+        },
+        {
+          "tag": "FORM:法兰",
+          "total": 69,
+          "train": 59,
+          "val": 10
+        },
+        {
+          "tag": "LANG:EN",
+          "total": 2965,
+          "train": 2667,
+          "val": 298
+        },
+        {
+          "tag": "LANG:MIXED",
+          "total": 5742,
+          "train": 5169,
+          "val": 573
+        }
+      ],
+      "missing_body_tags_in_val": [
+        "BODY:单承口管盖",
+        "BODY:夹套剖分等径三通",
+        "BODY:带颈平焊法兰",
+        "BODY:波纹非金属软管",
+        "BODY:金属软管"
+      ],
+      "missing_body_tags_in_train": []
+    }
+  },
+  "outputs": {
+    "raw_train": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/type_raw/种类_train.json",
+    "raw_val": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/type_raw/种类_val.json",
+    "llamafactory_train": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/type_llamafactory/种类_train.json",
+    "llamafactory_val": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/type_llamafactory/种类_val.json",
+    "conflict_review": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/type_raw/种类_冲突样本待审核.json"
+  }
+}
