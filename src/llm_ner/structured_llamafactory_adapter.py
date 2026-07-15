@@ -375,7 +375,6 @@ class StructuredLlamaFactoryPredictor:
             service_url=self.service_url,
             model_name=self.model_name,
             text=input_text,
-            instruction=self.instruction,
             timeout=180,
             max_new_tokens=self.max_new_tokens,
             temperature=self.temperature,

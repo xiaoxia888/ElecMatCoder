@@ -518,6 +518,8 @@ class Qwen3Predictor:
         return self._parse_response(response, model_confidence=model_confidence)
 
     def _call_model_service(self, system_prompt: Optional[str], user_content: str) -> dict:
+        # 微调模型的 instruction 与模型路径一起由部署服务维护。
+        # 平台只指定模型和输入，避免调用侧提示词覆盖部署配置。
         payload = {
             "model": self.model_name,
             "text": user_content,
@@ -525,8 +527,6 @@ class Qwen3Predictor:
             "temperature": self.ollama_temperature,
             "top_p": self.ollama_top_p,
         }
-        if system_prompt:
-            payload["instruction"] = system_prompt
         resp = requests.post(
             f"{self.service_url}/predict",
             json=payload,

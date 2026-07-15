@@ -199,7 +199,6 @@ def call_hf_lazy_service_predict(
     service_url: str,
     model_name: str,
     text: str,
-    instruction: str,
     timeout: float,
     max_new_tokens: int,
     temperature: float,
@@ -210,7 +209,6 @@ def call_hf_lazy_service_predict(
         json={
             "model": model_name,
             "text": text,
-            "instruction": instruction,
             "max_new_tokens": max_new_tokens,
             "temperature": temperature,
             "top_p": top_p,
