@@ -635,10 +635,12 @@ class TextPreprocessor:
             ("偏头", "偏心大小头"),
             ("偏大", "偏心大小头"),
             ("CAP", "管帽"),
-            ("TEE", "三通"),
+            ("WRE", "焊接偏心异径管"),
+            # ("TEE", "三通"),
             ("BW Olet", "对焊支管台"),
             ("RTS", "异径三通"),
             ("RK", "同心异径管"),
+            ("WOL", "焊接支管台"),
             ("WOL-90", "90度对焊支管台"),
             ("WOL-45", "45度对焊支管台"),
             ("LJ Flg", "松套法兰"),
@@ -649,7 +651,8 @@ class TextPreprocessor:
             ("FlgWN", "带颈对焊法兰"),
             ("G1aV", "GALV"),
             ("FSW", "承插焊法兰"),
-            
+
+
         )
 
         def _char_boundary(kind_char: str, *, is_left: bool) -> str:

@@ -76123,7 +76123,7 @@
         "BODY": "弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [],
         "CONN": []
@@ -76342,7 +76342,7 @@
         "BODY": "弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [],
         "CONN": []
@@ -76357,7 +76357,7 @@
         "BODY": "弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [
           "WELDED"
@@ -76374,7 +76374,7 @@
         "BODY": "弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [
           "WELDED"
@@ -83499,14 +83499,14 @@
     }
   },
   {
-    "input": "DN250, BW 45deg 3D Bend, SMLS, ASME B16.9, ASTM A234M, SCH40",
+    "input": "DN250, BW 45D 3D Bend, SMLS, ASME B16.9, ASTM A234M, SCH40",
     "output": {
       "CATEGORY":"管件",
       "TYPE": {
         "BODY": "Bend",
         "GEOMETRY": {
           "ANGLE": "45",
-          "RADIUS": "3D"
+          "RADIUS": "5D"
         },
         "MANU": [
           "SMLS"
@@ -85888,7 +85888,7 @@
         "BODY": "夹套弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [],
         "CONN": []
@@ -85903,7 +85903,7 @@
         "BODY": "夹套弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [],
         "CONN": []
@@ -85918,7 +85918,7 @@
         "BODY": "夹套弯头",
         "GEOMETRY": {
           "ANGLE": "90",
-          "RADIUS": "1D"
+          "RADIUS": ""
         },
         "MANU": [],
         "CONN": []
@@ -117164,6 +117164,21 @@
     }
   },
   {
+    "input": "单承口管盖 NB/T47010,ASTM A182,SHC-DN50x20xSCH40SxCL3000 A182 F304",
+    "output": {
+      "CATEGORY":"管件",
+      "TYPE": {
+        "BODY": "单承口管盖",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "MANU": [],
+        "CONN": []
+      }
+    }
+  },
+  {
     "input": "管接头 FULL Th(NPT) 3000LB GB/T14383-08 DN15 S31603 NB/T47010 -",
     "output": {
       "CATEGORY":"管件",
@@ -128188,7 +128203,7 @@
     "output": {
       "CATEGORY":"管件",
       "TYPE": {
-        "BODY": "Y型三通",
+        "BODY": "Y型异径三通",
         "GEOMETRY": {
           "ANGLE": "",
           "RADIUS": ""
@@ -134019,6 +134034,19 @@
         "MANU": [],
         "CONN": [],
         "FLANGE_STYLE": "FLANGED"
+      }
+    }
+  },
+  {
+    "input": "带颈平焊法兰, PTFELined A105, RF, CL 150, SH/T 3406,不出材料用于PDMS衬里等级 , DN50",
+    "output": {
+      "CATEGORY":"管件",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
       }
     }
   },

@@ -52,7 +52,7 @@ models:
   # 各模型的 instruction 在部署层统一维护。正式平台调用只传 model/text，
   # 不再覆盖这里的提示词。
   type:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type-0618-mlx
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type-0715-q8
     instruction: "你是工业管道材料种类结构化提取助手。先判断CATEGORY为直管、管件或法兰，再按类别输出TYPE：直管包含BODY、FLANGE_STYLE、MANU；管件包含BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；法兰包含BODY、CONN、SEAL。ANGLE必须原样保留原文角度数值，仅去掉度、°、deg等单位，不得取整、舍入或改成常见角度；BW不写入CONN。未出现的信息使用空字符串或空数组。只输出严格JSON，不要解释。"
     max_tokens: 512
     temperature: 0.0

@@ -3,8 +3,8 @@
 
 type_key_order:
   - FLANGE_STYLE
-  - BODY
   - ANGLE
+  - BODY
   - RADIUS
   - CONN
   - SEAL

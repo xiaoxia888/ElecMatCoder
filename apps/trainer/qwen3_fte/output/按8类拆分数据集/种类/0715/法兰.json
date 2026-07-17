@@ -99976,5 +99976,5761 @@
         ]
       }
     }
+  },
+  {
+    "input": "WN FLG, ASTM A182 F316L, CL300, RF, SCH40, HG/T20615, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | WN FLG. | CL150 | RF | S30408 | SH/T3406 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG WN 2.规格型号:RJ DN25 PN40 3.材质:ASTM A105 4.标准:HG/T20592 5.壁厚:SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; WN FLANGE; 20; DN40; PN25; FF; STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WELD NECK FLG DN50 8.0mm PN16 A350 LF2 GB/T9124.1 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "W.N. FLG/EN 1092-1/CL600/RF/ASTM A182 F304/SCH80/DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 WN-FLG HG/T20615 RJ-CL300 DN100 S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG,WNDN150CL150FFA694F65SH/T3406SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN200;WN FLG;RF;PN40;XS;ASTM A182 F316L;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 RF WN FLG. 1\", ASME B16.5, S30408, bore SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG WN, ASTM A105, PN16, RJ, STD, GB/T9124.1, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | WN FLANGE | CL600 | FF | 20 | EN 1092-1 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:WELD NECK FLG 2.规格型号:RF 4\" CL300 3.材质:A350 LF2 4.标准:HG/T20615 5.壁厚:SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; W.N. FLG; ASTM A182 F304; 6\"; CL150; RF; S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WN-FLG DN15 SCH40 PN40 06Cr19Ni10 HG/T20592 RJ",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG,WN/ASME B16.5/PN25/FF/A694 F65/XS/DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L WN FLG GB/T9124.1 RF-PN16 DN25 SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG.DN40CL600RFS30408EN1092-1STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN50;FLG WN;RJ;CL300;8.0mm;ASTM A105;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 FF WN FLANGE DN80, SH/T3406, 20, bore SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLG, A350 LF2, PN40, RF, S-40S, HG/T20592, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | W.N. FLG | PN25 | RF | ASTM A182 F304 | ASME B16.5 | SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:WN-FLG 2.规格型号:RJ DN200 PN16 3.材质:06Cr19Ni10 4.标准:GB/T9124.1 5.壁厚:XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; FLG,WN; A694 F65; 1\"; CL600; FF; SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WN FLG 1.5\" STD CL300 ASTM A182 F316L HG/T20615 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG./SH/T3406/CL150/RF/S30408/8.0mm/2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 FLG WN HG/T20592 RJ-PN40 4\" SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLANGE6\"PN25FF20ASMEB16.5S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN15;WELD NECK FLG;RF;PN16;SCH40;A350 LF2;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RF W.N. FLG DN20, EN 1092-1, ASTM A182 F304, bore XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN-FLG, 06Cr19Ni10, CL300, RJ, SCH10S, HG/T20615, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | FLG,WN | CL150 | FF | A694 F65 | SH/T3406 | STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:WN FLG 2.规格型号:RF DN50 PN40 3.材质:ASTM A182 F316L 4.标准:HG/T20592 5.壁厚:8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; WN FLG.; S30408; DN80; PN25; RF; SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLG WN DN100 S-40S PN16 ASTM A105 GB/T9124.1 RJ",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLANGE/EN 1092-1/CL600/FF/20/SCH40/DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "A350 LF2 WELD NECK FLG HG/T20615 RF-CL300 DN200 XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "W.N. FLG1\"CL150RFASTMA182F304SH/T3406SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;1.5\";WN-FLG;RJ;PN40;STD;06Cr19Ni10;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 FF FLG,WN 2\", ASME B16.5, A694 F65, bore 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG, ASTM A182 F316L, PN16, RF, SCH80, GB/T9124.1, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | WN FLG. | CL600 | RF | S30408 | EN 1092-1 | S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG WN 2.规格型号:RJ DN15 CL300 3.材质:ASTM A105 4.标准:HG/T20615 5.壁厚:SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; WN FLANGE; 20; DN20; CL150; FF; XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WELD NECK FLG DN25 SCH10S PN40 A350 LF2 HG/T20592 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "W.N. FLG/ASME B16.5/PN25/RF/ASTM A182 F304/STD/DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 WN-FLG GB/T9124.1 RJ-PN16 DN50 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG,WNDN80CL600FFA694F65EN1092-1SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN100;WN FLG;RF;CL300;S-40S;ASTM A182 F316L;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 RF WN FLG. DN150, SH/T3406, S30408, bore SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG WN, ASTM A105, PN40, RJ, XS, HG/T20592, DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\" | WN FLANGE | PN25 | FF | 20 | ASME B16.5 | SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:WELD NECK FLG 2.规格型号:RF 1.5\" PN16 3.材质:A350 LF2 4.标准:GB/T9124.1 5.壁厚:STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; W.N. FLG; ASTM A182 F304; 2\"; CL600; RF; 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WN-FLG 4\" SCH80 CL300 06Cr19Ni10 HG/T20615 RJ",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG,WN/SH/T3406/CL150/FF/A694 F65/S-40S/6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L WN FLG HG/T20592 RF-PN40 DN15 SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG.DN20PN25RFS30408ASMEB16.5XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN25;FLG WN;RJ;PN16;SCH10S;ASTM A105;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FF WN FLANGE DN40, EN 1092-1, 20, bore STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLG, A350 LF2, CL300, RF, 8.0mm, HG/T20615, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | W.N. FLG | CL150 | RF | ASTM A182 F304 | SH/T3406 | SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:WN-FLG 2.规格型号:RJ DN100 PN40 3.材质:06Cr19Ni10 4.标准:HG/T20592 5.壁厚:S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; FLG,WN; A694 F65; DN150; PN25; FF; SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG, ASTM A182 F316L, PN40, RF, STD, HG/T20592, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | FLG. | PN25 | FF | S30408 | ASME B16.5 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG FLANGE 2.规格型号:RJ 4\" PN16 3.材质:ASTM A105 4.标准:GB/T9124.1 5.壁厚:SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; 法兰 FLG; 20; 6\"; CL600; ; S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLG DN15 SCH40 CL300 A350 LF2 HG/T20615 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG./SH/T3406/CL150/FF/ASTM A182 F304/XS/DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 FLG FLANGE HG/T20592 RJ-PN40 DN25 SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLGDN40PN25A694F65ASMEB16.5STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN50;FLG;RF;PN16;8.0mm;ASTM A182 F316L;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FF FLG. DN80, EN 1092-1, S30408, bore SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG FLANGE, ASTM A105, CL300, RJ, S-40S, HG/T20615, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | 法兰 FLG | CL150 | | 20 | SH/T3406 | SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG 2.规格型号:RF DN200 PN40 3.材质:A350 LF2 4.标准:HG/T20592 5.壁厚:XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; FLG.; ASTM A182 F304; 1\"; PN25; FF; SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLG FLANGE 1.5\" STD PN16 06Cr19Ni10 GB/T9124.1 RJ",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLG/EN 1092-1/CL600//A694 F65/8.0mm/2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L FLG HG/T20615 RF-CL300 4\" SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG.6\"CL150FFS30408SH/T3406S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN15;FLG FLANGE;RJ;PN40;SCH40;ASTM A105;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 法兰 FLG DN20, ASME B16.5, 20, bore XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG, A350 LF2, PN16, RF, SCH10S, GB/T9124.1, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | FLG. | CL600 | FF | ASTM A182 F304 | EN 1092-1 | STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG FLANGE 2.规格型号:RJ DN50 CL300 3.材质:06Cr19Ni10 4.标准:HG/T20615 5.壁厚:8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; 法兰 FLG; A694 F65; DN80; CL150; ; SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-0N FLANGE, ASTM A182 F316L, CL300, RF, XS, HG/T20615, DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\" | SLIP 0N FLG | CL150 | RF | S30408 | SH/T3406 | SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLG 2.规格型号:FF 1.5\" PN40 3.材质:ASTM A105 4.标准:HG/T20592 5.壁厚:STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; SLIP ON FLANGE; 20; 2\"; PN25; RJ; 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SO FLG 4\" SCH80 PN16 A350 LF2 GB/T9124.1 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SO/EN 1092-1/CL600/RF/ASTM A182 F304/S-40S/6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 S0 FLG HG/T20615 FF-CL300 DN15 SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-0N FLGDN20CL150RJA694F65SH/T3406XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN25;SLIP-0N FLANGE;RF;PN40;SCH10S;ASTM A182 F316L;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 RF SLIP 0N FLG DN40, ASME B16.5, S30408, bore STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-ON FLG, ASTM A105, PN16, FF, 8.0mm, GB/T9124.1, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | SLIP ON FLANGE | CL600 | RJ | 20 | EN 1092-1 | SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SO FLG 2.规格型号:RF DN100 CL300 3.材质:A350 LF2 4.标准:HG/T20615 5.壁厚:S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; FLG SO; ASTM A182 F304; DN150; CL150; RF; SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 S0 FLG DN200 XS PN40 06Cr19Ni10 HG/T20592 FF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-0N FLG/ASME B16.5/PN25/RJ/A694 F65/SCH10S/1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L SLIP-0N FLANGE GB/T9124.1 RF-PN16 1.5\" STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP 0N FLG2\"CL600RFS30408EN1092-18.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;4\";SLIP-ON FLG;FF;CL300;SCH80;ASTM A105;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 RJ SLIP ON FLANGE 6\", SH/T3406, 20, bore S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLG, A350 LF2, PN40, RF, SCH40, HG/T20592, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | FLG SO | PN25 | RF | ASTM A182 F304 | ASME B16.5 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:S0 FLG 2.规格型号:FF DN25 PN16 3.材质:06Cr19Ni10 4.标准:GB/T9124.1 5.壁厚:SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; SLIP-0N FLG; A694 F65; DN40; CL600; RJ; STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SLIP-0N FLANGE DN50 8.0mm CL300 ASTM A182 F316L HG/T20615 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP 0N FLG/SH/T3406/CL150/RF/S30408/SCH80/DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 SLIP-ON FLG HG/T20592 FF-PN40 DN100 S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP ON FLANGEDN150PN25RJ20ASMEB16.5SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN200;SO FLG;RF;PN16;XS;A350 LF2;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RF FLG SO 1\", EN 1092-1, ASTM A182 F304, bore SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "S0 FLG, 06Cr19Ni10, CL300, FF, STD, HG/T20615, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | SLIP-0N FLG | CL150 | RJ | A694 F65 | SH/T3406 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-0N FLANGE 2.规格型号:RF 4\" PN40 3.材质:ASTM A182 F316L 4.标准:HG/T20592 5.壁厚:SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; SLIP 0N FLG; S30408; 6\"; PN25; RF; S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SLIP-ON FLG DN15 SCH40 PN16 ASTM A105 GB/T9124.1 FF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP ON FLANGE/EN 1092-1/CL600/RJ/20/XS/DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "A350 LF2 SO FLG HG/T20615 RF-CL300 DN25 SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SODN40CL150RFASTMA182F304SH/T3406STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN50;S0 FLG;FF;PN40;8.0mm;06Cr19Ni10;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 RJ SLIP-0N FLG DN80, ASME B16.5, A694 F65, bore SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-0N FLANGE, ASTM A182 F316L, PN16, RF, S-40S, GB/T9124.1, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | SLIP 0N FLG | CL600 | RF | S30408 | EN 1092-1 | SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLG 2.规格型号:FF DN200 CL300 3.材质:ASTM A105 4.标准:HG/T20615 5.壁厚:XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; SLIP ON FLANGE; 20; 1\"; CL150; RJ; SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SO FLG 1.5\" STD PN40 A350 LF2 HG/T20592 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SO/ASME B16.5/PN25/RF/ASTM A182 F304/8.0mm/2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 S0 FLG GB/T9124.1 FF-PN16 4\" SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-0N FLG6\"CL600RJA694F65EN1092-1S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN15;SLIP-0N FLANGE;RF;CL300;SCH40;ASTM A182 F316L;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 RF SLIP 0N FLG DN20, SH/T3406, S30408, bore XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-ON FLG, ASTM A105, PN40, FF, SCH10S, HG/T20592, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | SLIP ON FLANGE | PN25 | RJ | 20 | ASME B16.5 | STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SO FLG 2.规格型号:RF DN50 PN16 3.材质:A350 LF2 4.标准:GB/T9124.1 5.壁厚:8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; FLG SO; ASTM A182 F304; DN80; CL600; RF; SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 S0 FLG DN100 S-40S CL300 06Cr19Ni10 HG/T20615 FF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-0N FLG/SH/T3406/CL150/RJ/A694 F65/SCH40/DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L SLIP-0N FLANGE HG/T20592 RF-PN40 DN200 XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP 0N FLG1\"PN25RFS30408ASMEB16.5SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;1.5\";SLIP-ON FLG;FF;PN16;STD;ASTM A105;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ SLIP ON FLANGE 2\", EN 1092-1, 20, bore 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLG, A350 LF2, CL300, RF, SCH80, HG/T20615, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | FLG SO | CL150 | RF | ASTM A182 F304 | SH/T3406 | S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:S0 FLG 2.规格型号:FF DN15 PN40 3.材质:06Cr19Ni10 4.标准:HG/T20592 5.壁厚:SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; SLIP-0N FLG; A694 F65; DN20; PN25; RJ; XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGE, ASTM A182 F316L, PN40, RF, 8.0mm, HG/T20592, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | LJ FLG | PN25 | FF | S30408 | ASME B16.5 | SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:LAP-JOINT FLG 2.规格型号:RJ DN100 PN16 3.材质:ASTM A105 4.标准:GB/T9124.1 5.壁厚:S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; 松套法兰; 20; DN150; CL600; LF; SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 LJ FLANGE DN200 XS CL300 A350 LF2 HG/T20615 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PJ/SE FLG/SH/T3406/CL150/FF/ASTM A182 F304/SCH10S/1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 LAP JOINT FLANGE HG/T20592 RJ-PN40 1.5\" STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LJ FLG2\"PN25LFA694F65ASMEB16.58.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;4\";LAP-JOINT FLG;RF;PN16;SCH80;ASTM A182 F316L;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FF 松套法兰 6\", EN 1092-1, S30408, bore S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LJ FLANGE, ASTM A105, CL300, RJ, SCH40, HG/T20615, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | PJ/SE FLG | CL150 | LF | 20 | SH/T3406 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:LAP JOINT FLANGE 2.规格型号:RF DN25 PN40 3.材质:A350 LF2 4.标准:HG/T20592 5.壁厚:SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; LJ FLG; ASTM A182 F304; DN40; PN25; FF; STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 LAP-JOINT FLG DN50 8.0mm PN16 06Cr19Ni10 GB/T9124.1 RJ",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰/EN 1092-1/CL600/LF/A694 F65/SCH80/DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L LJ FLANGE HG/T20615 RF-CL300 DN100 S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PJ/SE FLGDN150CL150FFS30408SH/T3406SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN200;LAP JOINT FLANGE;RJ;PN40;XS;ASTM A105;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 LF LJ FLG 1\", ASME B16.5, 20, bore SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP-JOINT FLG, A350 LF2, PN16, RF, STD, GB/T9124.1, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | 松套法兰 | CL600 | FF | ASTM A182 F304 | EN 1092-1 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:LJ FLANGE 2.规格型号:RJ 4\" CL300 3.材质:06Cr19Ni10 4.标准:HG/T20615 5.壁厚:SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; PJ/SE FLG; A694 F65; 6\"; CL150; LF; S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 LAP JOINT FLANGE DN15 SCH40 PN40 ASTM A182 F316L HG/T20592 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LJ FLG/ASME B16.5/PN25/FF/S30408/XS/DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 LAP-JOINT FLG GB/T9124.1 RJ-PN16 DN25 SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰DN40CL600LF20EN1092-1STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN50;LJ FLANGE;RF;CL300;8.0mm;A350 LF2;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 FF PJ/SE FLG DN80, SH/T3406, ASTM A182 F304, bore SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGE, 06Cr19Ni10, PN40, RJ, S-40S, HG/T20592, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | LJ FLG | PN25 | LF | A694 F65 | ASME B16.5 | SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SW, A350 LF2, PN40, RF, XS, HG/T20592, DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\" | SW FLG | PN25 | RF | ASTM A182 F304 | ASME B16.5 | SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FSW 2.规格型号:FF 1.5\" PN16 3.材质:06Cr19Ni10 4.标准:GB/T9124.1 5.壁厚:STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; SOCKET WELD FLG; A694 F65; 2\"; CL600; RJ; 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SOCKET-WELD FLANGE 4\" SCH80 CL300 ASTM A182 F316L HG/T20615 MFM",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SOCKET WELD/SH/T3406/CL150/LF/S30408/S-40S/6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 SW FLANGE HG/T20592 RF-PN40 DN15 SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG-SWDN20PN25RF20ASMEB16.5XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN25;FLG SW;FF;PN16;SCH10S;A350 LF2;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ SW FLG DN40, EN 1092-1, ASTM A182 F304, bore STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FSW, 06Cr19Ni10, CL300, MFM, 8.0mm, HG/T20615, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | SOCKET WELD FLG | CL150 | LF | A694 F65 | SH/T3406 | SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET-WELD FLANGE 2.规格型号:RF DN100 PN40 3.材质:ASTM A182 F316L 4.标准:HG/T20592 5.壁厚:S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; FLG SOCKET WELD; S30408; DN150; PN25; RF; SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SW FLANGE DN200 XS PN16 ASTM A105 GB/T9124.1 FF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG-SW/EN 1092-1/CL600/RJ/20/SCH10S/1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "A350 LF2 FLG SW HG/T20615 MFM-CL300 1.5\" STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLG2\"CL150LFASTMA182F304SH/T34068.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;4\";FSW;RF;PN40;SCH80;06Cr19Ni10;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 RF SOCKET WELD FLG 6\", ASME B16.5, A694 F65, bore S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET-WELD FLANGE, ASTM A182 F316L, PN16, FF, SCH40, GB/T9124.1, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | FLG SOCKET WELD | CL600 | RJ | S30408 | EN 1092-1 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SW FLANGE 2.规格型号:MFM DN25 CL300 3.材质:ASTM A105 4.标准:HG/T20615 5.壁厚:SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; FLG-SW; 20; DN40; CL150; LF; STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLG SW DN50 8.0mm PN40 A350 LF2 HG/T20592 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLG/ASME B16.5/PN25/RF/ASTM A182 F304/SCH80/DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 FSW GB/T9124.1 FF-PN16 DN100 S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLGDN150CL600RJA694F65EN1092-1SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN200;SOCKET-WELD FLANGE;MFM;CL300;XS;ASTM A182 F316L;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 LF FLG SOCKET WELD 1\", SH/T3406, S30408, bore SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLANGE, ASTM A105, PN40, RF, STD, HG/T20592, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | FLG-SW | PN25 | RF | 20 | ASME B16.5 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG SW 2.规格型号:FF 4\" PN16 3.材质:A350 LF2 4.标准:GB/T9124.1 5.壁厚:SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; SW FLG; ASTM A182 F304; 6\"; CL600; RJ; S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FSW DN15 SCH40 CL300 06Cr19Ni10 HG/T20615 MFM",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLG/SH/T3406/CL150/LF/A694 F65/XS/DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L SOCKET-WELD FLANGE HG/T20592 RF-PN40 DN25 SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SOCKET WELDDN40PN25RFS30408ASMEB16.5STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN50;SW FLANGE;FF;PN16;8.0mm;ASTM A105;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ FLG-SW DN80, EN 1092-1, 20, bore SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SW, A350 LF2, CL300, MFM, S-40S, HG/T20615, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | SW FLG | CL150 | LF | ASTM A182 F304 | SH/T3406 | SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FSW 2.规格型号:RF DN200 PN40 3.材质:06Cr19Ni10 4.标准:HG/T20592 5.壁厚:XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; SOCKET WELD FLG; A694 F65; 1\"; PN25; RF; SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SOCKET-WELD FLANGE 1.5\" STD PN16 ASTM A182 F316L GB/T9124.1 FF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SOCKET WELD/EN 1092-1/CL600/RJ/S30408/8.0mm/2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 SW FLANGE HG/T20615 MFM-CL300 4\" SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG-SW6\"CL150LF20SH/T3406S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN15;FLG SW;RF;PN40;SCH40;A350 LF2;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 RF SW FLG DN20, ASME B16.5, ASTM A182 F304, bore XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FSW, 06Cr19Ni10, PN16, FF, SCH10S, GB/T9124.1, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | SOCKET WELD FLG | CL600 | RJ | A694 F65 | EN 1092-1 | STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET-WELD FLANGE 2.规格型号:MFM DN50 CL300 3.材质:ASTM A182 F316L 4.标准:HG/T20615 5.壁厚:8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; FLG SOCKET WELD; S30408; DN80; CL150; LF; SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SW FLANGE DN100 S-40S PN40 ASTM A105 HG/T20592 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG-SW/ASME B16.5/PN25/RF/20/SCH40/DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "A350 LF2 FLG SW GB/T9124.1 FF-PN16 DN200 XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLG1\"CL600RJASTMA182F304EN1092-1SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;1.5\";FSW;MFM;CL300;STD;06Cr19Ni10;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 LF SOCKET WELD FLG 2\", SH/T3406, A694 F65, bore 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET-WELD FLANGE, ASTM A182 F316L, PN40, RF, SCH80, HG/T20592, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | FLG SOCKET WELD | PN25 | RF | S30408 | ASME B16.5 | S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SW FLANGE 2.规格型号:FF DN15 PN16 3.材质:ASTM A105 4.标准:GB/T9124.1 5.壁厚:SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; FLG-SW; 20; DN20; CL600; RJ; XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FLG SW DN25 SCH10S CL300 A350 LF2 HG/T20615 MFM",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLG/SH/T3406/CL150/LF/ASTM A182 F304/STD/DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 FSW HG/T20592 RF-PN40 DN50 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLGDN80PN25RFA694F65ASMEB16.5SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN100;SOCKET-WELD FLANGE;FF;PN16;S-40S;ASTM A182 F316L;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ FLG SOCKET WELD DN150, EN 1092-1, S30408, bore SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLANGE, ASTM A105, CL300, MFM, XS, HG/T20615, DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\" | FLG-SW | CL150 | LF | 20 | SH/T3406 | SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FLG SW 2.规格型号:RF 1.5\" PN40 3.材质:A350 LF2 4.标准:HG/T20592 5.壁厚:STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; SW FLG; ASTM A182 F304; 2\"; PN25; RF; 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 FSW 4\" SCH80 PN16 06Cr19Ni10 GB/T9124.1 FF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLG/EN 1092-1/CL600/RJ/A694 F65/S-40S/6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F316L SOCKET-WELD FLANGE HG/T20615 MFM-CL300 DN15 SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SOCKET WELDDN20CL150LFS30408SH/T3406XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN25;SW FLANGE;RF;PN40;SCH10S;ASTM A105;HG/T20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN25 RF FLG-SW DN40, ASME B16.5, 20, bore STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SW, A350 LF2, PN16, FF, 8.0mm, GB/T9124.1, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | SW FLG | CL600 | RJ | ASTM A182 F304 | EN 1092-1 | SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:FSW 2.规格型号:MFM DN100 CL300 3.材质:06Cr19Ni10 4.标准:HG/T20615 5.壁厚:S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SH/T3406; SOCKET WELD FLG; A694 F65; DN150; CL150; LF; SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SOCKET-WELD FLANGE DN200 XS PN40 ASTM A182 F316L HG/T20592 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG SOCKET WELD/ASME B16.5/PN25/RF/S30408/SCH10S/1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 SW FLANGE GB/T9124.1 FF-PN16 1.5\" STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG-SW2\"CL600RJ20EN1092-18.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;4\";FLG SW;MFM;CL300;SCH80;A350 LF2;HG/T20615",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150 LF SW FLG 6\", SH/T3406, ASTM A182 F304, bore S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FSW, 06Cr19Ni10, PN40, RF, SCH40, HG/T20592, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | SOCKET WELD FLG | PN25 | RF | A694 F65 | ASME B16.5 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SOCKET-WELD FLANGE 2.规格型号:FF DN25 PN16 3.材质:ASTM A182 F316L 4.标准:GB/T9124.1 5.壁厚:SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; FLG SOCKET WELD; S30408; DN40; CL600; RJ; STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SW FLANGE DN50 8.0mm CL300 ASTM A105 HG/T20615 MFM",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "MFM"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLG-SW/SH/T3406/CL150/LF/20/SCH80/DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN25 PN40 FRJ 3.材质:A350 LF2 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;FRJ;ASTM A182 F304;DN40;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLINDDN50PN16FRJ06Cr19Ni10ASMEB16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FRJ 盲板法兰 DN80, ASME B16.5, A694 F65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "8字盲板, ASTM A182 F316L, FRJ, CL300, ASME B16.48, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | DN150 | CL150 | FRJ | S30408 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN200 PN40 FRJ 3.材质:ASTM A105 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;FRJ;20;1\";PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND1.5\"PN16FRJA350LF2ASMEB16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FRJ 盲板法兰 2\", ASME B16.5, ASTM A182 F304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "8字盲板, 06Cr19Ni10, FRJ, CL300, ASME B16.48, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | 6\" | CL150 | FRJ | A694 F65 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN15 PN40 FRJ 3.材质:ASTM A182 F316L 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;FRJ;S30408;DN20;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLINDDN25PN16FRJASTMA105ASMEB16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FRJ 盲板法兰 DN40, ASME B16.5, 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "8字盲板, A350 LF2, FRJ, CL300, ASME B16.48, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | DN80 | CL150 | FRJ | ASTM A182 F304 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN100 PN40 FRJ 3.材质:06Cr19Ni10 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;FRJ;A694 F65;DN150;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLINDDN200PN16FRJASTMA182F316LASMEB16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FRJ 盲板法兰 1\", ASME B16.5, S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "8字盲板, ASTM A105, FRJ, CL300, ASME B16.48, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | 2\" | CL150 | FRJ | 20 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:4\" PN40 FRJ 3.材质:A350 LF2 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;FRJ;ASTM A182 F304;6\";PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLINDDN15PN16FRJ06Cr19Ni10ASMEB16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FRJ 盲板法兰 DN20, ASME B16.5, A694 F65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "8字盲板, ASTM A182 F316L, FRJ, CL300, ASME B16.48, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | DN40 | CL150 | FRJ | S30408 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN50 PN40 FRJ 3.材质:ASTM A105 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;FRJ;20;DN80;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLINDDN100PN16FRJA350LF2ASMEB16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 FRJ 盲板法兰 DN150, ASME B16.5, ASTM A182 F304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "8字盲板, 06Cr19Ni10, FRJ, CL300, ASME B16.48, DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | 1\" | CL150 | FRJ | A694 F65 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FRJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLG1.5\"PN16RJ06Cr19Ni10ASMEB16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ 8字盲板 2\", ASME B16.48, A694 F65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "盲板法兰, ASTM A182 F316L, RJ, CL300, ASME B16.5, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | 6\" | CL150 | RJ | S30408 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN15 PN40 RJ 3.材质:ASTM A105 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;RJ;20;DN20;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLGDN25PN16RJA350LF2ASMEB16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ 8字盲板 DN40, ASME B16.48, ASTM A182 F304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "盲板法兰, 06Cr19Ni10, RJ, CL300, ASME B16.5, DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | DN80 | CL150 | RJ | A694 F65 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN100 PN40 RJ 3.材质:ASTM A182 F316L 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;RJ;S30408;DN150;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLGDN200PN16RJASTMA105ASMEB16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RJ 8字盲板 1\", ASME B16.48, 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "盲板法兰, A350 LF2, RJ, CL300, ASME B16.5, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | 2\" | CL150 | RJ | ASTM A182 F304 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:4\" PN40 RJ 3.材质:06Cr19Ni10 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;RJ;A694 F65;6\";PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLG4\"PN16RTJA350LF2ASMEB16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RTJ 8字盲板 6\", ASME B16.48, ASTM A182 F304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "盲板法兰, 06Cr19Ni10, RTJ, CL300, ASME B16.5, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | DN20 | CL150 | RTJ | A694 F65 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN25 PN40 RTJ 3.材质:ASTM A182 F316L 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;RTJ;S30408;DN40;PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLGDN50PN16RTJASTMA105ASMEB16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RTJ 8字盲板 DN80, ASME B16.48, 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "盲板法兰, A350 LF2, RTJ, CL300, ASME B16.5, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SPECTACLE BLIND | DN150 | CL150 | RTJ | ASTM A182 F304 | ASME B16.48",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:盲板法兰 2.规格:DN200 PN40 RTJ 3.材质:06Cr19Ni10 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.48;SPECTACLE BLIND;RTJ;A694 F65;1\";PN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, A350 LF2, PN40, TYPE B1 EN 1092-1, STD, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | WN FLG | PN25 | EN 1092-1 TYPE B1 | ASTM A182 F304 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLANGE 2.规格:4\" PN16 3.密封面:TYPE B1 4.标准:EN 1092-1 5.材质:06Cr19Ni10",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1;TYPE B1;WELD NECK FLANGE;A694 F65;CL600;6\";S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLGDN15CL300TYPEB1EN1092-1ASTMA182F316LSCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "TYPE B1 CL150 SLIP-ON FLANGE DN20, EN 1092-1, S30408, XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, ASTM A105, PN40, TYPE B1 EN 1092-1, SCH10S, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | WN FLG | PN25 | EN 1092-1 TYPE B1 | 20 | STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLANGE 2.规格:DN50 PN16 3.密封面:TYPE B1 4.标准:EN 1092-1 5.材质:A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1;TYPE B1;WELD NECK FLANGE;ASTM A182 F304;CL600;DN80;SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLGDN100CL300TYPEB1EN1092-106Cr19Ni10S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "TYPE B1 CL150 SLIP-ON FLANGE DN150, EN 1092-1, A694 F65, SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, ASTM A182 F316L, PN40, TYPE B1 EN 1092-1, XS, DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1\" | WN FLG | PN25 | EN 1092-1 TYPE B1 | S30408 | SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLANGE 2.规格:1.5\" PN16 3.密封面:TYPE B1 4.标准:EN 1092-1 5.材质:ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1;TYPE B1;WELD NECK FLANGE;20;CL600;2\";8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG4\"CL300TYPEB1EN1092-1A350LF2SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "TYPE B1 CL150 SLIP-ON FLANGE 6\", EN 1092-1, ASTM A182 F304, S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, 06Cr19Ni10, PN40, TYPE B1 EN 1092-1, SCH40, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | WN FLG | PN25 | EN 1092-1 TYPE B1 | A694 F65 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLANGE 2.规格:DN25 PN16 3.密封面:TYPE B1 4.标准:EN 1092-1 5.材质:ASTM A182 F316L",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1;TYPE B1;WELD NECK FLANGE;S30408;CL600;DN40;STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLGDN50CL300TYPEB1EN1092-1ASTMA1058.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "TYPE B1 CL150 SLIP-ON FLANGE DN80, EN 1092-1, 20, SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, A350 LF2, PN40, TYPE B1 EN 1092-1, S-40S, DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | WN FLG | PN25 | EN 1092-1 TYPE B1 | ASTM A182 F304 | SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLANGE 2.规格:DN200 PN16 3.密封面:TYPE B1 4.标准:EN 1092-1 5.材质:06Cr19Ni10",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1;TYPE B1;WELD NECK FLANGE;A694 F65;CL600;1\";SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG1.5\"CL300TYPEB1EN1092-1ASTMA182F316LSTD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "TYPE B1 CL150 SLIP-ON FLANGE 2\", EN 1092-1, S30408, 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, ASTM A105, PN40, TYPE B1 EN 1092-1, SCH80, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | WN FLG | PN25 | EN 1092-1 TYPE B1 | 20 | S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SLIP-ON FLANGE 2.规格:DN15 PN16 3.密封面:TYPE B1 4.标准:EN 1092-1 5.材质:A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1;TYPE B1;WELD NECK FLANGE;ASTM A182 F304;CL600;DN20;XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLGDN25CL300TYPEB1EN1092-106Cr19Ni10SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "TYPE B1 CL150 SLIP-ON FLANGE DN40, EN 1092-1, A694 F65, STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG, ASTM A182 F316L, PN40, RF, SCH40, HG/T20592, DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN20 | WELD NECK FLANGE | PN25 | RF | S30408 | ASME B16.5 | XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SO FLG 2.规格型号:RF DN25 PN16 3.材质:ASTM A105 4.标准:GB/T9124.1 5.壁厚:SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; WN FLG; 20; DN40; CL600; RF; STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WELD NECK FLANGE DN50 8.0mm CL300 A350 LF2 HG/T20615 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLG/SH/T3406/CL150/RF/ASTM A182 F304/SCH80/DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 WN FLG HG/T20592 RF-PN40 DN100 S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGEDN150PN25RFA694F65ASMEB16.5SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;DN200;SO FLG;RF;PN16;XS;ASTM A182 F316L;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 RF WN FLG 1\", EN 1092-1, S30408, bore SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, ASTM A105, CL300, RF, STD, HG/T20615, 1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | SO FLG | CL150 | RF | 20 | SH/T3406 | 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG, 06Cr19Ni10, PN40, LF, SCH10S, HG/T20592, DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | WELD NECK FLANGE | PN25 | LF | A694 F65 | ASME B16.5 | STD",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:SO FLG 2.规格型号:LF DN50 PN16 3.材质:ASTM A182 F316L 4.标准:GB/T9124.1 5.壁厚:8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "EN 1092-1; WN FLG; S30408; DN80; CL600; LF; SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 WELD NECK FLANGE DN100 S-40S CL300 ASTM A105 HG/T20615 LF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLG/SH/T3406/CL150/LF/20/SCH40/DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "A350 LF2 WN FLG HG/T20592 LF-PN40 DN200 XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE1\"PN25LFASTMA182F304ASMEB16.5SCH10S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰件;1.5\";SO FLG;LF;PN16;STD;06Cr19Ni10;GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL600 LF WN FLG 2\", EN 1092-1, A694 F65, bore 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE, ASTM A182 F316L, CL300, LF, SCH80, HG/T20615, 4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | SO FLG | CL150 | LF | S30408 | SH/T3406 | S-40S",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称:WN FLG 2.规格型号:LF DN15 PN40 3.材质:ASTM A105 4.标准:HG/T20592 5.壁厚:SCH40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASME B16.5; WELD NECK FLANGE; 20; DN20; PN25; LF; XS",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰 SO FLG DN25 SCH10S PN16 A350 LF2 GB/T9124.1 LF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WN FLG/EN 1092-1/CL600/LF/ASTM A182 F304/STD/DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10 WELD NECK FLANGE HG/T20615 LF-CL300 DN50 8.0mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLGDN80CL150LFA694F65SH/T3406SCH80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "LF"
+        ]
+      }
+    },
+    "来源": "数据增强"
   }
 ]

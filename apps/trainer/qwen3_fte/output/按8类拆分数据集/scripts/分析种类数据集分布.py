@@ -11,8 +11,8 @@ import pandas as pd
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-INPUT_FILE = BASE_DIR / "种类/法兰_统一标注清洗.json"
-OUTPUT_FILE = BASE_DIR / "法兰分布统计.xlsx"
+INPUT_FILE = BASE_DIR / "种类/管件_清洗后.json"
+OUTPUT_FILE = BASE_DIR / "种类分布统计.xlsx"
 
 
 def text(value: object) -> str:
