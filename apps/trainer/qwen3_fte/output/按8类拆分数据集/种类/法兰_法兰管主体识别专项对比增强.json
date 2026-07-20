@@ -1,0 +1,7128 @@
+[
+  {
+    "input": "6\" | ASTM A350 LF2 | PN16 | THREADED FLANGE FNPT | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:6\" PN16 RF 3.名称:WELD NECK FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,DN40,PN16,RF,NAME:盲法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:6\" PN10 RF 3.名称:BLIND FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰 Flange16BAR ClassA PL50-16 RF GB/T9124.1(Ⅰ),20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:DN80 CL300 FF 3.名称:SW FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN40,_NB/T47010-S31603;6x1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Flange Lapped Type 33 DIN EN 1092-1 - DN150 - PN 16 - 168.3 AISI 316L",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "衬里法兰;PN16;RF;20/衬胶;HG/T 20592;DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN300",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN125",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=5mm DN450",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN80 PN16 RF 3.名称:SOCKET WELD FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pad Flange, NB/T47010-S31603, RF, CL 150, AS MC09-01 , DN250 x DN100;10x4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "盲法兰;CL150;RF;ASTM A105;ASME B16.5;DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN25 | 20 | CL150 | WN FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL65(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰PL,RF,PN16 DN80,GB/T9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰PL,RF,PN16 DN50,GB/T9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:4\" PN16 RF 3.名称:WN FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLANGE;PN16;RF;ASTM A105;HG/T 20592;4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20,HG/T 20592,DN40,PN16,RF,NAME:FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "盲法兰;PN16;RF;ASTM A350 LF2;HG/T 20592;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105,HG/T 20592,DN80,PN16,RF,NAME:LAP JOINT FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:DN50 CL150 RF 3.名称:SLIP-ON FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN200,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,2\",PN16,RF,NAME:SW FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "THREADED FLANGE FNPT;PN16;RF;ASTM A105;HG/T 20592;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,ASME B16.5,DN80,CL300,FF,NAME:WELD NECK FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN20,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN65,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN400,_NB/T47010-S30408;16\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN25 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL32(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:DN40 PN10 RF 3.名称:THREADED FLANGE FNPT 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN150 PN16 RF 3.名称:SOCKET WELD FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | 20 | PN16 | LAP JOINT FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "NB/T 47010(II);SH/T 3406 PJ/SE Lap Joint Flang CL150设备用不出材料 S30408 DN450",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=3.4mm DN150 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN250 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN150x200-FLRF-SO 8 X 6\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:20 2.规格:6\" PN10 RF 3.名称:SO FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN300 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "4\" | ASTM A350 LF2 | PN16 | SLIP-ON FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | 20/衬胶 | CL300 | 衬里法兰 | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN20 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN50 PN16 RF 3.名称:FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN250,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN50 | 06Cr19Ni10 | PN16 | LAP JOINT FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 LJ-RF PN16 HG/T20592-09B S30408 NB/T47010 DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰DN40,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN40 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN16, HG/T20592(B), DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A105 + PTFE LINED 2.规格:DN150 PN16 RF 3.名称:衬里法兰 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | ASTM A350 LF2 | CL300 | LAP JOINT FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN400 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "WELD NECK FLANGE;CL150;RF;ASTM A350 LF2;ASME B16.5;DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "盲法兰;PN16;RF;ASTM A182 F304L;HG/T 20592;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN200 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN80 | ASTM A350 LF2 | CL300 | 盲法兰 | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=4.5mm DN300",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "NB/T 47010(II);SH/T 3406 PJ/SE Lap Joint Flang CL150设备用不出材料 S31603 DN450",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN400",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "6\" | ASTM A182 F304L | CL300 | WN FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=3.4mm DN125 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SOCKET WELD FLANGE;PN16;RF;06Cr19Ni10;HG/T 20592;DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN20,PL-RF,PN6, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W40(A)-CLASS900RF,16Mn(Ⅲ) DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN65 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A105,HG/T 20592,2\",PN10,RF,NAME:WN FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLANGE;PN10;RF;06Cr19Ni10;HG/T 20592;DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,ASME B16.5,2\",CL300,FF,NAME:盲法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20,HG/T 20592,DN200,PN10,RF,NAME:WELD NECK FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN20 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN15x40-FLRF-SO 1.5 X 0.5\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGE;CL300;FF;ASTM A105;ASME B16.5;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:DN40 PN16 RF 3.名称:SO FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN50 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰, NB/T47010-S30408, RF, PN2.5, HG/T 20592(A) , DN100 ,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN100 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN100 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:DN25 CL150 RF 3.名称:WELD NECK FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰, NB/T47010-S30408, RF, PN2.5, HG/T 20592(A) , DN100 ,_NB/T47010-S30408;4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "WELD NECK FLANGE;CL300;FF;20;ASME B16.5;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN500",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 LJ-RF PN16 HG/T20592-09B S30408 NB/T47010 DN300",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL10(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN350",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN80 | 20 | PN16 | THREADED FLANGE FNPT | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰, NB/T47010-S30408, RF, PN2.5, HG/T 20592(A) , DN200 ,_NB/T47010-S30408;8\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN40 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN100 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN400",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "ASTM A105,ASME B16.5,2\",CL300,FF,NAME:FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,ASME B16.5,6\",CL150,RF,NAME:SLIP-ON FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S30408,RF,CL150,ASMC09-01,DN150xDN40,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:20 2.规格:6\" CL150 RF 3.名称:LAP JOINT FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:2\" PN16 RF 3.名称:SLIP-ON FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,6\",PN10,RF,NAME:SLIP-ON FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 LJ-RF PN16 HG/T20592-09B S30408 NB/T47010 DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=4.78mm DN400 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL100(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGE;PN16;RF;ASTM A182 F304L;HG/T 20592;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN250,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN150 | ASTM A350 LF2 | PN16 | WN FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN500,_NB/T47010-S30408;20\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN25 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/S30408 DN80 20/S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN400,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:2\" PN16 RF 3.名称:盲法兰 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:DN25 PN10 RF 3.名称:WN FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN20 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN25,PL-RF,PN16,GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN150 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A350 LF2,ASME B16.5,2\",CL300,FF,NAME:SLIP-ON FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN450",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN25 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "6\" | 06Cr19Ni10 | CL150 | WELD NECK FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN50,_NB/T47010-S31603;6x2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20,HG/T 20592,DN80,PN10,RF,NAME:SLIP-ON FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLANGE;CL300;FF;ASTM A350 LF2;ASME B16.5;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊法兰\\PN16 DN32 RF HGT20592Ⅰ 20#",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "2\" | ASTM A182 F304L | PN10 | BLIND FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL32(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=3.6mm DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20,HG/T 20592,DN150,PN16,RF,NAME:BLIND FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=4.78mm DN350 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN450 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰,S30408 NB/T47010,RF,PN40,HG/T 20592(B),DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰，CL150,DN15(RF)，20，SH/T 3406(PL)",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN40 | 20/PTFE LINED | PN16 | 衬里法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN50,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "WN FLANGE;CL150;RF;20;ASME B16.5;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN350",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN500 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰DN150,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:2\" CL300 FF 3.名称:BLIND FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN200 | 20 | PN10 | FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN150,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A105,ASME B16.5,DN80,CL300,FF,NAME:SOCKET WELD FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN150 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=3.05mm DN100 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:6\" PN10 RF 3.名称:LAP JOINT FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,DN40,PN10,RF,NAME:WELD NECK FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | ASTM A105 | PN16 | SO FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=3.76mm DN200 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN200 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN80 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN65 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN40 | 06Cr19Ni10 | PN10 | FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,DN25,PN10,RF,NAME:WELD NECK FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "突面对焊钢制管法兰:WN 50-150 RF 4mm,16Mn,NB/T47008 HG/T20615-2009 WN 50-150 RF 4mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN125 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "4\" | ASTM A105 | PN16 | FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:20/PTFE LINED 2.规格:6\" PN16 RF 3.名称:衬里法兰 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN600 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SOCKET WELD FLANGE;PN16;RF;20;HG/T 20592;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SO FLANGE;CL300;FF;ASTM A350 LF2;ASME B16.5;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE;PN16;RF;20;HG/T 20592;DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL50(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:6\" PN16 RF 3.名称:SOCKET WELD FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN125 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10,ASME B16.5,6\",CL150,RF,NAME:FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰PL,RF,PN16 DN300,GB/T9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN300 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN25 | ASTM A182 F304L | CL150 | THREADED FLANGE FNPT | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE LAPPED TYPE 33 DIN EN 1092-1 88.9 AISI 316L;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:DN80 PN10 RF 3.名称:BLIND FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,DN50,PN16,RF,NAME:THREADED FLANGE FNPT",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,HG/T 20592,DN80,PN16,RF,NAME:BLIND FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W65(A)-CLASS900RF,16Mn(Ⅲ) DN65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰 DN1000 PN2.5 20 GB/T711 RF",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,DN80,PN16,RF,NAME:SO FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN15 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN300",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,DN80,PN10,RF,NAME:盲法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | ASTM A350 LF2 | PN16 | SOCKET WELD FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105,HG/T 20592,DN40,PN16,RF,NAME:SLIP-ON FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN650,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:20 2.规格:4\" PN16 RF 3.名称:SW FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,2\",PN10,RF,NAME:SW FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN40,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "WN FLANGE;CL300;FF;06Cr19Ni10;ASME B16.5;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLANGE;PN16;RF;ASTM A182 F304L;HG/T 20592;4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN50 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊法兰\\PN16 DN32 RF 20592Ⅰ 20#",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A182 F304L,HG/T 20592,2\",PN16,RF,NAME:THREADED FLANGE FNPT",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN16, HG/T20592(B), DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰DN125,PL-RF,PN10, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "6\" | 20/衬胶 | PN10 | 衬里法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN200x250-FLRF-SO 10 X 8\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN200 PN10 RF 3.名称:THREADED FLANGE FNPT 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN25,_NB/T47010-S31603;6x1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰 Flange16BAR ClassA PL80-16 RF GB/T9124.1(Ⅰ),20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN150 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN40x80-FLRF-SO 3 x 1.5\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN25 CL150 RF 3.名称:SOCKET WELD FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,DN200,PN10,RF,NAME:SOCKET WELD FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶,ASME B16.5,DN80,CL300,FF,NAME:衬里法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰, NB/T47010-S30408, RF, PN2.5, HG/T 20592(A) , DN40 ,_NB/T47010-S30408;1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/S30408 DN100 20/S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "6\" | 06Cr19Ni10 | PN16 | WN FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL25(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN100x150-FLRF-SO 6 x 4\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN150x200-FLRF-SO 8 X 6\" 06Cr19Ni10 PN20 SH/T3426 NB/T47010",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN125,PL-RF,PN6, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGE;PN10;RF;20;HG/T 20592;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,DN50,PN16,RF,NAME:WN FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "THREADED FLANGE FNPT;PN10;RF;06Cr19Ni10;HG/T 20592;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A350 LF2,ASME B16.5,6\",CL300,FF,NAME:BLIND FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN40 PN10 RF 3.名称:WN FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN40 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20,HG/T 20592,2\",PN10,RF,NAME:THREADED FLANGE FNPT",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN50 | ASTM A182 F304L | PN16 | SO FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN350 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN25 PN10 RF 3.名称:SW FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-ON FLANGE;PN16;RF;ASTM A105;HG/T 20592;DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,ASME B16.5,DN50,CL150,RF,NAME:WN FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰, NB/T47010-S30408, RF, PN2.5, HG/T 20592(A) , DN200 ,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=2.77mm DN50 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN200x250-FLRF-SO 10 X 8\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN250 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=3.05mm DN80 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "THREADED FLANGE FNPT;CL150;RF;ASTM A182 F304L;ASME B16.5;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE;CL150;RF;06Cr19Ni10;ASME B16.5;DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S30408,RF,CL150,ASMC09-01,DN150xDN40,_NB/T47010-S30408;6x1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:2\" PN10 RF 3.名称:盲法兰 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:6\" CL150 RF 3.名称:BLIND FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "带颈对焊环松套法兰 HG/T 20615-2009 DN100 CL150 增强聚丙烯",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,DN150,PN16,RF,NAME:SO FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN25 | 06Cr19Ni10 | PN10 | SLIP-ON FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "4\" | ASTM A182 F304L | PN16 | 盲法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL25(B)-16 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN150x200-FLRF-SO 8 X 6\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰DN250,PL-RF,PN16,GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "WELD NECK FLANGE;PN10;RF;ASTM A182 F304L;HG/T 20592;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL15(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A105,HG/T 20592,6\",PN16,RF,NAME:BLIND FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "WELD NECK FLANGE;PN16;RF;ASTM A105;HG/T 20592;DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:4\" PN16 RF 3.名称:THREADED FLANGE FNPT 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "突面对焊钢制管法兰:WN 80-150 RF 5.5mm,16Mn,NB/T47008 HG/T20615-2009 WN 80-150 RF 5.5mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰,GB/T12228-A105(C≤0.3%),RF,PN2.5,HG/T20592(A),DN600,_GB/T_12228-A105(C≤0.3%);24\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A105,ASME B16.5,DN25,CL150,RF,NAME:SO FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | ASTM A105 | PN10 | SOCKET WELD FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SO FLANGE;PN10;RF;20;HG/T 20592;DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN100 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN50 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGE;PN16;RF;ASTM A105;HG/T 20592;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PAD FLANGE,A182 F304L,CL300,RF,MFR;3X1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A182 F304L,HG/T 20592,6\",PN16,RF,NAME:SO FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL50(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SLIP-ON FLANGE;PN16;RF;20;HG/T 20592;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "THREADED FLANGE FNPT;PN10;RF;20;HG/T 20592;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=5mm DN400",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN80 PN10 RF 3.名称:SO FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:2\" CL300 FF 3.名称:LAP JOINT FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN125,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "突面对焊钢制管法兰:WN 80-300 RF 5.5mm ,16Mn,HG/T20615-2009 WN 80-300 RF 5.5mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN20x40-FLRF-SO 1.5 X 0.75\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN80,_NB/T47010-S31603;6x3\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN32,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN20x40-FLRF-SO 1.5 X 0.75\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN50,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN15x40-FLRF-SO 1.5 X 0.5\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN25x50-FLRF-SO 2 x 1\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGE;PN16;RF;06Cr19Ni10;HG/T 20592;4\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN450,_NB/T47010-S30408;18\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:DN25 PN10 RF 3.名称:THREADED FLANGE FNPT 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLANGE;CL300;FF;ASTM A182 F304L;ASME B16.5;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20,HG/T 20592,DN40,PN10,RF,NAME:SOCKET WELD FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,HG/T 20592,DN80,PN10,RF,NAME:FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20,HG/T 20592,6\",PN10,RF,NAME:盲法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN200 PN10 RF 3.名称:WN FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN450,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A182 F304L,ASME B16.5,6\",CL300,FF,NAME:LAP JOINT FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLANGE;CL300;FF;20;ASME B16.5;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN40,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "BLIND FLANGE;PN10;RF;ASTM A350 LF2;HG/T 20592;DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN600,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN150 PN16 RF 3.名称:WELD NECK FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN300",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN25,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN80 | ASTM A182 F304L | PN10 | WELD NECK FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN25,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN50,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "THREADED FLANGE FNPT;CL300;FF;ASTM A350 LF2;ASME B16.5;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE LAPPED TYPE 33 DIN EN 1092-1 168.3 AISI 316L;DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰PN10 200 RF HG/T20592Ⅰ 20#",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=4mm DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20,HG/T 20592,2\",PN16,RF,NAME:WN FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | ASTM A350 LF2 | PN10 | WELD NECK FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105,HG/T 20592,4\",PN16,RF,NAME:WELD NECK FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN50 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN50 | ASTM A182 F304L | CL150 | LAP JOINT FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PAD FLANGE,A182 F304L,CL300,RF,MFR;6X1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN200,PL-RF,PN16,GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "6\" | 20 | PN16 | SW FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,ASME B16.5,DN40,CL300,FF,NAME:SW FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE LAPPED TYPE 33 DIN EN 1092-1 219.1 AISI 316L;DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN15 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:20/衬胶 2.规格:DN25 CL150 RF 3.名称:衬里法兰 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN20,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰，CL150,DN25(RF)，20，SH/T 3406(PL)",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN65 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:20/衬胶 2.规格:6\" CL300 FF 3.名称:衬里法兰 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE LAPPED TYPE 33 DIN EN 1092-1 273 AISI 316L;DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "WELD NECK FLANGE;PN16;RF;06Cr19Ni10;HG/T 20592;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGE;PN10;RF;ASTM A182 F304L;HG/T 20592;DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | 06Cr19Ni10 | PN16 | BLIND FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-ON FLANGE;CL150;RF;ASTM A182 F304L;ASME B16.5;DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105,ASME B16.5,6\",CL150,RF,NAME:盲法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN100 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN250 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN200 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 LJ-RF PN16 HG/T20592-09B S30408 NB/T47O1O DN65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:6\" CL300 FF 3.名称:WELD NECK FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:DN50 PN16 RF 3.名称:盲法兰 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN200 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN200 | 06Cr19Ni10 | PN10 | 盲法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W100(A)-CLASS900RF,16Mn(Ⅲ) DN100",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "WN FLANGE;PN10;RF;ASTM A182 F304L;HG/T 20592;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "NB/T 47010(II);SH/T 3406 PJ/SE Lap Joint Flang CL150设备用不出材料 S30408 DN400",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰DN150,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20,HG/T 20592,DN50,PN16,RF,NAME:SW FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN80 CL300 FF 3.名称:WN FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A182 F304L,HG/T 20592,DN25,PN10,RF,NAME:SOCKET WELD FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN900x1000-FLRF-SO 40 X 36\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN350",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN50 | 20 | CL150 | SO FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN80 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN80 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN16, HG/T20592(B), DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "ASTM A105,ASME B16.5,DN50,CL150,RF,NAME:SW FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | 06Cr19Ni10 | CL300 | THREADED FLANGE FNPT | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN25x50-FLRF-SO 2 x 1\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "2\" | ASTM A105 | PN10 | LAP JOINT FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN125 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "2\" | ASTM A105 | CL300 | WELD NECK FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A105 + PTFE LINED,HG/T 20592,DN200,PN10,RF,NAME:衬里法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "2\" | ASTM A350 LF2 | PN10 | SO FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN200 | ASTM A105 | PN10 | SLIP-ON FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A350 LF2,ASME B16.5,DN40,CL300,FF,NAME:WN FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN800 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:DN200 PN10 RF 3.名称:SW FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN400,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "盲法兰;CL300;FF;20;ASME B16.5;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10,ASME B16.5,DN50,CL150,RF,NAME:THREADED FLANGE FNPT",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGE LAPPED TYPE 33 DIN EN 1092-1 323.9 AISI 316L;DN300",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "盲法兰;PN16;RF;06Cr19Ni10;HG/T 20592;DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN25 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:DN80 PN16 RF 3.名称:WELD NECK FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN80 PN10 RF 3.名称:LAP JOINT FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLANGE;PN10;RF;ASTM A105;HG/T 20592;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:6\" CL300 FF 3.名称:SOCKET WELD FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SW FLANGE;PN10;RF;06Cr19Ni10;HG/T 20592;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:20 2.规格:2\" PN10 RF 3.名称:SLIP-ON FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN150x200-FLRF-SO 6 x 0.75\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=5mm DN350",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:2\" PN10 RF 3.名称:FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN50 PN16 RF 3.名称:SLIP-ON FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN100,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN50 | ASTM A105 | PN16 | BLIND FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=2.77mm DN40 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN150 | ASTM A182 F304L | PN16 | SW FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰,S30408 NB/T47010,RF,PN40,HG/T 20592(B),DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20,ASME B16.5,DN25,CL150,RF,NAME:LAP JOINT FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN80x150-FLRF-SO 6 X 3\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN25 | ASTM A350 LF2 | CL150 | SW FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN25 | ASTM A350 LF2 | PN10 | FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN65",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W80(A)-CLASS900RF,16Mn(Ⅲ) DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN50 | ASTM A350 LF2 | CL150 | BLIND FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN40 PN16 RF 3.名称:LAP JOINT FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN25,PL-RF,PN16, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,6\",PN10,RF,NAME:FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN50 CL150 RF 3.名称:盲法兰 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A350 LF2,HG/T 20592,DN150,PN16,RF,NAME:LAP JOINT FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN50x80-FLRF-SO 3 X 2\" 06Cr19Ni10 PN20 SH/T3426 NB/T47010",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=7.92mm DN700 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL40(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "6\" | ASTM A182 F304L | PN10 | SOCKET WELD FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pad Flange, NB/T47010-S31603, RF, CL 150, AS MC09-01 , DN250 x DN40;10x1.5\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "BLIND FLANGE;PN10;RF;06Cr19Ni10;HG/T 20592;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "NB/T 47010(II);SH/T 3406 PJ/SE Lap Joint Flang CL150设备用不出材料 S31603 DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL80(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN80 | ASTM A182 F304L | CL300 | FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN25,_NB/T47010-S31603",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A105 + PTFE LINED,HG/T 20592,4\",PN16,RF,NAME:衬里法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN100,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN100,PL-RF,PN6, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "板式平焊法兰DN250,PL-RF,PN6, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A182 F304L 2.规格:2\" CL300 FF 3.名称:SO FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=2.77mm DN25 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN40 | ASTM A182 F304L | PN10 | SLIP-ON FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN200 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:DN40 CL300 FF 3.名称:盲法兰 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL65(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "6\" | ASTM A105 + PTFE LINED | CL150 | 衬里法兰 | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊环板式松套法兰PL/C,RF,PL,PN16 DN40,GB/T9124.1-2019,焊环高硅不锈钢/法兰304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "06Cr19Ni10,ASME B16.5,DN25,CL150,RF,NAME:BLIND FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN150 | ASTM A105 | PN16 | THREADED FLANGE FNPT | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN80 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN400",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN300 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN300 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,4\",PN16,RF,NAME:SOCKET WELD FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN50x80-FLRF-SO 3 X 2\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "WN FLANGE;PN16;RF;ASTM A350 LF2;HG/T 20592;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLANGE;PN10;RF;ASTM A105;HG/T 20592;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SOCKET WELD FLANGE;CL150;RF;ASTM A182 F304L;ASME B16.5;DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN50,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL40(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SW FLANGE;PN16;RF;ASTM A182 F304L;HG/T 20592;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "BLIND FLANGE;PN10;RF;20;HG/T 20592;DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20,ASME B16.5,6\",CL300,FF,NAME:SO FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN50 CL150 RF 3.名称:FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN40 PN16 RF 3.名称:BLIND FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL20(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:DN40 CL300 FF 3.名称:SLIP-ON FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN600",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20/PTFE LINED,HG/T 20592,DN25,PN10,RF,NAME:衬里法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W50(A)-CLASS900RF,16Mn(Ⅲ) DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "6\" | ASTM A105 | CL300 | SW FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "6\" | 20 | CL150 | SOCKET WELD FLANGE | RF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN100x150-FLRF-SO 6 X 4\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SLIP-ON FLANGE;PN16;RF;ASTM A350 LF2;HG/T 20592;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:ASTM A350 LF2 2.规格:DN40 PN10 RF 3.名称:SW FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN300 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN40 CL300 FF 3.名称:FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | 20/PTFE LINED | PN10 | 衬里法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN80 | 20 | CL300 | SLIP-ON FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL80(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN16, HG/T20592(B), DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SO FLANGE;PN10;RF;ASTM A105;HG/T 20592;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰PL,RF,PN16 DN40,GB/T9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A105 2.规格:6\" CL150 RF 3.名称:SO FLANGE 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SLIP-ON FLANGE;CL300;FF;06Cr19Ni10;ASME B16.5;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN700 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "衬里法兰;CL150;RF;ASTM A105 + PTFE LINED;ASME B16.5;DN50",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN500,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W100(A)-CLASS900RF,16Mn(Ⅲ) DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "FLANGE;CL300;FF;ASTM A350 LF2;ASME B16.5;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN80 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN1200,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "2\" | 06Cr19Ni10 | CL300 | SOCKET WELD FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN50 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN50,_NB/T47010-S31603",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN40 | ASTM A105 | PN10 | 盲法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PAD FLANGE,A182 F304L,CL300,RF,MFR;4X2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN80 | ASTM A105 | PN16 | WN FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=4mm DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN500 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN200x250-FLRF-SO 10 X 8\" 06Cr19Ni10 PN20 SH/T3426 NB/T47010",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "衬里法兰;PN16;RF;20/PTFE LINED;HG/T 20592;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰DN125,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN40 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN80x150-FLRF-SO 3 x 0.5\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.材质:ASTM A105 + PTFE LINED 2.规格:DN80 PN16 RF 3.名称:衬里法兰 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "松套法兰 HG/T 20615-2009 DN150 CL150 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN500",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "NB/T 47010(II);SH/T 3406 PJ/SE Lap Joint Flang CL150设备用不出材料 S30408 DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=4.19mm DN250 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "DN40 | 06Cr19Ni10 | CL300 | SO FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN250 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SW FLANGE;CL150;RF;ASTM A350 LF2;ASME B16.5;6\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰, NB/T47010-S30408, RF, PN2.5, HG/T 20592(A) , DN40 ,_NB/T47010-S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "板式平焊法兰DN65,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN125",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "突面对焊钢制管法兰:WN 20-150 RF 4mm,16Mn,HG/T20615-2009 WN 20-150 RF 4mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN40 | 20 | PN16 | WELD NECK FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL25(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=4.78mm DN450 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "06Cr19Ni10,HG/T 20592,6\",PN16,RF,NAME:LAP JOINT FLANGE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED,HG/T 20592,DN40,PN10,RF,NAME:衬里法兰",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN25 | 20 | PN10 | 盲法兰 | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:20 2.规格:DN80 CL300 FF 3.名称:THREADED FLANGE FNPT 4.标准:ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里法兰;PN10;RF;20/PTFE LINED;HG/T 20592;2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN450",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN80,_NB/T47010-S31603",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "WN FLANGE;PN10;RF;ASTM A105;HG/T 20592;DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "DN40 | 20 | CL300 | BLIND FLANGE | FF | ASME B16.5",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "板式平焊法兰，CL150,DN20(RF)，20，SH/T 3406(PL)",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN80x150-FLRF-SO 6 X 3\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "DN80 | 06Cr19Ni10 | PN16 | SW FLANGE | RF | HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGE;PN10;RF;ASTM A350 LF2;HG/T 20592;DN200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.材质:06Cr19Ni10 2.规格:2\" PN16 RF 3.名称:FLANGE 4.标准:HG/T 20592",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "衬里法兰;CL300;FF;20/衬胶;ASME B16.5;DN40",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "衬里法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN40,_NB/T47010-S31603",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W25(A)-CLASS900RF,16Mn(Ⅲ) DN25",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN400 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=5.6mm DN500",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "ASTM A105,ASME B16.5,DN40,CL300,FF,NAME:THREADED FLANGE FNPT",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [
+          "FNPT"
+        ],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  }
+]

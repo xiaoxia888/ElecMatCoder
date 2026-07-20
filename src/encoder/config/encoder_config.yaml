@@ -256,6 +256,8 @@ type_included_keywords:
 # 规则提取标签（通过正则提取，不依赖NER标注）
 # 定义需要匹配的关键词，编码映射在 pipe_code_mapping.yaml 中
 # 提取规则：关键词两侧是空格、分隔符(;,-)或字符串边界，忽略大小写
+# TYPE 子字段命中后还会按材料分类过滤：
+# 直管仅补 MANU；法兰仅补 CONN/SEAL；管件仅补 GEOMETRY/MANU/CONN。
 # ============================================================
 regex_extraction:
   # RADIUS 弯曲半径 - 影响弯头类型编码
@@ -265,7 +267,9 @@ regex_extraction:
       - SR          # Short Radius 短半径
       - LR          # Long Radius 长半径
     patterns:
-      - 'R?\s*=?\s*\d+\.?\d*\s*[DdRr]'   # 匹配 1D, 1.5D, R=1D, 3R 等
+      # 数字半径左侧不能粘连数字，右侧不能粘连字母。
+      # 例如允许 5R、15R、R=1.5D；拒绝从 SCH40 R(C) 中截取 0 R，也拒绝 5RA。
+      - '(?<!\d)R?\s*=?\s*\d+(?:\.\d+)?\s*[DdRr](?![A-Za-z])'
   
   # SEAL 密封面形式 - 需要匹配的关键词列表
   SEAL:
@@ -275,6 +279,7 @@ regex_extraction:
       # - RF        # Raised Face 突面（暂不提取）
       - RTJ         # Ring Type Joint 环连接面
       - RJ
+      - SO
       - MFM
       - LM
       - MF
@@ -305,7 +310,6 @@ regex_extraction:
       - TBE
       - GROOVED
     keywords_loose:
-      - SO
       - SW
       - FTE         # 通用内螺纹
       - MTE         # 通用外螺纹

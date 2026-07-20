@@ -48,6 +48,16 @@ logger = logging.getLogger(__name__)
 TYPE_RULE_CONFIG = Path(__file__).parent / "config" / "type_rule_mapping.yaml"
 DEFAULT_TYPE_KEY_ORDER = ['FLANGE_STYLE', 'BODY', 'ANGLE', 'RADIUS', 'SEAL', 'CONN', 'MANU']
 
+# TYPE 子字段的规则补提必须受材料分类约束，避免同一个缩写在不同种类中串字段。
+TYPE_REGEX_FALLBACK_LABELS = frozenset({
+    'ANGLE', 'RADIUS', 'FLANGE_STYLE', 'ENDS', 'MANU', 'CONN', 'SEAL',
+})
+REGEX_FALLBACK_LABELS_BY_CATEGORY = {
+    '直管': frozenset({'MANU'}),
+    '法兰': frozenset({'CONN', 'SEAL'}),
+    '管件': frozenset({'ANGLE', 'RADIUS', 'MANU', 'CONN'}),
+}
+
 
 @dataclass
 class EncodedFieldDetail:
@@ -2551,6 +2561,7 @@ class PipeEncoderBase:
         entities: Dict[str, Any],
         original_text: str,
         regex_value_code_map: Dict[str, Any],
+        material_category: str = "",
     ):
         """基于原文做规则补提。STANDARD 修饰符绑定由标准处理器统一负责。"""
         if not original_text:
@@ -2558,6 +2569,14 @@ class PipeEncoderBase:
 
         exclude_ranges = self._build_exclude_ranges(entities, original_text)
         regex_all_results = self.regex_extractor.extract(original_text, exclude_ranges)
+        category = str(material_category or '').strip()
+        allowed_type_labels = REGEX_FALLBACK_LABELS_BY_CATEGORY.get(category, frozenset())
+        regex_all_results = [
+            extraction
+            for extraction in regex_all_results
+            if extraction.label not in TYPE_REGEX_FALLBACK_LABELS
+            or extraction.label in allowed_type_labels
+        ]
         other_extractions = self._split_regex_extractions(regex_all_results)
         self._apply_regex_fallbacks(entities, regex_value_code_map, other_extractions)
 
@@ -3069,7 +3088,12 @@ class PipeEncoderBase:
         regex_value_code_map = {}
         
         self._fix_size_thickness_split(entities)
-        self._augment_entities_from_text(entities, original_text, regex_value_code_map)
+        self._augment_entities_from_text(
+            entities,
+            original_text,
+            regex_value_code_map,
+            material_category=material_category,
+        )
         self._normalize_standard_body_grade_suffix(entities)
         entities['_STANDARD_MODIFIER_MAP'] = self._build_standard_modifier_map(entities, original_text)
         

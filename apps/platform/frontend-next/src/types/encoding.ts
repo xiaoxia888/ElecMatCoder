@@ -125,7 +125,7 @@ export interface BatchJobSummary {
   started_at?: number | null
   finished_at?: number | null
   duration_seconds?: number | null
-  items?: Array<{ index?: number; text?: string; project_name?: string }>
+  items?: Array<{ index?: number; text?: string; project_name?: string; preprocess?: boolean }>
   results?: Record<string, EncodingResult>
 }
 

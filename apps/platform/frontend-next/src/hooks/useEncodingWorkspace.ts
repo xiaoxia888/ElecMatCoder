@@ -339,16 +339,31 @@ export function useEncodingWorkspace() {
     setIsEncodingSingle(true)
     setError('')
     try {
-      const result = await api.encodeSingle({
-        text: currentItem.text,
-        preprocess: true,
-        project_name: currentItem.projectName || '',
-      })
+      let result: EncodingResult
+      if (activeTaskId && activeTaskId !== 'local') {
+        const response = await api.reencodeBatchJobItem(activeTaskId, currentItem.index)
+        result = response.result
+        setJobs((prev) => prev.map((job) => (job.job_id === response.job.job_id ? response.job : job)))
+      } else {
+        result = await api.encodeSingle({
+          text: currentItem.text,
+          preprocess: true,
+          project_name: currentItem.projectName || '',
+        })
+      }
       setResults((prev) => ({ ...prev, [currentItem.index]: result }))
       if (activeTaskId === 'local') {
         setLocalResults((prev) => ({ ...prev, [currentItem.index]: result }))
       }
-      setNotice(result.need_review ? '当前样本已编码，结果进入待审核。' : '当前样本编码完成。')
+      setNotice(
+        result.need_review
+          ? activeTaskId && activeTaskId !== 'local'
+            ? '当前样本已重新编码并保存，结果进入待审核。'
+            : '当前样本已编码，结果进入待审核。'
+          : activeTaskId && activeTaskId !== 'local'
+            ? '当前样本已重新编码并保存。'
+            : '当前样本编码完成。',
+      )
     } catch (err) {
       setError(err instanceof Error ? err.message : '单条编码失败')
     } finally {

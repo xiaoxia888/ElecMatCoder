@@ -1415,8 +1415,7 @@ class ThicknessProcessor:
         if not isinstance(items, list):
             return ""
 
-        parts: List[str] = []
-        pending_base = ""
+        normalized_items: List[Tuple[str, str, str]] = []
         for item in items:
             if not isinstance(item, dict):
                 continue
@@ -1429,28 +1428,46 @@ class ThicknessProcessor:
                 continue
 
             role = str(item.get("role", "") or "").strip().upper()
-            if role == "BASE":
-                if pending_base and pending_base not in parts:
-                    parts.append(pending_base)
-                pending_base = normalized
-                continue
-            if role == "LINING":
-                if pending_base:
-                    layered = f"{pending_base}/{normalized}"
-                    if layered not in parts:
-                        parts.append(layered)
-                    pending_base = ""
-                elif normalized not in parts:
-                    parts.append(normalized)
-                continue
+            normalized_items.append((subtype, normalized, role))
 
-            if pending_base and pending_base not in parts:
-                parts.append(pending_base)
-                pending_base = ""
+        role_values: Dict[str, Dict[str, List[str]]] = {}
+        first_role_index: Dict[str, int] = {}
+        for index, (subtype, normalized, role) in enumerate(normalized_items):
+            if role not in {"BASE", "LINING"}:
+                continue
+            first_role_index.setdefault(subtype, index)
+            grouped = role_values.setdefault(subtype, {"BASE": [], "LINING": []})
+            grouped[role].append(normalized)
+
+        folded_by_type: Dict[str, List[str]] = {}
+        for subtype, grouped in role_values.items():
+            bases = grouped["BASE"]
+            linings = grouped["LINING"]
+            folded: List[str] = []
+            for index in range(max(len(bases), len(linings))):
+                base_value = bases[index] if index < len(bases) else ""
+                lining_value = linings[index] if index < len(linings) else ""
+                value = (
+                    f"{base_value}/{lining_value}"
+                    if base_value and lining_value
+                    else base_value or lining_value
+                )
+                if value and value not in folded:
+                    folded.append(value)
+            folded_by_type[subtype] = folded
+
+        parts: List[str] = []
+        emitted_types = set()
+        for index, (subtype, normalized, role) in enumerate(normalized_items):
+            if role in {"BASE", "LINING"}:
+                if subtype not in emitted_types and index == first_role_index[subtype]:
+                    for value in folded_by_type[subtype]:
+                        if value not in parts:
+                            parts.append(value)
+                    emitted_types.add(subtype)
+                continue
             if normalized not in parts:
                 parts.append(normalized)
-        if pending_base and pending_base not in parts:
-            parts.append(pending_base)
         return 'X'.join(parts)
 
     def _normalize_structured_part(self, subtype: str, item: Any) -> str:

@@ -43,6 +43,12 @@ export const api = {
   getBatchJobItem(jobId: string, itemIndex: number) {
     return request<{ result?: EncodingResult }>(`/api/pipe/encode/batch/jobs/${jobId}/items/${itemIndex}`)
   },
+  reencodeBatchJobItem(jobId: string, itemIndex: number) {
+    return request<{ job: BatchJobSummary; result: EncodingResult }>(
+      `/api/pipe/encode/batch/jobs/${jobId}/items/${itemIndex}/reencode`,
+      { method: 'POST' },
+    )
+  },
   cancelBatchJob(jobId: string) {
     return request<{ job: BatchJobSummary }>(`/api/pipe/encode/batch/jobs/${jobId}/cancel`, {
       method: 'POST',

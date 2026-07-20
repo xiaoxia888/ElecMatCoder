@@ -176,36 +176,46 @@ class StructuralFieldOutputNormalizer:
 
     @classmethod
     def _fold_lined_items(cls, items: List[Dict[str, str]]) -> List[Dict[str, str]]:
-        result: List[Dict[str, str]] = []
-        pending_base_by_type: Dict[str, str] = {}
+        role_values: Dict[str, Dict[str, List[str]]] = {}
+        first_role_index: Dict[str, int] = {}
 
-        for item in items:
-            item_type = item["type"]
-            item_value = item["value"]
+        for index, item in enumerate(items):
             role = str(item.get("role", "") or "").upper()
-
-            if role == "BASE":
-                existing = pending_base_by_type.get(item_type)
-                if existing:
-                    result.append({"type": item_type, "value": existing})
-                pending_base_by_type[item_type] = item_value
+            if role not in {"BASE", "LINING"}:
                 continue
+            item_type = item["type"]
+            first_role_index.setdefault(item_type, index)
+            grouped = role_values.setdefault(item_type, {"BASE": [], "LINING": []})
+            grouped[role].append(item["value"])
 
-            if role == "LINING":
-                base_value = pending_base_by_type.pop(item_type, "")
-                if base_value:
-                    result.append({"type": item_type, "value": f"{base_value}/{item_value}"})
-                else:
-                    result.append({"type": item_type, "value": item_value})
+        folded_by_type: Dict[str, List[Dict[str, str]]] = {}
+        for item_type, grouped in role_values.items():
+            bases = grouped["BASE"]
+            linings = grouped["LINING"]
+            folded: List[Dict[str, str]] = []
+            for index in range(max(len(bases), len(linings))):
+                base_value = bases[index] if index < len(bases) else ""
+                lining_value = linings[index] if index < len(linings) else ""
+                value = (
+                    f"{base_value}/{lining_value}"
+                    if base_value and lining_value
+                    else base_value or lining_value
+                )
+                if value:
+                    folded.append({"type": item_type, "value": value})
+            folded_by_type[item_type] = folded
+
+        result: List[Dict[str, str]] = []
+        emitted_types = set()
+        for index, item in enumerate(items):
+            item_type = item["type"]
+            role = str(item.get("role", "") or "").upper()
+            if role in {"BASE", "LINING"}:
+                if item_type not in emitted_types and index == first_role_index[item_type]:
+                    result.extend(folded_by_type[item_type])
+                    emitted_types.add(item_type)
                 continue
-
-            pending = pending_base_by_type.pop(item_type, "")
-            if pending:
-                result.append({"type": item_type, "value": pending})
-            result.append({"type": item_type, "value": item_value})
-
-        for item_type, item_value in pending_base_by_type.items():
-            result.append({"type": item_type, "value": item_value})
+            result.append({"type": item_type, "value": item["value"]})
         return result
 
     @classmethod

@@ -1,0 +1,6634 @@
+[
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1280 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL150;SH/T 3406;HG/T 20538;ASTM A106 Gr.B + PTFE LINED;6\";两端带法兰的直管;RF;SMLS;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/PTFE LINED, RF, CL150, SH/T 3406;HG/T 20538, SMLS, DN80, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN40（φ48*3.5），PN10，长度：200~500mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 589 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T20592, HG/T21501, SMLS ,DN250, 7.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, CL150, SH/T 3406;HG/T 20538, SMLS, 2\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, FF, CL300, ASME B16.5;ASME B36.10M, SMLS, DN100, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3810mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.700mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN40（φ48*3.5），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SMLS 20/PTFE LINED 4\" 3.0mm，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 153 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 06Cr19Ni10/PTFE 4.Size: DN40 4.0mm 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN100（φ114*6.0），PN10，长度：2000~3000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "FLANGED PIPE, 20/PTFE LINED, SMLS, PN10, RF, HG/T 20592;HG/T 20538, DN100, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED | DN25 | 3.0mm | PIPE FLGD | SMLS | CL150 | RF | SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1013 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 400 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 609 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN200 | SCH80 | PIPE FLGD | SMLS | PN10 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | 2\" | 3.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS ASTM A106 Gr.B + PTFE LINED DN100 3.0mm，管道端部形式：两端法兰，PN10 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 94 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN80, 4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 156 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 278 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "法兰管, ASTM A106 Gr.B + PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN50, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED;PN16;RF;DN80;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1505 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | DN40 | SCH40 | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;PN10;RF;DN200;法兰管;SMLS;HG/T 20592;HG/T 20538;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, CL150, RF, SH/T 3406;HG/T 20538, DN80, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶 | DN25 | 4.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN50, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.520mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;06Cr19Ni10/PTFE;DN25;两端带法兰的直管;FF;SMLS;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶;PN16;RF;DN80;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, 06Cr19Ni10/PTFE, SMLS, CL150, RF, SH/T 3406;HG/T 20538, DN80, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED;PN16;RF;2\";法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 4000mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;06Cr19Ni10/PTFE;DN100;SCH40;LJ FLANGE X FLANGE;PN16;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 176 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN50（φ60*4.0），PN10，长度：2000~3000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, CL150, RF, SH/T 3406;HG/T 20538, 4\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, CL150, SH/T 3406;HG/T 20538, SMLS, DN50, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | 6\" | 3.0mm | PIPE FLGD | SMLS | PN10 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 647 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN80 | 4.0mm | PIPE FLGD | SMLS | CL150 | RF | SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/PTFE LINED | 6\" | 3.0mm | PIPE FLGD | SMLS | CL150 | RF | SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | 2\" | 3.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 1200mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;ASTM A106 Gr.B + PTFE LINED;4\";SCH80;LJ FLANGE X FLANGE;CL300;FF;ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 350 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN200, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN50 4.0mm，管道端部形式：两端法兰，PN10 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;ASTM A106 Gr.B + PTFE LINED;DN80;两端带法兰的直管;FF;SMLS;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 3950 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 232 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 263 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN100 | SCH40 | PIPE FLGD | SMLS | PN10 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN200, 6.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 140 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 480 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, CL150, SH/T 3406;HG/T 20538, SMLS, 2\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, FF, CL300, ASME B16.5;ASME B36.10M, SMLS, 2\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN50（φ60*4.0），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 899 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1409 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 814 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN100 SCH80 ASTM A106 Gr.B + PTFE LINED，两端法兰连接，CL300 FF，ASME B16.5;ASME B36.10M，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN200 | 3.0mm | PIPE FLGD | SMLS | CL150 | RF | SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1800 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED;PN10;RF;6\";法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 777 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 356 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 1421.5mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 272 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶;CL300;FF;DN100;法兰管;SMLS;ASME B16.5;ASME B36.10M;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 477 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, CL150, RF, SH/T 3406;HG/T 20538, 4\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | PIPE WITH LOOSE FLANGE ENDS | DN200 | CL300 | FF | ASME B16.5;ASME B36.10M | SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.1930mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 647mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 1885mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶 | DN40 | SCH80 | PIPE FLGD | SMLS | PN10 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | PIPE WITH LOOSE FLANGE ENDS | DN100 | PN16 | RF | HG/T 20592;HG/T 20538 | 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN50, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1150 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN200 SCH80，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN40（φ48*3.5），PN10，长度：0~200mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "法兰管, ASTM A106 Gr.B + PTFE LINED, FF, CL300, ASME B16.5;ASME B36.10M, SMLS, DN80, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1200 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 06Cr19Ni10/PTFE 4.Size: DN150 SCH80 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN250",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PN16;HG/T 20592;HG/T 20538;20/衬胶;4\";两端带法兰的直管;RF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 1\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 210 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN150 SCH80 20/衬胶，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶 | DN25 | 3.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN150 3.0mm 06Cr19Ni10/PTFE，两端法兰连接，PN10 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 110 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN150 SCH40，管道端部形式：两端法兰，CL150 RF，SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS ASTM A106 Gr.B + PTFE LINED DN80 3.0mm，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN25, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 4\" SCH40 20/PTFE LINED，两端活套法兰，PN16 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;ASTM A106 Gr.B + PTFE LINED;DN80;两端带法兰的直管;FF;SMLS;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 958 DN 100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN80（φ89*4.0），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "法兰管, 20/PTFE LINED, FF, CL300, ASME B16.5;ASME B36.10M, SMLS, DN200, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1621 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 629 DN 150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, 20/PTFE LINED, SMLS, PN10, RF, HG/T 20592;HG/T 20538, DN150, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;2\";4.0mm;LJ FLANGE X FLANGE;CL300;FF;ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 308 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.1594mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.3365mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1724 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN25（φ34*3.5），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 163 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: ASTM A106 Gr.B + PTFE LINED 4.Size: DN40 SCH80 5.Rating: PN10 RF 6.Std: HG/T 20592;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN40, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406;DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, CL150, SH/T 3406;HG/T 20538, SMLS, 6\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN80 SCH40 20/衬胶，两端活套法兰，PN16 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1506 DN 40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN50 SCH40 ASTM A106 Gr.B + PTFE LINED，两端法兰连接，PN10 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1083 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/PTFE LINED, PN16, RF, HG/T 20592;HG/T 20538, DN80, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN25, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN200 SCH40 ASTM A106 Gr.B + PTFE LINED，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 20/PTFE LINED 4.Size: DN200 4.0mm 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN65（φ76*4.0），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "FLANGED PIPE, 06Cr19Ni10/PTFE, SMLS, CL300, FF, ASME B16.5;ASME B36.10M, DN100, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;06Cr19Ni10/PTFE;DN50;两端带法兰的直管;FF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1293 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406,S-40;DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;PN10;RF;DN200;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1506 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶 | DN150 | SCH40 | PIPE FLGD | SMLS | PN16 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED;PN16;RF;DN25;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, CL150, RF, SH/T 3406;HG/T 20538, DN150, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | PIPE WITH LOOSE FLANGE ENDS | DN200 | PN10 | RF | HG/T 20592;HG/T 20538 | 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE;SMLS;06Cr19Ni10/PTFE;6\";3.0mm;LJ FLANGE X FLANGE;CL150;RF;SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS 20/衬胶 DN100 SCH40，管道端部形式：两端法兰，CL300 FF，ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 220 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, PN10, RF, HG/T 20592;HG/T 20538, 2\", 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS ASTM A106 Gr.B + PTFE LINED 6\" SCH40，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN200 SCH40 06Cr19Ni10/PTFE，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 958 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1182 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;DN150;3.0mm;LJ FLANGE X FLANGE;PN10;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1200 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN150 | 3.0mm | PIPE FLGD | SMLS | PN16 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150;SH/T 3406;HG/T 20538;20/衬胶;DN80;两端带法兰的直管;RF;SMLS;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, PN10, RF, HG/T 20592;HG/T 20538, DN40, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1750 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 266 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN80（φ89*4.0），PN10，长度：2000~3000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406,S-40;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1759 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | PIPE WITH LOOSE FLANGE ENDS | 6\" | PN16 | RF | HG/T 20592;HG/T 20538 | SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN200 4.0mm ASTM A106 Gr.B + PTFE LINED，两端法兰连接，PN10 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 138 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1600 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING DN 25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 804 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 2000 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PN16;HG/T 20592;HG/T 20538;ASTM A106 Gr.B + PTFE LINED;DN80;两端带法兰的直管;RF;SMLS;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1117 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN100（φ114*6.0），PN10，长度：200~500mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;CL150;RF;6\";法兰管;SMLS;SH/T 3406;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/PTFE LINED, PN10, RF, HG/T 20592;HG/T 20538, DN200, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.1554mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 871 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/PTFE LINED;DN200;SCH80;LJ FLANGE X FLANGE;PN16;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN25（φ34*3.5），PN10，长度：200~500mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | DN150 | SCH80 | PIPE FLGD | SMLS | CL150 | RF | SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN50（φ60*4.0），PN10，长度：0~200mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20/衬胶;PN10;RF;DN100;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 6\" 4.0mm 20/PTFE LINED，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, CL150, SH/T 3406;HG/T 20538, SMLS, 6\", SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS 20/衬胶 DN50 4.0mm，管道端部形式：两端法兰，CL300 FF，ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 440 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 664 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN25（φ34*3.5），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN100（φ114*6.0），PN10，长度：0~200mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "法兰管, 20/PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN50, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 4\" SCH80 20/衬胶，两端法兰连接，CL300 FF，ASME B16.5;ASME B36.10M，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 225 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/PTFE LINED;PN16;RF;DN50;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN10;HG/T 20592;HG/T 20538;20/衬胶;4\";两端带法兰的直管;RF;SMLS;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN50 3.0mm 20/衬胶，两端法兰连接，PN10 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶 | PIPE WITH LOOSE FLANGE ENDS | DN100 | CL300 | FF | ASME B16.5;ASME B36.10M | 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶;PN10;RF;DN40;法兰管;SMLS;HG/T 20592;HG/T 20538;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN50 3.0mm 20/衬胶，两端法兰连接，PN16 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406 DN 100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1930 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 20/衬胶 4.Size: 2\" 4.0mm 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN100（φ114*6.0），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 137 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, PN16, RF, HG/T 20592;HG/T 20538, 6\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1970 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN500",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 671 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;DN200;3.0mm;LJ FLANGE X FLANGE;PN10;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150;SH/T 3406;HG/T 20538;20/衬胶;DN50;两端带法兰的直管;RF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN80（φ89*4.0），PN10，长度：200~500mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "CL150;SH/T 3406;HG/T 20538;20/衬胶;2\";两端带法兰的直管;RF;SMLS;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 06Cr19Ni10/PTFE 4.Size: 2\" 3.0mm 5.Rating: PN10 RF 6.Std: HG/T 20592;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, 06Cr19Ni10/PTFE, SMLS, PN16, RF, HG/T 20592;HG/T 20538, 2\", SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 4\" SCH80 ASTM A106 Gr.B + PTFE LINED，两端法兰连接，CL300 FF，ASME B16.5;ASME B36.10M，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN100 SCH40 ASTM A106 Gr.B + PTFE LINED，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED | PIPE WITH LOOSE FLANGE ENDS | 6\" | PN10 | RF | HG/T 20592;HG/T 20538 | 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS 20/PTFE LINED DN80 SCH40，管道端部形式：两端法兰，CL300 FF，ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 600 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;DN100;SCH40;LJ FLANGE X FLANGE;CL150;RF;SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, PN10, RF, HG/T 20592;HG/T 20538, DN25, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1385 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 385 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶;PN16;RF;6\";法兰管;SMLS;HG/T 20592;HG/T 20538;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN150 3.0mm，管道端部形式：两端法兰，PN10 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 6\" 3.0mm 06Cr19Ni10/PTFE，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;CL300;FF;DN50;法兰管;SMLS;ASME B16.5;ASME B36.10M;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN80 | SCH80 | PIPE FLGD | SMLS | PN16 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.6000mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN200 SCH80，管道端部形式：两端法兰，PN10 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1570 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.1038mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 1 1/2\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶;CL150;RF;DN50;法兰管;SMLS;SH/T 3406;HG/T 20538;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 8\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 2047 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 895mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 317 DN 100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;ASTM A106 Gr.B + PTFE LINED;DN50;SCH80;LJ FLANGE X FLANGE;CL150;RF;SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 4\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN25 SCH80 20/PTFE LINED，两端法兰连接，CL300 FF，ASME B16.5;ASME B36.10M，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN80（φ89*4.0），PN10，长度：0~200mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, PN16, RF, HG/T 20592;HG/T 20538, 6\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 2\" SCH80 20/PTFE LINED，两端活套法兰，PN10 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1594 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 350 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1953 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406,S-40;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 2\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 978 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN65（φ76*4.0），PN10，长度：2000~3000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;20/衬胶;DN100;两端带法兰的直管;FF;SMLS;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN300, 8.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, ASTM A106 Gr.B + PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, 2\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, 06Cr19Ni10/PTFE, SMLS, PN16, RF, HG/T 20592;HG/T 20538, DN25, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 4\" SCH40 20/PTFE LINED，两端法兰连接，PN10 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN25（φ34*3.5），PN10，长度：0~200mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "FLANGED PIPE, 20/PTFE LINED, SMLS, CL150, RF, SH/T 3406;HG/T 20538, 6\", 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1362 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;PN10;RF;DN40;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN25,HG/T 20592,HG/T 20538, SMLS , DN40, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 550 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.501mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, PN10, RF, HG/T 20592;HG/T 20538, DN80, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, ASTM A106 Gr.B + PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN150, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 342mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 06Cr19Ni10/PTFE 4.Size: DN25 4.0mm 5.Rating: PN10 RF 6.Std: HG/T 20592;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE;SMLS;06Cr19Ni10/PTFE;4\";SCH40;LJ FLANGE X FLANGE;PN10;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS ASTM A106 Gr.B + PTFE LINED 2\" 3.0mm，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 911 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 874 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN16, HG/T 20592;HG/T 20538, SMLS, DN80, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN400, 8.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, CL150, RF, SH/T 3406;HG/T 20538, DN80, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T20592, HG/T21501, SMLS ,DN400, 8.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL150;SH/T 3406;HG/T 20538;20/衬胶;DN150;两端带法兰的直管;RF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, PN16, RF, HG/T 20592;HG/T 20538, DN150, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, CL300, FF, ASME B16.5;ASME B36.10M, DN150, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1350 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 20/PTFE LINED 4.Size: 2\" 3.0mm 5.Rating: PN16 RF 6.Std: HG/T 20592;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 211 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN50（φ60*4.0），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 609 DN 150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 300 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN80 SCH80 20/PTFE LINED，两端活套法兰，CL300 FF，ASME B16.5;ASME B36.10M，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 6\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;20/PTFE LINED;DN150;两端带法兰的直管;FF;SMLS;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 6\" SCH40 20/衬胶，两端法兰连接，PN16 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 449 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶 | DN50 | 3.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 636 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, PN16, HG/T 20592;HG/T 20538, SMLS, DN40, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 113 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 280 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;CL300;FF;DN100;法兰管;SMLS;ASME B16.5;ASME B36.10M;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 20/衬胶 4.Size: DN40 3.0mm 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED | DN25 | 4.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 314 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1338 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 306 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;06Cr19Ni10/PTFE;DN100;两端带法兰的直管;FF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN50（φ60*4.0），PN10，长度：200~500mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "直管 DN200 SCH80 ASTM A106 Gr.B + PTFE LINED，两端活套法兰，PN16 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 651 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, DN50, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 6\" 3.0mm ASTM A106 Gr.B + PTFE LINED，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PN10;HG/T 20592;HG/T 20538;ASTM A106 Gr.B + PTFE LINED;DN200;两端带法兰的直管;RF;SMLS;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1800 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/PTFE LINED, RF, PN10, HG/T 20592;HG/T 20538, SMLS, 4\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 3181 DN 40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, PN10, RF, HG/T 20592;HG/T 20538, 4\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 949 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 652 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3093mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, CL300, FF, ASME B16.5;ASME B36.10M, 6\", SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS ASTM A106 Gr.B + PTFE LINED DN50 SCH40，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3671mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T20592, HG/T21501, SMLS ,DN50, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN100（φ114*6.0），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;DN200;3.0mm;LJ FLANGE X FLANGE;CL300;FF;ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 407 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, 06Cr19Ni10/PTFE, SMLS, PN10, RF, HG/T 20592;HG/T 20538, DN25, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, FF, CL300, ASME B16.5;ASME B36.10M, SMLS, DN200, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 2\" 4.0mm 06Cr19Ni10/PTFE，两端法兰连接，PN10 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 196 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;DN150;SCH40;LJ FLANGE X FLANGE;CL300;FF;ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN65, 4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN200 | 3.0mm | PIPE FLGD | SMLS | CL300 | FF | ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 120 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;PN16;RF;DN100;法兰管;SMLS;HG/T 20592;HG/T 20538;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 325 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 900 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PN10;HG/T 20592;HG/T 20538;20/衬胶;4\";两端带法兰的直管;RF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1486 DN 100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN16, HG/T 20592;HG/T 20538, SMLS, 2\", 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN65, 4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN80 SCH80 20/衬胶，两端活套法兰，PN16 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN100 4.0mm 06Cr19Ni10/PTFE，两端法兰连接，CL300 FF，ASME B16.5;ASME B36.10M，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, CL150, RF, SH/T 3406;HG/T 20538, DN25, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T20592, HG/T21501, SMLS ,DN300, 8.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 2106 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN100 3.0mm，管道端部形式：两端法兰，PN10 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN50, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;4\";SCH80;LJ FLANGE X FLANGE;CL150;RF;SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/PTFE LINED;PN10;RF;DN80;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 3181 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: ASTM A106 Gr.B + PTFE LINED 4.Size: DN150 3.0mm 5.Rating: CL300 FF 6.Std: ASME B16.5;ASME B36.10M 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/衬胶, PN10, RF, HG/T 20592;HG/T 20538, DN50, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 658 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 850 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN25（φ34*3.5），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "直管 DN200 SCH80 06Cr19Ni10/PTFE，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1375 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, 20/衬胶, SMLS, PN16, RF, HG/T 20592;HG/T 20538, 4\", 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶 | PIPE WITH LOOSE FLANGE ENDS | DN150 | PN10 | RF | HG/T 20592;HG/T 20538 | SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "SMLS ASTM A106 Gr.B + PTFE LINED 6\" 3.0mm，管道端部形式：两端法兰，CL150 RF，SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN200 | SCH40 | PIPE FLGD | SMLS | PN16 | RF | HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN40（φ48*3.5），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;2\";4.0mm;LJ FLANGE X FLANGE;PN16;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, CL150, SH/T 3406;HG/T 20538, SMLS, DN50, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 2\" 4.0mm 20/衬胶，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1871 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1650 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN300",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1885 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PN10;HG/T 20592;HG/T 20538;06Cr19Ni10/PTFE;DN200;两端带法兰的直管;RF;SMLS;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3879mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 06Cr19Ni10/PTFE 4.Size: 6\" 3.0mm 5.Rating: CL300 FF 6.Std: ASME B16.5;ASME B36.10M 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/PTFE LINED, CL300, FF, ASME B16.5;ASME B36.10M, DN200, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 678 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SMLS 06Cr19Ni10/PTFE DN80 SCH80，管道端部形式：两端法兰，CL300 FF，ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1656 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 830 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 4\" SCH40 06Cr19Ni10/PTFE，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 934 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN40 SCH80 06Cr19Ni10/PTFE，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 4\" SCH40 06Cr19Ni10/PTFE，两端法兰连接，PN16 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3206.2mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN250, 7.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 196 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SMLS 20/衬胶 DN100 SCH80，管道端部形式：两端法兰，CL300 FF，ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE;CL300;FF;DN200;法兰管;SMLS;ASME B16.5;ASME B36.10M;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.1395mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20/PTFE LINED;CL150;RF;DN80;法兰管;SMLS;SH/T 3406;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED;CL150;RF;6\";法兰管;SMLS;SH/T 3406;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, CL300, FF, ASME B16.5;ASME B36.10M, DN150, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, 20/PTFE LINED, SMLS, PN16, RF, HG/T 20592;HG/T 20538, DN80, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 348 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: ASTM A106 Gr.B + PTFE LINED 4.Size: DN100 3.0mm 5.Rating: PN16 RF 6.Std: HG/T 20592;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN65（φ76*4.0），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "20/衬胶;PN16;RF;6\";法兰管;SMLS;HG/T 20592;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, PN10, HG/T 20592;HG/T 20538, SMLS, 4\", SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 06Cr19Ni10/PTFE 4.Size: 6\" SCH80 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 4\" 4.0mm ASTM A106 Gr.B + PTFE LINED，两端法兰连接，PN16 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "PIPE;SMLS;ASTM A106 Gr.B + PTFE LINED;2\";3.0mm;LJ FLANGE X FLANGE;PN10;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1060 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;4\";SCH40;LJ FLANGE X FLANGE;CL300;FF;ASME B16.5;ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1150 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 2\" SCH40 06Cr19Ni10/PTFE，两端法兰连接，CL300 FF，ASME B16.5;ASME B36.10M，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1252 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | DN200 | 4.0mm | PIPE FLGD | SMLS | CL150 | RF | SH/T 3406;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: 20/衬胶 4.Size: DN80 SCH80 5.Rating: CL150 RF 6.Std: SH/T 3406;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "20/衬胶 | PIPE WITH LOOSE FLANGE ENDS | 4\" | CL150 | RF | SH/T 3406;HG/T 20538 | 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1475 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 629 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE;SMLS;20/衬胶;DN40;SCH80;LJ FLANGE X FLANGE;PN16;RF;HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN65（φ76*4.0），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | PIPE WITH LOOSE FLANGE ENDS | 4\" | CL300 | FF | ASME B16.5;ASME B36.10M | SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 658 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.5119mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1751 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶;CL150;RF;6\";法兰管;SMLS;SH/T 3406;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 909 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 4\" SCH80 20/PTFE LINED，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 2912 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/PTFE LINED;CL150;RF;DN40;法兰管;SMLS;SH/T 3406;HG/T 20538;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 3\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, 20/衬胶, SMLS, CL300, FF, ASME B16.5;ASME B36.10M, DN40, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN65（φ76*4.0），PN10，长度：200~500mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 745mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 150 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, PN10, HG/T 20592;HG/T 20538, SMLS, 6\", 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN80（φ89*4.0），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, CL300, FF, ASME B16.5;ASME B36.10M, DN100, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN65（φ76*4.0），PN10，长度：0~200mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 410 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "LAP JOINT FLANGED PIPE, 20/PTFE LINED, CL150, RF, SH/T 3406;HG/T 20538, 2\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 627 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, PN10, RF, HG/T 20592;HG/T 20538, DN100, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, FF, CL300, ASME B16.5;ASME B36.10M, SMLS, DN50, 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 276 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶;PN10;RF;DN100;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1605 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "PIPE , FRP, DARAKANE 470/LAP JOINT FLANGE: A105.GALV, CL150 , LJ FLG , 1.0MPa , DIN16965/ASME B16.5.3766mm;6\";",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0720"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1000 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;06Cr19Ni10/PTFE;2\";两端带法兰的直管;FF;SMLS;SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 6\" SCH40 20/PTFE LINED，两端活套法兰，CL150 RF，SH/T 3406;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "1.Name: PIPE 2.Ends: FLANGED 3.Material: ASTM A106 Gr.B + PTFE LINED 4.Size: DN100 4.0mm 5.Rating: PN10 RF 6.Std: HG/T 20592;HG/T 20538 7.Mfg: SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 871 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, CL150, SH/T 3406;HG/T 20538, SMLS, DN80, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;ASTM A106 Gr.B + PTFE LINED;6\";两端带法兰的直管;FF;SMLS;4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1300 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN80 SCH80 ASTM A106 Gr.B + PTFE LINED，两端法兰连接，CL150 RF，SH/T 3406;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING DN 150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, 20/衬胶, SMLS, CL300, FF, ASME B16.5;ASME B36.10M, DN150, 3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 465 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1673 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1506 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T20592, HG/T21501, SMLS ,DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1738 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 174 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "20/衬胶 | PIPE WITH LOOSE FLANGE ENDS | DN50 | PN10 | RF | HG/T 20592;HG/T 20538 | SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "06Cr19Ni10/PTFE | PIPE WITH LOOSE FLANGE ENDS | 4\" | CL300 | FF | ASME B16.5;ASME B36.10M | SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 878 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN200 SCH40 ASTM A106 Gr.B + PTFE LINED，两端活套法兰，PN10 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3742mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "CL300;ASME B16.5;ASME B36.10M;20/衬胶;DN150;两端带法兰的直管;FF;SMLS;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "直管 DN200 3.0mm ASTM A106 Gr.B + PTFE LINED，两端法兰连接，PN16 RF，HG/T 20592;HG/T 20538，无缝",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 720 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1503 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1700 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "FLANGED PIPE, ASTM A106 Gr.B + PTFE LINED, SMLS, PN16, RF, HG/T 20592;HG/T 20538, 6\", SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "ASTM A106 Gr.B + PTFE LINED;PN10;RF;DN25;法兰管;SMLS;HG/T 20592;HG/T 20538;SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406;DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "直管 DN80 4.0mm ASTM A106 Gr.B + PTFE LINED，两端活套法兰，PN10 RF，HG/T 20592;HG/T 20538，SMLS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "法兰管, 06Cr19Ni10/PTFE, RF, PN16, HG/T 20592;HG/T 20538, SMLS, DN40, SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 3600 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 192 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "真实项目数据-0721"
+  },
+  {
+    "input": "SMLS 20/PTFE LINED DN150 SCH80，管道端部形式：两端法兰，PN16 RF，HG/T 20592;HG/T 20538",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "FLANGED PIPE, 06Cr19Ni10/PTFE, SMLS, PN10, RF, HG/T 20592;HG/T 20538, 4\", 4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  },
+  {
+    "input": "CL150;SH/T 3406;HG/T 20538;20/衬胶;6\";两端带法兰的直管;RF;SMLS;3.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强"
+  }
+]

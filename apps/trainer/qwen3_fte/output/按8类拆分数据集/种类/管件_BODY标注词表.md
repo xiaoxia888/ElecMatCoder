@@ -44,6 +44,10 @@
 | 夹套等径三通 | JACKET EQUAL TEE、夹套等径三通 |
 | 夹套异径三通 | JACKET REDUCING TEE、夹套异径三通 |
 | 夹套剖分等径三通 | 夹套管剖分三通、JACKET SPLIT EQUAL TEE |
+| 夹套剖分异径三通 | 夹套剖分异径三通、JACKET SPLIT REDUCING TEE |
+| 夹套剖分三通 | 夹套剖分三通、JACKET SPLIT TEE，未说明等径或异径 |
+
+“剖分”必须有明确结构证据，例如`剖分、剖切、纵向剖分、SPLIT、SPLIT IN 2 HALVES、LONGITUDINALLY SPLIT`。仅有“成对包装、配对供货”不能推导为剖分。夹套、等径/异径和剖分同时出现时必须组合为对应的夹套剖分标准词，不能丢失任一结构特征。
 
 `SW/THD/NPT`等端部方式不改变普通三通、四通的`BODY`，只写入`CONN`。
 
@@ -135,7 +139,7 @@
 | 圆形丝堵 | ROUND HEAD PLUG、圆形丝堵 |
 | 方形丝堵 | 方形丝堵 |
 
-产品名称明确包含“螺纹”但未说明具体螺纹标准时，`CONN`使用`THD`；明确NPT、NPTF或公母端时使用更具体值。
+产品`BODY`已归一化为“螺纹短节”、“螺纹管帽”等带泛化螺纹含义的类型时，不再重复标注`THD`；只有原文明确NPT、NPTF、FNPT、MNPT、SCRD等具体形式时才写入`CONN`。如果`BODY`本身不含螺纹语义，原文另外明示`THD/THREADED/螺纹连接`时，`CONN`标注为`THD`。
 
 ## 8. 其他管件
 
@@ -153,7 +157,10 @@
 - 只有显式`FNPT`或`Female NPT`才标注为`FNPT`。
 - 只有显式`MNPT`或`Male NPT`才标注为`MNPT`。
 - 原文明示`SCRD`时保留为`SCRD`，不得转换为`THD`或`NPT`。
-- 裸`NPT`标注为`NPT`；`THREADED/螺纹`等未提供具体制式的泛化表达标注为`THD`。
+- 裸`NPT`标注为`NPT`；`THREADED/螺纹`等未提供具体制式的泛化表达，仅在`BODY`未表达螺纹语义时标注为`THD`。
+- 原文明示`SW`、`SOCKET WELD`或“承插焊”时，无论`BODY`是否已包含承插焊含义，`CONN`都标注为`SW`。`SOCKOLET/SOCKET OLET/承插焊支管台`整体表达同样视为明确`SW`证据。
+- 单独“承口”、`Single Socket Pipe Coupling`不自动推断`SW`；`SWAGE`中的`SW`也不得识别为承插焊。
+- 辅助部件的连接不进入主体`CONN`，例如孔板法兰中`Pressure Taps 1/2'' SW`表示取压口连接，不代表法兰主体为`SW`。
 
 ### MANU
 

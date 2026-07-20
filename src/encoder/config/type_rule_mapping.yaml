@@ -19,6 +19,8 @@ body_codes:
   直管: P
   衬里管: P
   衬里复合管: P
+  夹套管: PJ
+  接管: P
 
   法兰: F
   单片法兰: F
@@ -57,6 +59,7 @@ body_codes:
   Y型异径三通: YRT
   仪表三通: IT
   加强管咀: O
+  马鞍座接头: O
   BEND: BE
   异径单口管箍: CP
 

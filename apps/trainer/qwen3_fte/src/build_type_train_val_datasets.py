@@ -12,6 +12,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+"""构建训练集、验证集、测试集的工具。
+python apps/trainer/qwen3_fte/src/build_type_train_val_datasets.py \
+    --flange apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/法兰.json \
+    --pipe apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/直管.json \
+    --fitting apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/管件_清洗后.json \
+    --raw-output-dir apps/trainer/qwen3_fte/output/按8类拆分数据集/type_raw \
+    --llamafactory-output-dir apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/type_llamafactory \
+    --val-ratio 0.1 \
+    --test-ratio 0.1 \
+    --seed 20260714
+"""
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 QWEN_ROOT = PROJECT_ROOT / "apps" / "trainer" / "qwen3_fte"
@@ -71,6 +82,11 @@ class Record:
     category: str
     source: str
     source_index: int
+    source_label: str = ""
+
+    @property
+    def is_augmented(self) -> bool:
+        return self.source_label.strip().startswith("数据增强")
 
 
 def load_json_rows(path: Path) -> tuple[list[dict[str, Any]], int]:
@@ -201,7 +217,10 @@ def load_source_records(
             "loaded_rows": len(rows),
             "nested_arrays_flattened": nested_arrays,
             "category_override_count": 0,
+            "augmented_rows": 0,
+            "source_label_distribution": {},
         }
+        source_labels: Counter[str] = Counter()
         for index, row in enumerate(rows):
             text = str(row.get("input") or "").strip()
             if not text:
@@ -218,13 +237,19 @@ def load_source_records(
                         "original_category": source_category,
                         "target_category": category,
                     })
+            source_label = str(row.get("来源") or "").strip()
+            source_labels[source_label or "<EMPTY>"] += 1
+            if source_label.startswith("数据增强"):
+                report["files"][category]["augmented_rows"] += 1
             records.append(Record(
                 input=text,
                 output=normalize_output(output, category, skeletons),
                 category=category,
                 source=str(path),
                 source_index=index,
+                source_label=source_label,
             ))
+        report["files"][category]["source_label_distribution"] = dict(source_labels.most_common())
     return records, report
 
 
@@ -249,6 +274,7 @@ def load_validation_records(
                 category=category,
                 source=str(path),
                 source_index=index,
+                source_label=str(row.get("来源") or "").strip(),
             ))
     return records, {"files": files}
 
@@ -276,7 +302,8 @@ def deduplicate_records(records: list[Record], *, reject_conflicts: bool) -> tup
             conflict_groups.append(detail)
             conflict_rows_removed += len(grouped)
             continue
-        kept.append(grouped[0])
+        # 同描述同标签时优先保留真实样本，避免增强标识覆盖原始来源。
+        kept.append(next((record for record in grouped if not record.is_augmented), grouped[0]))
         exact_duplicate_rows_removed += len(grouped) - 1
 
     return kept, {
@@ -490,18 +517,182 @@ def choose_category_validation(
     }
 
 
-def split_automatically(records: list[Record], ratio: float, seed: int) -> tuple[list[Record], list[Record], dict[str, Any]]:
+def allocate_joint_body_quotas(
+    records: list[Record],
+    val_target: int,
+    test_target: int,
+    val_ratio: float,
+    test_ratio: float,
+    min_holdout_body_rows: int = 5,
+) -> dict[str, dict[str, int]]:
+    """联合分配验证/测试名额，避免先抽验证集后耗尽稀有 BODY。"""
+    body_counts = Counter(body_value(record) for record in records)
+    quotas = {body: {"val": 0, "test": 0} for body in body_counts}
+    eligible = [body for body, count in body_counts.items() if count >= min_holdout_body_rows]
+
+    def seed_one(split: str, target: int) -> None:
+        if target <= 0:
+            return
+        ranked = sorted(eligible, key=lambda body: (-body_counts[body], body))
+        for body in ranked[:target]:
+            if sum(quotas[body].values()) < body_counts[body] - 1:
+                quotas[body][split] = 1
+
+    seed_one("val", val_target)
+    seed_one("test", test_target)
+
+    def current(split: str) -> int:
+        return sum(value[split] for value in quotas.values())
+
+    def add_one(split: str, target: int, ratio: float) -> bool:
+        if current(split) >= target:
+            return False
+        candidates = [
+            body for body in eligible
+            if sum(quotas[body].values()) < body_counts[body] - 1
+        ]
+        if not candidates:
+            raise ValueError(
+                f"无法完成{split}集配额: 目标={target}, 已分配={current(split)}"
+            )
+        chosen = max(
+            candidates,
+            key=lambda body: (
+                body_counts[body] * ratio - quotas[body][split],
+                body_counts[body],
+                body,
+            ),
+        )
+        quotas[chosen][split] += 1
+        return True
+
+    while current("val") < val_target or current("test") < test_target:
+        add_one("val", val_target, val_ratio)
+        add_one("test", test_target, test_ratio)
+    return quotas
+
+
+def choose_category_holdouts(
+    records: list[Record],
+    val_ratio: float,
+    test_ratio: float,
+    seed: int,
+) -> tuple[set[int], set[int], dict[str, Any]]:
+    if len(records) < 2:
+        return set(), set(), {
+            "body_strata": len(records),
+            "real_rows": len(records),
+            "val_target_rows": 0,
+            "test_target_rows": 0,
+        }
+
+    val_target = max(1, int(round(len(records) * val_ratio))) if val_ratio else 0
+    test_target = max(1, int(round(len(records) * test_ratio))) if test_ratio else 0
+    if val_target + test_target >= len(records):
+        raise ValueError("验证集与测试集数量之和必须小于真实样本数")
+
+    body_indices: dict[str, list[int]] = defaultdict(list)
+    for index, record in enumerate(records):
+        body_indices[body_value(record)].append(index)
+
+    quotas = allocate_joint_body_quotas(
+        records,
+        val_target,
+        test_target,
+        val_ratio,
+        test_ratio,
+    )
+    val_selected: set[int] = set()
+    test_selected: set[int] = set()
+    for offset, body in enumerate(sorted(body_indices)):
+        indices = body_indices[body]
+        val_indices = select_body_validation_indices(
+            records,
+            indices,
+            quotas[body]["val"],
+            seed + offset,
+        )
+        val_selected.update(val_indices)
+        remaining = [index for index in indices if index not in val_indices]
+        test_selected.update(select_body_validation_indices(
+            records,
+            remaining,
+            quotas[body]["test"],
+            seed + 10000 + offset,
+        ))
+
+    if len(val_selected) != val_target or len(test_selected) != test_target:
+        raise RuntimeError(
+            f"联合分层数量异常: val={len(val_selected)}/{val_target}, "
+            f"test={len(test_selected)}/{test_target}"
+        )
+
+    covered = {"val": set(), "test": set()}
+    for index in val_selected:
+        covered["val"].update(expression_tags(records[index]))
+    for index in test_selected:
+        covered["test"].update(expression_tags(records[index]))
+    return val_selected, test_selected, {
+        "body_strata": len(body_indices),
+        "real_rows": len(records),
+        "val_target_rows": val_target,
+        "test_target_rows": test_target,
+        "val_selected_rows": len(val_selected),
+        "test_selected_rows": len(test_selected),
+        "body_quotas": [
+            {
+                "body": body,
+                "total": len(body_indices[body]),
+                "train": len(body_indices[body]) - quotas[body]["val"] - quotas[body]["test"],
+                "val": quotas[body]["val"],
+                "test": quotas[body]["test"],
+            }
+            for body in sorted(body_indices)
+        ],
+        "covered_tags": {
+            "val": sorted(covered["val"]),
+            "test": sorted(covered["test"]),
+        },
+        "bodies_below_holdout_minimum": sorted(
+            body for body, indices in body_indices.items() if len(indices) < 5
+        ),
+    }
+
+
+def split_automatically(
+    records: list[Record],
+    val_ratio: float,
+    test_ratio: float,
+    seed: int,
+) -> tuple[list[Record], list[Record], list[Record], dict[str, Any]]:
     val_global_indices: set[int] = set()
+    test_global_indices: set[int] = set()
     split_detail: dict[str, Any] = {}
     for offset, category in enumerate(CATEGORIES):
-        category_pairs = [(index, record) for index, record in enumerate(records) if record.category == category]
+        category_pairs = [
+            (index, record) for index, record in enumerate(records)
+            if record.category == category and not record.is_augmented
+        ]
         local_records = [record for _, record in category_pairs]
-        local_val, detail = choose_category_validation(local_records, ratio, seed + offset)
+        local_val, local_test, detail = choose_category_holdouts(
+            local_records,
+            val_ratio,
+            test_ratio,
+            seed + offset,
+        )
         val_global_indices.update(category_pairs[index][0] for index in local_val)
+        test_global_indices.update(category_pairs[index][0] for index in local_test)
+        detail["augmented_rows_forced_to_train"] = sum(
+            record.category == category and record.is_augmented for record in records
+        )
         split_detail[category] = detail
-    train = [record for index, record in enumerate(records) if index not in val_global_indices]
+    train = [
+        record for index, record in enumerate(records)
+        if index not in val_global_indices and index not in test_global_indices
+    ]
     val = [record for index, record in enumerate(records) if index in val_global_indices]
-    return train, val, split_detail
+    test = [record for index, record in enumerate(records) if index in test_global_indices]
+    return train, val, test, split_detail
 
 
 def count_tags(records: list[Record]) -> Counter[str]:
@@ -511,34 +702,82 @@ def count_tags(records: list[Record]) -> Counter[str]:
     return counter
 
 
-def category_report(source: list[Record], train: list[Record], val: list[Record]) -> dict[str, Any]:
+def category_report(
+    source: list[Record],
+    train: list[Record],
+    val: list[Record],
+    test: list[Record],
+) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for category in CATEGORIES:
         source_rows = [record for record in source if record.category == category]
         train_rows = [record for record in train if record.category == category]
         val_rows = [record for record in val if record.category == category]
+        test_rows = [record for record in test if record.category == category]
         source_tags = count_tags(source_rows)
         train_tags = count_tags(train_rows)
         val_tags = count_tags(val_rows)
+        test_tags = count_tags(test_rows)
         body_tags = sorted(tag for tag in source_tags if tag.startswith("BODY:"))
         form_tags = sorted(tag for tag in source_tags if tag.startswith("FORM:") or tag.startswith("LANG:"))
         result[category] = {
             "source_rows": len(source_rows),
             "train_rows": len(train_rows),
             "val_rows": len(val_rows),
+            "test_rows": len(test_rows),
             "actual_val_ratio": round(len(val_rows) / len(source_rows), 6) if source_rows else 0.0,
+            "actual_test_ratio": round(len(test_rows) / len(source_rows), 6) if source_rows else 0.0,
             "body_coverage": [
-                {"tag": tag, "total": source_tags[tag], "train": train_tags[tag], "val": val_tags[tag]}
+                {
+                    "tag": tag,
+                    "total": source_tags[tag],
+                    "train": train_tags[tag],
+                    "val": val_tags[tag],
+                    "test": test_tags[tag],
+                }
                 for tag in body_tags
             ],
             "expression_coverage": [
-                {"tag": tag, "total": source_tags[tag], "train": train_tags[tag], "val": val_tags[tag]}
+                {
+                    "tag": tag,
+                    "total": source_tags[tag],
+                    "train": train_tags[tag],
+                    "val": val_tags[tag],
+                    "test": test_tags[tag],
+                }
                 for tag in form_tags
             ],
             "missing_body_tags_in_val": [tag for tag in body_tags if val_tags[tag] == 0],
+            "missing_body_tags_in_test": [tag for tag in body_tags if test_tags[tag] == 0],
             "missing_body_tags_in_train": [tag for tag in body_tags if train_tags[tag] == 0],
         }
     return result
+
+
+def provenance_report(records: list[Record]) -> dict[str, Any]:
+    source_labels = Counter(record.source_label or "<EMPTY>" for record in records)
+    augmented_rows = sum(record.is_augmented for record in records)
+    return {
+        "rows": len(records),
+        "original_rows": len(records) - augmented_rows,
+        "augmented_rows": augmented_rows,
+        "augmented_ratio": round(augmented_rows / len(records), 6) if records else 0.0,
+        "source_label_distribution": dict(source_labels.most_common()),
+    }
+
+
+def split_overlap_report(left: list[Record], right: list[Record]) -> dict[str, Any]:
+    left_descriptions = {description_key(record.input) for record in left}
+    right_descriptions = {description_key(record.input) for record in right}
+    description_overlap = left_descriptions & right_descriptions
+    left_skeletons = {surface_skeleton(record.input) for record in left}
+    right_skeletons = {surface_skeleton(record.input) for record in right}
+    skeleton_overlap = left_skeletons & right_skeletons
+    return {
+        "description_overlap": len(description_overlap),
+        "surface_skeleton_overlap": len(skeleton_overlap),
+        "surface_skeleton_overlap_examples": sorted(skeleton_overlap)[:50],
+    }
 
 
 def raw_rows(records: list[Record]) -> list[dict[str, Any]]:
@@ -588,7 +827,10 @@ def write_json(path: Path, value: Any) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="合并法兰、直管、管件数据，按 skeleton 统一结构并生成种类训练集和验证集。"
+        description=(
+            "合并法兰、直管、管件数据，按 skeleton 统一结构并生成"
+            "种类训练集、验证集和测试集；增强数据只进入训练集。"
+        )
     )
     parser.add_argument("--flange", required=True, help="法兰 input/output JSON")
     parser.add_argument("--pipe", required=True, help="直管 input/output JSON")
@@ -597,10 +839,22 @@ def main() -> None:
     parser.add_argument("--llamafactory-output-dir", required=True, help="LlamaFactory 格式输出目录")
     parser.add_argument("--val-ratio", type=float, default=0.1, help="未指定验证集时的验证比例，默认 0.1")
     parser.add_argument(
+        "--test-ratio",
+        type=float,
+        default=0.1,
+        help="未指定固定集合时的测试比例，默认 0.1；设为 0 可关闭测试集",
+    )
+    parser.add_argument(
         "--val-file",
         action="append",
         default=[],
         help="指定验证集文件，可重复传入；支持原始格式和 LlamaFactory 格式",
+    )
+    parser.add_argument(
+        "--test-file",
+        action="append",
+        default=[],
+        help="指定固定测试集文件，可重复传入；测试集不参与训练和 checkpoint 选择",
     )
     parser.add_argument("--prompt", default=str(DEFAULT_PROMPT), help="LlamaFactory instruction 提示词文件")
     parser.add_argument("--skeleton-dir", default=str(DEFAULT_SKELETON_DIR), help="直管/法兰/管件骨架目录")
@@ -609,6 +863,10 @@ def main() -> None:
 
     if not 0 < args.val_ratio < 1:
         raise ValueError("--val-ratio 必须在 0 到 1 之间")
+    if not 0 <= args.test_ratio < 1:
+        raise ValueError("--test-ratio 必须在 0 到 1 之间")
+    if args.val_ratio + args.test_ratio >= 1:
+        raise ValueError("--val-ratio 与 --test-ratio 之和必须小于 1")
 
     prompt_path = Path(args.prompt).expanduser().resolve()
     instruction = prompt_path.read_text(encoding="utf-8").strip()
@@ -626,73 +884,139 @@ def main() -> None:
     source_records, source_dedup_report = deduplicate_records(source_loaded, reject_conflicts=False)
 
     explicit_val_paths = [Path(path).expanduser().resolve() for path in args.val_file]
+    explicit_test_paths = [Path(path).expanduser().resolve() for path in args.test_file]
     explicit_report: dict[str, Any] = {}
-    if explicit_val_paths:
-        val_loaded, explicit_load_report = load_validation_records(explicit_val_paths, skeletons)
-        val_records, explicit_dedup_report = deduplicate_records(val_loaded, reject_conflicts=True)
+    if explicit_val_paths or explicit_test_paths:
+        val_records: list[Record] = []
+        test_records: list[Record] = []
+        val_report: dict[str, Any] = {}
+        test_report: dict[str, Any] = {}
+        if explicit_val_paths:
+            val_loaded, val_load_report = load_validation_records(explicit_val_paths, skeletons)
+            val_records, val_dedup_report = deduplicate_records(val_loaded, reject_conflicts=True)
+            val_report = {"load": val_load_report, "deduplication": val_dedup_report}
+        if explicit_test_paths:
+            test_loaded, test_load_report = load_validation_records(explicit_test_paths, skeletons)
+            test_records, test_dedup_report = deduplicate_records(test_loaded, reject_conflicts=True)
+            test_report = {"load": test_load_report, "deduplication": test_dedup_report}
+
+        if any(record.is_augmented for record in val_records + test_records):
+            raise ValueError("固定验证集/测试集中不能包含带‘数据增强’标识的样本")
+
         val_keys = {description_key(record.input) for record in val_records}
+        test_keys = {description_key(record.input) for record in test_records}
+        explicit_overlap = val_keys & test_keys
+        if explicit_overlap:
+            raise ValueError(f"固定验证集与测试集存在 {len(explicit_overlap)} 条重复描述")
+
+        holdout_keys = val_keys | test_keys
         source_keys = {description_key(record.input) for record in source_records}
-        train_records = [record for record in source_records if description_key(record.input) not in val_keys]
+        source_by_key = {description_key(record.input): record for record in source_records}
+        augmented_holdout_matches = [
+            key for key in holdout_keys
+            if key in source_by_key and source_by_key[key].is_augmented
+        ]
+        if augmented_holdout_matches:
+            raise ValueError(
+                f"固定验证/测试集命中 {len(augmented_holdout_matches)} 条只来自增强数据的描述"
+            )
+
+        train_records = [
+            record for record in source_records
+            if description_key(record.input) not in holdout_keys
+        ]
         removed = len(source_records) - len(train_records)
-        split_mode = "explicit_validation"
+        split_mode = "explicit_holdout"
         split_detail: dict[str, Any] = {}
         explicit_report = {
-            "load": explicit_load_report,
-            "deduplication": explicit_dedup_report,
-            "source_rows_removed_by_validation_description": removed,
+            "validation": val_report,
+            "test": test_report,
+            "source_rows_removed_by_holdout_description": removed,
             "validation_rows_not_in_source": sum(
                 1 for record in val_records
                 if description_key(record.input) not in source_keys
             ),
+            "test_rows_not_in_source": sum(
+                1 for record in test_records
+                if description_key(record.input) not in source_keys
+            ),
         }
     else:
-        train_records, val_records, split_detail = split_automatically(
-            source_records, args.val_ratio, args.seed
+        train_records, val_records, test_records, split_detail = split_automatically(
+            source_records, args.val_ratio, args.test_ratio, args.seed
         )
         split_mode = "automatic_stratified"
 
-    train_keys = {description_key(record.input) for record in train_records}
-    val_keys = {description_key(record.input) for record in val_records}
-    overlap = train_keys & val_keys
-    if overlap:
-        raise RuntimeError(f"训练集和验证集仍有 {len(overlap)} 条重复描述")
+    overlaps = {
+        "train_val": split_overlap_report(train_records, val_records),
+        "train_test": split_overlap_report(train_records, test_records),
+        "val_test": split_overlap_report(val_records, test_records),
+    }
+    for pair, detail in overlaps.items():
+        if detail["description_overlap"]:
+            raise RuntimeError(f"{pair} 仍有 {detail['description_overlap']} 条重复描述")
+    if any(record.is_augmented for record in val_records + test_records):
+        raise RuntimeError("验证集或测试集中仍存在增强样本")
 
     raw_dir = Path(args.raw_output_dir).expanduser().resolve()
     llama_dir = Path(args.llamafactory_output_dir).expanduser().resolve()
     raw_train_path = raw_dir / "种类_train.json"
     raw_val_path = raw_dir / "种类_val.json"
+    raw_test_path = raw_dir / "种类_test.json"
     llama_train_path = llama_dir / "种类_train.json"
     llama_val_path = llama_dir / "种类_val.json"
+    llama_test_path = llama_dir / "种类_test.json"
     conflict_review_path = raw_dir / "种类_冲突样本待审核.json"
 
     write_json(raw_train_path, raw_rows(train_records))
     write_json(raw_val_path, raw_rows(val_records))
+    write_json(raw_test_path, raw_rows(test_records))
     write_json(llama_train_path, llamafactory_rows(train_records, instruction))
     write_json(llama_val_path, llamafactory_rows(val_records, instruction))
+    write_json(llama_test_path, llamafactory_rows(test_records, instruction))
     write_json(conflict_review_path, conflict_review_rows(source_dedup_report))
 
+    source_provenance = provenance_report(source_records)
+    original_source_rows = source_provenance["original_rows"]
+    automatic_mode = not (explicit_val_paths or explicit_test_paths)
     report = {
         "mode": split_mode,
         "prompt_path": str(prompt_path),
         "skeleton_dir": str(skeleton_dir),
-        "requested_val_ratio": args.val_ratio if not explicit_val_paths else None,
-        "seed": args.seed if not explicit_val_paths else None,
+        "requested_val_ratio": args.val_ratio if automatic_mode else None,
+        "requested_test_ratio": args.test_ratio if automatic_mode else None,
+        "seed": args.seed if automatic_mode else None,
         "source_load": source_load_report,
         "source_deduplication": source_dedup_report,
-        "explicit_validation": explicit_report,
+        "source_provenance": source_provenance,
+        "explicit_holdout": explicit_report,
         "automatic_split_detail": split_detail,
         "total_source_rows_after_dedup": len(source_records),
         "train_rows": len(train_records),
         "val_rows": len(val_records),
-        "actual_val_ratio": round(len(val_records) / (len(train_records) + len(val_records)), 6)
-        if train_records or val_records else 0.0,
-        "train_val_description_overlap": len(overlap),
-        "category_summary": category_report(source_records, train_records, val_records),
+        "test_rows": len(test_records),
+        "actual_val_ratio": round(len(val_records) / len(source_records), 6) if source_records else 0.0,
+        "actual_test_ratio": round(len(test_records) / len(source_records), 6) if source_records else 0.0,
+        "actual_val_ratio_of_original": round(len(val_records) / original_source_rows, 6)
+        if original_source_rows else 0.0,
+        "actual_test_ratio_of_original": round(len(test_records) / original_source_rows, 6)
+        if original_source_rows else 0.0,
+        "split_provenance": {
+            "train": provenance_report(train_records),
+            "val": provenance_report(val_records),
+            "test": provenance_report(test_records),
+        },
+        "split_overlap": overlaps,
+        "category_summary": category_report(
+            source_records, train_records, val_records, test_records
+        ),
         "outputs": {
             "raw_train": str(raw_train_path),
             "raw_val": str(raw_val_path),
+            "raw_test": str(raw_test_path),
             "llamafactory_train": str(llama_train_path),
             "llamafactory_val": str(llama_val_path),
+            "llamafactory_test": str(llama_test_path),
             "conflict_review": str(conflict_review_path),
         },
     }
@@ -703,12 +1027,23 @@ def main() -> None:
         "source_rows": len(source_records),
         "train_rows": len(train_records),
         "val_rows": len(val_records),
+        "test_rows": len(test_records),
         "actual_val_ratio": report["actual_val_ratio"],
-        "train_val_description_overlap": len(overlap),
+        "actual_test_ratio": report["actual_test_ratio"],
+        "actual_val_ratio_of_original": report["actual_val_ratio_of_original"],
+        "actual_test_ratio_of_original": report["actual_test_ratio_of_original"],
+        "augmented_rows": {
+            split: report["split_provenance"][split]["augmented_rows"]
+            for split in ("train", "val", "test")
+        },
+        "description_overlap": {
+            pair: detail["description_overlap"] for pair, detail in overlaps.items()
+        },
         "category_rows": {
             category: {
                 "train": report["category_summary"][category]["train_rows"],
                 "val": report["category_summary"][category]["val_rows"],
+                "test": report["category_summary"][category]["test_rows"],
             }
             for category in CATEGORIES
         },

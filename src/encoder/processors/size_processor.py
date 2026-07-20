@@ -1262,6 +1262,43 @@ class SizeProcessor:
                 consumed_pair_spans.append(span)
                 _record(m.group(0), span)
 
+        # DN数字xD数字 / D数字xDN数字：
+        # DN 侧是强锚点；D 侧仅在命中 common_dn_values 时才按 DN 提取。
+        mixed_dn_d_pair_pattern = re.compile(
+            r'(?i)(?<![A-Z0-9])(?:'
+            r'DN\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*D\s*(\d+(?:\.\d+)?)'
+            r'|D\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*DN\s*(\d+(?:\.\d+)?)'
+            r')(?!\.\d)(?!\s*(?:MM|毫米))'
+        )
+        for m in mixed_dn_d_pair_pattern.finditer(normalized):
+            span = (m.start(), m.end())
+            if any(start <= span[0] and span[1] <= end for start, end in consumed_pair_spans):
+                continue
+
+            dn_left, d_right, d_left, dn_right = m.groups()
+            if d_left is not None and _is_astm_d_context(m.start()):
+                continue
+            d_value = d_right or d_left
+            if not d_value or not self._is_common_dn_integer(d_value):
+                continue
+
+            if dn_left is not None:
+                ordered_values = (
+                    (dn_left, m.span(1)),
+                    (d_right, m.span(2)),
+                )
+            else:
+                ordered_values = (
+                    (d_left, m.span(3)),
+                    (dn_right, m.span(4)),
+                )
+            for raw_value, value_span in ordered_values:
+                value = self._normalize_number_text(raw_value)
+                _add_unique(dn_values, value)
+                _add_ordered_item("DN", value, value_span)
+            consumed_pair_spans.append(span)
+            _record(m.group(0), span)
+
         dn_dash_pair_pattern = re.compile(
             rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*-\s*(\d+\.\d+|{"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})'
             r'(?!\s*(?:MM|毫米))'

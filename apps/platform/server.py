@@ -599,6 +599,7 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
                 "index": int(item.get("client_index", idx)),
                 "text": str(item.get("text", "") or ""),
                 "project_name": str(item.get("project_name", "") or ""),
+                "preprocess": bool(item.get("preprocess", True)),
             }
             for idx, item in enumerate(request.items)
         ],
@@ -1515,6 +1516,60 @@ async def pipe_batch_encode_get_job_item(job_id: str, item_index: int):
         "order_index": order_index,
         "item": item_meta or {"index": int(item_index)},
         "status": "pending" if result is None else "processed",
+        "result": result,
+    }
+
+
+@app.post("/api/pipe/encode/batch/jobs/{job_id}/items/{item_index}/reencode")
+async def pipe_batch_encode_reencode_job_item(job_id: str, item_index: int):
+    """重新编码批量任务中的单条数据，并覆盖该条持久化结果。"""
+    job = await _batch_job_get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="任务不存在或已过期")
+
+    job_status = str(job.get("status", "") or "")
+    if job_status in _BATCH_JOB_ACTIVE_STATUSES:
+        raise HTTPException(status_code=409, detail="任务仍在运行，暂不能重新编码单条数据")
+
+    items_meta = list(job.get("items_meta", []))
+    order_index = -1
+    item_meta: Optional[Dict[str, Any]] = None
+    for idx, meta in enumerate(items_meta):
+        if int(meta.get("index", idx)) == item_index:
+            order_index = idx
+            item_meta = dict(meta)
+            break
+    if order_index < 0 or item_meta is None:
+        raise HTTPException(status_code=404, detail="任务条目不存在")
+
+    old_result = await asyncio.to_thread(_batch_store.get_result, job_id, order_index)
+    result = await asyncio.to_thread(
+        _run_pipe_encode_flow,
+        str(item_meta.get("text", "") or ""),
+        project_name=str(item_meta.get("project_name", "") or "").strip(),
+        preprocess=bool(item_meta.get("preprocess", True)),
+    )
+    await asyncio.to_thread(_batch_store.save_result, job_id, order_index, item_index, result)
+
+    old_success = bool(isinstance(old_result, dict) and old_result.get("success"))
+    old_review = bool(isinstance(old_result, dict) and old_result.get("need_review"))
+    new_success = bool(result.get("success"))
+    new_review = bool(result.get("need_review"))
+    if old_result is None:
+        job["processed"] = min(int(job.get("total", 0) or 0), int(job.get("processed", 0) or 0) + 1)
+    job["success_count"] = max(0, int(job.get("success_count", 0) or 0) + int(new_success) - int(old_success))
+    job["review_count"] = max(0, int(job.get("review_count", 0) or 0) + int(new_review) - int(old_review))
+    job["updated_at"] = _utc_ts()
+    await asyncio.to_thread(_persist_job_meta, job)
+
+    snapshot = _batch_job_public(job)
+    logger.info("批量任务单条重新编码已保存: job=%s item=%s order=%s", job_id, item_index, order_index)
+    return {
+        "success": True,
+        "job": snapshot,
+        "job_id": job_id,
+        "item_index": int(item_index),
+        "order_index": order_index,
         "result": result,
     }
 

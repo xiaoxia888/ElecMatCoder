@@ -13091,7 +13091,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -13130,7 +13132,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23030,7 +23034,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23043,7 +23049,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23056,7 +23064,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23069,7 +23079,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23082,7 +23094,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23095,7 +23109,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23108,7 +23124,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23121,7 +23139,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23134,7 +23154,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23147,7 +23169,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23160,7 +23184,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23173,7 +23199,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23186,7 +23214,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23199,7 +23229,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23212,7 +23244,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23225,7 +23259,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23238,7 +23274,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23251,7 +23289,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23264,7 +23304,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23277,7 +23319,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23290,7 +23334,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23303,7 +23349,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23316,7 +23364,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23329,7 +23379,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23342,7 +23394,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23355,7 +23409,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23368,7 +23424,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23381,7 +23439,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23394,7 +23454,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23407,7 +23469,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23420,7 +23484,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23431,7 +23497,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23442,7 +23510,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23453,7 +23523,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23464,7 +23536,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23475,7 +23549,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23488,7 +23564,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23501,7 +23579,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23514,7 +23594,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23527,7 +23609,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23540,7 +23624,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23553,7 +23639,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23566,7 +23654,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23579,7 +23669,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23592,7 +23684,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23605,7 +23699,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23618,7 +23714,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23631,7 +23729,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23644,7 +23744,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23657,7 +23759,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23670,7 +23774,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23683,7 +23789,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23696,7 +23804,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23709,7 +23819,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23722,7 +23834,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23733,7 +23847,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23744,7 +23860,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23755,7 +23873,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -23766,7 +23886,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23779,7 +23901,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23792,7 +23916,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23805,7 +23931,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23818,7 +23946,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23831,7 +23961,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23844,7 +23976,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23857,7 +23991,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23870,7 +24006,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23883,7 +24021,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23896,7 +24036,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23909,7 +24051,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23922,7 +24066,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23935,7 +24081,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23948,7 +24096,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23961,7 +24111,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23974,7 +24126,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -23987,7 +24141,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24000,7 +24156,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24013,7 +24171,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24026,7 +24186,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24039,7 +24201,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24052,7 +24216,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24065,7 +24231,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24076,7 +24244,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24087,7 +24257,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24098,7 +24270,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24109,7 +24283,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24120,7 +24296,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24133,7 +24311,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24146,7 +24326,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24159,7 +24341,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24172,7 +24356,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24185,7 +24371,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24198,7 +24386,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24211,7 +24401,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24224,7 +24416,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24237,7 +24431,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24250,7 +24446,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24263,7 +24461,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24276,7 +24476,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24289,7 +24491,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24302,7 +24506,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24315,7 +24521,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24328,7 +24536,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24341,7 +24551,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24354,7 +24566,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24367,7 +24581,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24380,7 +24596,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24393,7 +24611,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24406,7 +24626,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24419,7 +24641,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24432,7 +24656,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24445,7 +24671,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24458,7 +24686,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24471,7 +24701,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24484,7 +24716,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24497,7 +24731,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24510,7 +24746,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24523,7 +24761,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24536,7 +24776,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24549,7 +24791,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24562,7 +24806,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24575,7 +24821,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24586,7 +24834,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24597,7 +24847,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24608,7 +24860,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24619,7 +24873,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24630,7 +24886,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24641,7 +24899,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24652,7 +24912,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24663,7 +24925,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24674,7 +24938,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24687,7 +24953,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24700,7 +24968,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24713,7 +24983,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24726,7 +24998,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24737,7 +25011,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24748,7 +25024,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24759,7 +25037,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24770,7 +25050,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24781,7 +25063,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24792,7 +25076,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24803,7 +25089,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24814,7 +25102,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24825,7 +25115,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24836,7 +25128,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24847,7 +25141,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24858,7 +25154,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24869,7 +25167,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -24880,7 +25180,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24893,7 +25195,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24906,7 +25210,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24919,7 +25225,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24932,7 +25240,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24945,7 +25255,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24958,7 +25270,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24971,7 +25285,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24984,7 +25300,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -24997,7 +25315,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25010,7 +25330,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25023,7 +25345,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25036,7 +25360,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25049,7 +25375,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25062,7 +25390,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25075,7 +25405,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25088,7 +25420,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25101,7 +25435,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25114,7 +25450,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25127,7 +25465,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25140,7 +25480,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25153,7 +25495,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25166,7 +25510,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25179,7 +25525,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25192,7 +25540,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25205,7 +25555,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25218,7 +25570,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25231,7 +25585,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25244,7 +25600,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25257,7 +25615,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -25271,7 +25631,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -25285,7 +25647,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -25299,7 +25663,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -25313,7 +25679,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25326,7 +25694,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25339,7 +25709,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25352,7 +25724,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25365,7 +25739,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25378,7 +25754,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25391,7 +25769,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25404,7 +25784,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25417,7 +25799,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25430,7 +25814,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25443,7 +25829,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25456,7 +25844,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25469,7 +25859,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25482,7 +25874,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25495,7 +25889,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25508,7 +25904,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25521,7 +25919,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25534,7 +25934,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25547,7 +25949,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25560,7 +25964,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25573,7 +25979,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25586,7 +25994,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25599,7 +26009,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25612,7 +26024,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25625,7 +26039,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25638,7 +26054,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25651,7 +26069,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25664,7 +26084,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25677,7 +26099,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25690,7 +26114,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25703,7 +26129,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25716,7 +26144,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25729,7 +26159,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25742,7 +26174,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25755,7 +26189,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25768,7 +26204,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25781,7 +26219,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25794,7 +26234,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25807,7 +26249,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25820,7 +26264,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25833,7 +26279,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25846,7 +26294,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25859,7 +26309,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25872,7 +26324,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25885,7 +26339,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25898,7 +26354,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25911,7 +26369,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25924,7 +26384,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25937,7 +26399,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25950,7 +26414,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25963,7 +26429,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25976,7 +26444,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -25989,7 +26459,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26002,7 +26474,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26015,7 +26489,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26028,7 +26504,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26041,7 +26519,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26054,7 +26534,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26067,7 +26549,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26080,7 +26564,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26093,7 +26579,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26106,7 +26594,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26119,7 +26609,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26132,7 +26624,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26145,7 +26639,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26158,7 +26654,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26171,7 +26669,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26184,7 +26684,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26197,7 +26699,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26210,7 +26714,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26223,7 +26729,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -26237,7 +26745,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -26251,7 +26761,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26264,7 +26776,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26277,7 +26791,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26290,7 +26806,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26303,7 +26821,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26316,7 +26836,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26329,7 +26851,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -26343,7 +26867,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -26357,7 +26883,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -26371,7 +26899,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -26385,7 +26915,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26398,7 +26930,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26411,7 +26945,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26424,7 +26960,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26437,7 +26975,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26450,7 +26990,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26463,7 +27005,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26476,7 +27020,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26489,7 +27035,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26502,7 +27050,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26515,7 +27065,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26528,7 +27080,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26541,7 +27095,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26554,7 +27110,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -26565,7 +27123,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -26576,7 +27136,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -26587,7 +27149,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -26598,7 +27162,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26611,7 +27177,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26624,7 +27192,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26637,7 +27207,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26650,7 +27222,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26663,7 +27237,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26676,7 +27252,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26689,7 +27267,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26702,7 +27282,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26715,7 +27297,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26728,7 +27312,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26741,7 +27327,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26841,7 +27429,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26854,7 +27444,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26867,7 +27459,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26939,7 +27533,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -26952,7 +27548,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27002,7 +27600,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27015,7 +27615,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27028,7 +27630,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27042,7 +27646,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27056,7 +27662,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27070,7 +27678,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27084,7 +27694,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27098,7 +27710,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27112,7 +27726,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27203,7 +27819,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27216,7 +27834,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27229,7 +27849,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27242,7 +27864,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27255,7 +27879,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27268,7 +27894,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27368,7 +27996,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27381,7 +28011,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27394,7 +28026,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27408,7 +28042,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27422,7 +28058,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF",
           "SERRATED"
@@ -27436,7 +28074,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27449,7 +28089,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27462,7 +28104,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27488,7 +28132,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27501,7 +28147,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27514,7 +28162,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27527,7 +28177,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -27540,7 +28192,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27553,7 +28207,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -27566,7 +28222,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -31095,7 +31753,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -31108,7 +31768,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -37198,7 +37860,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37211,7 +37875,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37237,7 +37903,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37363,7 +38031,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -37501,7 +38171,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37514,7 +38186,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37527,7 +38201,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37540,7 +38216,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37553,7 +38231,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37566,7 +38246,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37579,7 +38261,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -37592,7 +38276,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38239,7 +38925,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -38252,7 +38940,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -38499,7 +39189,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38512,7 +39204,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38525,7 +39219,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38538,7 +39234,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38551,7 +39249,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38564,7 +39264,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38577,7 +39279,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38590,7 +39294,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38603,7 +39309,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38616,7 +39324,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -38820,7 +39530,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38833,7 +39545,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38846,7 +39560,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38859,7 +39575,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38872,7 +39590,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38885,7 +39605,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38898,7 +39620,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38911,7 +39635,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -38924,7 +39650,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -39396,7 +40124,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -39409,7 +40139,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -39422,7 +40154,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -39435,7 +40169,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -39747,7 +40483,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -39760,7 +40498,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40153,7 +40893,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40166,7 +40908,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40179,7 +40923,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40192,7 +40938,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40205,7 +40953,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40218,7 +40968,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40231,7 +40983,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40244,7 +40998,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40257,7 +41013,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40270,7 +41028,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40283,7 +41043,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40296,7 +41058,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40322,7 +41086,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40335,7 +41101,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40374,7 +41142,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40426,7 +41196,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40478,7 +41250,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40530,7 +41304,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40582,7 +41358,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40634,7 +41412,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -40686,7 +41466,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -40738,7 +41520,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -40790,7 +41574,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -40842,7 +41628,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -40894,7 +41682,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -40946,7 +41736,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -40998,7 +41790,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41050,7 +41844,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41102,7 +41898,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41154,7 +41952,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41206,7 +42006,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41258,7 +42060,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41310,7 +42114,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -41362,7 +42168,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -41414,7 +42222,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -41466,7 +42276,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -41518,7 +42330,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -41570,7 +42384,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -41622,7 +42438,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -41674,7 +42492,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -41726,7 +42546,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -41778,7 +42600,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -41830,7 +42654,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -41882,7 +42708,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -41934,7 +42762,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -41986,7 +42816,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42038,7 +42870,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42090,7 +42924,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42142,7 +42978,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42194,7 +43032,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42246,7 +43086,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -42298,7 +43140,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -42350,7 +43194,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -42402,7 +43248,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -42454,7 +43302,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -42506,7 +43356,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -42558,7 +43410,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -42610,7 +43464,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -42662,7 +43518,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -42714,7 +43572,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -42766,7 +43626,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -42818,7 +43680,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -42870,7 +43734,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42922,7 +43788,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -42974,7 +43842,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43026,7 +43896,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43078,7 +43950,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43130,7 +44004,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43182,7 +44058,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -43234,7 +44112,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -43286,7 +44166,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -43338,7 +44220,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -43390,7 +44274,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -43442,7 +44328,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -43494,7 +44382,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -43546,7 +44436,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -43598,7 +44490,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -43650,7 +44544,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -43702,7 +44598,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -43754,7 +44652,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -43806,7 +44706,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43858,7 +44760,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43910,7 +44814,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -43962,7 +44868,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -44014,7 +44922,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -44066,7 +44976,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -44248,7 +45160,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44313,7 +45227,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44378,7 +45294,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44443,7 +45361,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44495,7 +45415,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44547,7 +45469,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44599,7 +45523,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44651,7 +45577,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44703,7 +45631,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44755,7 +45685,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44794,7 +45726,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44833,7 +45767,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44872,7 +45808,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44937,7 +45875,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -44976,7 +45916,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45015,7 +45957,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45054,7 +45998,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45080,7 +46026,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45119,7 +46067,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45158,7 +46108,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45197,7 +46149,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45236,7 +46190,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45275,7 +46231,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45314,7 +46272,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45353,7 +46313,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45392,7 +46354,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45418,7 +46382,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45457,7 +46423,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45496,7 +46464,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45535,7 +46505,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45574,7 +46546,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45613,7 +46587,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45652,7 +46628,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45678,7 +46656,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45704,7 +46684,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45730,7 +46712,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45769,7 +46753,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45808,7 +46794,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45873,7 +46861,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45912,7 +46902,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -45977,7 +46969,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46003,7 +46997,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46029,7 +47025,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46055,7 +47053,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -46094,7 +47094,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46133,7 +47135,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46172,7 +47176,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46198,7 +47204,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46224,7 +47232,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46263,7 +47273,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46302,7 +47314,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46341,7 +47355,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -46444,7 +47460,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -46455,7 +47473,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -46466,7 +47486,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": []
       }
     }
@@ -57943,7 +58965,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -57956,7 +58980,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -57969,7 +58995,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -57982,7 +59010,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -57995,7 +59025,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58008,7 +59040,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58021,7 +59055,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58034,7 +59070,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58047,7 +59085,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58060,7 +59100,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58073,7 +59115,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58086,7 +59130,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58099,7 +59145,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58112,7 +59160,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58125,7 +59175,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58138,7 +59190,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58151,7 +59205,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58164,7 +59220,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58177,7 +59235,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58190,7 +59250,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58203,7 +59265,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58216,7 +59280,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58229,7 +59295,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58242,7 +59310,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58255,7 +59325,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58268,7 +59340,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58281,7 +59355,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58294,7 +59370,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58307,7 +59385,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58320,7 +59400,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58333,7 +59415,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58346,7 +59430,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58359,7 +59445,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58372,7 +59460,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58385,7 +59475,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58398,7 +59490,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58411,7 +59505,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58424,7 +59520,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58437,7 +59535,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58450,7 +59550,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58463,7 +59565,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58476,7 +59580,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58489,7 +59595,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58502,7 +59610,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58515,7 +59625,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58528,7 +59640,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58541,7 +59655,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58554,7 +59670,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58567,7 +59685,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58580,7 +59700,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58593,7 +59715,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58606,7 +59730,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58619,7 +59745,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58632,7 +59760,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58645,7 +59775,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58658,7 +59790,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58671,7 +59805,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58684,7 +59820,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58697,7 +59835,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58710,7 +59850,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58723,7 +59865,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58736,7 +59880,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58749,7 +59895,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58762,7 +59910,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58775,7 +59925,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58788,7 +59940,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58801,7 +59955,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58814,7 +59970,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58827,7 +59985,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58840,7 +60000,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58853,7 +60015,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58866,7 +60030,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58879,7 +60045,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58892,7 +60060,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58905,7 +60075,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58918,7 +60090,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58931,7 +60105,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58944,7 +60120,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58957,7 +60135,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -58970,7 +60150,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -60092,7 +61274,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -60219,7 +61403,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -60359,7 +61545,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -60486,7 +61674,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -60600,7 +61790,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -60712,7 +61904,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -60839,7 +62033,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -60966,7 +62162,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -61205,7 +62403,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -61345,7 +62545,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -61472,7 +62674,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -61571,7 +62775,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -61683,7 +62889,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -61782,7 +62990,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -61909,7 +63119,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -62008,7 +63220,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -62243,7 +63457,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -62342,7 +63558,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -62424,7 +63642,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -62551,7 +63771,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -62650,7 +63872,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -62732,7 +63956,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "螺纹法兰",
-        "CONN": [],
+        "CONN": [
+          "SCRD"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -64924,7 +66150,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -64937,7 +66165,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -64950,7 +66180,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -64963,7 +66195,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -64976,7 +66210,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -64989,7 +66225,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -65002,7 +66240,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -65015,7 +66255,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -65028,7 +66270,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -65041,7 +66285,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -65054,7 +66300,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -65067,7 +66315,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -65080,7 +66330,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -65093,7 +66345,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -65106,7 +66360,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -65119,7 +66375,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -65132,7 +66390,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -65145,7 +66405,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -65158,7 +66420,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -65171,7 +66435,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LM"
         ]
@@ -65184,7 +66450,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -65197,7 +66465,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -74687,7 +75957,7 @@
       "TYPE": {
         "BODY": "异径法兰",
         "CONN": [
-          "THD"
+          "SCRD"
         ],
         "SEAL": [
           "RJ"
@@ -74962,7 +76232,7 @@
       "TYPE": {
         "BODY": "异径法兰",
         "CONN": [
-          "THD"
+          "SCRD"
         ],
         "SEAL": [
           "MFM"
@@ -75172,7 +76442,7 @@
       "TYPE": {
         "BODY": "异径法兰",
         "CONN": [
-          "THD"
+          "SCRD"
         ],
         "SEAL": [
           "RF"
@@ -75187,7 +76457,7 @@
       "TYPE": {
         "BODY": "异径法兰",
         "CONN": [
-          "THD"
+          "SCRD"
         ],
         "SEAL": [
           "LF"
@@ -75397,7 +76667,7 @@
       "TYPE": {
         "BODY": "异径法兰",
         "CONN": [
-          "THD"
+          "SCRD"
         ],
         "SEAL": [
           "RJ"
@@ -76958,7 +78228,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -76971,7 +78243,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -76984,7 +78258,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -76997,7 +78273,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -77010,7 +78288,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -77023,7 +78303,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -77036,7 +78318,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -77049,7 +78333,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -77062,7 +78348,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -77075,7 +78363,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RTJ"
         ]
@@ -77088,7 +78378,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -77101,7 +78393,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -77114,7 +78408,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -77127,7 +78423,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -77140,7 +78438,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -81573,7 +82873,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81586,7 +82888,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81599,7 +82903,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81612,7 +82918,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81625,7 +82933,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81638,7 +82948,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81651,7 +82963,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81664,7 +82978,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81677,7 +82993,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81690,7 +83008,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81703,7 +83023,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81716,7 +83038,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81729,7 +83053,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81742,7 +83068,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81755,7 +83083,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81768,7 +83098,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81781,7 +83113,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81794,7 +83128,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81807,7 +83143,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81820,7 +83158,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81833,7 +83173,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81846,7 +83188,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81859,7 +83203,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81872,7 +83218,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81885,7 +83233,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81898,7 +83248,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81911,7 +83263,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81924,7 +83278,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81937,7 +83293,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81950,7 +83308,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81963,7 +83323,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81976,7 +83338,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -81989,7 +83353,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82002,7 +83368,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82015,7 +83383,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82028,7 +83398,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82041,7 +83413,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82054,7 +83428,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82067,7 +83443,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82080,7 +83458,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82093,7 +83473,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82106,7 +83488,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82119,7 +83503,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82132,7 +83518,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82145,7 +83533,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82158,7 +83548,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82171,7 +83563,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82184,7 +83578,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82197,7 +83593,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82210,7 +83608,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82223,7 +83623,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82236,7 +83638,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82249,7 +83653,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82262,7 +83668,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82275,7 +83683,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82288,7 +83698,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82301,7 +83713,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82314,7 +83728,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82327,7 +83743,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82340,7 +83758,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82353,7 +83773,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82366,7 +83788,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82379,7 +83803,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82392,7 +83818,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82405,7 +83833,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82418,7 +83848,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82431,7 +83863,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -82444,7 +83878,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -99732,7 +101168,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -99877,7 +101315,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -99955,7 +101395,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102547,7 +103989,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102561,7 +104005,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102575,7 +104021,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -102589,7 +104037,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -102603,7 +104053,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -102617,7 +104069,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -102631,7 +104085,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102645,7 +104101,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102659,7 +104117,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -102673,7 +104133,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -102687,7 +104149,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -102701,7 +104165,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -102715,7 +104181,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102729,7 +104197,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102743,7 +104213,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -102757,7 +104229,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -102771,7 +104245,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -102785,7 +104261,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -102799,7 +104277,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102813,7 +104293,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102827,7 +104309,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -102841,7 +104325,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -102855,7 +104341,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -102869,7 +104357,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -102883,7 +104373,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102897,7 +104389,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102911,7 +104405,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -102925,7 +104421,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -102939,7 +104437,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -102953,7 +104453,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -102967,7 +104469,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102981,7 +104485,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -102995,7 +104501,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103009,7 +104517,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103023,7 +104533,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103037,7 +104549,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103051,7 +104565,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103065,7 +104581,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103079,7 +104597,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103093,7 +104613,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103107,7 +104629,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103121,7 +104645,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103135,7 +104661,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103149,7 +104677,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103163,7 +104693,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103177,7 +104709,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103191,7 +104725,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103205,7 +104741,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103219,7 +104757,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103233,7 +104773,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103247,7 +104789,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103261,7 +104805,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103275,7 +104821,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103289,7 +104837,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103303,7 +104853,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103317,7 +104869,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103331,7 +104885,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103345,7 +104901,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103359,7 +104917,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103373,7 +104933,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103387,7 +104949,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103401,7 +104965,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103415,7 +104981,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103429,7 +104997,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103443,7 +105013,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103457,7 +105029,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103471,7 +105045,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103485,7 +105061,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103499,7 +105077,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103513,7 +105093,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103527,7 +105109,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103541,7 +105125,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103555,7 +105141,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103569,7 +105157,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103583,7 +105173,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103597,7 +105189,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103611,7 +105205,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103625,7 +105221,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103639,7 +105237,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103653,7 +105253,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103667,7 +105269,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103681,7 +105285,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103695,7 +105301,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103709,7 +105317,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103723,7 +105333,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103737,7 +105349,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103751,7 +105365,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103765,7 +105381,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103779,7 +105397,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103793,7 +105413,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
@@ -103807,7 +105429,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103821,7 +105445,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RF"
         ]
@@ -103835,7 +105461,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "FF"
         ]
@@ -103849,7 +105477,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "RJ"
         ]
@@ -103863,7 +105493,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "MFM"
         ]
@@ -103877,7 +105509,9 @@
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "承插焊法兰",
-        "CONN": [],
+        "CONN": [
+          "SW"
+        ],
         "SEAL": [
           "LF"
         ]
