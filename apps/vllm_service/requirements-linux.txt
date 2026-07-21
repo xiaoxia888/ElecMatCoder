@@ -1,0 +1,9 @@
+# 依据CUDA驱动选择与服务器匹配的torch/vLLM版本。
+vllm>=0.10.0
+fastapi>=0.109.0
+uvicorn>=0.27.0
+httpx>=0.25.0
+requests>=2.31.0
+PyYAML>=6.0
+openpyxl>=3.1.0
+

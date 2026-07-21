@@ -9,24 +9,28 @@
     "files": {
       "法兰": {
         "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/法兰.json",
-        "loaded_rows": 7974,
+        "loaded_rows": 8484,
         "nested_arrays_flattened": 0,
         "category_override_count": 0,
-        "augmented_rows": 412,
+        "augmented_rows": 652,
         "source_label_distribution": {
           "<EMPTY>": 7562,
-          "数据增强": 412
+          "数据增强": 652,
+          "真实项目数据-0721": 141,
+          "真实项目数据-0720": 129
         }
       },
       "直管": {
         "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/直管.json",
-        "loaded_rows": 2620,
+        "loaded_rows": 3108,
         "nested_arrays_flattened": 1,
         "category_override_count": 0,
-        "augmented_rows": 40,
+        "augmented_rows": 280,
         "source_label_distribution": {
           "<EMPTY>": 2580,
-          "数据增强": 40
+          "数据增强": 280,
+          "真实项目数据-0721": 205,
+          "真实项目数据-0720": 43
         }
       },
       "管件": {
@@ -47,8 +51,8 @@
     "category_overrides": []
   },
   "source_deduplication": {
-    "input_rows": 22553,
-    "output_rows": 22397,
+    "input_rows": 23551,
+    "output_rows": 23395,
     "rows_removed_total": 156,
     "exact_duplicate_rows_removed": 156,
     "conflict_rows_removed": 0,
@@ -56,34 +60,36 @@
     "conflict_groups": []
   },
   "source_provenance": {
-    "rows": 22397,
-    "original_rows": 18727,
-    "augmented_rows": 3670,
-    "augmented_ratio": 0.163861,
+    "rows": 23395,
+    "original_rows": 19245,
+    "augmented_rows": 4150,
+    "augmented_ratio": 0.177388,
     "source_label_distribution": {
       "<EMPTY>": 18727,
       "数据增强-同心偏心异径专项对比": 1290,
+      "数据增强": 1028,
       "数据增强-剖分三通专项对比": 982,
       "数据增强-TR_RED_TE连接方式专项对比": 850,
-      "数据增强": 548
+      "真实项目数据-0721": 346,
+      "真实项目数据-0720": 172
     }
   },
   "explicit_holdout": {},
   "automatic_split_detail": {
     "法兰": {
       "body_strata": 22,
-      "real_rows": 7562,
-      "val_target_rows": 756,
-      "test_target_rows": 756,
-      "val_selected_rows": 756,
-      "test_selected_rows": 756,
+      "real_rows": 7832,
+      "val_target_rows": 783,
+      "test_target_rows": 783,
+      "val_selected_rows": 783,
+      "test_selected_rows": 783,
       "body_quotas": [
         {
           "body": "8字盲板",
           "total": 684,
-          "train": 548,
-          "val": 68,
-          "test": 68
+          "train": 546,
+          "val": 69,
+          "test": 69
         },
         {
           "body": "固定法兰",
@@ -136,10 +142,10 @@
         },
         {
           "body": "带颈平焊夹套法兰",
-          "total": 131,
-          "train": 105,
-          "val": 13,
-          "test": 13
+          "total": 153,
+          "train": 123,
+          "val": 15,
+          "test": 15
         },
         {
           "body": "带颈平焊法兰",
@@ -185,24 +191,24 @@
         },
         {
           "body": "松套法兰",
-          "total": 121,
-          "train": 97,
-          "val": 12,
-          "test": 12
+          "total": 243,
+          "train": 195,
+          "val": 24,
+          "test": 24
         },
         {
           "body": "板式平焊松套法兰",
-          "total": 6,
-          "train": 4,
+          "total": 13,
+          "train": 11,
           "val": 1,
           "test": 1
         },
         {
           "body": "板式平焊法兰",
-          "total": 121,
-          "train": 97,
-          "val": 12,
-          "test": 12
+          "total": 240,
+          "train": 192,
+          "val": 24,
+          "test": 24
         },
         {
           "body": "法兰",
@@ -353,15 +359,15 @@
         "异径夹套法兰",
         "异径板式法兰"
       ],
-      "augmented_rows_forced_to_train": 412
+      "augmented_rows_forced_to_train": 652
     },
     "直管": {
       "body_strata": 3,
-      "real_rows": 2570,
-      "val_target_rows": 257,
-      "test_target_rows": 257,
-      "val_selected_rows": 257,
-      "test_selected_rows": 257,
+      "real_rows": 2818,
+      "val_target_rows": 282,
+      "test_target_rows": 282,
+      "val_selected_rows": 282,
+      "test_selected_rows": 282,
       "body_quotas": [
         {
           "body": "仪表管",
@@ -379,10 +385,10 @@
         },
         {
           "body": "直管",
-          "total": 2555,
-          "train": 2043,
-          "val": 256,
-          "test": 256
+          "total": 2803,
+          "train": 2241,
+          "val": 281,
+          "test": 281
         }
       ],
       "covered_tags": {
@@ -453,7 +459,7 @@
       "bodies_below_holdout_minimum": [
         "仪表管"
       ],
-      "augmented_rows_forced_to_train": 40
+      "augmented_rows_forced_to_train": 280
     },
     "管件": {
       "body_strata": 90,
@@ -1352,51 +1358,57 @@
       "augmented_rows_forced_to_train": 3218
     }
   },
-  "total_source_rows_after_dedup": 22397,
-  "train_rows": 18651,
-  "val_rows": 1873,
-  "test_rows": 1873,
-  "actual_val_ratio": 0.083627,
-  "actual_test_ratio": 0.083627,
-  "actual_val_ratio_of_original": 0.100016,
-  "actual_test_ratio_of_original": 0.100016,
+  "total_source_rows_after_dedup": 23395,
+  "train_rows": 19545,
+  "val_rows": 1925,
+  "test_rows": 1925,
+  "actual_val_ratio": 0.082283,
+  "actual_test_ratio": 0.082283,
+  "actual_val_ratio_of_original": 0.100026,
+  "actual_test_ratio_of_original": 0.100026,
   "split_provenance": {
     "train": {
-      "rows": 18651,
-      "original_rows": 14981,
-      "augmented_rows": 3670,
-      "augmented_ratio": 0.196772,
+      "rows": 19545,
+      "original_rows": 15395,
+      "augmented_rows": 4150,
+      "augmented_ratio": 0.212331,
       "source_label_distribution": {
-        "<EMPTY>": 14981,
+        "<EMPTY>": 14967,
         "数据增强-同心偏心异径专项对比": 1290,
+        "数据增强": 1028,
         "数据增强-剖分三通专项对比": 982,
         "数据增强-TR_RED_TE连接方式专项对比": 850,
-        "数据增强": 548
+        "真实项目数据-0721": 281,
+        "真实项目数据-0720": 147
       }
     },
     "val": {
-      "rows": 1873,
-      "original_rows": 1873,
+      "rows": 1925,
+      "original_rows": 1925,
       "augmented_rows": 0,
       "augmented_ratio": 0.0,
       "source_label_distribution": {
-        "<EMPTY>": 1873
+        "<EMPTY>": 1882,
+        "真实项目数据-0721": 28,
+        "真实项目数据-0720": 15
       }
     },
     "test": {
-      "rows": 1873,
-      "original_rows": 1873,
+      "rows": 1925,
+      "original_rows": 1925,
       "augmented_rows": 0,
       "augmented_ratio": 0.0,
       "source_label_distribution": {
-        "<EMPTY>": 1873
+        "<EMPTY>": 1878,
+        "真实项目数据-0721": 37,
+        "真实项目数据-0720": 10
       }
     }
   },
   "split_overlap": {
     "train_val": {
       "description_overlap": 0,
-      "surface_skeleton_overlap": 770,
+      "surface_skeleton_overlap": 791,
       "surface_skeleton_overlap_examples": [
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD AISI N 6TI BW ENDS - STD N 6TIS- N 0S SIZE",
         "ANGLE ELBOW LR S3 N STD WELD BW STD THK SIZE",
@@ -1452,7 +1464,7 @@
     },
     "train_test": {
       "description_overlap": 0,
-      "surface_skeleton_overlap": 910,
+      "surface_skeleton_overlap": 930,
       "surface_skeleton_overlap_examples": [
         "ANGLE ELBOW A1 N 5N GALV. CL. N SCRD STD SIZE",
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD AISI N 6TI BW ENDS - STD N 6TIS- N 0S SIZE",
@@ -1508,7 +1520,7 @@
     },
     "val_test": {
       "description_overlap": 0,
-      "surface_skeleton_overlap": 441,
+      "surface_skeleton_overlap": 473,
       "surface_skeleton_overlap_examples": [
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD AISI N 6TI BW ENDS - STD N 6TIS- N 0S SIZE",
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD STD GR.WP3 N 4L BW ENDS THK SIZE",
@@ -1553,31 +1565,31 @@
         "ECC. SWAGE A2 N -WPB GALV SMLS TBE XS MSS SP- N 2X SIZE",
         "ECCENTRIC REDUCER BW STD WP3 N 6L-S BW STD THK L × THK S SIZE",
         "EQUAL LATERAL TEE ANGLE SEAMLESS MNF STD STD GR.WP3 N 6L BW ENDS - STD THK SIZE N",
-        "FIGURE N BLANK PRESS RF S3 N 8NB T N STD",
         "FIGURE N BLIND SIZE PRESS STD B1 N FF",
         "FLANGE GROOVED A1 N GALV PRESS RF STD SIZE",
         "FLANGE N THK FLANGE SIZE THK PRESS RF A1 N F3 N N 4L DGT STD",
         "FLANGE N THK FLANGE SIZE THK PRESS RF A1 N STD B",
         "FLANGE N THK FLANGE SIZE THK PRESS RJ A1 N F1 N PRESS STD",
-        "FLANGE N THK FLANGE SIZE THK PRESS RJ A1 N F3 N 7H STD"
+        "FLANGE N THK FLANGE SIZE THK PRESS RJ A1 N F3 N 7H STD",
+        "FLANGE N THK FLANGE SIZE THK PRESS RJ A1 N F3 N N 4L DGT STD"
       ]
     }
   },
   "category_summary": {
     "法兰": {
-      "source_rows": 7974,
-      "train_rows": 6462,
-      "val_rows": 756,
-      "test_rows": 756,
-      "actual_val_ratio": 0.094808,
-      "actual_test_ratio": 0.094808,
+      "source_rows": 8484,
+      "train_rows": 6918,
+      "val_rows": 783,
+      "test_rows": 783,
+      "actual_val_ratio": 0.092291,
+      "actual_test_ratio": 0.092291,
       "body_coverage": [
         {
           "tag": "BODY:8字盲板",
           "total": 723,
-          "train": 587,
-          "val": 68,
-          "test": 68
+          "train": 585,
+          "val": 69,
+          "test": 69
         },
         {
           "tag": "BODY:固定法兰",
@@ -1623,22 +1635,22 @@
         },
         {
           "tag": "BODY:带颈对焊法兰",
-          "total": 1945,
-          "train": 1577,
+          "total": 1985,
+          "train": 1617,
           "val": 184,
           "test": 184
         },
         {
           "tag": "BODY:带颈平焊夹套法兰",
-          "total": 131,
-          "train": 105,
-          "val": 13,
-          "test": 13
+          "total": 153,
+          "train": 123,
+          "val": 15,
+          "test": 15
         },
         {
           "tag": "BODY:带颈平焊法兰",
-          "total": 1089,
-          "train": 889,
+          "total": 1129,
+          "train": 929,
           "val": 100,
           "test": 100
         },
@@ -1665,8 +1677,8 @@
         },
         {
           "tag": "BODY:承插焊法兰",
-          "total": 791,
-          "train": 651,
+          "total": 831,
+          "train": 691,
           "val": 70,
           "test": 70
         },
@@ -1679,50 +1691,50 @@
         },
         {
           "tag": "BODY:松套法兰",
-          "total": 153,
-          "train": 129,
-          "val": 12,
-          "test": 12
+          "total": 295,
+          "train": 247,
+          "val": 24,
+          "test": 24
         },
         {
           "tag": "BODY:板式平焊松套法兰",
-          "total": 6,
-          "train": 4,
+          "total": 13,
+          "train": 11,
           "val": 1,
           "test": 1
         },
         {
           "tag": "BODY:板式平焊法兰",
-          "total": 121,
-          "train": 97,
-          "val": 12,
-          "test": 12
+          "total": 240,
+          "train": 192,
+          "val": 24,
+          "test": 24
         },
         {
           "tag": "BODY:法兰",
-          "total": 978,
-          "train": 786,
+          "total": 998,
+          "train": 806,
           "val": 96,
           "test": 96
         },
         {
           "tag": "BODY:盲板法兰",
-          "total": 969,
-          "train": 781,
+          "total": 1009,
+          "train": 821,
           "val": 94,
           "test": 94
         },
         {
           "tag": "BODY:螺纹法兰",
-          "total": 432,
-          "train": 346,
+          "total": 452,
+          "train": 366,
           "val": 43,
           "test": 43
         },
         {
           "tag": "BODY:衬里法兰",
-          "total": 48,
-          "train": 38,
+          "total": 68,
+          "train": 58,
           "val": 5,
           "test": 5
         }
@@ -1730,17 +1742,17 @@
       "expression_coverage": [
         {
           "tag": "FORM:BLIND",
-          "total": 1453,
-          "train": 1166,
-          "val": 144,
-          "test": 143
+          "total": 1493,
+          "train": 1204,
+          "val": 145,
+          "test": 144
         },
         {
           "tag": "FORM:FLANGE",
-          "total": 2462,
-          "train": 1966,
-          "val": 250,
-          "test": 246
+          "total": 2673,
+          "train": 2175,
+          "val": 251,
+          "test": 247
         },
         {
           "tag": "FORM:FLG",
@@ -1751,10 +1763,10 @@
         },
         {
           "tag": "FORM:LAP_JOINT",
-          "total": 148,
-          "train": 122,
-          "val": 13,
-          "test": 13
+          "total": 284,
+          "train": 236,
+          "val": 24,
+          "test": 24
         },
         {
           "tag": "FORM:PIPE",
@@ -1772,52 +1784,52 @@
         },
         {
           "tag": "FORM:SO",
-          "total": 1076,
-          "train": 874,
-          "val": 102,
-          "test": 100
+          "total": 1138,
+          "train": 932,
+          "val": 104,
+          "test": 102
         },
         {
           "tag": "FORM:SW",
-          "total": 673,
-          "train": 549,
+          "total": 713,
+          "train": 589,
           "val": 62,
           "test": 62
         },
         {
           "tag": "FORM:WELDED",
-          "total": 1108,
-          "train": 876,
-          "val": 116,
-          "test": 116
+          "total": 1151,
+          "train": 911,
+          "val": 120,
+          "test": 120
         },
         {
           "tag": "FORM:WN",
-          "total": 1745,
-          "train": 1409,
-          "val": 168,
-          "test": 168
+          "total": 1790,
+          "train": 1451,
+          "val": 170,
+          "test": 169
         },
         {
           "tag": "FORM:法兰",
-          "total": 4876,
-          "train": 3909,
-          "val": 483,
-          "test": 484
+          "total": 5160,
+          "train": 4144,
+          "val": 508,
+          "test": 508
         },
         {
           "tag": "LANG:EN",
-          "total": 2416,
-          "train": 1980,
-          "val": 219,
-          "test": 217
+          "total": 2587,
+          "train": 2146,
+          "val": 221,
+          "test": 220
         },
         {
           "tag": "LANG:MIXED",
-          "total": 5558,
-          "train": 4482,
-          "val": 537,
-          "test": 539
+          "total": 5897,
+          "train": 4772,
+          "val": 562,
+          "test": 563
         }
       ],
       "missing_body_tags_in_val": [
@@ -1831,12 +1843,12 @@
       "missing_body_tags_in_train": []
     },
     "直管": {
-      "source_rows": 2610,
-      "train_rows": 2096,
-      "val_rows": 257,
-      "test_rows": 257,
-      "actual_val_ratio": 0.098467,
-      "actual_test_ratio": 0.098467,
+      "source_rows": 3098,
+      "train_rows": 2534,
+      "val_rows": 282,
+      "test_rows": 282,
+      "actual_val_ratio": 0.091026,
+      "actual_test_ratio": 0.091026,
       "body_coverage": [
         {
           "tag": "BODY:仪表管",
@@ -1854,10 +1866,10 @@
         },
         {
           "tag": "BODY:直管",
-          "total": 2595,
-          "train": 2083,
-          "val": 256,
-          "test": 256
+          "total": 3083,
+          "train": 2521,
+          "val": 281,
+          "test": 281
         }
       ],
       "expression_coverage": [
@@ -1870,38 +1882,38 @@
         },
         {
           "tag": "FORM:FLANGE",
-          "total": 79,
-          "train": 67,
-          "val": 6,
-          "test": 6
+          "total": 344,
+          "train": 302,
+          "val": 21,
+          "test": 21
         },
         {
           "tag": "FORM:FLG",
-          "total": 26,
-          "train": 20,
-          "val": 3,
-          "test": 3
+          "total": 38,
+          "train": 30,
+          "val": 4,
+          "test": 4
         },
         {
           "tag": "FORM:LAP_JOINT",
-          "total": 70,
-          "train": 55,
-          "val": 8,
-          "test": 7
+          "total": 162,
+          "train": 141,
+          "val": 11,
+          "test": 10
         },
         {
           "tag": "FORM:PIPE",
-          "total": 2381,
-          "train": 1909,
-          "val": 236,
-          "test": 236
+          "total": 2691,
+          "train": 2181,
+          "val": 255,
+          "test": 255
         },
         {
           "tag": "FORM:SMLS",
-          "total": 1535,
-          "train": 1228,
-          "val": 154,
-          "test": 153
+          "total": 1923,
+          "train": 1581,
+          "val": 171,
+          "test": 171
         },
         {
           "tag": "FORM:SO",
@@ -1921,29 +1933,29 @@
           "tag": "FORM:WELDED",
           "total": 700,
           "train": 541,
-          "val": 76,
-          "test": 83
+          "val": 75,
+          "test": 84
         },
         {
           "tag": "FORM:法兰",
-          "total": 132,
-          "train": 106,
-          "val": 13,
-          "test": 13
+          "total": 329,
+          "train": 288,
+          "val": 22,
+          "test": 19
         },
         {
           "tag": "LANG:EN",
-          "total": 681,
-          "train": 549,
-          "val": 66,
-          "test": 66
+          "total": 939,
+          "train": 769,
+          "val": 85,
+          "test": 85
         },
         {
           "tag": "LANG:MIXED",
-          "total": 1928,
-          "train": 1547,
-          "val": 190,
-          "test": 191
+          "total": 2158,
+          "train": 1765,
+          "val": 196,
+          "test": 197
         },
         {
           "tag": "LANG:ZH",

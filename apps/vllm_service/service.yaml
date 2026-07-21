@@ -1,0 +1,107 @@
+# Linux NVIDIA部署示例。把基座和LoRA路径替换为服务器实际路径。
+gateway:
+  host: 0.0.0.0
+  port: 8200
+  request_timeout_seconds: 600
+  startup_timeout_seconds: 1200
+  health_check_interval_seconds: 3
+
+engines:
+  qwen3_8b:
+    host: 127.0.0.1
+    port: 8301
+    model_path: /models/Qwen3-8B
+    served_model_name: qwen3-8b-base
+    # 双卡部署设为0；单卡部署时两个engine都设为0并重新分配显存比例。
+    cuda_visible_devices: "0"
+    dtype: float16 
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 16
+    trust_remote_code: true
+    enable_prefix_caching: true
+    enforce_eager: false
+    # 空字符串表示不主动量化；预量化模型通常可从config.json自动识别。
+    quantization: ""
+    max_loras: 1
+    max_cpu_loras: 1
+    max_lora_rank: 16
+    lora_modules:
+      type: /models/lora/type
+
+  qwen3_4b:
+    host: 127.0.0.1
+    port: 8302
+    model_path: /models/Qwen3-4B
+    served_model_name: qwen3-4b-base
+    cuda_visible_devices: "1"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 32
+    trust_remote_code: true
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""
+    # 一阶段尺寸和材质需要同时进入批次；3为编码LoRA也预留容量。
+    max_loras: 3
+    max_cpu_loras: 3
+    max_lora_rank: 16
+    lora_modules:
+      size-thick-pressure: /models/lora/size-thick-pressure
+      material-standard: /models/lora/material-standard
+      coder: /models/lora/coder
+
+models:
+  type:
+    engine: qwen3_8b
+    upstream_model: type
+    instruction: |-
+      你是工业管道材料种类结构化提取助手。仅按原文明示信息提取，禁止从尺寸、壁厚、材质、标准或常识推断。
+
+      先按主体判断CATEGORY，例如：直管、管件或法兰。法兰管/FLANGED PIPE为直管；法兰弯头、法兰三通、FLANGED REDUCER为管件。FLANGE、FLG、RF、法兰标准或配套法兰不能单独决定CATEGORY。
+
+      TYPE字段固定：直管为BODY、FLANGE_STYLE、MANU；管件为BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；法兰为BODY、CONN、SEAL。
+
+      BODY按既定标签归一化，不得由尺寸、壁厚或标准推断同心、偏心、等径、异径。FLANGE_STYLE仅在直管或管件自身明示法兰式、FLANGED、LAP JOINT FLANGED或固定法兰时提取；仅有法兰标准、密封面或配套法兰时留空。
+
+      MANU仅提取明示制造工艺；施工/焊接方法不等于WELDED；不从标准或牌号后缀推断；Forged、锻制、牌号单字母不是MANU。CONN仅提取明示连接；BW不写入CONN；不由PBE、标准或材质猜测SW、NPT；泛称螺纹已在BODY时不额外推断NPT或THD。
+
+      ANGLE保留原文数值，仅去掉度、°、deg等单位，不得取整、舍入或改为常见角度；RADIUS仅在原文明示时提取。缺失值用空字符串或空数组。只输出严格JSON对象，不要解释。
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs:
+      enable_thinking: false
+
+  size-thick-pressure:
+    engine: qwen3_4b
+    upstream_model: size-thick-pressure
+    instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，不要输出 JSON 以外的内容。"
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs:
+      enable_thinking: false
+
+  material-standard:
+    engine: qwen3_4b
+    upstream_model: material-standard
+    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs:
+      enable_thinking: false
+
+  coder:
+    engine: qwen3_4b
+    upstream_model: coder
+    instruction: "你是工业管道材料字段编码助手。请输出唯一的标准化编码，只输出编码，不要解释。"
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs:
+      enable_thinking: false

@@ -8,12 +8,15 @@ import time
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 """
 评测 LoRA 微调模型的结构化抽取效果。
 
 支持两种模式：
  1. 交互模式：直接输入描述，实时查看模型输出
-  2. 批量模式：输入 test_set.json，逐条评测并生成报告
+ 2. 批量模式：输入 test_set.json，逐条评测并生成报告
+ 3. Excel 预测模式：读取材料描述列，保留原列并追加模型预测结果
 
 用法示例：
   # 交互模式
@@ -36,7 +39,7 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
 python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task type \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2170-种类
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2400-种类
 
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -72,6 +75,15 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
     --test-file /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/工作簿2_test_file.json \
     --predict \
     --predict-output /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/工作簿2_predicted.json
+
+# Excel 批量预测
+python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
+    --task type \
+    --base-model /path/to/base-model \
+    --lora /path/to/checkpoint \
+    --excel-file /path/to/input.xlsx \
+    --input-column 材料描述 \
+    --excel-output /path/to/output.xlsx
 
   # 不加载 LoRA（测试底座模型）
   python evaluate_llamafactory_model.py \
@@ -782,6 +794,158 @@ def predict_mode(
     print(f"输出: {output_file}")
 
 
+def _excel_value(value: Any) -> str:
+    """将结构化字段转换为适合写入 Excel 的文本。"""
+    if value is None:
+        return ""
+    if isinstance(value, (list, tuple)):
+        return ";".join(str(item) for item in value)
+    if isinstance(value, dict):
+        return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    return str(value)
+
+
+def _type_excel_columns(predicted: dict[str, Any]) -> dict[str, Any]:
+    """展开种类模型结果，便于在 Excel 中直接筛选和比对。"""
+    type_result = predicted.get("TYPE")
+    if not isinstance(type_result, dict):
+        type_result = {}
+    geometry = type_result.get("GEOMETRY")
+    if not isinstance(geometry, dict):
+        geometry = {}
+
+    return {
+        "TYPE_CATEGORY": _excel_value(predicted.get("CATEGORY")),
+        "TYPE_BODY": _excel_value(type_result.get("BODY")),
+        "TYPE_ANGLE": _excel_value(geometry.get("ANGLE")),
+        "TYPE_RADIUS": _excel_value(geometry.get("RADIUS")),
+        "TYPE_FLANGE_STYLE": _excel_value(type_result.get("FLANGE_STYLE")),
+        "TYPE_MANU": _excel_value(type_result.get("MANU")),
+        "TYPE_CONN": _excel_value(type_result.get("CONN")),
+        "TYPE_SEAL": _excel_value(type_result.get("SEAL")),
+    }
+
+
+def excel_predict_mode(
+    model,
+    tokenizer,
+    *,
+    input_file: Path,
+    output_file: Path,
+    input_column: str,
+    sheet_name: str | int = 0,
+    max_samples: int | None = None,
+    task: str,
+    instruction: str,
+    max_new_tokens: int = 512,
+    temperature: float = 0.0,
+    top_p: float = 1.0,
+) -> None:
+    """读取 Excel 描述列进行预测，并将结果追加到原始列后。"""
+    if not input_file.exists():
+        raise FileNotFoundError(f"Excel 文件不存在: {input_file}")
+
+    data = pd.read_excel(input_file, sheet_name=sheet_name, dtype=object)
+    if not isinstance(data, pd.DataFrame):
+        raise ValueError("Excel 工作表读取失败，请检查 --excel-sheet")
+    if input_column not in data.columns:
+        columns = ", ".join(str(column) for column in data.columns)
+        raise ValueError(
+            f"Excel 中不存在描述列 {input_column!r}。现有列: {columns}"
+        )
+    if max_samples is not None:
+        data = data.head(max_samples).copy()
+    else:
+        data = data.copy()
+
+    result_columns = [
+        "TYPE_模型结果",
+        "TYPE_CATEGORY",
+        "TYPE_BODY",
+        "TYPE_ANGLE",
+        "TYPE_RADIUS",
+        "TYPE_FLANGE_STYLE",
+        "TYPE_MANU",
+        "TYPE_CONN",
+        "TYPE_SEAL",
+        "模型原始输出",
+        "模型解析状态",
+        "模型耗时_秒",
+    ]
+    for column in result_columns:
+        data[column] = ""
+
+    print(
+        f"Excel 预测: {len(data)} 行 | 工作表: {sheet_name!r} | "
+        f"描述列: {input_column!r}\n"
+    )
+    ok_count = 0
+    fail_count = 0
+    skipped_count = 0
+
+    for position, (row_index, row) in enumerate(data.iterrows(), start=1):
+        raw_input = row.get(input_column)
+        input_text = "" if pd.isna(raw_input) else str(raw_input).strip()
+        if not input_text:
+            data.at[row_index, "模型解析状态"] = "SKIPPED_EMPTY"
+            skipped_count += 1
+            print(f"  [{position}/{len(data)}] SKIPPED_EMPTY")
+            continue
+
+        t0 = time.time()
+        try:
+            raw_output = generate(
+                model,
+                tokenizer,
+                input_text,
+                instruction=instruction,
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+            )
+            elapsed = time.time() - t0
+            data.at[row_index, "模型原始输出"] = raw_output
+            data.at[row_index, "模型耗时_秒"] = round(elapsed, 3)
+
+            if task in {"extract", "type", "structural"}:
+                predicted = parse_json_output(raw_output)
+                if predicted is None:
+                    status = "PARSE_FAIL"
+                    fail_count += 1
+                else:
+                    status = "OK"
+                    ok_count += 1
+                    data.at[row_index, "TYPE_模型结果"] = json.dumps(
+                        predicted, ensure_ascii=False, separators=(",", ":")
+                    )
+                    if task == "type":
+                        for column, value in _type_excel_columns(predicted).items():
+                            data.at[row_index, column] = value
+            else:
+                predicted_text = clean_text_output(raw_output)
+                data.at[row_index, "TYPE_模型结果"] = predicted_text
+                status = "OK"
+                ok_count += 1
+
+            data.at[row_index, "模型解析状态"] = status
+        except Exception as exc:
+            elapsed = time.time() - t0
+            status = "ERROR"
+            fail_count += 1
+            data.at[row_index, "模型解析状态"] = f"ERROR: {exc}"
+            data.at[row_index, "模型耗时_秒"] = round(elapsed, 3)
+
+        print(f"  [{position}/{len(data)}] {status}  ({elapsed:.1f}s)  {input_text[:60]}")
+
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    data.to_excel(output_file, index=False, engine="openpyxl")
+    print(
+        f"\n完成: {len(data)} 行, 成功: {ok_count}, "
+        f"失败: {fail_count}, 空描述跳过: {skipped_count}"
+    )
+    print(f"输出: {output_file}")
+
+
 # ──────────────────────────────────────────────
 # 入口
 # ──────────────────────────────────────────────
@@ -824,6 +988,22 @@ def main() -> None:
         help="测试集 JSON 文件路径。不指定则进入交互模式。",
     )
     parser.add_argument(
+        "--excel-file", type=Path, default=None,
+        help="Excel 批量预测输入路径。设置后直接进入预测模式。",
+    )
+    parser.add_argument(
+        "--input-column", default="材料描述",
+        help="Excel 中的材料描述列名，默认: 材料描述。",
+    )
+    parser.add_argument(
+        "--excel-sheet", default=0,
+        help="Excel 工作表名称，默认读取第一张工作表。",
+    )
+    parser.add_argument(
+        "--excel-output", type=Path, default=None,
+        help="Excel 预测输出路径，默认生成 <输入文件名>_predicted.xlsx。",
+    )
+    parser.add_argument(
         "--report-file", type=Path, default=None,
         help="评测报告输出路径（JSON 格式）",
     )
@@ -857,6 +1037,8 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    if args.test_file and args.excel_file:
+        parser.error("--test-file 和 --excel-file 不能同时使用")
     instruction, instruction_path = resolve_instruction(args.task, args.instruction)
     if instruction_path:
         print(f"种类模型提示词: {instruction_path}")
@@ -866,7 +1048,28 @@ def main() -> None:
 
     model, tokenizer = load_model(args.base_model, args.lora)
 
-    if args.predict and args.test_file:
+    if args.excel_file:
+        excel_sheet: str | int = args.excel_sheet
+        if isinstance(excel_sheet, str) and excel_sheet.isdigit():
+            excel_sheet = int(excel_sheet)
+        excel_output = args.excel_output or args.excel_file.with_name(
+            args.excel_file.stem + "_predicted.xlsx"
+        )
+        excel_predict_mode(
+            model,
+            tokenizer,
+            input_file=args.excel_file,
+            output_file=excel_output,
+            input_column=args.input_column,
+            sheet_name=excel_sheet,
+            max_samples=args.max_samples,
+            task=args.task,
+            instruction=instruction,
+            max_new_tokens=max_new_tokens,
+            temperature=args.temperature,
+            top_p=args.top_p,
+        )
+    elif args.predict and args.test_file:
         out = args.predict_output or args.test_file.with_name(
             args.test_file.stem + "_predicted.json"
         )

@@ -3105,6 +3105,19 @@
     }
   },
   {
+    "input": "8字盲板;CL300;RF;NB/T 47008 20;SH/T 3425;ANTI-H2S DN15",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
     "input": "八字盲板DN25SPECTACLEBLANKHG/T2154706Cr19Ni10PN16RF",
     "output": {
       "CATEGORY": "法兰",
@@ -3176,6 +3189,20 @@
         "CONN": [],
         "SEAL": [
           "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "6'' FIGURE 8 BLANK ASTM A350 LF2 CL.1 (Inpact Tested at -46°C) ASME B16.48 600# RF 125 - 250 μin AARH (3.2 - 6.3 μm Ra) SERRATED FINISH",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RF",
+          "SERRATED"
         ]
       }
     }
@@ -3361,7 +3388,7 @@
     }
   },
   {
-    "input": "8字盲板,ASTMA182GradeF304(UNSS30400),FF,CL300,ASMEB16.48,DN80",
+    "input": "8字盲板,20GB/T711,FF,CL150,HG/T21547,DN25",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -3374,7 +3401,33 @@
     }
   },
   {
-    "input": "8字盲板,20GB/T711,FF,CL150,HG/T21547,DN25",
+    "input": "8字盲板,15CrMoNB/T47008,FF,CL600,HG/T21547,DN250",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "8字盲板, A105 GB/T12228, FF, CL 150, HG/T 21547 , DN250 ,_A105_GB/T12228",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "8字盲板,Q245R(NACE)GB/T713,FF,CL150,HG/T21547,DN25",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -3400,33 +3453,7 @@
     }
   },
   {
-    "input": "8字盲板 TA2, NB/T47010, BLF-FF,PN 1.0MPa, HG/T21547-2016 DN300",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "8字盲板",
-        "CONN": [],
-        "SEAL": [
-          "FF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "8字盲板,S32168Gr.IIINB/T47010,FF,CL600,HG/T21547,DN150",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "8字盲板",
-        "CONN": [],
-        "SEAL": [
-          "FF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "PAD FLANGE DN1200,PL-RF,PN6, GB/T 9124.1-2019,20",
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL10(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -3439,7 +3466,7 @@
     }
   },
   {
-    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL10(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "input": "1.名称：不锈钢板式平焊法兰 2.规格型号：PL20(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -3478,6 +3505,19 @@
     }
   },
   {
+    "input": "板式平焊法兰DN2O0,PL-RF,PN6, GB/T 9124.1-2019,S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
     "input": "夹套法兰;CL600;WN-RF;2205(A182F51);NB/T47010;HG/T20615;φ48.3XSCH80S",
     "output": {
       "CATEGORY": "法兰",
@@ -3499,19 +3539,6 @@
         "CONN": [],
         "SEAL": [
           "RF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "FIGURE8,CL600,RJ,ASTMA240GRADES32205,ASMEB16.48",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "8字盲板",
-        "CONN": [],
-        "SEAL": [
-          "RJ"
         ]
       }
     }
@@ -3544,6 +3571,19 @@
   },
   {
     "input": "8字盲板, A105 GB/T12228, RJ, CL 1500, HG/T 21547 , DN200 ,_A105_GB/T12228",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "8字盲板",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    }
+  },
+  {
+    "input": "8字盲板;CL900;RJ;A105;ASMEB16.48;-DN50",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -3616,32 +3656,6 @@
         "CONN": [],
         "SEAL": [
           "RJ"
-        ]
-      }
-    }
-  },
-  {
-    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=2.6mm DN25",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "松套法兰",
-        "CONN": [],
-        "SEAL": [
-          "RF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN25",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "松套法兰",
-        "CONN": [],
-        "SEAL": [
-          "RF"
         ]
       }
     }
@@ -7133,6 +7147,19 @@
     }
   },
   {
+    "input": "Pad FlangeDN800PN6RTJ20GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    }
+  },
+  {
     "input": "DN50,PL FLANGE,PN16,MFM,20,GB/T9124.1(I)",
     "output": {
       "CATEGORY": "法兰",
@@ -7146,7 +7173,33 @@
     }
   },
   {
-    "input": "1.名称:PadFlange 2.规格型号:RTJ DN500 PN16 3.材质:Q235B 4.标准:GB/T9124.1",
+    "input": "板式平焊法兰DN20PN16FF20GB/T9124.1",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "FF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "板式平焊法兰;PN16;RJ;20;GB/T9124.1;DN20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN20,板式平焊法兰,CL150,RTJ,20,SH/T3406",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -7193,19 +7246,6 @@
         "CONN": [],
         "SEAL": [
           "LF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "DN25,Pad Flange,PN16,RTJ,20,GB/T9124.1",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "板式平焊法兰",
-        "CONN": [],
-        "SEAL": [
-          "RTJ"
         ]
       }
     }
@@ -7471,6 +7511,19 @@
     }
   },
   {
+    "input": "GB/T9124.1 松套法兰 RTJ DN250 PN16 304",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    }
+  },
+  {
     "input": "DN125,活套法兰,PN10,RTJ,SCH10S,20,HG/T20592(A系列)",
     "output": {
       "CATEGORY": "法兰",
@@ -7484,27 +7537,14 @@
     }
   },
   {
-    "input": "1.名称:LAP JOINT FLANGE 2.规格型号:RF φ273 PN16 3.材质:AISI 316L 4.标准:EN1092-1",
+    "input": "GB/T9124.1 LAP JOINT FLANGE FF DN200 PN16 304",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
         "BODY": "松套法兰",
         "CONN": [],
         "SEAL": [
-          "RF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "LAP JOINT FLANGEφ168.3PN16RTJAISI316LEN1092-1",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "松套法兰",
-        "CONN": [],
-        "SEAL": [
-          "RTJ"
+          "FF"
         ]
       }
     }
@@ -7523,33 +7563,7 @@
     }
   },
   {
-    "input": "DN150,LAP JOINT FLANGE,PN16,RTJ,AISI 316L,DIN EN 1092-1",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "松套法兰",
-        "CONN": [],
-        "SEAL": [
-          "RTJ"
-        ]
-      }
-    }
-  },
-  {
     "input": "DN150,环松套法兰,CL150,FF,S30403 Gr.II,HG/T20615",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "松套法兰",
-        "CONN": [],
-        "SEAL": [
-          "FF"
-        ]
-      }
-    }
-  },
-  {
-    "input": "松套法兰DN250PN16FF304GB/T9124.1",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -7575,7 +7589,20 @@
     }
   },
   {
-    "input": "1.名称:LJ Flg 2.规格型号:RJ DN150 PN10 3.材质:20 4.标准:HG/T20592(A系列)",
+    "input": "HG/T20592(A系列) LAP JOINT FLANGE RTJ SCH10S DN40 PN10 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RTJ"
+        ]
+      }
+    }
+  },
+  {
+    "input": "环松套法兰;PN16;RJ;AISI 316L;EN1092-1;φ323.9",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {
@@ -7583,6 +7610,45 @@
         "CONN": [],
         "SEAL": [
           "RJ"
+        ]
+      }
+    }
+  },
+  {
+    "input": "松套法兰| DN200 | PN16 | RJ | 304 | GB/T9124.1 |",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RJ"
+        ]
+      }
+    }
+  },
+  {
+    "input": "LAP JOINT FLANGE| DN150 | PN16 | RF | AISI 316L | DIN EN 1092-1 |",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称:LJ Flg 2.规格型号:RF SCH10S DN25 PN10 3.材质:20 4.标准:HG/T20592(A系列)",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
         ]
       }
     }
@@ -9918,19 +9984,6 @@
     }
   },
   {
-    "input": "8字盲板 SPECTACLE BLINDFIGURE 8DN250ASTM A105RF CL300ASME B16.5/16.48",
-    "output": {
-      "CATEGORY": "法兰",
-      "TYPE": {
-        "BODY": "8字盲板",
-        "CONN": [],
-        "SEAL": [
-          "RF"
-        ]
-      }
-    }
-  },
-  {
     "input": "8字盲板 不锈钢法兰8字盲板DN25CL600S32168Gr.IIINB/T 47010ASME B16.48",
     "output": {
       "CATEGORY": "法兰",
@@ -10072,14 +10125,298 @@
     }
   },
   {
-    "input": "管子;SMLS;BE;316L;GB/T14976;HG/T20553(Ia);φ10.2XSCH80S;DN6",
+    "input": "低压不锈钢法兰 1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN65 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
     "output": {
-      "CATEGORY": "直管",
+      "CATEGORY": "法兰",
       "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SMLS"
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN15x40-FLRF-SO 1.5 X 0.5\" 20#-CE PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "松套法兰, S30408NB/T47010, RF, PN10, HG/T20592(B), DN500",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=4.78mm DN400 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰20,PJ/SE-RF,PN10,HG/T20592,A系列 DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PadFlange,NB/T47010-S31603,RF,CL150,ASMC09-01,DN150xDN50,_NB/T47010-S31603;6x2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=3.6mm DN150",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=3.76mm DN200 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN10 HG/T20592 A系列 DN300 20/TA2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "板式平焊法兰DN40,PL-RF,PN10, GB/T 9124.1-2019,20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压不锈钢法兰 1.名称：不锈钢板式平焊法兰 2.规格型号：PL25(B)-10 RF 06Cr19Ni10 3.参照 标准：HG/T 20592-2009 4.焊接方式：氩弧焊",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "带颈对焊环松套法兰 HG/T 20615-2009 DN100 CL150 增强聚丙烯",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": []
+      }
+    }
+  },
+  {
+    "input": "PAD FLANGE,A182 F304L,CL300,RF,MFR;3X1\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "突面对焊钢制管法兰:WN 80-300 RF 5.5mm ,16Mn,HG/T20615-2009 WN 80-300 RF 5.5mm",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "平焊钢制夹套法兰 PN20-DN20x40-FLRF-SO 1.5 X 0.75\" 20# PN20 SH/T3426 NB/T47008",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈平焊夹套法兰",
+        "CONN": [],
+        "SEAL": [
+          "FLRF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "板式平焊法兰,NB/T47010-S30408,RF,PN2.5,HG/T20592(A),DN450,_NB/T47010-S30408;18\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF 1.6MPa HG/T20592-2009 B系列 20/PE DN50 20/PE",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 20,PJ/SE-RF,PN10,HG/T20592,A系列 Sch10S THK=5mm DN350",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "GB/T9118-2010,法兰HL/W100(A)-CLASS900RF,16Mn(Ⅲ) DN80",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质：S30408;HG/T20592(B);PN10;PL-RF 2.结构形式：板式平焊法兰 3.规格：DN80 4.连接形式：含配套垫片、螺栓、螺母等 5.焊接方法：详见说明",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PAD FLANGE,A182 F304L,CL300,RF,MFR;4X2\"",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 PJ/SE-RF PN16 HG/T20592 A系列 THK=4.19mm DN250 SS304/N02200",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    }
+  },
+  {
+    "input": "对焊环松套法兰 PJ-RF PN16 HG/T20592-09 Series B NB/T47008-20 DN125",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
         ]
       }
     }
@@ -10239,6 +10576,19 @@
     }
   },
   {
+    "input": "PIPE A/G S.S.ASTM A312 TP316L SMLS BE ASME B36.19 40S DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
     "input": "中压不锈钢钢管 [项目特征] 1.材质:中压不锈钢钢管DN200 SCH40S PIPE,SMLS BE GB/T 14976 06Cr19Ni10 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.充氩保护 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
     "output": {
       "CATEGORY": "直管",
@@ -10287,17 +10637,6 @@
     }
   },
   {
-    "input": "不锈钢衬四氟管道（紧衬） 1.名称：不锈钢衬四氟管道（紧衬） 2.材料或性能等级：304/PTFE 3.规格型号：DN100（钢管外径φ108*4.0，衬层：4mm），PN16，长度：500mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": []
-      }
-    }
-  },
-  {
     "input": "PIPE A312GR.TP316L SMLS PE ASME B36.19M BC.09 DN25 S-80S",
     "output": {
       "CATEGORY": "直管",
@@ -10319,19 +10658,6 @@
         "FLANGE_STYLE": "",
         "MANU": [
           "SMLS"
-        ]
-      }
-    }
-  },
-  {
-    "input": "管子,GB/T12771(IV)-S30408,BE,HG/T20553(Ia),EFW,DN350,6.0mm,_GB/T_12771(IV)-S30408",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "EFW"
         ]
       }
     }
@@ -10377,6 +10703,32 @@
   },
   {
     "input": "不锈无缝钢管 88.9 2205 管子;SMLS;PE;2205;GB/T21833.2;GB/T14976;HG/T20553(Ia);φ88.9XSCH40S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "中压不锈钢钢管 [项目特征] 1.材质:不锈钢管DN300 SCH20 PIPE,SMLS BE GB/T 14976 022Cr17Ni12Mo2 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.充氩保护 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "中压不锈钢钢管 [项目特征] 1.材质:中压不锈钢钢管DN80 SCH40S PIPE,SMLS BE GB/T 14976 022Cr17Ni12Mo2 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.充氩保护 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -10439,7 +10791,7 @@
     }
   },
   {
-    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN80",
+    "input": "PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN80",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -10544,6 +10896,19 @@
         "BODY": "直管",
         "FLANGE_STYLE": "",
         "MANU": []
+      }
+    }
+  },
+  {
+    "input": "PIPE SEAMLESS 2\" SCH80S ASTM A312 TP304 B36.19 BE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
       }
     }
   },
@@ -10700,6 +11065,19 @@
     }
   },
   {
+    "input": "钢管 ;埋弧焊 ;GB/T3091;Q235B Ga1V.; 系列 1;SH/T3405;XS DN15",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    }
+  },
+  {
     "input": "碳钢管道 1.名称、材质、规格：DN2000 钢管自带3PE加强级外防腐,SAW,SPS,SY/T 5037 Q235B,SH/T 3405 22.23mm 埋地",
     "output": {
       "CATEGORY": "直管",
@@ -10709,6 +11087,17 @@
         "MANU": [
           "SAW"
         ]
+      }
+    }
+  },
+  {
+    "input": "1.名称：钢衬四氟管道（模压） 2.材料或性能等级：20/PTFE 3.规格型号：DN65（钢管外径φ76*4.0，衬层：模压），PN16，长度：2000mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
       }
     }
   },
@@ -10766,6 +11155,19 @@
   },
   {
     "input": "中压不锈钢管 1.材质：06Cr19Ni10 2.规格：NPS1 1/2 GB/T14976 SMLS BE GB/T 17395 4mm 3.连接形式、焊接方法：氩弧焊 4.充氩保护方式、部位：按设计要求综合考虑 5.压力试验、吹扫与清洗设计要求：按设计要求综合考虑 6. 脱脂设计要求：采用溶剂、乳剂或碱清洗剂等清洗",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "中压碳钢管 [项目特征] 1.材质:低压碳钢管DN150 SCH40 PIPE,SMLS BE GB 9948 20 SH/T 3405 ANTI-H2S [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.焊前预热及焊缝热处理 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -10960,19 +11362,6 @@
     }
   },
   {
-    "input": "管子,GB/T12771(II)-S31603,BE,HG/T20553(Ia),EFW,DN200,S-20,_GB/T12771(II)-S31603",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "EFW"
-        ]
-      }
-    }
-  },
-  {
     "input": "管子;SAW LGS;BE;GB/T 9711 GB 713 Q245R;SH/T 3405;-;18mm DN1000",
     "output": {
       "CATEGORY": "直管",
@@ -10982,17 +11371,6 @@
         "MANU": [
           "SAW"
         ]
-      }
-    }
-  },
-  {
-    "input": "不锈钢衬四氟管道（模压） 1.名称：不锈钢衬四氟管道（模压） 2.材料或性能等级：304/PTFE 3.规格型号：DN50（钢管外径φ57*3.5，衬层：模压），PN16，长度：500mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": []
       }
     }
   },
@@ -11008,7 +11386,7 @@
     }
   },
   {
-    "input": "1.材质:PIPE , BE , GB/T 6479 20# , SMLS , S-40 2.规格:NPS2 3.焊接方法:氩电联焊 4.充氩保护方式、部位:焊口充氩保护，方式综合考虑 5.压力试验、吹扫与清洗设计要求:水压试验，空气吹扫，氮气或热空气干燥 6.无损检测 7.泄露性试验",
+    "input": "DN15 管子 PIPE ASME B 36.10 Seamless,API 5L GR.B PE Sch 80",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -11021,15 +11399,13 @@
     }
   },
   {
-    "input": "DN15 管子 PIPE ASME B 36.10 Seamless,API 5L GR.B PE Sch 80",
+    "input": "GB/T 14976;SH/T 3405 Pipe21.3 SCH40S PE S30408",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "",
-        "MANU": [
-          "SMLS"
-        ]
+        "MANU": []
       }
     }
   },
@@ -11162,6 +11538,19 @@
     }
   },
   {
+    "input": "中压碳钢管 [项目特征] 1.材质:中压碳钢管 DN20 SCH80 PIPE,SMLS PE GB/T 8163 20 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.焊前预热及焊缝热处理 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
     "input": "无缝不锈钢管 PIPE SMLS BE HG/T20553Ia SCH20 DN300 S30408,GB/T14976 -",
     "output": {
       "CATEGORY": "直管",
@@ -11254,19 +11643,6 @@
   },
   {
     "input": "碳钢管道 1.名称、材质、规格：DN200 钢管自带3PE加强级外防腐SMLS,GB/T 8163 20,SH/T 3405 SCH30 埋地",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SMLS"
-        ]
-      }
-    }
-  },
-  {
-    "input": "管子(SMLS)DN150 20# GB/T8163 SMLS SH/T3405 SCH30",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -11652,6 +12028,17 @@
     }
   },
   {
+    "input": "Hose for MH,DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
     "input": "PIPE A/G S.S.ASTM A358 TP304L CL.1,E.F.W Ej=1 BE ASME B36.19 40S DN200",
     "output": {
       "CATEGORY": "直管",
@@ -11817,6 +12204,19 @@
     }
   },
   {
+    "input": "中压碳钢管 [项目特征] 1.材质:中压碳钢管 DN25 SCH80 PIPE,SMLS PE GB 9948 20 SH/T 3405 ANTI-H2S [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.焊前预热及焊缝热处理 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
     "input": "中压碳钢管 [项目特征] 1.材质:管子(SMLS)DN50 SCH40 PIPE,SMLS BE GB/T 8163 20 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.焊前预热及焊缝热处理 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
     "output": {
       "CATEGORY": "直管",
@@ -11831,6 +12231,19 @@
   },
   {
     "input": "低压不锈钢管 1.名称：06Cr19Ni10无缝钢管φ25×2.0 2.连接方式：氩弧焊，焊口焊接管内充氩保护 3.材料或性能等级：S30408 4.参照标准GB/T14976-2025 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压不锈钢管 [项目特征] 1.材质:低压不锈钢管DN200 SCH20S PIPE,SMLS BE GB/T 14976 022Cr17Ni12Mo2 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.充氩保护 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -11891,6 +12304,17 @@
         "MANU": [
           "SMLS"
         ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,FRP,DARKANE 470HT-400/LAP JOINT FLANGE:A105.GALV,CL150,LJ FLG,1.0MPa,DIN16965/ASME B16.5. 2657mm;2 in;",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
       }
     }
   },
@@ -12128,33 +12552,7 @@
     }
   },
   {
-    "input": "碳钢管道 1.名称、材质、规格：DN250 SMLS,GB/T 8163 20,SH/T 3405 SCN40",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SMLS"
-        ]
-      }
-    }
-  },
-  {
     "input": "碳钢管道 1.名称、材质、规格：D76.1×5无缝钢管 20,GB /T8163 , BE,HG/T 20553 2011 Ia 系列 Sch40",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SMLS"
-        ]
-      }
-    }
-  },
-  {
-    "input": "碳钢管道安装 50mm,GALV,SMLS,PE,XS,SH/T 3405 GB/T 8163 20",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -12304,6 +12702,19 @@
     }
   },
   {
+    "input": "1.名称:螺旋缝埋弧焊钢管（主材甲供） 2.材质:L290M PSL2（满足GB/T9711-2023规范要求） 3.规格:Φ508x10 4.连接形式、焊接方法:氩电联焊 5.外壁防腐:含三层PE防腐加强级 6.压力试验、吹扫与清洗设计要求:满足设计和规范要求 7.标识:参照《民用机场飞行区技术标准》（MH 5001-2021）、《民用航空油料设备完好技术规范》（MH/T 6002-2008）、《",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    }
+  },
+  {
     "input": "1.材质:流体输送用不锈钢无缝钢管 2.规格:Φ57×3.50 3.连接形式、焊接方法:Q235B 焊接钢管 GB/T3091 普通级 4.管道施工完后应做水压试验及吹扫",
     "output": {
       "CATEGORY": "直管",
@@ -12325,6 +12736,19 @@
         "FLANGE_STYLE": "",
         "MANU": [
           "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN200×Sch20 Pipe EFW Bevelled Ends SH/T 3405 S30408 SS GB/T 12771 E=1.0",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
         ]
       }
     }
@@ -12391,6 +12815,32 @@
     }
   },
   {
+    "input": "焊接钢管 PIPE SAWL, BE, HG/T20553-2011 Ia SCH20 DN450 L245 PSL1 GB/T9711 -",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "直焊缝钢管 :埋弧焊 ;GB/T3091;Q235B Ga1V.; 系列 1;SH/T3405;XS DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
     "input": "直焊缝钢管;GB/T3091;Q235B Ga1V.; 系列 1;SH/T3405;XS DN20",
     "output": {
       "CATEGORY": "直管",
@@ -12400,17 +12850,6 @@
         "MANU": [
           "WELDED"
         ]
-      }
-    }
-  },
-  {
-    "input": "碳素钢管 管子;PSL2L245N;GB/T9711;SAW100%射线;HG/T20553(II);φ530X10mmDN500",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": []
       }
     }
   },
@@ -12631,6 +13070,17 @@
     }
   },
   {
+    "input": "直管,PL-RF,300LBDN80,HG/T2437-06,HG/T20615(A),PTFE/CS,L=150MM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
     "input": "不锈钢钢管, BE stain sted Pipe φ10.2X1.2 ，GB/T14976-2012,S30408",
     "output": {
       "CATEGORY": "直管",
@@ -12638,6 +13088,19 @@
         "BODY": "直管",
         "FLANGE_STYLE": "",
         "MANU": []
+      }
+    }
+  },
+  {
+    "input": "不锈钢无缝钢管安装 1.名称:无缝钢管 2.材质:06Cr19Ni10(PC) 3.管径、壁厚:φ60.3 2.9 mm GB/T14976-2012 4.连接方式:综合考虑 5.其它详见设计图纸",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
       }
     }
   },
@@ -12650,6 +13113,19 @@
         "FLANGE_STYLE": "",
         "MANU": [
           "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, S30403 GB/T 12771 TYPE I, EFW, BE, SH/T 3405,11.91 mm;DN1400",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
         ]
       }
     }
@@ -12677,17 +13153,6 @@
         "MANU": [
           "WELDED"
         ]
-      }
-    }
-  },
-  {
-    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 40",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
-        "MANU": []
       }
     }
   },
@@ -13037,6 +13502,17 @@
     }
   },
   {
+    "input": "PIPE 114.3x6.02 CL150 RF TP304 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
     "input": "Submerged Arc Welded Pipe DN200 SCH40 RF CL150 A106-B",
     "output": {
       "CATEGORY": "直管",
@@ -13045,32 +13521,6 @@
         "FLANGE_STYLE": "",
         "MANU": [
           "SAW"
-        ]
-      }
-    }
-  },
-  {
-    "input": "Spiral Submerged Arc Welded Pipe DN250 SCH40 RF CL150 A106-B",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SAWH"
-        ]
-      }
-    }
-  },
-  {
-    "input": "Longitudinal Submerged Arc Welded Pipe DN250 SCH40 RF CL150 A106-B",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SAWL"
         ]
       }
     }
@@ -13141,32 +13591,6 @@
     }
   },
   {
-    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE Lined SAW L=3000mm CL150 RF 219.1x6.35(3.0) 20#/PTFE DN200",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SAW"
-        ]
-      }
-    }
-  },
-  {
-    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE Lined SAWL L=3000mm CL150 RF 219.1x6.35(3.0) 20#/PTFE DN200",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "",
-        "MANU": [
-          "SAWL"
-        ]
-      }
-    }
-  },
-  {
     "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 350 DN 100",
     "output": {
       "CATEGORY": "直管",
@@ -13194,17 +13618,6 @@
   },
   {
     "input": "PTFE内衬碳钢管 Flgd Pipe,20/PTFE GB/T 8163,RF,CL 150,HG/T 20615,MFR STD,HG/T 20553(Ia),DN80,S-40",
-    "output": {
-      "CATEGORY": "直管",
-      "TYPE": {
-        "BODY": "直管",
-        "FLANGE_STYLE": "FLANGED",
-        "MANU": []
-      }
-    }
-  },
-  {
-    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3500mm",
     "output": {
       "CATEGORY": "直管",
       "TYPE": {
@@ -13315,6 +13728,254 @@
         "MANU": [
           "EFW"
         ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1280 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, 20/衬胶, RF, PN10, HG/T 20592, HG/T 21501, SMLS , DN200, 6.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 1885mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1506 DN 40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1182 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406,S-40;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 664 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN25（φ34*3.5），PN10，长度：500~1000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "FLANGED PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN500",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 280 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1338 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 934 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 1252 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压搪玻璃管 1、材质：搪玻璃管（含法兰、垫片、螺栓等） 2.规格型号：DN80（φ89*4.0），PN10，长度：1000~2000mm,两端活套法兰 3.参照标准HG/T 2130-2014 4、包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 - CUT TO 410 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "FLANGED PIPE FP, CL150, RF, PTFE/20, HG/T 20538, SH/T 3406;DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
       }
     }
   },
