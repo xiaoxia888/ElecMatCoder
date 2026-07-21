@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+"""
+python -m vllm_service.launch \
+    --config vllm_service/service.yaml
+"""
 import argparse
 import json
 import logging
@@ -26,15 +30,21 @@ def _gateway_module_name() -> str:
 
 def _engine_env(engine: EngineSpec) -> dict[str, str]:
     env = os.environ.copy()
+    env.update(engine.environment)
     if engine.cuda_visible_devices.strip():
         env["CUDA_VISIBLE_DEVICES"] = engine.cuda_visible_devices.strip()
     return env
 
 
 def _format_command(engine: EngineSpec) -> str:
-    prefix = ""
+    environment = dict(engine.environment)
     if engine.cuda_visible_devices.strip():
-        prefix = f"CUDA_VISIBLE_DEVICES={shlex.quote(engine.cuda_visible_devices.strip())} "
+        environment["CUDA_VISIBLE_DEVICES"] = engine.cuda_visible_devices.strip()
+    prefix = " ".join(
+        f"{key}={shlex.quote(value)}" for key, value in sorted(environment.items())
+    )
+    if prefix:
+        prefix += " "
     return prefix + shlex.join(build_engine_command(engine))
 
 
@@ -82,6 +92,9 @@ def _wait_for_engines(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="vLLM 多基座、多LoRA一键启动器")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
+    parser.add_argument(
+        "--profile", default=None, help="临时覆盖service.yaml中的硬件Profile"
+    )
     parser.add_argument("--dry-run", action="store_true", help="仅校验配置并打印启动命令")
     parser.add_argument("--skip-health-check", action="store_true")
     parser.add_argument("--log-level", default="info")
@@ -96,10 +109,14 @@ def main() -> int:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     config_path = args.config.expanduser().resolve()
-    config = load_config(config_path)
+    config = load_config(config_path, profile=args.profile)
 
     if args.dry_run:
         output = {
+            "profile": {
+                "name": config.profile_name,
+                "path": str(config.profile_path),
+            },
             "engines": {name: _format_command(engine) for name, engine in config.engines.items()},
             "gateway": shlex.join(
                 [
@@ -108,6 +125,8 @@ def main() -> int:
                     _gateway_module_name(),
                     "--config",
                     str(config_path),
+                    "--profile",
+                    str(config.profile_path),
                 ]
             ),
             "models": {
@@ -164,6 +183,8 @@ def main() -> int:
             _gateway_module_name(),
             "--config",
             str(config_path),
+            "--profile",
+            str(config.profile_path),
             "--log-level",
             args.log_level,
         ]

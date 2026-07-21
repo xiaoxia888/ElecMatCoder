@@ -1,0 +1,23 @@
+# 单A100 80GB：两个独立engine共享GPU 0，显存比例总和必须小于1。
+engines:
+  qwen3_8b:
+    cuda_visible_devices: "0"
+    dtype: bfloat16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.54
+    tensor_parallel_size: 1
+    max_num_seqs: 16
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""
+
+  qwen3_4b:
+    cuda_visible_devices: "0"
+    dtype: bfloat16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.34
+    tensor_parallel_size: 1
+    max_num_seqs: 32
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""

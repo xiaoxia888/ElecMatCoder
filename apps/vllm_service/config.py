@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import sys
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,36 @@ import yaml
 
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().with_name("service.yaml")
+
+PROFILE_ALLOWED_TOP_LEVEL = {"gateway", "engines"}
+PROFILE_ALLOWED_GATEWAY_FIELDS = {
+    "request_timeout_seconds",
+    "startup_timeout_seconds",
+    "health_check_interval_seconds",
+}
+PROFILE_ALLOWED_ENGINE_FIELDS = {
+    "cuda_visible_devices",
+    "dtype",
+    "max_model_len",
+    "gpu_memory_utilization",
+    "tensor_parallel_size",
+    "max_num_seqs",
+    "enforce_eager",
+    "enable_prefix_caching",
+    "quantization",
+    "kv_cache_dtype",
+    "cpu_offload_gb",
+    "environment",
+    "extra_args",
+}
+PROFILE_REQUIRED_ENGINE_FIELDS = {
+    "cuda_visible_devices",
+    "dtype",
+    "max_model_len",
+    "gpu_memory_utilization",
+    "tensor_parallel_size",
+    "max_num_seqs",
+}
 
 
 def _expand(value: Any) -> str:
@@ -58,6 +89,7 @@ class EngineSpec:
     max_cpu_loras: int = 1
     max_lora_rank: int = 16
     lora_modules: dict[str, str] = field(default_factory=dict)
+    environment: dict[str, str] = field(default_factory=dict)
     extra_args: tuple[str, ...] = ()
 
     @property
@@ -83,6 +115,8 @@ class DeploymentConfig:
     gateway: GatewaySpec
     engines: dict[str, EngineSpec]
     models: dict[str, ModelRoute]
+    profile_name: str
+    profile_path: Path
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -92,9 +126,88 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
-def load_config(path: Path) -> DeploymentConfig:
+def _resolve_profile_path(config_path: Path, profile: str | Path) -> Path:
+    raw = os.path.expandvars(os.path.expanduser(str(profile).strip()))
+    if not raw:
+        raise ValueError("profile 不能为空")
+
+    candidate = Path(raw)
+    if candidate.is_absolute():
+        return candidate.resolve()
+    if candidate.parent != Path("."):
+        return (config_path.parent / candidate).resolve()
+
+    filename = candidate.name if candidate.suffix else f"{candidate.name}.yaml"
+    return (config_path.parent / "profiles" / filename).resolve()
+
+
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    merged = deepcopy(base)
+    for key, value in override.items():
+        if value is None:
+            merged.pop(key, None)
+        elif isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = deepcopy(value)
+    return merged
+
+
+def _validate_profile(data: dict[str, Any], base: dict[str, Any], path: Path) -> None:
+    unknown_top_level = set(data) - PROFILE_ALLOWED_TOP_LEVEL
+    if unknown_top_level:
+        raise ValueError(
+            f"硬件Profile不允许配置这些顶层字段: {sorted(unknown_top_level)} ({path})"
+        )
+
+    raw_gateway = data.get("gateway") or {}
+    if not isinstance(raw_gateway, dict):
+        raise ValueError(f"Profile gateway 必须是对象: {path}")
+    unknown_gateway = set(raw_gateway) - PROFILE_ALLOWED_GATEWAY_FIELDS
+    if unknown_gateway:
+        raise ValueError(
+            f"硬件Profile不允许覆盖这些gateway字段: {sorted(unknown_gateway)} ({path})"
+        )
+
+    raw_engines = data.get("engines") or {}
+    if not isinstance(raw_engines, dict):
+        raise ValueError(f"Profile engines 必须是对象: {path}")
+    base_engines = base.get("engines") or {}
+    unknown_engines = set(raw_engines) - set(base_engines)
+    if unknown_engines:
+        raise ValueError(f"硬件Profile引用了未知engine: {sorted(unknown_engines)} ({path})")
+    missing_engines = set(base_engines) - set(raw_engines)
+    if missing_engines:
+        raise ValueError(f"硬件Profile缺少engine配置: {sorted(missing_engines)} ({path})")
+    for name, row in raw_engines.items():
+        if not isinstance(row, dict):
+            raise ValueError(f"Profile engine {name} 必须是对象: {path}")
+        unknown_fields = set(row) - PROFILE_ALLOWED_ENGINE_FIELDS
+        if unknown_fields:
+            raise ValueError(
+                f"硬件Profile不允许覆盖engine {name}字段: "
+                f"{sorted(unknown_fields)} ({path})"
+            )
+        missing_fields = PROFILE_REQUIRED_ENGINE_FIELDS - set(row)
+        if missing_fields:
+            raise ValueError(
+                f"硬件Profile的engine {name}缺少必填字段: "
+                f"{sorted(missing_fields)} ({path})"
+            )
+
+
+def load_config(path: Path, profile: str | Path | None = None) -> DeploymentConfig:
     path = path.expanduser().resolve()
-    data = _load_yaml(path)
+    base_data = _load_yaml(path)
+    selected_profile = profile if profile is not None else base_data.get("profile")
+    if selected_profile is None or not str(selected_profile).strip():
+        raise ValueError(f"service.yaml必须配置顶层profile字段: {path}")
+    profile_path = _resolve_profile_path(path, selected_profile)
+    if not profile_path.is_file():
+        raise FileNotFoundError(f"硬件Profile不存在: {profile_path}")
+    profile_data = _load_yaml(profile_path)
+    _validate_profile(profile_data, base_data, profile_path)
+    data = _deep_merge(base_data, profile_data)
 
     raw_gateway = data.get("gateway") or {}
     gateway = GatewaySpec(
@@ -109,6 +222,9 @@ def load_config(path: Path) -> DeploymentConfig:
     for name, row in (data.get("engines") or {}).items():
         if not isinstance(row, dict):
             raise ValueError(f"engine {name} 配置必须是对象")
+        raw_environment = row.get("environment") or {}
+        if not isinstance(raw_environment, dict):
+            raise ValueError(f"engine {name} environment 配置必须是对象")
         lora_modules = {
             str(alias).strip(): _expand(adapter_path)
             for alias, adapter_path in (row.get("lora_modules") or {}).items()
@@ -137,6 +253,11 @@ def load_config(path: Path) -> DeploymentConfig:
             max_cpu_loras=int(row.get("max_cpu_loras", max(1, len(lora_modules)))),
             max_lora_rank=int(row.get("max_lora_rank", 16)),
             lora_modules=lora_modules,
+            environment={
+                str(key).strip(): os.path.expandvars(os.path.expanduser(str(value)))
+                for key, value in raw_environment.items()
+                if str(key).strip()
+            },
             extra_args=tuple(str(value) for value in (row.get("extra_args") or [])),
         )
         if not engine.model_path:
@@ -149,6 +270,27 @@ def load_config(path: Path) -> DeploymentConfig:
 
     if not engines:
         raise ValueError("配置文件至少需要一个 engine")
+
+    utilization_by_devices: dict[tuple[str, ...], float] = {}
+    for engine in engines.values():
+        devices = tuple(
+            sorted(
+                device.strip()
+                for device in engine.cuda_visible_devices.split(",")
+                if device.strip()
+            )
+        )
+        if not devices:
+            continue
+        utilization_by_devices[devices] = (
+            utilization_by_devices.get(devices, 0.0) + engine.gpu_memory_utilization
+        )
+    for devices, utilization in utilization_by_devices.items():
+        if utilization > 1.0 + 1e-9:
+            raise ValueError(
+                f"共享GPU {','.join(devices)} 的gpu_memory_utilization总和不能超过1，"
+                f"当前为{utilization:.4f}"
+            )
 
     models: dict[str, ModelRoute] = {}
     for name, row in (data.get("models") or {}).items():
@@ -181,7 +323,13 @@ def load_config(path: Path) -> DeploymentConfig:
     if not models:
         raise ValueError("配置文件至少需要一个 model 路由")
 
-    return DeploymentConfig(gateway=gateway, engines=engines, models=models)
+    return DeploymentConfig(
+        gateway=gateway,
+        engines=engines,
+        models=models,
+        profile_name=profile_path.stem,
+        profile_path=profile_path,
+    )
 
 
 def build_engine_command(engine: EngineSpec) -> list[str]:

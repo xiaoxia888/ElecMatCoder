@@ -15,6 +15,18 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from requests.adapters import HTTPAdapter
+
+
+_HTTP_SESSION = requests.Session()
+_HTTP_ADAPTER = HTTPAdapter(
+    pool_connections=64,
+    pool_maxsize=64,
+    max_retries=0,
+    pool_block=True,
+)
+_HTTP_SESSION.mount("http://", _HTTP_ADAPTER)
+_HTTP_SESSION.mount("https://", _HTTP_ADAPTER)
 
 
 DEFAULT_TEXTS = [
@@ -197,8 +209,9 @@ def call_predict(
     timeout: int,
 ) -> dict[str, Any]:
     started = time.perf_counter()
-    response = requests.post(
+    response = _HTTP_SESSION.post(
         f"{service_url.rstrip('/')}/predict",
+        headers={"Connection": "keep-alive"},
         json={
             "model": model,
             "text": text,
@@ -343,7 +356,7 @@ def main() -> int:
     args = parse_args()
     texts = read_texts(args.input, args.text_column, args.text, args.limit)
 
-    health_response = requests.get(
+    health_response = _HTTP_SESSION.get(
         f"{args.service_url.rstrip('/')}/health", timeout=min(30, args.timeout)
     )
     health_response.raise_for_status()

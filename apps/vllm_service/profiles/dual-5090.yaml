@@ -1,0 +1,27 @@
+# 双RTX 5090 32GB。当前FlashInfer sampler对Blackwell sm_120可能误判架构。
+engines:
+  qwen3_8b:
+    cuda_visible_devices: "0"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 16
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""
+    environment:
+      VLLM_USE_FLASHINFER_SAMPLER: "0"
+
+  qwen3_4b:
+    cuda_visible_devices: "1"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 32
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""
+    environment:
+      VLLM_USE_FLASHINFER_SAMPLER: "0"

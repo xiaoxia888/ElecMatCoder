@@ -21,6 +21,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import requests
 import yaml
 
+from .llm_http_transport import call_hf_lazy_service_predict
 from .prompts import (
     get_stage1_decisions_only_prompt,
     get_stage1_platform_predict_prompt,
@@ -520,20 +521,16 @@ class Qwen3Predictor:
     def _call_model_service(self, system_prompt: Optional[str], user_content: str) -> dict:
         # 微调模型的 instruction 与模型路径一起由部署服务维护。
         # 平台只指定模型和输入，避免调用侧提示词覆盖部署配置。
-        payload = {
-            "model": self.model_name,
-            "text": user_content,
-            "max_new_tokens": self.ollama_num_predict,
-            "temperature": self.ollama_temperature,
-            "top_p": self.ollama_top_p,
-        }
-        resp = requests.post(
-            f"{self.service_url}/predict",
-            json=payload,
+        service_response = call_hf_lazy_service_predict(
+            service_url=self.service_url,
+            model_name=self.model_name,
+            text=user_content,
             timeout=self.request_timeout,
+            max_new_tokens=self.ollama_num_predict,
+            temperature=self.ollama_temperature,
+            top_p=self.ollama_top_p,
         )
-        resp.raise_for_status()
-        payload = resp.json()
+        payload = service_response.payload
         raw_response = str(payload.get("raw_response") or "")
         parsed_json = payload.get("parsed_json")
         if isinstance(parsed_json, dict):

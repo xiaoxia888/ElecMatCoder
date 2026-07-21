@@ -438,30 +438,9 @@ async def _run_batch_job(job_id: str) -> None:
             client_index = int(item.get("client_index", order_index))
             try:
                 converted = await process_one(order_index, item)
-                converted_results[order_index] = converted
-                await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, converted)
-                async with _batch_job_lock:
-                    current_job = _batch_jobs.get(job_id)
-                    if not current_job:
-                        return
-                    current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
-                    if converted and converted.get("success"):
-                        current_job["success_count"] = int(current_job.get("success_count", 0) or 0) + 1
-                    if converted and converted.get("need_review"):
-                        current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
-                    _refresh_batch_job_runtime(current_job)
-                    snapshot = _batch_job_public(current_job)
-                await asyncio.to_thread(_persist_job_meta, current_job)
-                await _batch_job_emit(job, {
-                    "type": "progress",
-                    "index": client_index,
-                    "order_index": order_index,
-                    "result": converted,
-                    "snapshot": snapshot,
-                })
             except Exception as exc:
                 logger.exception("批量编码任务处理失败: job=%s index=%s", job_id, order_index)
-                failed_result = {
+                converted = {
                     "original_text": item.get("text", ""),
                     "final_code": "",
                     "success": False,
@@ -469,24 +448,39 @@ async def _run_batch_job(job_id: str) -> None:
                     "errors": [str(exc)],
                     "fields": {},
                 }
-                converted_results[order_index] = failed_result
-                await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, failed_result)
-                async with _batch_job_lock:
-                    current_job = _batch_jobs.get(job_id)
-                    if not current_job:
-                        return
-                    current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
+
+            converted_results[order_index] = converted
+            now = _utc_ts()
+            duration_seconds = max(0.0, now - float(job["started_at"])) if job.get("started_at") else None
+            await asyncio.to_thread(
+                _batch_store.save_result_and_advance_job,
+                job_id,
+                order_index,
+                client_index,
+                converted,
+                success_delta=int(bool(converted and converted.get("success"))),
+                review_delta=int(bool(converted and converted.get("need_review"))),
+                updated_at=now,
+                duration_seconds=duration_seconds,
+            )
+            async with _batch_job_lock:
+                current_job = _batch_jobs.get(job_id)
+                if not current_job:
+                    return
+                current_job["processed"] = int(current_job.get("processed", 0) or 0) + 1
+                if converted and converted.get("success"):
+                    current_job["success_count"] = int(current_job.get("success_count", 0) or 0) + 1
+                if converted and converted.get("need_review"):
                     current_job["review_count"] = int(current_job.get("review_count", 0) or 0) + 1
-                    _refresh_batch_job_runtime(current_job)
-                    snapshot = _batch_job_public(current_job)
-                await asyncio.to_thread(_persist_job_meta, current_job)
-                await _batch_job_emit(job, {
-                    "type": "progress",
-                    "index": client_index,
-                    "order_index": order_index,
-                    "result": failed_result,
-                    "snapshot": snapshot,
-                })
+                _refresh_batch_job_runtime(current_job, now=now)
+                snapshot = _batch_job_public(current_job)
+            await _batch_job_emit(job, {
+                "type": "progress",
+                "index": client_index,
+                "order_index": order_index,
+                "result": converted,
+                "snapshot": snapshot,
+            })
 
     try:
         workers = [asyncio.create_task(worker()) for _ in range(max(1, max_concurrent))]
@@ -515,25 +509,56 @@ async def _run_batch_job(job_id: str) -> None:
 
         final_success_count = 0
         final_review_count = 0
+        changed_results: list[tuple[int, int, Dict[str, Any]]] = []
         for order_index, (item, converted) in enumerate(zip(items, finalized)):
             if not isinstance(converted, dict) or converted.get("skipped_encoding"):
                 continue
+            previous = converted_results[order_index]
             converted_results[order_index] = converted
             if converted.get("success"):
                 final_success_count += 1
             if converted.get("need_review"):
                 final_review_count += 1
-            client_index = int(item.get("client_index", order_index))
-            await asyncio.to_thread(_batch_store.save_result, job_id, order_index, client_index, converted)
-            async with _batch_job_lock:
-                current_job = _batch_jobs.get(job_id)
-                if not current_job:
-                    return
-                current_job["success_count"] = final_success_count
-                current_job["review_count"] = final_review_count
-                _refresh_batch_job_runtime(current_job)
-                snapshot = _batch_job_public(current_job)
-            await asyncio.to_thread(_persist_job_meta, current_job)
+            if converted != previous:
+                changed_results.append(
+                    (order_index, int(item.get("client_index", order_index)), converted)
+                )
+
+        finished_at = _utc_ts()
+        duration_seconds = (
+            max(0.0, finished_at - float(job["started_at"])) if job.get("started_at") else None
+        )
+        await asyncio.to_thread(
+            _batch_store.finalize_job,
+            job_id,
+            changed_results,
+            processed=total,
+            success_count=final_success_count,
+            review_count=final_review_count,
+            finished_at=finished_at,
+            duration_seconds=duration_seconds,
+        )
+        logger.info(
+            "批量任务项目维度分析已批量落库: job=%s total=%s changed=%s",
+            job_id,
+            total,
+            len(changed_results),
+        )
+        async with _batch_job_lock:
+            current_job = _batch_jobs.get(job_id)
+            if not current_job:
+                return
+            current_job["status"] = "finished"
+            current_job["processed"] = total
+            current_job["success_count"] = final_success_count
+            current_job["review_count"] = final_review_count
+            current_job["error"] = ""
+            current_job["finished_at"] = finished_at
+            current_job["updated_at"] = finished_at
+            current_job["duration_seconds"] = duration_seconds
+            snapshot = _batch_job_public(current_job)
+
+        for order_index, client_index, converted in changed_results:
             await _batch_job_emit(job, {
                 "type": "finalize",
                 "index": client_index,
@@ -541,13 +566,6 @@ async def _run_batch_job(job_id: str) -> None:
                 "result": converted,
                 "snapshot": snapshot,
             })
-
-        async with _batch_job_lock:
-            current_job = _batch_jobs.get(job_id)
-            if not current_job:
-                return
-            await _batch_job_mark_finished(current_job, "finished")
-            snapshot = _batch_job_public(current_job)
         await _batch_job_emit(job, {"type": "end", "snapshot": snapshot})
     except Exception as exc:
         logger.exception("批量编码任务失败: job=%s", job_id)

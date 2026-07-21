@@ -27,6 +27,9 @@
 新建独立Linux环境，依据CUDA驱动安装PyTorch后执行：
 
 ```bash
+
+conda create -n vllm python=3.11
+
 pip install -r apps/vllm_service/requirements-linux.txt
 ```
 
@@ -34,27 +37,44 @@ V100使用`float16`。A100、4090、5090可根据模型支持选择`float16`或`
 
 ## 配置
 
-编辑：
+公共配置与硬件配置分离：
 
 ```text
 apps/vllm_service/service.yaml
+apps/vllm_service/profiles/*.yaml
 ```
+
+`service.yaml`中的`profile`为必填项，启动时会自动加载同目录`profiles`下的配置：
+
+```yaml
+profile: dual-5090
+```
+
+已有Profile：
+
+- `dual-3090`：双RTX 3090 24GB。
+- `dual-4090`：双RTX 4090 24GB。
+- `dual-5090`：双RTX 5090 32GB，关闭当前不兼容的FlashInfer sampler。
+- `dual-v100-32gb`：双V100 32GB，强制使用`float16`。
+- `single-a100-80gb`：单A100 80GB，两个engine共享GPU 0。
+
+Profile只能覆盖GPU、精度、显存、并发和兼容环境变量，不能覆盖模型路径、LoRA、提示词、端口或模型路由。双V100 16GB不能直接套用32GB配置，需要量化模型和独立Profile。
 
 至少替换以下路径：
 
 ```yaml
 engines:
   qwen3_8b:
-    model_path: /models/Qwen3-8B
+    model_path: /home/waas/base-models/Qwen3-8B
     lora_modules:
-      type: /models/lora/type
+      type: /home/waas/lora/type
 
   qwen3_4b:
-    model_path: /models/Qwen3-4B
+    model_path: /home/waas/base-models/Qwen3-4B-Instruct-2507
     lora_modules:
-      size-thick-pressure: /models/lora/size-thick-pressure
-      material-standard: /models/lora/material-standard
-      coder: /models/lora/coder
+      size-thick-pressure: /home/waas/lora/size-thick-pressure
+      material-standard: /home/waas/lora/material-standard
+      coder: /home/waas/lora/coder
 ```
 
 先校验配置并查看实际启动命令：
@@ -62,6 +82,15 @@ engines:
 ```bash
 python -m apps.vllm_service.launch \
   --config apps/vllm_service/service.yaml \
+  --dry-run
+```
+
+临时测试其他硬件Profile时可以覆盖`service.yaml`中的选择：
+
+```bash
+python -m apps.vllm_service.launch \
+  --config apps/vllm_service/service.yaml \
+  --profile dual-4090 \
   --dry-run
 ```
 
@@ -74,14 +103,14 @@ python -m apps.vllm_service.launch \
 
 启动器会：
 
-1. 同时启动8B和4B两个vLLM engine。
+1. 依次启动8B和4B两个vLLM engine，避免启动阶段争抢显存。
 2. 等待两个engine通过健康检查。
 3. 启动兼容MLX协议的统一网关。
 4. 任意子进程退出时停止整组服务，避免残留进程占用显存。
 
 ## 单卡与双卡
 
-双卡推荐配置：
+双卡参数配置在对应Profile中：
 
 ```yaml
 qwen3_8b:
@@ -93,7 +122,7 @@ qwen3_4b:
   gpu_memory_utilization: 0.90
 ```
 
-单张40GB及以上显卡可以让两个engine共用GPU 0，但两个进程的显存比例之和应小于1：
+单张40GB及以上显卡可以让两个engine共用GPU 0，但两个进程的显存比例之和应小于1。建议复制`single-a100-80gb.yaml`创建新Profile，不要把硬件参数写回`service.yaml`：
 
 ```yaml
 qwen3_8b:
@@ -174,4 +203,3 @@ python -m apps.vllm_service.benchmark \
 ## 与现有平台连接
 
 现有平台配置中的后端名称可以暂时保留`mlx_service`，只需把`service_url`改为Linux网关地址。这里复用的是协议，并不代表Linux服务器仍在运行MLX。
-

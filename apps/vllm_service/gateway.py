@@ -107,6 +107,7 @@ class VLLMGateway:
         return {
             "ok": all(item.get("ok") for item in checks),
             "backend": "vllm",
+            "profile": self.config.profile_name,
             "registered_models": len(self.config.models),
             "engines": engines,
         }
@@ -230,6 +231,9 @@ def build_app(config: DeploymentConfig) -> FastAPI:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="vLLM 多基座、多LoRA统一网关")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
+    parser.add_argument(
+        "--profile", default=None, help="临时覆盖service.yaml中的硬件Profile"
+    )
     parser.add_argument("--host", default=None)
     parser.add_argument("--port", type=int, default=None)
     parser.add_argument("--log-level", default="info")
@@ -243,7 +247,7 @@ def main() -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    config = load_config(args.config)
+    config = load_config(args.config, profile=args.profile)
     app = build_app(config)
     uvicorn.run(
         app,

@@ -1,0 +1,23 @@
+# 双V100 32GB。V100不支持bfloat16，必须使用float16。
+engines:
+  qwen3_8b:
+    cuda_visible_devices: "0"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 8
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""
+
+  qwen3_4b:
+    cuda_visible_devices: "1"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 16
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""

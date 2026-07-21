@@ -13,6 +13,21 @@ from dataclasses import dataclass
 from typing import Any, Dict, Sequence
 
 import requests
+from requests.adapters import HTTPAdapter
+
+
+# The platform issues several concurrent requests per material. Reusing the
+# gateway connections avoids a TCP/TLS handshake for every model call when the
+# vLLM service is reached through a public HTTPS endpoint.
+_HF_SERVICE_SESSION = requests.Session()
+_HF_SERVICE_ADAPTER = HTTPAdapter(
+    pool_connections=64,
+    pool_maxsize=64,
+    max_retries=0,
+    pool_block=True,
+)
+_HF_SERVICE_SESSION.mount("http://", _HF_SERVICE_ADAPTER)
+_HF_SERVICE_SESSION.mount("https://", _HF_SERVICE_ADAPTER)
 
 
 @dataclass
@@ -204,8 +219,9 @@ def call_hf_lazy_service_predict(
     temperature: float,
     top_p: float,
 ) -> LlmHttpResponse:
-    resp = requests.post(
+    resp = _HF_SERVICE_SESSION.post(
         f"{service_url.rstrip('/')}/predict",
+        headers={"Connection": "keep-alive"},
         json={
             "model": model_name,
             "text": text,

@@ -1,0 +1,23 @@
+# 双RTX 4090 24GB：8B和4B基座各占一张卡。
+engines:
+  qwen3_8b:
+    cuda_visible_devices: "0"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 16
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""
+
+  qwen3_4b:
+    cuda_visible_devices: "1"
+    dtype: float16
+    max_model_len: 1024
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 32
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""

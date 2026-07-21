@@ -120,6 +120,94 @@ class BatchJobStore:
             )
             self._conn.commit()
 
+    def save_result_and_advance_job(
+        self,
+        job_id: str,
+        order_index: int,
+        client_index: int,
+        result: Dict[str, Any],
+        *,
+        success_delta: int,
+        review_delta: int,
+        updated_at: float,
+        duration_seconds: Optional[float],
+    ) -> None:
+        """原子保存单条结果并推进任务计数，只提交一次事务。"""
+        result_json = json.dumps(result, ensure_ascii=False)
+        with self._lock:
+            try:
+                self._conn.execute(
+                    "INSERT OR REPLACE INTO results (job_id,order_index,client_index,result) VALUES (?,?,?,?)",
+                    (job_id, int(order_index), int(client_index), result_json),
+                )
+                self._conn.execute(
+                    """UPDATE jobs
+                       SET processed=processed+1,
+                           success_count=success_count+?,
+                           review_count=review_count+?,
+                           updated_at=?, duration_seconds=?
+                       WHERE job_id=?""",
+                    (
+                        int(success_delta),
+                        int(review_delta),
+                        float(updated_at),
+                        duration_seconds,
+                        job_id,
+                    ),
+                )
+                self._conn.commit()
+            except Exception:
+                self._conn.rollback()
+                raise
+
+    def finalize_job(
+        self,
+        job_id: str,
+        changed_results: List[tuple[int, int, Dict[str, Any]]],
+        *,
+        processed: int,
+        success_count: int,
+        review_count: int,
+        finished_at: float,
+        duration_seconds: Optional[float],
+    ) -> None:
+        """批量保存项目维度修正，并与任务完成状态在同一事务提交。"""
+        rows = [
+            (
+                job_id,
+                int(order_index),
+                int(client_index),
+                json.dumps(result, ensure_ascii=False),
+            )
+            for order_index, client_index, result in changed_results
+        ]
+        with self._lock:
+            try:
+                if rows:
+                    self._conn.executemany(
+                        "INSERT OR REPLACE INTO results (job_id,order_index,client_index,result) VALUES (?,?,?,?)",
+                        rows,
+                    )
+                self._conn.execute(
+                    """UPDATE jobs
+                       SET status='finished', processed=?, success_count=?, review_count=?,
+                           error='', finished_at=?, duration_seconds=?, updated_at=?
+                       WHERE job_id=?""",
+                    (
+                        int(processed),
+                        int(success_count),
+                        int(review_count),
+                        float(finished_at),
+                        duration_seconds,
+                        float(finished_at),
+                        job_id,
+                    ),
+                )
+                self._conn.commit()
+            except Exception:
+                self._conn.rollback()
+                raise
+
     def mark_interrupted_jobs(self) -> None:
         """服务启动时把上次未跑完（非终态）的任务标记为失败，避免出现僵尸"运行中"。"""
         now = time.time()

@@ -374,6 +374,14 @@ class TextPreprocessor:
             rf'S{weak_schedule_base}S?|{weak_schedule_suffix_s}|XXS|XS|STD)'
         )
         strong_patterns = (
+            # 尺寸接壁厚等级：保留 DN20xXS / OD89xSTD 这类完整结构，
+            # 避免后面的单尺寸规则只匹配 DN20 / OD89 后在 x 前误插空格。
+            re.compile(
+                rf'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*{schedule_token}'
+            ),
+            re.compile(
+                rf'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?\s*[xX×*]\s*{schedule_token}'
+            ),
             # 尺寸：DN数字x数字 / DN数字
             re.compile(r'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?'),
             re.compile(r'(?i)DN\s*\d+(?:\.\d+)?(?!\s*[xX×*]\s*(?:DN\s*)?\d)'),
