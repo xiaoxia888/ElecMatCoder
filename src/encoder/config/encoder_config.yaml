@@ -187,6 +187,33 @@ standard_processing:
   remove_chars: [" ", "/", "(", ")", "（", "）", "-", "_"]
   separator: ""
 
+# TYPE 二阶段制造工艺补提
+# 下列规范本身限定为焊接制造；STANDARD 必须按完整编码精确命中，等级等后缀不忽略。
+# 命中后为 TYPE.MANU 补充泛化 WELDED，具体焊接工艺会通过 MANU.resolution 压掉 WELDED。
+type_manu_standard_supplement:
+  enabled: true
+  default_value: WELDED
+  trigger_standard_codes:
+    - SYT5037
+    - GBT12771
+    - GBT713
+    - GBT3091
+    - GBT13401
+    - EN103052
+    - EN103053
+    - EN103055
+    - EN103056
+    - GBT21832
+    - GBT13793
+    - AA139
+    - AA139M
+    - EN102177
+    - GBT21835
+    - EN10374
+    - EN10217
+    - DIN10374
+    - DIN10357
+
 # 磅级处理规则
 pressure_processing:
   class_values:
@@ -349,6 +376,7 @@ regex_extraction:
   # MANU 工艺 - 基于 pipe_code_mapping.yaml 中已有的关键词
   MANU:
     keywords_loose:
+      - WELDED
       - ERW
       - DSAW
       - DSAWL
@@ -371,3 +399,6 @@ regex_extraction:
           suppress: [DSAW]
         - when_any: [ DSAWL, DSAWH, SAWL, SAWH, LSAW ]
           suppress: [ SAW ]
+        # 任一具体焊接工艺均优先于泛化 WELDED
+        - when_any: [ERW, DSAW, DSAWL, DSAWH, SAW, SAWL, SAWH, LSAW, EFW, HFW]
+          suppress: [WELDED]

@@ -20,7 +20,15 @@ class BatchJobStoreTest(unittest.TestCase):
                 "threshold": 0.8,
                 "max_concurrent": 2,
                 "error": "",
-                "items_meta": [],
+                "items_meta": [
+                    {
+                        "index": 10,
+                        "text": "PIPE DN100",
+                        "project_name": "项目A",
+                        "category": "直管",
+                        "preprocess": True,
+                    }
+                ],
                 "created_at": 10.0,
                 "started_at": 11.0,
                 "finished_at": None,
@@ -113,6 +121,11 @@ class BatchJobStoreTest(unittest.TestCase):
         results = self.store.get_results("job-1")
         self.assertEqual(results["0"], original_first)
         self.assertEqual(results["1"], finalized_second)
+
+    def test_imported_category_is_persisted_with_item_metadata(self) -> None:
+        job = self.store.get_job("job-1")
+        self.assertIsNotNone(job)
+        self.assertEqual(job["items_meta"][0]["category"], "直管")
 
 
 if __name__ == "__main__":

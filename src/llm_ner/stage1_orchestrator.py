@@ -190,43 +190,57 @@ class Stage1FieldOrchestrator:
             self._structural_extractor = self.structural_extractor_factory()
         return self._structural_extractor
 
-    def predict(self, text: str) -> Dict[str, Any]:
+    def predict(self, text: str, category_override: str = "") -> Dict[str, Any]:
         route_info = None
-        selected_category = ""
-        try:
-            if self.router is not None:
-                route_info = self.router.route(text)
-                selected_category = str(route_info.get("category") or "").strip()
-            else:
-                route_info = {
-                    "category": "",
-                    "confidence": 1.0,
-                    "reason": "router_disabled",
-                    "source": "router_disabled",
-                    "candidates": [],
-                    "review_required": False,
-                }
-        except Exception as exc:
-            logger.exception("路由失败，回退默认类别: %s", exc)
+        selected_category = str(category_override or "").strip()
+        if selected_category:
             route_info = {
-                "category": self.fallback_category,
-                "confidence": 0.0,
-                "reason": "路由异常，回退默认类别",
-                "source": "router_error",
-                "candidates": [{"category": self.fallback_category, "score": 0.0}],
-                "review_required": True,
-                "error": str(exc),
+                "category": selected_category,
+                "confidence": 1.0,
+                "reason": "imported_category",
+                "source": "imported_category",
+                "candidates": [{"category": selected_category, "score": 1.0}],
+                "review_required": False,
+                "imported_category": selected_category,
             }
-            selected_category = self.fallback_category
+        else:
+            try:
+                if self.router is not None:
+                    route_info = self.router.route(text)
+                    selected_category = str(route_info.get("category") or "").strip()
+                else:
+                    route_info = {
+                        "category": "",
+                        "confidence": 1.0,
+                        "reason": "router_disabled",
+                        "source": "router_disabled",
+                        "candidates": [],
+                        "review_required": False,
+                    }
+            except Exception as exc:
+                logger.exception("路由失败，回退默认类别: %s", exc)
+                route_info = {
+                    "category": self.fallback_category,
+                    "confidence": 0.0,
+                    "reason": "路由异常，回退默认类别",
+                    "source": "router_error",
+                    "candidates": [{"category": self.fallback_category, "score": 0.0}],
+                    "review_required": True,
+                    "error": str(exc),
+                }
+                selected_category = self.fallback_category
 
         should_encode = (
-            self.router is None
-            or (not self.encodable_categories)
+            (not self.encodable_categories)
             or (selected_category in self.encodable_categories)
+            or (not category_override and self.router is None)
         )
         route_payload = dict(route_info or {})
         confidence = float(route_payload.get("confidence") or 0.0)
-        if self.router is None:
+        if category_override:
+            route_payload["review_required"] = False
+            route_payload["route_level"] = "imported"
+        elif self.router is None:
             route_payload["review_required"] = False
             route_payload["route_level"] = "router_disabled"
         elif confidence >= self.direct_threshold:

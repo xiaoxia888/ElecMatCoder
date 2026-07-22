@@ -5,6 +5,7 @@ export interface ImportedRow {
   index: number
   text: string
   projectName: string
+  importedCategory: string
   rawRow: Record<string, unknown>
 }
 
@@ -62,6 +63,9 @@ export interface EncodingResult {
   need_review: boolean
   confidence?: number
   material_category?: string
+  imported_category?: string
+  model_material_category?: string
+  category_source?: 'imported' | 'model' | string
   fields: Record<string, FieldPayload>
   route_info?: Record<string, unknown> | null
   routing?: {
@@ -125,7 +129,7 @@ export interface BatchJobSummary {
   started_at?: number | null
   finished_at?: number | null
   duration_seconds?: number | null
-  items?: Array<{ index?: number; text?: string; project_name?: string; preprocess?: boolean }>
+  items?: Array<{ index?: number; text?: string; project_name?: string; category?: string; preprocess?: boolean }>
   results?: Record<string, EncodingResult>
 }
 

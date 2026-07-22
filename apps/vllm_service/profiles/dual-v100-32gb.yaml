@@ -10,6 +10,12 @@ engines:
     enable_prefix_caching: true
     enforce_eager: false
     quantization: ""
+    environment:
+      VLLM_USE_FLASHINFER_SAMPLER: "0"
+    # V100 是 sm_70，FA2 要求 sm_80+，固定为支持 V100 的 TRITON_ATTN。
+    extra_args:
+        - --attention-backend
+        - TRITON_ATTN
 
   qwen3_4b:
     cuda_visible_devices: "1"
@@ -21,3 +27,9 @@ engines:
     enable_prefix_caching: true
     enforce_eager: false
     quantization: ""
+    environment:
+      VLLM_USE_FLASHINFER_SAMPLER: "0"
+    # V100 是 sm_70，FA2 要求 sm_80+，固定为支持 V100 的 TRITON_ATTN。
+    extra_args:
+        - --attention-backend
+        - TRITON_ATTN

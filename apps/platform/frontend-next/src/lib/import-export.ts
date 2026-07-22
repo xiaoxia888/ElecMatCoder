@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx'
 import { downloadBlob, formatPercent } from '@/lib/utils'
 import type { EncodingResult, FieldPayload, ImportedRow } from '@/types/encoding'
-import { formatFieldCode, formatFieldValue, getDifficultyLevel, getRouteReason } from '@/lib/formatters'
+import { formatFieldCode, formatFieldValue, getDifficultyLevel, getRouteReason, getTypeCategory } from '@/lib/formatters'
 
 const DIFFICULTY_HEADER = '分流最终难度（0=困难，1=中等，2=简单）'
 
@@ -26,6 +26,7 @@ function buildExportRecord(item: ImportedRow, result?: EncodingResult): Record<s
   const record: Record<string, string | number> = {
     序号: item.index + 1,
     项目名称: item.projectName || '',
+    分类: getTypeCategory(result, item.importedCategory),
     原始描述: item.text,
     原始总编码: isRecognized ? (result?.final_code || '') : '',
     是否需审核: isRecognized ? (result?.need_review ? '是' : '否') : '',
@@ -58,6 +59,7 @@ function getExportHeaders(): string[] {
   return [
     '序号',
     '项目名称',
+    '分类',
     '原始描述',
     '原始总编码',
     '是否需审核',

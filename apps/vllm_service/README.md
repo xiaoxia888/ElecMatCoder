@@ -31,6 +31,8 @@
 conda create -n vllm python=3.11
 
 pip install -r apps/vllm_service/requirements-linux.txt
+
+uv pip install -r apps/vllm_service/requirements-linux.txt
 ```
 
 V100使用`float16`。A100、4090、5090可根据模型支持选择`float16`或`bfloat16`。

@@ -2562,7 +2562,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
-        "MANU": []
+        "MANU": ["WELDED"]
       }
     }
   },
@@ -21958,18 +21958,6 @@
     }
   },
   {
-    "input": "碳素无缝钢管 管子;PSL2L245N;GB/T9711;SAW100%射线;HG/T20553(II);φ530X10mmDN500",
-    "output": {
-      "CATEGORY":"直管",
-      "TYPE": {
-        "BODY": "直管",
-        "MANU": [
-          "SMLS"
-        ]
-      }
-    }
-  },
-  {
     "input": "碳素钢管 管子;PSL2L245N;GB/T9711;SAW100%射线;HG/T20553(II);φ530X10mmDN500",
     "output": {
       "CATEGORY":"直管",
@@ -22715,7 +22703,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "夹套钢管",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -24140,7 +24128,7 @@
       "CATEGORY":"直管",
       "TYPE": {
         "BODY": "直管",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -24369,7 +24357,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "LAP_JOINT_FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29656,7 +29644,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29667,7 +29655,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29678,7 +29666,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29766,7 +29754,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29777,7 +29765,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29788,7 +29776,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29799,7 +29787,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -29810,7 +29798,7 @@
       "TYPE": {
         "BODY": "直管",
         "FLANGE_STYLE": "FLANGED",
-        "MANU": []
+        "MANU": ["SMLS"]
       }
     }
   },
@@ -37253,6 +37241,3198 @@
       }
     },
     "来源": "数据增强"
+  },
+  {
+    "input": "SEAM(L), ERW, 钢管, BE, ASME B36.19M, 6.3mm, 20, DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM(L) | DSAW | 钢管 | PE | MFR STD | 6.3mm | A106 Gr.B | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | PE | ASME B36.10M | SCH80 | Q235B | DN100 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, SH/T 3405, LONGITUDINAL SEAM, 6.3mm, Q235B, DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM | 钢管 | TBE | ASME B36.10M | 4.0mm | Q235B | 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, MFR STD, 4.0mm, S31603, DN200, SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管, TBE, ASME B36.19M, 4.0mm, 20, 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | PE | MFR STD | SCH40 | 06Cr19Ni10 | DN200 | Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | MFR STD | SCH40 | A106 Gr.B | DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 BE MFR STD SMLS SCH10S 20 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝 工业管道 PIPE TBE SH/T 3405 6.3mm 06Cr19Ni10 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ASME B36.10M;SCH10S;Q235B;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, BE, ISO 1127, SCH10S, A106 Gr.B, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, SH/T 3405, 6.3mm, A106 Gr.B, DN350, Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ASME B36.10M;SMLS;SCH10S;Q235B;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;3mm;022Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE TBE SH/T 3405 6.3mm 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM, PIPE, BE, HG/T20553II, 4mm, 022Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 PE ISO 1127 SCH80 Q235B DN150 SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;SEAM(L);4.5mm;022Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS, 直管, PE, SH/T 3405, SCH10S, S31603, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | PE | ASME B36.10M | SCH80 | Q235B | DN100 | Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | MFR STD | LONGITUDINAL SEAM | SCH40 | A106 Gr.B | DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;3.5mm;06Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 4mm | 06Cr19Ni10 | GB/T12771-Ⅰ | DN65 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS, PIPE, TBE, ISO 1127, 4.0mm, S31603, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管;BE;SH/T 3405;SMLS;SCH80;Q235B;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | ASME B36.10M | SCH80 | Q235B | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;LONGITUDINAL SEAM;4mm;S30408;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;SEAM(L);5mm;S31603;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE PE ASME B36.10M SCH10S Q235B DN50 SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM | 钢管 | BE | MFR STD | 4.0mm | S30408 | DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE PE ASME B36.10M SCH10S Q235B DN50 ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE TBE ISO 1127 SCH40 Q235B DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM;钢管;TBE;ASME B36.10M;4.0mm;20;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管;TBE;MFR STD;SCH10S;A106 Gr.B;DN25;SEAM;SAWH",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM | 工业管道 PIPE | BE | SH/T 3405 | SCH80 | S31603 | DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 3mm, 06Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS | 直管 | TBE | ASME B36.19M | SCH10S | S31603 | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;BE;ASME B36.19M;SCH10S;06Cr19Ni10;DN50;ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE | PE | SH/T 3405 | SEAMLESS PIPE | SCH40 | A106 Gr.B | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 4mm | S31603 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管, TBE, ASME B36.19M, SEAMLESS PIPE, 4.0mm, 20, 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 6mm | S31603 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, PE, ASME B36.10M, 6.3mm, 20, DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, PIPE, BE, HG/T20553II, 4.5mm, 06Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ASME B36.10M;SEAM(L);SCH10S;Q235B;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | ASME B36.10M | SEAMLESS PIPE | SCH80 | Q235B | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, SH/T 3405, 4.0mm, Q235B, 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, TBE, ASME B36.10M, SEAM(L), SAWL, SCH40, A106 Gr.B, DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM 直管 PE ASME B36.19M SCH40 S31603 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | ASME B36.19M | SCH10S | S31603 | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, MFR STD, LONGITUDINAL SEAM, 6.3mm, 20, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, PE, SH/T 3405, SCH10S, S31603, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝;PIPE;TBE;ASME B36.10M;6.3mm;Q235B;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;4mm;S30408;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;SEAM(L);3.5mm;S31603;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;TBE;MFR STD;SCH40;Q235B;12\";SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;4.5mm;022Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 | TBE | ASME B36.10M | 4.0mm | Q235B | 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 6mm | 06Cr19Ni10 | GB/T12771-Ⅰ | DN65 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 PE ISO 1127 SMLS SCH80 S31603 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;PE;ASME B36.19M;SCH80;20;DN80;SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;BE;ASME B36.19M;SCH10S;06Cr19Ni10;DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE TBE ISO 1127 SCH40 Q235B DN100 ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM 工业管道 PIPE TBE SH/T 3405 6.3mm 06Cr19Ni10 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, SH/T 3405, 4.0mm, Q235B, 12\", SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM | 工业管道 PIPE | BE | ASME B36.19M | SCH10S | 06Cr19Ni10 | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 4.5mm, S31603, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM, PIPE, BE, HG/T20553II, 3mm, S31603, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | ASME B36.10M | LONGITUDINAL SEAM | SCH80 | Q235B | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;TBE;SH/T 3405;SCH80;20;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 6mm | S31603 | GB/T12771-Ⅰ | DN65 | ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;3.5mm;S31603;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE ASME B36.19M 6.3mm 06Cr19Ni10 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, 直管, PE, ASME B36.10M, 6.3mm, 20, DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;BE;SH/T 3405;SCH80;06Cr19Ni10;DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;TBE;ASME B36.10M;6.3mm;Q235B;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 BE ASME B36.19M 4.0mm 06Cr19Ni10 DN200 ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;6mm;S30408;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;TBE;ASME B36.10M;4.0mm;20;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 BE ASME B36.19M 4.0mm 06Cr19Ni10 DN200 SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 4mm | 06Cr19Ni10 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 4.5mm | S30408 | GB/T12771-Ⅰ | DN65 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | BE | ASME B36.10M | 4.0mm | 20 | DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 BE MFR STD SCH10S 20 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM(L) SAW 钢管 TBE SH/T 3405 4.0mm S30408 DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS, 工业管道 PIPE, BE, ISO 1127, SCH10S, A106 Gr.B, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM;PIPE;TBE;ASME B36.10M;6.3mm;Q235B;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 PE MFR STD SEAM(L) DSAWL SCH80 A106 Gr.B DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAWL"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管;TBE;ASME B36.10M;SCH80;S31603;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | PE | SH/T 3405 | SEAMLESS PIPE | 4.0mm | Q235B | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝;直管;TBE;ASME B36.10M;SCH80;S31603;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, 直管, PE, SH/T 3405, SCH10S, S31603, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE TBE ISO 1127 SCH40 Q235B DN100 SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;SH/T 3405;SEAM(L);SCH40;S31603;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | PE | MFR STD | SCH40 | 06Cr19Ni10 | DN200 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM, PIPE, BE, HG/T20553II, 4.5mm, S31603, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;PE;ASME B36.19M;SCH80;20;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM;工业管道 PIPE;TBE;SH/T 3405;6.3mm;20;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管, TBE, ASME B36.19M, LONGITUDINAL SEAM, 4.0mm, 20, 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝;工业管道 PIPE;TBE;ASME B36.19M;SCH80;Q235B;DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 BE MFR STD SCH10S S31603 DN50 SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 4mm, 022Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 PE MFR STD SCH10S 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM 直管 PE MFR STD SCH10S 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;PE;ASME B36.19M;SCH80;20;DN80;ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 BE MFR STD SEAM(L) SCH10S 20 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, BE, ISO 1127, SEAMLESS PIPE, SCH40, S31603, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | BE | ISO 1127 | SEAMLESS PIPE | 6.3mm | Q235B | DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, PE, ISO 1127, SCH80, 20, DN350, Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管;BE;SH/T 3405;SEAM(L);SCH80;Q235B;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ASME B36.19M;4.0mm;Q235B;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, BE, ISO 1127, 6.3mm, S30408, DN100, SEAM, DSAWH",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAWH"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;TBE;MFR STD;SCH40;Q235B;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ASME B36.19M;4.0mm;Q235B;12\";ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 | PE | SH/T 3405 | 4.0mm | S31603 | DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 3.5mm, S30408, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE TBE SH/T 3405 SMLS 6.3mm 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;SH/T 3405;SCH40;S31603;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, SH/T 3405, 4.0mm, Q235B, 12\", Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 PE ISO 1127 SCH80 Q235B DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;TBE;ASME B36.19M;SCH80;Q235B;DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE MFR STD 6.3mm Q235B DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 6mm | 06Cr19Ni10 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝;工业管道 PIPE;TBE;SH/T 3405;6.3mm;20;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE | PE | SH/T 3405 | LONGITUDINAL SEAM | SCH40 | A106 Gr.B | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 4mm | S31603 | GB/T12771-Ⅰ | DN65 | ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, PIPE, BE, HG/T20553II, 3mm, 06Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, TBE, ASME B36.10M, SCH80, Q235B, 12\", SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM PIPE TBE ASME B36.10M 6.3mm Q235B DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝 直管 PE ASME B36.19M SCH40 S31603 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, TBE, ASME B36.10M, SCH80, Q235B, 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 5mm | 022Cr19Ni10 | GB/T12771-Ⅰ | DN65 | ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, TBE, ASME B36.19M, 4.0mm, 20, DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;5mm;S31603;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 BE MFR STD SCH10S S31603 DN50 ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;PE;ISO 1127;SCH40;S31603;DN200;SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE TBE SH/T 3405 6.3mm 06Cr19Ni10 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, 直管, TBE, ASME B36.19M, 4.0mm, 20, DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE PE ASME B36.10M SCH10S Q235B DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | BE | ASME B36.10M | 4.0mm | 20 | DN350 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, PIPE, TBE, ISO 1127, 4.0mm, S31603, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, 工业管道 PIPE, BE, ISO 1127, SCH10S, A106 Gr.B, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, PE, ISO 1127, SCH80, 20, DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE TBE ASME B36.10M 6.3mm Q235B DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;TBE;SH/T 3405;SEAM(L);SCH80;20;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE | PE | SH/T 3405 | SCH40 | A106 Gr.B | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 | BE | ASME B36.10M | SEAM(L) | EFW | SCH10S | S31603 | DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, PIPE, BE, HG/T20553II, 3.5mm, S30408, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 3.5mm | 022Cr19Ni10 | GB/T12771-Ⅰ | DN65 | ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE ASME B36.10M 6.3mm S31603 DN50 SEAM(L) HFW",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 PE ISO 1127 SEAM(L) SCH80 S31603 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM 直管 TBE ASME B36.19M 6.3mm 06Cr19Ni10 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | BE | ISO 1127 | LONGITUDINAL SEAM | 6.3mm | Q235B | DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;PE;ISO 1127;SCH40;S31603;DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;TBE;SH/T 3405;SMLS;SCH80;20;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS | 钢管 | BE | MFR STD | 4.0mm | S30408 | DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM, PIPE, BE, HG/T20553II, 5mm, S30408, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 6mm, 022Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, MFR STD, 4.0mm, S31603, DN200, Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, SH/T 3405, 6.3mm, A106 Gr.B, DN350, SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | BE | ASME B36.10M | 4.0mm | 20 | DN350 | Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;PE;ISO 1127;SCH40;S31603;DN200;ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 3mm, S31603, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 4.5mm, 06Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝 PIPE TBE ASME B36.10M 6.3mm Q235B DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | PE | MFR STD | 4.0mm | 06Cr19Ni10 | 12\" | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝;钢管;TBE;ASME B36.10M;4.0mm;20;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;TBE;SH/T 3405;6.3mm;20;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;5mm;06Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | PE | ASME B36.10M | SCH80 | Q235B | DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 BE MFR STD SCH10S S31603 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 3mm | S30408 | GB/T12771-Ⅰ | DN65 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, TBE, ASME B36.10M, SCH80, Q235B, 12\", Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | TBE | MFR STD | SEAMLESS PIPE | SCH40 | A106 Gr.B | DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM(L);ERW;工业管道 PIPE;BE;ASME B36.19M;4.0mm;Q235B;DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ISO 1127;SEAM(L);EFW;4.0mm;Q235B;DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;TBE;MFR STD;SCH40;Q235B;12\";ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;LONGITUDINAL SEAM;5mm;06Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 4.5mm | S30408 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM;工业管道 PIPE;TBE;ASME B36.19M;SCH80;Q235B;DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, PE, ISO 1127, SCH80, 20, DN350, SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, MFR STD, SEAMLESS PIPE, 6.3mm, 20, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE MFR STD SEAM(L) 6.3mm Q235B DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, BE, ISO 1127, SCH40, S31603, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, MFR STD, 4.0mm, S31603, DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE | BE | SH/T 3405 | SCH80 | S31603 | DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | ASME B36.10M | SCH80 | S30408 | DN100 | SEAM(L) | HFW",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | BE | ISO 1127 | 6.3mm | Q235B | DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;BE;SH/T 3405;SEAM(L);SCH80;06Cr19Ni10;DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | PE | SH/T 3405 | LONGITUDINAL SEAM | 4.0mm | Q235B | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE MFR STD SMLS 6.3mm Q235B DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 3mm | S30408 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管;BE;SH/T 3405;SCH80;Q235B;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM, PIPE, BE, HG/T20553II, 6mm, 022Cr19Ni10, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, TBE, ISO 1127, 4.0mm, S31603, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 PE ISO 1127 SCH80 S31603 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管;BE;ASME B36.19M;SCH10S;06Cr19Ni10;DN50;SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;PE;ASME B36.19M;4.0mm;Q235B;12\";SMLS PIPE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, SH/T 3405, SEAMLESS PIPE, 6.3mm, Q235B, DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, SH/T 3405, 6.3mm, Q235B, DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE TBE SH/T 3405 SEAM(L) 6.3mm 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 | PE | SH/T 3405 | 4.0mm | S31603 | DN50 | Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 PE ASME B36.19M SCH40 S31603 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | PE | MFR STD | SCH40 | 06Cr19Ni10 | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管, BE, ISO 1127, LONGITUDINAL SEAM, SCH40, A106 Gr.B, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE ASME B36.19M SCH10S A106 Gr.B DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 | BE | MFR STD | 4.0mm | S30408 | DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS | 钢管 | TBE | ASME B36.10M | 4.0mm | Q235B | 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | PE | MFR STD | 4.0mm | 06Cr19Ni10 | 12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "LONG SEAM;直管;TBE;ASME B36.10M;SCH80;S31603;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 5mm | 022Cr19Ni10 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;LONGITUDINAL SEAM;3.5mm;06Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE | BE | ASME B36.19M | SCH10S | 06Cr19Ni10 | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | PE | MFR STD | 4.0mm | 06Cr19Ni10 | 12\" | Seamless",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS | 工业管道 PIPE | BE | ASME B36.19M | SCH10S | 06Cr19Ni10 | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 BE ASME B36.19M 4.0mm 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE, PE, MFR STD, 6.3mm, 20, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, SH/T 3405, 6.3mm, A106 Gr.B, DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 | PE | SH/T 3405 | 4.0mm | S31603 | DN50 | SEAM (L)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;LONGITUDINAL SEAM;6mm;S30408;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS, 直管, PE, ASME B36.10M, 6.3mm, 20, DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝 直管 TBE ASME B36.19M 6.3mm 06Cr19Ni10 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS | 工业管道 PIPE | BE | SH/T 3405 | SCH80 | S31603 | DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAM | 直管 | TBE | ASME B36.19M | SCH10S | S31603 | DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE ASME B36.19M SMLS SCH10S A106 Gr.B DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管, BE, ISO 1127, LONGITUDINAL SEAM, SCH40, S31603, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管 PE ISO 1127 SCH80 Q235B DN150 ONE LONGITUDINAL SEAM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;HG/T20553II;SEAM(L);3mm;022Cr19Ni10;GB/T12771-Ⅰ;DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管, BE, ISO 1127, SEAMLESS PIPE, SCH40, A106 Gr.B, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 5mm, S30408, GB/T12771-Ⅰ, DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "无缝 直管 PE MFR STD SCH10S 06Cr19Ni10 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "钢管, BE, ISO 1127, SCH40, A106 Gr.B, DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 | PE | SH/T 3405 | 4.0mm | Q235B | DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE;BE;SH/T 3405;SMLS;SCH40;S31603;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "工业管道 PIPE;BE;SH/T 3405;SMLS;SCH80;06Cr19Ni10;DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SEAMLESS, 直管, TBE, ASME B36.19M, 4.0mm, 20, DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "PIPE | BE | HG/T20553II | 3.5mm | 022Cr19Ni10 | GB/T12771-Ⅰ | DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "直管 TBE ASME B36.19M SEAM(L) SCH10S A106 Gr.B DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
   }
 ]
 ]

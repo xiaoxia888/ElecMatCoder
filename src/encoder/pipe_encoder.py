@@ -668,6 +668,60 @@ class PipeEncoderBase:
         if overwrite or not type_dict.get(label):
             type_dict[label] = value
 
+    def _supplement_type_manu_from_standard(self, entities: Dict[str, Any]) -> bool:
+        """在 TYPE 二阶段编码前，按焊接制造规范补充泛化 WELDED。"""
+        supplement_cfg = self.config.get('type_manu_standard_supplement', {}) or {}
+        if not supplement_cfg.get('enabled', False):
+            return False
+
+        trigger_codes = {
+            str(item).strip().upper()
+            for item in (supplement_cfg.get('trigger_standard_codes') or [])
+            if str(item).strip()
+        }
+        default_value = str(supplement_cfg.get('default_value') or 'WELDED').strip().upper()
+        if not trigger_codes or not default_value:
+            return False
+
+        standards = entities.get('STANDARD')
+        standard_items = standards if isinstance(standards, list) else [standards]
+        matched_codes: List[str] = []
+        for item in standard_items:
+            if isinstance(item, dict):
+                body = str(item.get('BODY') or '').strip()
+            else:
+                body = str(item or '').strip()
+            if not body:
+                continue
+            standard_info = self.standard_processor.get_standard_info(body)
+            encoded = str(standard_info.get('encoded') or '').strip().upper()
+            if encoded in trigger_codes and encoded not in matched_codes:
+                matched_codes.append(encoded)
+
+        if not matched_codes:
+            return False
+
+        manu_values = self._merge_unique_values(
+            self._get_nested_type_value(entities, 'MANU'),
+            [default_value],
+        )
+        manu_values = self.regex_extractor.resolve_values('MANU', manu_values)
+        if not manu_values:
+            return False
+
+        self._set_nested_type_value(
+            entities,
+            'MANU',
+            manu_values if len(manu_values) > 1 else manu_values[0],
+            overwrite=True,
+        )
+        logger.info(
+            "[TYPE/MANU补提] 规范=%s，二阶段制造工艺=%s",
+            matched_codes,
+            manu_values,
+        )
+        return True
+
     def _get_nested_type_geometry_value(self, entities: Dict[str, Any], label: str) -> Any:
         type_dict = self._ensure_type_dict(entities.get('TYPE'))
         if type_dict is None:
@@ -3095,6 +3149,7 @@ class PipeEncoderBase:
             material_category=material_category,
         )
         self._normalize_standard_body_grade_suffix(entities)
+        self._supplement_type_manu_from_standard(entities)
         entities['_STANDARD_MODIFIER_MAP'] = self._build_standard_modifier_map(entities, original_text)
         
         entities = self._preprocess_tee_reducing(entities, original_text)

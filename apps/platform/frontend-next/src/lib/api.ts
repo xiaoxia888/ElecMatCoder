@@ -19,14 +19,14 @@ export const api = {
   getConfig() {
     return request<ConfigResponse>('/api/config')
   },
-  encodeSingle(payload: { text: string; preprocess?: boolean; project_name?: string }) {
+  encodeSingle(payload: { text: string; preprocess?: boolean; project_name?: string; category?: string }) {
     return request<EncodingResult>('/api/pipe/encode', {
       method: 'POST',
       body: JSON.stringify(payload),
     })
   },
   createBatchJob(payload: {
-    items: Array<{ client_index: number; text: string; project_name?: string; preprocess?: boolean }>
+    items: Array<{ client_index: number; text: string; project_name?: string; category?: string; preprocess?: boolean }>
     max_concurrent?: number
   }) {
     return request<{ job: BatchJobSummary }>('/api/pipe/encode/batch/jobs', {

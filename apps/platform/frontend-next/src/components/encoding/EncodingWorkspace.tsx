@@ -74,7 +74,10 @@ export function EncodingWorkspace() {
                 />
               </div>
               <div className="shrink-0">
-                <CodeResultCard result={workspace.currentResult} />
+                <CodeResultCard
+                  result={workspace.currentResult}
+                  importedCategory={workspace.currentItem?.importedCategory}
+                />
               </div>
               <div className="min-h-0 flex-1">
                 <FieldBreakdownCard result={workspace.currentResult} />

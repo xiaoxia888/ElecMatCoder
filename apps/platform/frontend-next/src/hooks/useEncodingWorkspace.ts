@@ -9,6 +9,7 @@ function normalizeImportedRows(
   rows: Record<string, unknown>[],
   column: string,
   projectColumn?: string,
+  categoryColumn?: string,
 ): ImportedRow[] {
   return rows
     .map((row, index) => ({
@@ -17,6 +18,7 @@ function normalizeImportedRows(
       projectName: projectColumn
         ? String(row[projectColumn] ?? '').trim()
         : resolveProjectName(row),
+      importedCategory: categoryColumn ? String(row[categoryColumn] ?? '').trim() : '',
       rawRow: row,
     }))
     .filter((item) => item.text)
@@ -211,6 +213,7 @@ export function useEncodingWorkspace() {
           index: Number.isFinite(Number(item.index)) ? Number(item.index) : idx,
           text: item.text || '',
           projectName: item.project_name || '',
+          importedCategory: item.category || '',
           rawRow: {},
         }))
         .sort((a, b) => a.index - b.index),
@@ -315,8 +318,14 @@ export function useEncodingWorkspace() {
     column: string,
     fileName = '',
     projectColumn = '',
+    categoryColumn = '',
   ) {
-    const normalized = normalizeImportedRows(rows, column, projectColumn || undefined)
+    const normalized = normalizeImportedRows(
+      rows,
+      column,
+      projectColumn || undefined,
+      categoryColumn || undefined,
+    )
     const nextIndex = normalized.length > 0 ? 0 : -1
     setLocalDataList(normalized)
     setLocalResults({})
@@ -349,6 +358,7 @@ export function useEncodingWorkspace() {
           text: currentItem.text,
           preprocess: true,
           project_name: currentItem.projectName || '',
+          category: currentItem.importedCategory || '',
         })
       }
       setResults((prev) => ({ ...prev, [currentItem.index]: result }))
@@ -383,6 +393,7 @@ export function useEncodingWorkspace() {
           client_index: item.index,
           text: item.text,
           project_name: item.projectName,
+          category: item.importedCategory,
           preprocess: true,
         })),
         max_concurrent: maxConcurrent,

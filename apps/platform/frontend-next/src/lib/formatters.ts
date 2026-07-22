@@ -71,8 +71,12 @@ function asObj(value: JsonValue | undefined): Record<string, JsonValue> {
   return isObject(value as JsonValue) ? (value as Record<string, JsonValue>) : {}
 }
 
-export function getTypeCategory(result?: EncodingResult | null): string {
-  return s(result?.material_category as JsonValue | undefined)
+export function getTypeCategory(result?: EncodingResult | null, importedCategory = ''): string {
+  return (
+    String(importedCategory || '').trim() ||
+    String(result?.imported_category || '').trim() ||
+    s(result?.material_category as JsonValue | undefined)
+  )
 }
 
 function formatTypeValue(value: JsonValue | undefined): string {

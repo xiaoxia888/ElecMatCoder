@@ -64,6 +64,8 @@
       ],
       "20/PTFE": [
         "20衬PTFE",
+        "20/PTFE",
+        "20PTFE",
         "PTFE Lined 20"
       ],
       "20/PE": [
@@ -444,6 +446,13 @@
         "ASTM A106 Grade B",
         "ASTMA106"
       ],
+      "A1063PE": [
+        "A1063PE"
+      ],
+      "L360M": [
+        "L360M",
+        "L360M/X52M"
+      ],
       "A106/PTFE": [
         "A106/PTFE"
       ],
@@ -677,18 +686,22 @@
         "膨胀四氟"
       ],
       "F11": [
+        "F11",
         "A182 F11",
+        "A182F11",
         "A182 F11 CL2",
         "A182 Gr.F11",
         "A182Gr.F11",
         "ASTM A182 GR. F11 CL.",
         "ASTM A182 GRADE F11",
-        "ASTM A182 Grade F11",
-        "ASTM A182F11",
-        "ASTMA182F11",
-        "ASTMA182GradeF11"
+        "ASTM A182 Grade F11"
+      ],
+      "20/EAA": [
+        "20/EAA",
+        "20EAA"
       ],
       "F22": [
+        "F22",
         "ASTM A182 F22-CL3",
         "ASTM A182 Grade F22"
       ],
@@ -4935,14 +4948,6 @@
         "45DEGREEELBOW",
         "45Deg Elb",
         "45Deg Elb LR",
-        "45EL;45D;3D;WELDED;SMLS",
-        "45EL;BE",
-        "45EL;BW",
-        "45EL;LR",
-        "45EL;LR;BE;SMLS",
-        "45EL;LR;SMLS;BW",
-        "45EL;R=1.5D",
-        "45EL;SMLS;BE",
         "45EL;SMLS;BW;LR",
         "45ELBOW",
         "45° ELBOW",
@@ -4977,8 +4982,7 @@
         "45°长半径弯头;LR;SW",
         "45°弯头;SMLS",
         "45°长半径弯头;SMLS;RF",
-        "弯头 45 1.5D",
-        "45°EL",
+        "弯头;45;1.5D",
         "45度弯头;LR;BW",
         "45° ELBOW;LR",
         "45° ELBOW;LR;SMLS;BW",
@@ -5166,6 +5170,8 @@
         "45EL;FORGED;SW",
         "45EL;SW",
         "45ELBOW,SW",
+        "弯头;45;长半径;SW",
+        "弯头;45;LR;SW",
         "45°锻制弯头:SW",
         "45°锻制弯头;SW",
         "45度弯头 SW",
@@ -5232,7 +5238,6 @@
         "45度弯头;LR;WELD;BW",
         "45度长半径弯头;LR.ELBOW;BW;WELDED",
         "45度弯头;WELDED;BW",
-        "45度弯头;LR;BW;SMLS",
         "45度弯头;LR;BW",
         "45度弯头;BW",
         "45度弯头;LR;WELD",
@@ -5253,7 +5258,8 @@
         "45度弯头;1.5D;WELDED",
         "45度弯头;45DEG;WELDED;BW",
         "45EL;LR;WELD",
-        "45°长半径弯头"
+        "45°长半径弯头",
+        "45度长半径弯头;Welded;BW"
       ],
       "45ES": [
         "45EL;R=1D",
@@ -5326,7 +5332,19 @@
         "45;TEE STRAIGHT",
         "45度等径斜三通;SMLS",
         "45;等径斜三通",
-        "45°等径斜三通;SMLS;BW"
+        "45°等径斜三通;SMLS;BW",
+        "斜三通 45 SMLS",
+        "斜三通 45",
+        "45度等径斜三通;40S",
+        "45度斜三通;BE",
+        "45度等径三通;BW",
+        "45°等径三通;SMLS;BW",
+        "Lateral Tee",
+        "LATERAL",
+        "等径斜三通",
+        "Equal Tee",
+        "斜三通",
+        "斜三通;SMLS;BW"
       ],
       "30LT": [
         "30 度等径斜三通",
@@ -5361,10 +5379,7 @@
         "45度异径斜三通;40S",
         "45度异径斜三通;SMLS;BW",
         "异径45°斜三通",
-        "斜三通 45 SMLS",
-        "斜三通 45",
         "45度异径斜三通;SMLS;BE",
-        "45;斜三通",
         "异径斜三通",
         "异径斜三通;SMLS;BW",
         "异径斜三通;BW",
@@ -5372,40 +5387,22 @@
         "异径斜三通;SMLS;BE",
         "45度异径斜三通;SMLS",
         "45度异径斜接三通;SMLS;BW",
-        "45度等径斜三通;40S",
-        "45度等径斜三通;SMLS;SW",
-        "45度斜三通;BE",
-        "45度异径三通;SMLS;BW"
-      ],
-      "45RLTS": [
-        "45° Lateral Tee;SMLS;SW",
-        "45度 Lateral Tee; SMLS; SW",
-        "45度 Lateral Tee;SMLS;SW",
-        "45度 Lateral Tee;SMLS;SW;",
-        "45度 Lateral Tee;SW;SMLS",
-        "45度异径斜三通;承插焊"
-      ],
-      "45RLTW": [
-        "45度异径斜三通;WELDED",
-        "异径斜三通 45 WELDED",
-        "斜三通 45 WELDED",
-        "异径斜三通;WELDED",
-        "45度斜三通;BW;WELDED"
-      ],
-      "45RT": [
+        "45度异径三通;SMLS;BW",
         "RED. 45 LATERAL",
         "45° REDUCING TEE",
         "45度异径侧流管",
         "45°异径三通",
-        "45度异径三通;SMLS;BW",
         "45度异径三通",
         "45°异径三通;SMLS;BW"
       ],
-      "45T": [
-        "45°等径三通",
-        "45度等径三通;BW",
-        "45°等径三通;SMLS;BW",
-        "45度等径三通;SMLS;BW"
+      "45RLTS": [
+        "45度异径斜三通;承插焊",
+        "异径斜三通;SW"
+      ],
+      "45RLTW": [
+        "45度异径斜三通;WELDED",
+        "异径斜三通 45 WELDED",
+        "异径斜三通;WELDED"
       ],
       "55EL": [
         "55度长半径弯头;SMLS;BE",
@@ -5509,6 +5506,10 @@
         "8字盲板;M",
         "八字盲板;M",
         "八字盲板;MF"
+      ],
+      "FTHSERR": [
+        "螺纹法兰;RF;SERRATED;THD",
+        "螺纹法兰;THD;RF;SERRATED"
       ],
       "90EL": [
         "90-DEG ELB0W LR",
@@ -5732,7 +5733,6 @@
         "90度长半径弯头;LR;SCH40",
         "90度长半径弯头;LR;BW",
         "90度弯管",
-        "60度长半径弯头;SMLS;BE",
         "90度斜接弯头;BW",
         "90°弯头;E(L)",
         "90度长半径弯头;E(L)",
@@ -5953,7 +5953,6 @@
         "弯头 90 LR SW",
         "90度承插焊弯头;SW",
         "90 DEGREE ELBOW;SW",
-        "45° ELBOW;SW",
         "90;弯头 SW",
         "90;弯头SW",
         "90度承插焊弯头",
@@ -5983,7 +5982,6 @@
         "锻制90度弯头;SW",
         "锻钢制90度弯头;SW",
         "90度弯头;FORGED;SW",
-        "1.90度锻制弯头;SW",
         "1.5D 90度锻制弯头;SW",
         "90EL;SMLS;SW",
         "90° ELBOW;FORGED;SW",
@@ -6048,7 +6046,6 @@
         "90度弯头;WELDED;LR;BW;SF2205",
         "90度弯头;WELDED;LR;BW",
         "90度弯头;LR;BW;WELDED",
-        "45度长半径弯头;Welded;BW",
         "90度弯头;LR;WELD;BW",
         "90EL;LR;WELD",
         "90度长半径弯头;LR.ELBOW;BW;WELDED",
@@ -6063,7 +6060,6 @@
         "90度弯头;WELDED;LR;BE",
         "90度长半径焊接弯头;W90EL;BW",
         "90°长半径焊接弯头;W90EL;BW",
-        "90度弯头;LR;BW;SMLS",
         "90度弯头;LR;BW",
         "90度弯头;长半径;WELD",
         "90度弯头;LR;WELD",
@@ -6679,84 +6675,56 @@
         "减压阀"
       ],
       "F": [
-        "FIX FLG",
-        "F;RF",
-        "F;RF;XS",
         "FLANGE",
-        "FLANGE WN",
+        "单片法兰",
         "Flange;RF",
         "PAD FLANGE",
         "带颈对焊法兰;FLRF",
         "WELDING NECK FLANGE",
-        "WELDINGNECKFLANGE",
-        "WN FLANGE",
-        "WN Flange",
-        "WN Flg",
-        "WNFLANGE",
-        "WNFlange",
         "WN法兰",
         "WN法兰;RF",
         "带颈对焊法兰",
         "带颈对焊法兰;RF",
-        "带颈对焊法兰;S30403",
         "法兰",
-        "法兰;PN40;WN-RF;锻制",
         "法兰;RF",
         "突面对焊钢制管法兰",
         "带颈对焊钢制管法兰",
         "带颈对焊钢制法兰",
-        "法兰;WN-RF;锻制",
         "锻制WN法兰",
         "锻制WN法兰;RF",
         "带颈对焊法兰 RF",
         "WELD NECK FLANGE",
-        "法兰短节",
         "法兰;WN;RF",
         "FLANGE;WN",
         "衬里法兰;RF",
-        "WN法兰;RF;BW",
         "对焊法兰;WN;RF",
         "WELD NECK FLANGE;RF",
-        "F;TYPE E Spigot",
         "对焊法兰 RF",
         "法兰 RF",
         "对焊法兰;RF",
         "对焊法兰;RF;WN",
-        "带颈对焊法兰 FLANGE",
-        "带颈对焊法兰 S",
         "带颈对焊法兰;WN;RF",
-        "FLANGE WN;RF",
-        "FLANGE;WN;RF",
-        "WN FLANGE;RF",
         "法兰;WN-RF",
         "法兰;RF;WN",
         "衬里法兰 RF",
         "带颈对焊法兰 FF",
-        "法兰;WN;RF;锻制",
         "衬里法兰",
         "对焊法兰",
         "法兰;WN",
         "对焊管法兰",
         "带颈对焊法兰;RF;WN",
-        "法兰WN",
         "异径法兰WN;RF",
         "对焊法兰;WN",
         "带颈对焊管法兰",
         "法兰;WN;MF",
         "WELDNECK FLANGE;RF",
-        "法兰;WN;RF;Galv.",
-        "法兰;WN;RF;CL1",
         "WN法兰;GALV;RF",
         "法兰;FWN;RF",
-        "WN法兰;RF",
         "ANCHOR FLANGE",
         "带颈对焊法兰;",
         "带颈对焊法兰;WN;",
-        "WN法兰;锻制",
-        "WN法兰;RF;S-STD",
-        "法兰;PN16;WN-RF",
+        "法兰;PN16;WN",
         "FLANGE;RF;WN",
-        "法兰;CL150;WN-RF",
         "Flange Welding Neck Type 11",
         "Welding Neck Flange;Type 11",
         "WELDING NECK FLANGE;RF",
@@ -6769,13 +6737,7 @@
         "碳钢带颈对焊法兰;WN;RF",
         "碳钢带颈对焊法兰;RF",
         "法兰;CL1500;WN-RF",
-        "WELDING NECK FLANGE;RF",
-        "WELDING NECKFLANGE;RF",
-        "FLANGE,WN;RF",
-        "不锈钢法兰带颈对焊法兰;WN",
-        "法兰;BW;WN;RF",
-        "RF法兰",
-        "WELDING NECKFLANGE"
+        "不锈钢法兰带颈对焊法兰;WN"
       ],
       "F45EL": [
         "45EL;FLANGED;RF",
@@ -6831,11 +6793,9 @@
         "WNFLANGE;FNPT",
         "螺纹法兰 FNPT RF",
         "螺纹法兰;RF",
-        "螺纹法兰;RF;FNPT",
         "FLANGE;FNPT;RF",
         "FLANGE;RF;FNPT",
         "FNPT螺纹法兰;RF",
-        "螺纹法兰;FNPT",
         "法兰;FNPT"
       ],
       "FI": [
@@ -7022,7 +6982,6 @@
         "WELDNECK FLANGE;RJ",
         "带颈对焊法兰;WN;RJ",
         "Flange;RJ",
-        "WN法兰;RJ",
         "带颈对焊法兰;RJ",
         "WN法兰;FLRJ",
         "WN法兰;FLRJ;SCH40S",
@@ -7091,11 +7050,8 @@
         "SW Socket Welding Flange",
         "FLANGED PIPE;SW",
         "SOCKET WELD FLANGE",
-        "承插焊法兰",
         "SW FLG",
         "SW法兰;RF;SCH80",
-        "法兰;RF;SW",
-        "法兰;RF;SW",
         "SW法兰",
         "法兰;SW-RF",
         "SW法兰;RF;SW",
@@ -7104,8 +7060,6 @@
         "不锈钢法兰承插焊法兰;SW",
         "承插焊法兰;PN16;SW;RF",
         "FLANGE SW法兰;RF;SW",
-        "承插焊法兰",
-        "承插焊法兰;SW",
         "FLANGE SW-RF",
         "FLANGE,SW,RF",
         "SOCKET FLANGE,SW,RF",
@@ -7412,14 +7366,6 @@
         "钢衬PE管道",
         "碳钢衬四氟钢管"
       ],
-      "LT": [
-        "Lateral Tee",
-        "LATERAL",
-        "等径斜三通",
-        "Equal Tee",
-        "斜三通",
-        "斜三通;SMLS;BW"
-      ],
       "LWO": [
         "LIGHT WEIGHT OLET"
       ],
@@ -7549,12 +7495,11 @@
         "OLET",
         "OLET;BW",
         "Olet;BW",
-        "WELD ING OUTLET",
-        "WELDING OUTLET",
         "WELDOLET;BW",
         "WELDOLET;BW;STD",
         "Weldolet",
-        "olet",
+        "马鞍座接头",
+        "马鞍座接头;SR",
         "weldolet",
         "Branch",
         "不锈钢管件管接台",
@@ -7583,20 +7528,6 @@
         "对焊支管座;BW",
         "对焊管接台;BW",
         "加强管咀",
-        "WOL-90 STD BWOlet",
-        "OLET-90",
-        "OLET-90;BW",
-        "WELDOLET;WELD",
-        "对焊支管台 90",
-        "对焊管接台;BE",
-        "WOL-90",
-        "对焊管接台;WELDED",
-        "Olet;Forged;BW;ANTI-H2S",
-        "Olet;Forged;BW",
-        "对焊支管座 OLET-90",
-        "Olet;BW;ANTI-H2S",
-        "支管座;BW",
-        "支管座;支管台;BW",
         "Weldolet;BE",
         "支管座;对焊支管座;BW",
         "OLET;90度;BW",
@@ -7606,78 +7537,17 @@
         "Weldolet;THRD",
         "Weldolet;GALV;THRD",
         "WELDOLET;WELDED",
-        "Weld Olet",
-        "WOL-90;XS;BWOlet",
-        "WOL-90 XS BWOlet",
-        "WOL-90;XS;BW;Olet",
-        "WOL-90;STD;BWOlet",
-        "管座;BW",
-        "支管台;SMLS;BW",
-        "焊接支管台;WOL",
-        "对焊支管座;SW",
-        "WELDING OUTLET;BW",
-        "WOL;BE",
-        "Olet;BE",
-        "Olet;",
-        "WOLDOLET;BE",
-        "对焊支管座;WOL",
-        "对焊支管座;WOL;WELDED",
         "对焊支管台;SMLS;BW",
         "对焊支管台;BW",
         "WELDOLET;XS;BE",
         "对焊管接台;SMLS;BW",
-        "支管台;BE",
-        "对焊管接台;S-40xS-80",
-        "对焊支管台;S-40xS-80",
-        "对焊支管台;BW;STDS",
-        "对焊支管座;WOL;BW;STD",
         "支管台;SW",
-        "加强管嘴(短型);平底型;BW",
         "加强管嘴;BW",
         "加强管接头;BW",
         "对焊接管台;WDT(A)",
         "支管台;WDT(A)",
-        "对焊支管台;WOL;BW",
-        "对焊支管座;WOL;BW",
-        "WELDOLET;BW;XS",
-        "WELDOLET;FORGE;BW",
         "对焊支管台;BE",
-        "对焊支管台;WELDED",
-        "绝缘接头",
-        "对焊支管座;BW;锻制",
-        "对焊管接台;S-80;S-80",
-        "对焊管接台;S-40;S-40",
-        "对焊管接台;WELD",
-        "对焊管接台;S-60xS-80",
-        "对焊管接台;32.0mmxS-60",
-        "对焊管接台;S-80xS-80",
-        "对焊管接台;BW;锻20",
-        "WELDOLET;FORGED;BW",
-        "对焊支管座;FORGED;BW",
-        "对焊管接台;S-40xS-40",
-        "对焊支管座;S30408;NB/T 47010;锻制;BW",
-        "WELDOLET;S31603;NB/T 47010;FORGED;BW",
-        "WELDOLET;BW;FORGED",
-        "WELDOLET;BW;WELDED",
-        "对焊管接台;SW",
-        "对焊支管座;BW;WOL",
-        "对焊支管座;SMLS;BW",
-        "对焊支管座;S31603;BW;锻制",
-        "对焊支管座;S31603;NB/T 47010;锻制;BW",
-        "对焊支管座;S31603;NB/T47010;锻制;BW",
-        "对焊支管座;S31603;锻制;BW",
-        "WELDOLET, S31603 NB/T 47010, FORGED, BW",
-        "锻制对焊支管座;BW",
-        "对焊支管座;SMLS;BW;锻制",
-        "对焊支管座;锻制;BW",
-        "支管台;焊接",
-        "支管台;WELDED",
-        "支管台;BE;开口焊",
-        "对焊弯头支管台;BWMC09-01",
-        "Olet;BW;BE",
-        "支管台;WELDOLET",
-        "WELDOLET;锻制;BW",
-        "对焊管接台;SMLS;BE"
+        "对焊支管台;WELDED"
       ],
       "OB": [
         "Boss"
@@ -7824,16 +7694,12 @@
       "OT": [
         "THREAD OUTLET",
         "THREDOLET",
-        "threadolet",
         "螺纹支管台",
+        "螺纹支管台;THD",
         "螺纹管接台",
-        "Weldolet",
         "Threadolet",
         "THREADOLET;THDD",
-        "THREAD OUTLET;CL.3000;SCRD",
-        "THREAD OUTLET;SCRD",
-        "THREAD OUTLET;S-40X",
-        "THREAD OUTLET;CL.3000"
+        "THREAD OUTLET;SCRD"
       ],
       "OW": [
         "Branch W",
@@ -7947,7 +7813,6 @@
         "碳钢管;SMLS;BE",
         "P;PL-RF",
         "直管;PL-RF",
-        "增强聚丙烯管",
         "增强聚丙烯管",
         "P;PE",
         "P,焊接",
@@ -8122,7 +7987,9 @@
         "焊接钢管;EFW;BE",
         "PIPE EFW;BE",
         "EFW BE",
-        "P, EFW"
+        "P, EFW",
+        "直缝电熔焊钛管",
+        "直缝电熔焊钛管;TA2"
       ],
       "QR": [
         "Quick Release Coupling",
@@ -8191,7 +8058,6 @@
         "异径管接头",
         "同心异径管 SMLS",
         "异径管 SMLS",
-        "异径短节",
         "同心异径管;RF",
         "同心异径管;SMLS;BE",
         "SWAGE NIPPLE",
@@ -8250,11 +8116,8 @@
         "同心异径管;FRP/PVC",
         "Concentric Reducer;SMLS;BW",
         "同心异径管;BW;ISO2037",
-        "偏心异径管;SWAGE NIPPLE",
-        "偏心异径管;SWAGE NIPPLE;SMLS",
         "同心异径管;SMLS;GALV",
         "Reducer CON.",
-        "同心/偏心大小头;SMLS;BW",
         "同心大小头;BW",
         "同心异径管;S-10S",
         "同心异径接头",
@@ -8367,6 +8230,7 @@
         "承插焊异径接头;SW",
         "同心异径管;SW",
         "同心异径管箍;SW",
+        "异径管箍;SW",
         "同心异径管;FORGED;SW",
         "CONCENTRIC REDUCING COUPLING;FORGED;SW",
         "同心大小头;SW",
@@ -8398,7 +8262,6 @@
         "同心异径管;WELDED;BW",
         "同心异径管;CONC.REDUCER;BW;WELDED",
         "RC;WELD",
-        "同心异径管;SMLS;BE",
         "同心异径管;90度;LR;WELDED",
         "同心异径管;90度;LR;WELDED;BW",
         "同心异径管;WELD;BW",
@@ -8462,8 +8325,6 @@
         "偏心管大小头",
         "偏心异径管 SMLS",
         "偏心异径短节 SMLS",
-        "同心异径管",
-        "同心异径管;SMLS;BE",
         "偏心异径管;SMLS;RF",
         "偏心异径管RE",
         "偏心异径短节;BLE/PSE",
@@ -8598,7 +8459,9 @@
         "偏心异径管;REDUCER;ECC;SMLS;BW",
         "RE;REDUCER",
         "偏心异径 PIPE NIPPLE;SWAGE NIPPLE;PBE",
-        "偏心异径短节, BLE x PSE"
+        "偏心异径短节, BLE x PSE",
+        "偏心异径管;SWAGE NIPPLE",
+        "偏心异径管;SWAGE NIPPLE;SMLS"
       ],
       "REBN": [
         "偏心异径短节 BLE x TSE",
@@ -8623,8 +8486,7 @@
         "偏心异径短节 SMLS MNPT",
         "偏心异径短节;MNPT",
         "偏心异径短管;SW",
-        "偏心异径短节;TBE(MNPT)",
-        "同心异径短节;TBE(MNPT)"
+        "偏心异径短节;TBE(MNPT)"
       ],
       "RES": [
         "ECC. REDUCER;SW",
@@ -8652,7 +8514,6 @@
         "偏心异径管;WELD",
         "偏心异径管;WELDED",
         "偏心异径管 WELDED",
-        "同心异径管;WELDED",
         "偏心异径管",
         "偏心大小头;BW",
         "ECC. REDUCER WELDED",
@@ -8665,7 +8526,8 @@
         "偏心异径管;WRE",
         "偏心异径管;WELDED;BE",
         "偏心异径管;BE;WELDED",
-        "偏心异径管;REDUCER ECC;WELDED;BW"
+        "偏心异径管;REDUCER ECC;WELDED;BW",
+        "偏心异径管;Welded + 100% RT;BW"
       ],
       "RO": [
         "限流孔板"
@@ -8692,56 +8554,37 @@
         "异径三通;SMLS;BW",
         "异径三通 SMLS",
         "异径三通",
-        "三通",
-        "同心异径管",
-        "等径三通;SMLS",
-        "等径三通",
         "异径三通;SR",
         "异径三通,SR",
-        "三通 SMLS",
         "异径三通;BW",
         "三通 Rc",
         "异径三通;BW;SMLS",
         "异径三通;GALV",
-        "钢衬聚四氟乙烯三通 SMLS",
-        "钢衬塑三通 SMLS",
-        "钢衬塑三通",
-        "钢衬PE三通 SMLS",
         "异径三通;RTEE",
         "异径三通;RTEE;SMLS;BW",
         "异径三通;BE",
         "内管异径三通",
-        "异径三通;TR",
         "三通;TR;SMLS;BW",
         "TEE(TR);SMLS;BW",
-        "三通;SMLS;BW",
         "TEE;TR",
-        "等径三通;SMLS;BW",
         "异径三通;PBE",
         "异径三通;SMLS",
         "Red.Tee",
         "异径三通;SMLS;BW;ANTI-H2S",
         "RED. TEE",
-        "TEE",
         "异径三通;内壁光洁",
-        "无缝三通",
         "异径三通;REDUCING TEE;SMLS;BW",
         "异径三通;REDUCING TEE",
         "RED. TEE;SMLS;BW",
         "RED. TEE;BW",
-        "无缝三通;SMLS",
         "异径三通;RED.TEE;BW",
         "异径三通;RED.TEE;SMLS",
         "异径三通;SMLS;RF",
         "马鞍座接头;三通",
         "异径三通;BW;Galv.",
         "异径三通;GALV;BW",
-        "异径三通;TR;BW",
         "异径三通;TR;SF304",
         "异径三通;卫生级;BW",
-        "三通;BW",
-        "三通;SMLS;RF",
-        "等径三通;BW",
         "异径三通;RED;BW",
         "异径三通;S-80xS-80",
         "异径三通;SCH40",
@@ -8753,23 +8596,19 @@
         "异径三通;S-60xS-60",
         "异径三通;S-40 x S-40S",
         "异径三通;S-40S x S-80S",
-        "等径三通;SMLS;BE",
         "异径三通;SMLS;BE;附录B",
         "异径三通;RF",
         "剖切异径三通;BW",
         "异径三通;FORGED",
         "RT,BW",
-        "异径三通;T(R)",
         "异径三通;夹套内管;SMLS;BE",
         "RT;SMLS;BW",
-        "异径三通;BW;TR",
         "异径三通;BE;SMLS",
         "异径三通;S-20",
         "异径三通;S-40",
         "异径三通;S-60",
         "异径三通;S-40xS-40",
         "异径三通;S-40xS-80",
-        "清管三通;BW",
         "异径三通;SMLS;LR;BW",
         "异径三通;SMLS;RED;BW",
         "异径三通;S-40S",
@@ -8778,7 +8617,6 @@
         "异径三通;BE;Type WX",
         "异径三通;SMLS;BE;POLISHING",
         "异径三通;Seamless;BW Ends",
-        "三通;TEE;SMLS;BW",
         "异径三通;SCH10S*SCH40S;SMLS;BW",
         "异径三通;2\"*1.5\";SCH40*SCH80;BW",
         "异径三通;2\"*1\";SCH80*SCH160;BW",
@@ -8798,7 +8636,8 @@
         "异径三通;4\"*3\";SCH40S;BW",
         "异径三通;RED;6\"*5\";SCH40S*SCH40S;BW",
         "异径三通;RED;8\"*6\";SCH40S*SCH40S;BW",
-        "异径三通;RED;3\"*DN65;SCH10S*SCH10S;BW"
+        "异径三通;RED;3\"*DN65;SCH10S*SCH10S;BW",
+        "RT"
       ],
       "RTFN": [
         "RT;FNPT",
@@ -8845,28 +8684,14 @@
         "异径三通;SW",
         "异径三通;SWE",
         "异径三通 SW",
-        "STR",
-        "异径斜三通;SW",
-        "斜三通;SW",
         "Red Te;SW",
-        "三通 SW",
-        "异径三通",
         "Red.Tee SW",
         "RED. TEE SW",
-        "TEE SW",
         "异径三通;FORGE;SW",
-        "锻制三通;SW",
-        "三通;SW",
-        "等径三通;SW",
         "异径三通;SWS",
         "异径三通;SMLS;SW",
         "异径三通;SW;Forged",
-        "异径三通;T(R);BW",
-        "异径三通;BW;T(R)",
-        "异径三通;T(R);SMLS;BW",
-        "异径三通;TR;BW",
         "承插焊异径三通;ST;SW",
-        "异径三通;夹套外管;BE",
         "异径三通;锻制;SW",
         "承插焊异径三通;SW",
         "异径三通;FORGED;SW",
@@ -8898,41 +8723,26 @@
         "异径三通;WELDED",
         "90度异径三通;WELDED",
         "异径三通 WELDED",
-        "三通;WELDED",
-        "等径三通;LR;WELD;RF",
-        "等径三通;LR;RF;WELD",
-        "等径三通",
-        "异径三通",
-        "三通 WELDED",
         "焊接异径三通",
         "异径三通;WELD;BW",
-        "异径三通;BW",
         "异径三通;WELDED;BW",
         "TEE REDUCED WELDED",
         "异径三通;Welded;BW;ANTI-H2S",
-        "TEE WELDED",
         "异径三通;RED.TEE;BW;WELDED",
         "异径三通;RED.TEE;WELDED;BW",
         "异径三通;WTR;BW",
-        "三通;WELDED;BW",
         "异径三通;100%RT;WELDED;BW",
-        "三通;WELD;LR;RF",
-        "等径三通;WTR;SF304",
         "异径三通;WELDED;BE",
-        "异径三通;BE",
         "异径三通;BW;WELDED",
         "异径三通;BE;WELDED",
         "RT;WELDED;BW",
         "异径三通;SMLS;BE;WELDED",
         "异径三通;S31603;WELD;BW",
-        "偏心异径管;Welded + 100% RT;BW",
         "异径三通;Welded + 100% RT;BW Ends",
-        "三通;TEE;WELDED;BW",
         "Tee RED 10\"*6\" SCH80S*SCH40S Welded,BW",
         "异径三通;RED;8*4;SCH40S*SCH40S;Welded;BW",
         "异径三通;RED;8;Welded,BW",
-        "RT;WELD;BW",
-        "RT"
+        "RT;WELD;BW"
       ],
       "TPJW": [
         "EQUAL TEE;JACKET;WELD",
@@ -9046,12 +8856,10 @@
         "三通 90",
         "等径三通;BW",
         "等径三通;SMLS;BW;ANTI-H2S",
-        "异径三通",
         "等径三通;BW;SMLS",
         "等径三通;EQUAL TEE",
         "钢衬聚四氟乙烯三通 SMLS",
         "钢衬塑三通 SMLS",
-        "等径三通;WELDED",
         "等径三通;BE",
         "STRAIGHT TEE",
         "TEE;SMLS;BW",
@@ -9084,7 +8892,12 @@
         "TEE TEST RING",
         "等径三通;STEEL REINFORCED POLYETHYLENE",
         "UNION TEE;FORGE",
-        "T;BW;SMLS"
+        "T;BW;SMLS",
+        "钢衬塑三通",
+        "钢衬PE三通 SMLS",
+        "三通;SMLS;BW",
+        "三通;SMLS;RF",
+        "三通;TEE;SMLS;BW"
       ],
       "HT": [
         "半壳等径三通"
@@ -9174,7 +8987,6 @@
         "同径三通;SW",
         "STRAIGHT TEE;SW",
         "Tee;SW",
-        "等径三通",
         "Tee SW",
         "三通;SW;Forged",
         "三通;Forged;SW",
@@ -9184,7 +8996,6 @@
         "等径三通;SMLS;SW",
         "等径三通;SMLS;BW;SW",
         "等径三通;SW;Forged",
-        "等径三通;TS;BW",
         "承插焊等径三通;SW",
         "等径三通;锻制;SW",
         "等径三通;SW;锻制",
@@ -9195,7 +9006,8 @@
         "等径三通;1.5\"*1.5\";XS*XS;CL3000;SW",
         "T;SMLS;SW;锻制",
         "T;TS;SW",
-        "T;SMLS;BW"
+        "STR",
+        "TEE SW"
       ],
       "TST": [
         "T-Type Strainer",
@@ -9220,13 +9032,10 @@
         "等径三通 WELDED",
         "WTS",
         "三通;WELDED",
-        "等径三通",
-        "同径三通;BW",
         "同径三通;WELDED",
         "STRAIGHT TEE;WELDED",
         "等径三通;WELD;BW",
         "三通 WELD",
-        "同径三通",
         "TEE STRAIGHT WELDED",
         "等径三通;WELDED;BW",
         "Tee;WELDED;BW",
@@ -9234,15 +9043,17 @@
         "等径三通;STR.TEE;BW;WELDED",
         "等径三通;STR.TEE;WELDED",
         "三通;BW;WELDED",
-        "直缝电熔焊钛管",
-        "直缝电熔焊钛管;TA2",
         "等径三通;BE;Welded",
-        "等径三通;BE",
         "等径三通;BW;WELDED",
         "同径三通;BW;WELDED",
-        "等径三通;BW",
         "T;WELDED;BW",
-        "等径三通;S31603;GB/T 4237;WELD;BW"
+        "等径三通;S31603;GB/T 4237;WELD;BW",
+        "等径三通;LR;WELD;RF",
+        "等径三通;LR;RF;WELD",
+        "TEE WELDED",
+        "三通;WELD;LR;RF",
+        "等径三通;WTR;SF304",
+        "三通;TEE;WELDED;BW"
       ],
       "WPBV": [
         "WAFER PNEUMATIC BALL VALVE",
@@ -9255,53 +9066,13 @@
         "清管三通",
         "Piggable Tee",
         "90度清管三通",
-        "Piggable Tee;90 deg"
+        "Piggable Tee;90 deg",
+        "清管三通;BW"
       ],
       "PGRT": [
         "清管三通；异径",
         "清管异径三通",
         "90度清管异径三通"
-      ],
-      "YLT": [
-        "45度Y型三通",
-        "Y型三通",
-        "Y型等径三通",
-        "45度Y型斜三通",
-        "Y型斜三通",
-        "Y型等径斜三通",
-        "Y型三通;BW",
-        "Y型三通;SMLS;BE",
-        "Y型三通;SMLS"
-      ],
-      "YRLT": [
-        "45度Y型异径三通",
-        "Y型异径三通",
-        "45度Y型异径斜三通",
-        "Y型异径斜三通",
-        "Y型三通 45",
-        "Y型三通 SMLS"
-      ],
-      "120YLT": [
-        "120度斜Y型三通;BW",
-        "120度Y型三通",
-        "120度Y型等径三通",
-        "120度Y型斜三通",
-        "120度Y型等径斜三通"
-      ],
-      "120YRLT": [
-        "120度Y型异径三通",
-        "120度Y型异径斜三通"
-      ],
-      "90YLT": [
-        "90度斜Y型三通;BW",
-        "90度Y型三通",
-        "90度Y型等径三通",
-        "90度Y型斜三通",
-        "90度Y型等径斜三通"
-      ],
-      "90YRLT": [
-        "90度Y型异径三通",
-        "90度Y型异径斜三通"
       ],
       "YST": [
         "Y-Type Strainer",
@@ -9569,10 +9340,7 @@
         "螺纹;RED TEE",
         "THREAD;REDUCING TEE",
         "REDUCING TEE;THREAD",
-        "RED TEE;THREADED",
-        "异径三通;T(R);BW",
-        "异径三通;T(R)",
-        "等径三通;T(R);BW"
+        "RED TEE;THREADED"
       ],
       "RET": [
         "偏心异径短节;THD",
@@ -9899,11 +9667,6 @@
         "等径四通;SW",
         "CROSS;SW"
       ],
-      "YT": [
-        "Y型等径三通",
-        "Y型三通",
-        "Y-Tee"
-      ],
       "4TP": [
         "剖切等径四通"
       ],
@@ -9940,7 +9703,8 @@
       ],
       "45LTW": [
         "斜三通 45 WELDED",
-        "45度等径斜三通;WELDED"
+        "45度等径斜三通;WELDED",
+        "45度斜三通;BW;WELDED"
       ],
       "RDCPFN": [
         "同心双口管箍 FNPT"
@@ -9959,7 +9723,8 @@
       "DNMN": [
         "双头外螺纹短节;MNPT",
         "双头短节 SMLS MNPT",
-        "双头短节 MNPT"
+        "双头螺纹短节;MNPT",
+        "双头短节;MNPT"
       ],
       "FFF": [
         "带颈对焊法兰;FF",
@@ -10001,7 +9766,8 @@
       ],
       "RTJ": [
         "异径三通;Jacket",
-        "夹套异径三通"
+        "夹套异径三通",
+        "异径三通;夹套外管;BE"
       ],
       "TJ": [
         "等径三通;夹套",
@@ -10056,7 +9822,8 @@
         "60.0° 弯头;LR",
         "外管弯头;60°",
         "60° 弯头;LR",
-        "60度弯头"
+        "60度弯头",
+        "60度长半径弯头;SMLS;BE"
       ],
       "87.9EL": [
         "87.9°长半径弯头"
@@ -10115,10 +9882,6 @@
       "FJM": [
         "带颈对焊夹套法兰 M"
       ],
-      "YRT": [
-        "Y型三通",
-        "Y-Red.Tee"
-      ],
       "90EL3DW": [
         "90度3D对焊弯头;WELDED;BW",
         "90度3D对焊弯头;BW",
@@ -10138,7 +9901,8 @@
         "45°热煨弯管;BW"
       ],
       "RCE": [
-        "同心/偏心大小头"
+        "同心/偏心大小头",
+        "同心/偏心大小头;SMLS;BW"
       ],
       "135EL": [
         "135度弯头;R=1.5DN;SMLS"
@@ -10157,13 +9921,16 @@
         "夹套90°弯头"
       ],
       "RTR": [
-        "异径三通;T(R);BW"
+        "异径三通;T(R);BW",
+        "异径三通;BW;T(R)",
+        "异径三通;T(R);SMLS;BW",
+        "异径三通;TR;BW",
+        "异径三通;TR",
+        "异径三通;T(R)",
+        "异径三通;BW;TR"
       ],
       "TPL": [
         "等径三通;PL-RF"
-      ],
-      "RS": [
-        "承插焊异径三通;SW"
       ],
       "LFPL": [
         "松套法兰;PL;RF"
@@ -10231,9 +9998,6 @@
       "SBFFF": [
         "插板;FF"
       ],
-      "40RLT": [
-        "45度等径斜三通;40S"
-      ],
       "45EL15D": [
         "45EL;SMLS",
         "45EL",
@@ -10242,9 +10006,61 @@
       ],
       "90EL15D": [
         "90EL"
+      ],
+      "45LTS": [
+        "45度等径斜三通;SMLS;SW",
+        "45° Lateral Tee;SMLS;SW",
+        "45度 Lateral Tee; SMLS; SW",
+        "45度 Lateral Tee;SMLS;SW",
+        "45度 Lateral Tee;SMLS;SW;",
+        "45度 Lateral Tee;SW;SMLS",
+        "斜三通;SW"
+      ],
+      "45YT": [
+        "45度Y型三通",
+        "等径Y型三通;45;SMLS",
+        "Y型三通",
+        "Y型等径三通",
+        "45度Y型斜三通",
+        "Y型斜三通",
+        "Y型等径斜三通",
+        "Y型三通;BW",
+        "Y型三通;SMLS;BE",
+        "Y型三通;SMLS",
+        "Y-Tee"
+      ],
+      "45YRT": [
+        "45度Y型异径三通",
+        "Y型异径三通",
+        "45度Y型异径斜三通",
+        "Y型异径斜三通",
+        "Y型异径三通；45",
+        "Y-Red.Tee"
+      ],
+      "90YT": [
+        "90度斜Y型三通;BW",
+        "90度Y型三通",
+        "90度Y型等径三通",
+        "90度Y型斜三通",
+        "90度Y型等径斜三通"
+      ],
+      "90YRT": [
+        "90度Y型异径三通",
+        "90度Y型异径斜三通"
+      ],
+      "120YT": [
+        "120度斜Y型三通;BW",
+        "120度Y型三通",
+        "120度Y型等径三通",
+        "120度Y型斜三通",
+        "120度Y型等径斜三通"
+      ],
+      "120YRT": [
+        "120度Y型异径三通",
+        "120度Y型异径斜三通"
       ]
     },
-    "unique_outputs": 460,
-    "unique_pairs": 4723
+    "unique_outputs": 455,
+    "unique_pairs": 4245
   }
 }

@@ -35,6 +35,7 @@ import copy
 # 导入配置模块
 from src.config import get_platform_config, get_semantic_config, get_ner_config
 from src.domain.pipeline import (
+    EncodeResultPayload,
     Stage1DecisionNormalizer,
 )
 
@@ -368,12 +369,23 @@ async def _run_batch_job(job_id: str) -> None:
     async def process_one(order_index: int, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         text = item.get("text", "")
         preprocess = bool(item.get("preprocess", True))
+        imported_category = str(item.get("category", "") or "").strip()
         processed_text = _preprocessor.process(text) if preprocess else text
 
         async with semaphore:
-            predict_result = await asyncio.to_thread(predictor.predict, processed_text)
+            predict_result = await asyncio.to_thread(
+                _predict_stage1,
+                predictor,
+                processed_text,
+                imported_category,
+            )
 
-        route_info = _decorate_predict_route_info(predict_result.get("route_info"))
+        model_category = _get_material_category_from_type_model(predict_result)
+        material_category = imported_category or model_category
+        route_info = _decorate_predict_route_info(
+            predict_result.get("route_info"),
+            imported_category=imported_category,
+        )
         stage1_snapshot = Stage1DecisionNormalizer.build_snapshot(predict_result)
         stage1 = stage1_snapshot.to_dict()
         if route_info.get("encoding_enabled") is False:
@@ -385,7 +397,7 @@ async def _run_batch_job(job_id: str) -> None:
                 need_review=False,
                 confidence=0.0,
                 fields={},
-                material_category=_get_material_category_from_type_model(predict_result),
+                material_category=material_category,
                 route_info=route_info,
                 errors=[],
                 warnings=[],
@@ -396,7 +408,11 @@ async def _run_batch_job(job_id: str) -> None:
             converted["routing"] = None
             converted["difficulty_split"] = None
             converted["second_pass"] = None
-            return converted
+            return _attach_category_metadata(
+                converted,
+                imported_category=imported_category,
+                model_category=model_category,
+            )
 
         extract_confidence = predict_result.get("extract_confidence", {}) or {}
         extract_confidence_v2 = stage1_snapshot.field_meta
@@ -409,14 +425,18 @@ async def _run_batch_job(job_id: str) -> None:
                 extract_confidence,
                 extract_confidence_v2,
                 stage1_snapshot.raw_values,
-                _get_material_category_from_type_model(predict_result),
+                material_category,
             )
 
         converted = _convert_pipe_result(result, route_info=route_info)
         converted["processed_text"] = processed_text
         converted["stage1"] = stage1
         converted = attach_routing(converted)
-        return converted
+        return _attach_category_metadata(
+            converted,
+            imported_category=imported_category,
+            model_category=model_category,
+        )
 
     async def worker() -> None:
         nonlocal next_index
@@ -445,6 +465,9 @@ async def _run_batch_job(job_id: str) -> None:
                     "final_code": "",
                     "success": False,
                     "need_review": True,
+                    "material_category": str(item.get("category", "") or "").strip(),
+                    "imported_category": str(item.get("category", "") or "").strip(),
+                    "category_source": "imported" if str(item.get("category", "") or "").strip() else "model",
                     "errors": [str(exc)],
                     "fields": {},
                 }
@@ -617,6 +640,7 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
                 "index": int(item.get("client_index", idx)),
                 "text": str(item.get("text", "") or ""),
                 "project_name": str(item.get("project_name", "") or ""),
+                "category": str(item.get("category", "") or "").strip(),
                 "preprocess": bool(item.get("preprocess", True)),
             }
             for idx, item in enumerate(request.items)
@@ -1074,6 +1098,7 @@ class PipeEncodeRequest(BaseModel):
     text: str = Field(..., description="原始描述")
     preprocess: bool = Field(True, description="是否预处理")
     project_name: str = Field("", description="项目名称，可选")
+    category: str = Field("", description="导入分类，可选；为空时使用 TYPE 模型分类")
 
 
 class PipeBatchEncodeRequest(BaseModel):
@@ -1118,7 +1143,13 @@ class H3yunImportRequest(BaseModel):
     encode_date: str = Field(..., description="编码日期时间，格式：YYYY-MM-DD HH:MM")
 
 
-def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool = True) -> Dict[str, Any]:
+def _run_pipe_encode_flow(
+    text: str,
+    *,
+    project_name: str = "",
+    preprocess: bool = True,
+    category: str = "",
+) -> Dict[str, Any]:
     """单次/批量共用的完整编码流程：预处理 -> 一阶段抽取 -> 二阶段编码 -> 分流。"""
     if not text or not str(text).strip():
         return {
@@ -1137,9 +1168,15 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
     predictor = get_ner_predictor()
     encoder = get_pipe_encoder()
 
-    predict_result = predictor.predict(processed_text)
+    imported_category = str(category or "").strip()
+    predict_result = _predict_stage1(predictor, processed_text, imported_category)
 
-    route_info = _decorate_predict_route_info(predict_result.get("route_info"))
+    model_category = _get_material_category_from_type_model(predict_result)
+    material_category = imported_category or model_category
+    route_info = _decorate_predict_route_info(
+        predict_result.get("route_info"),
+        imported_category=imported_category,
+    )
     stage1 = Stage1DecisionNormalizer.build_snapshot(predict_result)
     stage1_decisions = stage1.decisions
     stage1_meta = stage1.field_meta
@@ -1152,7 +1189,7 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
             need_review=False,
             confidence=0.0,
             fields={},
-            material_category=_get_material_category_from_type_model(predict_result),
+            material_category=material_category,
             route_info=route_info,
             errors=[],
             warnings=[],
@@ -1163,7 +1200,11 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
         payload["routing"] = None
         payload["difficulty_split"] = None
         payload["second_pass"] = None
-        return payload
+        return _attach_category_metadata(
+            payload,
+            imported_category=imported_category,
+            model_category=model_category,
+        )
 
     result = encoder.encode(
         stage1_decisions,
@@ -1171,15 +1212,28 @@ def _run_pipe_encode_flow(text: str, *, project_name: str = "", preprocess: bool
         predict_result.get("extract_confidence", {}) or {},
         stage1_meta,
         stage1.raw_values,
-        _get_material_category_from_type_model(predict_result),
+        material_category,
     )
     converted = _convert_pipe_result(result, processed_text=processed_text, route_info=route_info)
     converted["stage1"] = stage1.to_dict()
-    return attach_routing(converted)
+    return _attach_category_metadata(
+        attach_routing(converted),
+        imported_category=imported_category,
+        model_category=model_category,
+    )
 
 
-def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
+def _decorate_predict_route_info(route_info: Any, *, imported_category: str = "") -> Dict[str, Any]:
     info = copy.deepcopy(route_info) if isinstance(route_info, dict) else {}
+    imported_category = str(imported_category or "").strip()
+    if imported_category:
+        router_category = str(info.get("category") or "").strip()
+        if router_category and router_category != imported_category:
+            info["router_category"] = router_category
+        info["category"] = imported_category
+        info["selected_category"] = imported_category
+        info["imported_category"] = imported_category
+        info["category_source"] = "imported"
     encodable_categories = set(
         (((_resolve_qwen3_stage1_config((get_ner_config().get("qwen3", {}) or {})).get("router", {}) or {}).get("encodable_categories")) or [])
     )
@@ -1192,6 +1246,33 @@ def _decorate_predict_route_info(route_info: Any) -> Dict[str, Any]:
         info.setdefault("encoding_enabled", True)
         info.setdefault("skip_encoding_reason", "")
     return info
+
+
+def _predict_stage1(predictor: Any, text: str, imported_category: str = "") -> Dict[str, Any]:
+    """有导入分类时让编排器直接使用该分类选择 TYPE 模型。"""
+    imported_category = str(imported_category or "").strip()
+    if imported_category:
+        from src.llm_ner.stage1_orchestrator import Stage1FieldOrchestrator
+
+        if isinstance(predictor, Stage1FieldOrchestrator):
+            return predictor.predict(text, category_override=imported_category)
+    return predictor.predict(text)
+
+
+def _attach_category_metadata(
+    result: Dict[str, Any],
+    *,
+    imported_category: str = "",
+    model_category: str = "",
+) -> Dict[str, Any]:
+    """统一写入最终分类及其来源，保留模型分类用于审计。"""
+    imported_category = str(imported_category or "").strip()
+    model_category = str(model_category or "").strip()
+    result["material_category"] = imported_category or model_category
+    result["imported_category"] = imported_category
+    result["model_material_category"] = model_category
+    result["category_source"] = "imported" if imported_category else "model"
+    return result
 
 
 def _get_material_category_from_type_model(predict_result: Any) -> str:
@@ -1416,6 +1497,7 @@ def pipe_encode(request: PipeEncodeRequest):
         request.text,
         project_name=request.project_name,
         preprocess=request.preprocess,
+        category=request.category,
     )
 
 @app.post("/api/pipe/encode/batch")
@@ -1431,6 +1513,7 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
                 item.get('text', ''),
                 project_name=str(item.get('project_name', '') or '').strip(),
                 preprocess=bool(item.get('preprocess', True)),
+                category=str(item.get('category', '') or '').strip(),
             )
 
     results = await asyncio.gather(*(process_item(item) for item in request.items))
@@ -1566,6 +1649,7 @@ async def pipe_batch_encode_reencode_job_item(job_id: str, item_index: int):
         str(item_meta.get("text", "") or ""),
         project_name=str(item_meta.get("project_name", "") or "").strip(),
         preprocess=bool(item_meta.get("preprocess", True)),
+        category=str(item_meta.get("category", "") or "").strip(),
     )
     await asyncio.to_thread(_batch_store.save_result, job_id, order_index, item_index, result)
 

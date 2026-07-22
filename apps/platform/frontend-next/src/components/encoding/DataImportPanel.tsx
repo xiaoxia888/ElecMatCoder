@@ -5,7 +5,13 @@ import { parseExcel } from '@/lib/import-export'
 
 interface DataImportPanelProps {
   hasData: boolean
-  onImport: (rows: Record<string, unknown>[], column: string, fileName: string, projectColumn?: string) => void
+  onImport: (
+    rows: Record<string, unknown>[],
+    column: string,
+    fileName: string,
+    projectColumn?: string,
+    categoryColumn?: string,
+  ) => void
 }
 
 export function DataImportPanel({ onImport }: DataImportPanelProps) {
@@ -14,6 +20,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   const [columns, setColumns] = useState<string[]>([])
   const [selectedColumn, setSelectedColumn] = useState('')
   const [selectedProjectColumn, setSelectedProjectColumn] = useState('')
+  const [selectedCategoryColumn, setSelectedCategoryColumn] = useState('')
   const [fileName, setFileName] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState('')
@@ -37,8 +44,11 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
       setColumns(parsed.columns)
       const autoColumn = parsed.columns.find((item) => item.includes('描述')) || parsed.columns[0] || ''
       const autoProjectColumn = parsed.columns.find((item) => /项目|工程|project/i.test(item)) || ''
+      const autoCategoryColumn =
+        parsed.columns.find((item) => /^(分类|类别|category|materialcategory|material_category)$/i.test(item.trim())) || ''
       setSelectedColumn(autoColumn)
       setSelectedProjectColumn(autoProjectColumn)
+      setSelectedCategoryColumn(autoCategoryColumn)
       setIsDialogOpen(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : '文件解析失败')
@@ -55,7 +65,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
 
   function handleConfirmImport() {
     if (!selectedColumn || filteredRows.length === 0) return
-    onImport(filteredRows, selectedColumn, fileName, selectedProjectColumn)
+    onImport(filteredRows, selectedColumn, fileName, selectedProjectColumn, selectedCategoryColumn)
     setIsDialogOpen(false)
   }
 
@@ -149,6 +159,24 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                     onChange={(event) => setSelectedProjectColumn(event.target.value)}
                   >
                     <option value="">不指定（可选）</option>
+                    {columns.map((column) => (
+                      <option key={column} value={column}>
+                        {column}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                </div>
+              </div>
+              <div>
+                <div className="mb-2 text-[15px] font-semibold text-ink">分类列</div>
+                <div className="relative">
+                  <select
+                    className="h-12 w-full appearance-none rounded-[14px] border border-line bg-white px-4 pr-10 text-sm text-ink outline-none focus:border-accent"
+                    value={selectedCategoryColumn}
+                    onChange={(event) => setSelectedCategoryColumn(event.target.value)}
+                  >
+                    <option value="">不指定（使用 TYPE 模型分类）</option>
                     {columns.map((column) => (
                       <option key={column} value={column}>
                         {column}

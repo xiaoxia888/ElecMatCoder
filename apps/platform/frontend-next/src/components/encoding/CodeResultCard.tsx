@@ -4,11 +4,12 @@ import type { EncodingResult } from '@/types/encoding'
 
 interface CodeResultCardProps {
   result: EncodingResult | null
+  importedCategory?: string
 }
 
-export function CodeResultCard({ result }: CodeResultCardProps) {
+export function CodeResultCard({ result, importedCategory = '' }: CodeResultCardProps) {
   const percent = Math.max(0, Math.min(100, Number(result?.confidence || 0) * 100))
-  const category = getTypeCategory(result)
+  const category = getTypeCategory(result, importedCategory)
 
   return (
     <section className="rounded-xl border border-line bg-white p-4 shadow-panel">
