@@ -40433,6 +40433,651 @@
       }
     },
     "来源": "数据增强-SEAM_SEAMLESS制造工艺专项对比"
+  },
+  {
+    "input": "SMLSPipe;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "GB/T 14976 EFW PIPE 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "HFW PIPE;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "ERWTUBE;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "ASTM A312 TP316L SAWPIPE 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "NAME:ERW PIPE;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "SMLS Flanged Pipe;DN100;CL150;RF;ASTM A312 TP304",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰管正常空格对照"
+  },
+  {
+    "input": "HFWPIPE;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "NAME:ERWPIPE;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "GB/T 14976 SMLSPIPE 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "NAME:DSAW PIPE;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "NAME:HFWTUBE;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "DSAWTUBE;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "PIPESAW;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "NAME:WELDEDPipe;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "GB/T 14976 SAWTUBE 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "ASTM A312 TP316L SMLSTUBE 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "ASTM A312 TP316L PIPEDSAW 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "GB/T 14976 PIPESEAMLESS 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "NAME:PIPESMLS;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "GB/T 14976 ERWPipe 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "NAME:SEAMLESSTUBE;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "NAME:SAWPipe;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "ASTM A312 TP316L SEAMLESSPipe 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "SEAMLESSPIPE;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "GB/T 14976 EFWPIPE 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "GB/T 14976 DSAWPipe 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "ASTM A312 TP316L SAW PIPE 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "ASTM A312 TP316L EFWTUBE 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "SEAMLESS PIPE;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "ASTM A312 TP316L WELDEDPIPE 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "EFWPipe;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "GB/T 14976 WELDEDTUBE 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-TUBE"
+  },
+  {
+    "input": "SMLSFlangedPipe;DN100;CL150;RF;ASTM A312 TP304",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀与法兰管主体粘连"
+  },
+  {
+    "input": "ASTM A312 TP316L PIPEERW 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "PIPEWELDED;DN100;SCH40;GB/T 8163;20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "ERWFlangedPipe;DN100;CL150;RF;ASTM A312 TP304",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "焊接工艺与法兰管主体粘连"
+  },
+  {
+    "input": "ASTM A312 TP316L WELDED PIPE 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "ASTM A312 TP316L HFWPipe 4in SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连-大小写"
+  },
+  {
+    "input": "NAME:PIPEEFW;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
+  },
+  {
+    "input": "GB/T 14976 SMLS PIPE 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "正常空格对照"
+  },
+  {
+    "input": "NAME:DSAWPIPE;OD60.3x3.91;S30403;HG/T 20553",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "前缀粘连"
+  },
+  {
+    "input": "GB/T 14976 PIPEHFW 33.4x2.77 S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "HFW"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "后缀粘连"
   }
 ]
 ]

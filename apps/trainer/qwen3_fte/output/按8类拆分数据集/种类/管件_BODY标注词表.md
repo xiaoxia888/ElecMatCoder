@@ -83,16 +83,19 @@
 
 | 标准 BODY | 典型表达 | CONN约束 |
 |---|---|---|
-| 支管台 | OLET、支管台，未明确支管端方式 | 按原文明确信息标注 |
-| 对焊支管台 | WELDOLET、WELD OLET、对焊支管台/支管座 | `[]`，BW不标注 |
-| 承插焊支管台 | SOCKOLET、SOCKET OLET、SOL、承插焊支管台/支管座 | `["SW"]` |
-| 螺纹支管台 | THREDOLET、THREAD OLET、TOL、螺纹支管台/支管座 | 使用THD/NPT/FNPT/MNPT等最具体值 |
+| SWEEPOLET | SWEEPOLET、SWEEP OLET | `[]`，后续BW/B.W.不改变产品种类 |
+| 支管台 | OLET、支管台，且未明确支管端方式 | 按原文明确信息标注 |
+| 对焊支管台 | WELDOLET、WELD OLET、对焊支管台/支管座，或裸OLET带BW/BE/BUTT WELD | `[]`，BW/BE不标注 |
+| 承插焊支管台 | SOCKOLET、SOCKET OLET、SOL、承插焊支管台/支管座，或裸OLET带SW/SOCKET WELD | `["SW"]` |
+| 螺纹支管台 | THREDOLET、THREAD OLET、TOL、螺纹支管台/支管座，或裸OLET带THD/NPT/FNPT/MNPT等螺纹标识 | 使用THD/NPT/FNPT/MNPT等最具体值 |
 | 斜支管台 | LATROLET、斜支管台 | 按原文明确信息标注 |
 | 加强管嘴 | 加强管嘴、REINFORCED NOZZLE | 按原文明确信息标注 |
 | 加强管接头 | 加强管接头 | 按原文明确信息标注 |
 | 补强板开口焊 | 补强板开口焊 | `[]` |
 
 `SOCKET OLET`整体表示承插焊支管台，即使没有独立`SW`也必须标为`BODY=承插焊支管台，CONN=["SW"]`。
+
+裸`OLET`按支管端连接方式确定BODY：未提供端部信息时标为`支管台`；带`BW/BE/BUTT WELD`时标为`对焊支管台`；带`SW/SOCKET WELD`时标为`承插焊支管台`；带明确螺纹制式时标为`螺纹支管台`。显式`SWEEPOLET/WELDOLET/SOCKOLET/THREDOLET/LATROLET`产品词优先于泛化端部信息，其中`SWEEPOLET`必须保留为独立BODY，不能因后续`BW/B.W.`改判为对焊支管台。`BW/BE`不写入`CONN`，也不推导`MANU=WELDED`。
 
 ## 6. 管箍与管接头
 

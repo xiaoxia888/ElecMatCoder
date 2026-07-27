@@ -418,7 +418,8 @@ class Qwen3Predictor:
         return codes, confidences
 
     def _encode_one_single_field_text(self, field: str, value: Any) -> Tuple[str, Optional[float]]:
-        input_text = f"字段类型: {field}\n原始值: {value}"
+        value_label = "规范值" if str(field or "").strip().upper() == "TYPE" else "原始值"
+        input_text = f"字段类型: {field}\n{value_label}: {value}"
         result = self._call_model(self._resolve_stage2_system_prompt(), input_text)
         code = self._extract_stage2_code_from_result(result, field)
         model_conf = result.get("_model_confidence")

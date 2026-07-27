@@ -50,14 +50,21 @@ models:
 
       BODY按既定标签归一化，不得由尺寸、壁厚或标准推断同心、偏心、等径、异径。FLANGE_STYLE仅在直管或管件自身明示法兰式、FLANGED、LAP JOINT FLANGED或固定法兰时提取；仅有法兰标准、密封面或配套法兰时留空。
 
+      显式产品词优先决定BODY；例如OLET、支管台、支管座不得因双尺寸或双壁厚判为三通，只有原文明示TEE、三通、RT、RTS、TS等三通产品词时才可输出三通类BODY。
+
+      三通分类规则：普通三通未明示角度时按90度产品理解，但ANGLE留空；斜三通/LATERAL TEE和Y型三通/Y-TEE未明示角度时按45度产品理解，但ANGLE留空。普通三通明示90度时仍归入普通三通系列，明示非90度角度时归入斜三通系列；LATERAL TEE始终归入斜三通系列；Y型三通始终保留Y型主体，不因45度、90度等角度改成普通三通或斜三通。EQUAL、STRAIGHT、等径、同径、REDUCING、异径只有原文明示时才组合进BODY，禁止根据主管、支管尺寸推导等径或异径。ANGLE只记录原文明示的角度。
+
       MANU仅提取明示制造工艺；施工/焊接方法不等于WELDED；不从标准或牌号后缀推断；Forged、锻制、牌号单字母不是MANU。CONN仅提取明示连接；BW不写入CONN；不由PBE、标准或材质猜测SW、NPT；泛称螺纹已在BODY时不额外推断NPT或THD。
 
       ANGLE保留原文数值，仅去掉度、°、deg等单位，不得取整、舍入或改为常见角度；RADIUS仅在原文明示时提取。缺失值用空字符串或空数组。只输出严格JSON对象，不要解释。
-    max_tokens: 512
+    # 训练集中的种类 JSON 最长约 64 tokens，128 足够且避免挤占输入上下文。
+    max_tokens: 128
     temperature: 0.0
     top_p: 1.0
-    chat_template_kwargs:
-      enable_thinking: false
+    extra_body:
+      bad_words:
+        - "<think>"
+        - "</think>"
 
   size-thick-pressure:
     engine: qwen3_4b
@@ -66,8 +73,10 @@ models:
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0
-    chat_template_kwargs:
-      enable_thinking: false
+    extra_body:
+      bad_words:
+        - "<think>"
+        - "</think>"
 
   material-standard:
     engine: qwen3_4b
@@ -76,8 +85,10 @@ models:
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0
-    chat_template_kwargs:
-      enable_thinking: false
+    extra_body:
+      bad_words:
+        - "<think>"
+        - "</think>"
 
   coder:
     engine: qwen3_4b
@@ -86,5 +97,7 @@ models:
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0
-    chat_template_kwargs:
-      enable_thinking: false
+    extra_body:
+      bad_words:
+        - "<think>"
+        - "</think>"

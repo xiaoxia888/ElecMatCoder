@@ -4,60 +4,67 @@
   "skeleton_dir": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/skeletons",
   "requested_val_ratio": 0.1,
   "requested_test_ratio": 0.1,
-  "seed": 20260714,
+  "seed": 20260724,
   "source_load": {
     "files": {
       "法兰": {
         "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/法兰.json",
-        "loaded_rows": 8484,
+        "loaded_rows": 8520,
         "nested_arrays_flattened": 0,
         "category_override_count": 0,
-        "augmented_rows": 652,
+        "augmented_rows": 688,
         "source_label_distribution": {
           "<EMPTY>": 7562,
           "数据增强": 652,
           "真实项目数据-0721": 141,
-          "真实项目数据-0720": 129
+          "真实项目数据-0720": 129,
+          "数据增强-制造工艺与主体词粘连专项": 36
         }
       },
       "直管": {
         "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/直管.json",
-        "loaded_rows": 3347,
+        "loaded_rows": 3390,
         "nested_arrays_flattened": 1,
         "category_override_count": 0,
-        "augmented_rows": 520,
+        "augmented_rows": 563,
         "source_label_distribution": {
           "<EMPTY>": 2579,
           "数据增强": 280,
           "数据增强-SEAM_SEAMLESS制造工艺专项对比": 240,
           "真实项目数据-0721": 205,
-          "真实项目数据-0720": 43
+          "真实项目数据-0720": 43,
+          "数据增强-制造工艺与主体词粘连专项": 43
         }
       },
       "管件": {
         "path": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/种类/管件.json",
-        "loaded_rows": 12775,
+        "loaded_rows": 13887,
         "nested_arrays_flattened": 0,
         "category_override_count": 0,
-        "augmented_rows": 3876,
+        "augmented_rows": 4989,
         "source_label_distribution": {
-          "<EMPTY>": 8693,
+          "<EMPTY>": 8692,
           "数据增强-同心偏心异径专项对比": 1290,
           "数据增强-剖分三通专项对比": 982,
           "数据增强-TR_RED_TE连接方式专项对比": 884,
+          "数据增强-历史简写专项对比-真实项目": 385,
           "数据增强": 336,
+          "数据增强-OLET支管台专项对比": 272,
+          "数据增强-制造工艺与主体词粘连专项": 245,
           "数据增强-SEAM_SEAMLESS制造工艺专项对比": 240,
+          "数据增强-历史简写专项对比-组合对比": 155,
           "数据增强-Y型与斜三通专项对比": 144,
           "真实项目数据-0721": 133,
-          "真实项目数据-0720": 73
+          "真实项目数据-0720": 73,
+          "数据增强-Model数字D半径专项对比": 56
         }
       }
     },
     "category_overrides": []
   },
   "source_deduplication": {
-    "input_rows": 24606,
-    "output_rows": 24450,
+    "input_rows": 25797,
+    "output_rows": 25641,
     "rows_removed_total": 156,
     "exact_duplicate_rows_removed": 156,
     "conflict_rows_removed": 0,
@@ -65,20 +72,25 @@
     "conflict_groups": []
   },
   "source_provenance": {
-    "rows": 24450,
-    "original_rows": 19436,
-    "augmented_rows": 5014,
-    "augmented_ratio": 0.205072,
+    "rows": 25641,
+    "original_rows": 19435,
+    "augmented_rows": 6206,
+    "augmented_ratio": 0.242034,
     "source_label_distribution": {
-      "<EMPTY>": 18712,
+      "<EMPTY>": 18711,
       "数据增强-同心偏心异径专项对比": 1290,
       "数据增强": 1268,
       "数据增强-剖分三通专项对比": 982,
       "数据增强-TR_RED_TE连接方式专项对比": 850,
       "数据增强-SEAM_SEAMLESS制造工艺专项对比": 480,
       "真实项目数据-0721": 479,
+      "数据增强-历史简写专项对比-真实项目": 385,
+      "数据增强-制造工艺与主体词粘连专项": 324,
+      "数据增强-OLET支管台专项对比": 272,
       "真实项目数据-0720": 245,
-      "数据增强-Y型与斜三通专项对比": 144
+      "数据增强-历史简写专项对比-组合对比": 155,
+      "数据增强-Y型与斜三通专项对比": 144,
+      "数据增强-Model数字D半径专项对比": 56
     }
   },
   "explicit_holdout": {},
@@ -366,7 +378,7 @@
         "异径夹套法兰",
         "异径板式法兰"
       ],
-      "augmented_rows_forced_to_train": 652
+      "augmented_rows_forced_to_train": 688
     },
     "直管": {
       "body_strata": 3,
@@ -466,16 +478,23 @@
       "bodies_below_holdout_minimum": [
         "仪表管"
       ],
-      "augmented_rows_forced_to_train": 520
+      "augmented_rows_forced_to_train": 563
     },
     "管件": {
-      "body_strata": 89,
-      "real_rows": 8787,
+      "body_strata": 91,
+      "real_rows": 8786,
       "val_target_rows": 879,
       "test_target_rows": 879,
       "val_selected_rows": 879,
       "test_selected_rows": 879,
       "body_quotas": [
+        {
+          "body": "45度坡口半管接头",
+          "total": 23,
+          "train": 19,
+          "val": 2,
+          "test": 2
+        },
         {
           "body": "BEND",
           "total": 57,
@@ -496,6 +515,13 @@
           "train": 4,
           "val": 0,
           "test": 0
+        },
+        {
+          "body": "SWEEPOLET",
+          "total": 19,
+          "train": 15,
+          "val": 2,
+          "test": 2
         },
         {
           "body": "Y型三通",
@@ -625,10 +651,10 @@
         },
         {
           "body": "半管接头",
-          "total": 105,
-          "train": 83,
-          "val": 11,
-          "test": 11
+          "total": 82,
+          "train": 66,
+          "val": 8,
+          "test": 8
         },
         {
           "body": "单丝头",
@@ -842,10 +868,10 @@
         },
         {
           "body": "对焊支管台",
-          "total": 362,
-          "train": 290,
-          "val": 36,
-          "test": 36
+          "total": 445,
+          "train": 355,
+          "val": 45,
+          "test": 45
         },
         {
           "body": "异径三通",
@@ -926,8 +952,8 @@
         },
         {
           "body": "承插焊支管台",
-          "total": 294,
-          "train": 236,
+          "total": 292,
+          "train": 234,
           "val": 29,
           "test": 29
         },
@@ -940,10 +966,10 @@
         },
         {
           "body": "支管台",
-          "total": 149,
-          "train": 119,
-          "val": 15,
-          "test": 15
+          "total": 47,
+          "train": 37,
+          "val": 5,
+          "test": 5
         },
         {
           "body": "斜三通",
@@ -1073,8 +1099,8 @@
         },
         {
           "body": "螺纹支管台",
-          "total": 93,
-          "train": 75,
+          "total": 94,
+          "train": 76,
           "val": 9,
           "test": 9
         },
@@ -1105,8 +1131,10 @@
           "ANGLE:DECIMAL",
           "ANGLE:PRESENT",
           "ANGLE:UNCOMMON",
+          "BODY:45度坡口半管接头",
           "BODY:BEND",
           "BODY:COUPLING COLLAR",
+          "BODY:SWEEPOLET",
           "BODY:Y型三通",
           "BODY:Y型异径三通",
           "BODY:三通",
@@ -1220,8 +1248,10 @@
           "ANGLE:DECIMAL",
           "ANGLE:PRESENT",
           "ANGLE:UNCOMMON",
+          "BODY:45度坡口半管接头",
           "BODY:BEND",
           "BODY:COUPLING COLLAR",
+          "BODY:SWEEPOLET",
           "BODY:Y型三通",
           "BODY:Y型异径三通",
           "BODY:三通",
@@ -1355,33 +1385,38 @@
         "波纹非金属软管",
         "金属软管"
       ],
-      "augmented_rows_forced_to_train": 3842
+      "augmented_rows_forced_to_train": 4955
     }
   },
-  "total_source_rows_after_dedup": 24450,
-  "train_rows": 20562,
+  "total_source_rows_after_dedup": 25641,
+  "train_rows": 21753,
   "val_rows": 1944,
   "test_rows": 1944,
-  "actual_val_ratio": 0.079509,
-  "actual_test_ratio": 0.079509,
-  "actual_val_ratio_of_original": 0.100021,
-  "actual_test_ratio_of_original": 0.100021,
+  "actual_val_ratio": 0.075816,
+  "actual_test_ratio": 0.075816,
+  "actual_val_ratio_of_original": 0.100026,
+  "actual_test_ratio_of_original": 0.100026,
   "split_provenance": {
     "train": {
-      "rows": 20562,
-      "original_rows": 15548,
-      "augmented_rows": 5014,
-      "augmented_ratio": 0.243848,
+      "rows": 21753,
+      "original_rows": 15547,
+      "augmented_rows": 6206,
+      "augmented_ratio": 0.285294,
       "source_label_distribution": {
-        "<EMPTY>": 14957,
+        "<EMPTY>": 14953,
         "数据增强-同心偏心异径专项对比": 1290,
         "数据增强": 1268,
         "数据增强-剖分三通专项对比": 982,
         "数据增强-TR_RED_TE连接方式专项对比": 850,
         "数据增强-SEAM_SEAMLESS制造工艺专项对比": 480,
-        "真实项目数据-0721": 388,
-        "真实项目数据-0720": 203,
-        "数据增强-Y型与斜三通专项对比": 144
+        "真实项目数据-0721": 385,
+        "数据增强-历史简写专项对比-真实项目": 385,
+        "数据增强-制造工艺与主体词粘连专项": 324,
+        "数据增强-OLET支管台专项对比": 272,
+        "真实项目数据-0720": 209,
+        "数据增强-历史简写专项对比-组合对比": 155,
+        "数据增强-Y型与斜三通专项对比": 144,
+        "数据增强-Model数字D半径专项对比": 56
       }
     },
     "val": {
@@ -1390,9 +1425,9 @@
       "augmented_rows": 0,
       "augmented_ratio": 0.0,
       "source_label_distribution": {
-        "<EMPTY>": 1881,
-        "真实项目数据-0721": 39,
-        "真实项目数据-0720": 24
+        "<EMPTY>": 1877,
+        "真实项目数据-0721": 51,
+        "真实项目数据-0720": 16
       }
     },
     "test": {
@@ -1401,190 +1436,190 @@
       "augmented_rows": 0,
       "augmented_ratio": 0.0,
       "source_label_distribution": {
-        "<EMPTY>": 1874,
-        "真实项目数据-0721": 52,
-        "真实项目数据-0720": 18
+        "<EMPTY>": 1881,
+        "真实项目数据-0721": 43,
+        "真实项目数据-0720": 20
       }
     }
   },
   "split_overlap": {
     "train_val": {
       "description_overlap": 0,
-      "surface_skeleton_overlap": 824,
+      "surface_skeleton_overlap": 809,
       "surface_skeleton_overlap_examples": [
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD AISI N 6TI BW ENDS - STD N 6TIS- N 0S SIZE",
-        "ANGLE ELBOW LR S3 N STD SMLS BW STD STD -B ≥ PRESS THK SIZE",
         "ANGLE ELBOW LR S3 N STD WELD BW STD THK SIZE",
+        "ANGLE ELBOW PRESS N 0GLASSLINED MFR STD SIZE",
         "ANGLE ELBOW R= N .5D STD WP3 N 6L-S BW STD THK SIZE",
         "ANGLE ELBOW SMLS LR PRESS N STD + PTFE LINED 3MM STD LJ FLANGEXFLANGE N STD STD SIZE",
-        "ANGLE ELBOW SMLS LR STD THK STD WP3 N 4H-S BE POLISHING SIZE",
         "ANGLE LATERAL TEE N 0S STD GR.WP3 N 6L SEAMLESS MANUFACTURER STANDARD 参照 STD N N 设计温度 ANGLE C 设计压力 FV 6BAR 插焊 SIZE",
         "ANGLE PIGGABLE TEE S3 N STD SMLS BW STD THK SIZE",
-        "ANGLE 异径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK",
+        "ANGLE 异径斜三通 CF4 N 5K NACE STD BE N -MC0 N - N SMLS SIZE N .0MM X THK",
+        "ANGLE 异径斜三通 N 0GB T8 N BE N -MC0 N - N SMLS SIZE THK",
+        "ANGLE 异径斜三通 SF3 N 4L STD BE N -MC0 N - N SMLS SIZE THK",
         "ANGLE 异径斜三通 SMLS BW STD STD - THK SIZE",
-        "ANGLE 弯头 1D CF4 N 5K NACE STD BE STD SERIES I SMLS SIZE THK",
-        "ANGLE 弯头 1D STD -SF3 N BE STD SERIES I SMLS SIZE THK _GB T_ N -SF3 N",
+        "ANGLE 异径斜三通 STD -SF3 N 6L BE N -MC0 N - N WELDED SIZE THK _GB T_ N -SF3 N 6L",
         "ANGLE 弯头 E L BW T= N 0MM SIZE STD Q2 N 5B",
         "ANGLE 弯头 N 0E- PRESS - SIZE N # STD STD",
-        "ANGLE 弯头 N 0EL SF3 N STD BW STD I系列 THK THK= N .2MM SIZE",
+        "ANGLE 弯头 N 2CR17NI12MO2 N 6L SIZE IA- THK N 0E L STD",
         "ANGLE 弯头 N STD FTE PRESS STD GALVANIZED SIZE",
-        "ANGLE 弯头 N 衬胶 SMLS LR RF PRESS STD STD THK THK= N .3X3.0MM SIZE",
-        "ANGLE 弯头 R= N .5D STD N SIZE . N N 0EL",
+        "ANGLE 弯头 R= N .5D SMLS STD ANTI-SCC N STD BW THK SIZE",
         "ANGLE 弯头 SIZE BW A4 N -WP3 N STD THK",
         "ANGLE 弯头 SIZE BW N 0EL N +ZN STD THK",
         "ANGLE 弯头 SIZE THK N NACE STD BW",
-        "ANGLE 弯头E L SIZE II- N N STD",
+        "ANGLE 弯头 SIZE THK S3 N S STD BW",
         "ANGLE 斜Y型 三通 BW 厂标 THK SIZE SF3 N 6L STD -",
         "ANGLE 法兰弯头 N 衬胶 RF PRESS STD SMLS SIZE N MM",
         "ANGLE 法兰弯头 PTFELINED STD RF PRESS STD SMLS SIZE N MM",
-        "ANGLE 短半径弯头 ANGLE ELBOW SIZE THK STD N CF4 N",
-        "ANGLE 等径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK _CF4 N _ STD",
+        "ANGLE 等径斜三通 SMLS BW STD STD - THK SIZE",
         "ANGLE 钢板制对焊弯头 R= N .5D SIZE Q2 N 5R STD STD N 8X7. N",
-        "ANGLE 锻制弯头 FNPT STD N 0GALV. STD SERIES I - PRESS SIZE",
-        "ANGLE 长半径弯头 AF12G NACE STD BE STD SERIES I SMLS 符合 STD 附录B SIZE THK _AF12G NACE _ STD",
-        "ANGLE 长半径弯头 S3 N STD 无缝 BW STD STD 方法C THK SIZE",
+        "ANGLE 锻制弯头 FNPT STD N GALV. STD - PRESS SIZE",
+        "ANGLE 长半径弯头 ANGLE ELBOW SIZE THK STD S3 N SF3 N",
         "ANGLE 长半径弯头 SF3 N STD BE STD SERIES I SMLS 符合 STD 附录B SIZE THK",
-        "ANGLE 长半径弯头 SIZE - THK -BW SIZE N #-CE THK STD STD",
         "ANGLE 长半径弯头 SIZE THK N NACE STD BW",
-        "ANGLE 长半径弯头 SMLS BW A4 N WP3 N -S STD - THK SIZE",
-        "ANGLE 长半径弯头 STD WPL6 NACE BE STD SMLS SIZE THK",
-        "BLIND FLANGE STD PRESS A1 N F3 N RF POLISHING SIZE",
+        "ANGLE 长半径弯头 STD -SF3 N 6L BE STD SERIESI SMLS SIZE THK _GB T_ N -SF3 N 6L",
+        "ANGLE 长半径弯头 STD -SF3 N 6L BE STD SERIESI SMLS SIZE THK _GB T_ N -SF3 N 6L SIZE",
+        "ANGLE 长半径弯头 STD WPL6 BE STD TYPE S 符合 STD 附录B SIZE THK",
+        "ANGLE 长半径弯头 STD WPL6 NACE BE STD SMLS 符合 STD 附录B SIZE THK",
         "BLIND FLANGE STD PRESS A1 N F3 N RF SIZE",
+        "BLIND FLANGE STD PRESS N STD RF SIZE",
         "BLIND FLANGE STD PRESS RF A1 N F3 N 4L SIZE",
         "BLIND FLANGE STD PRESS STD F3 N 4H RJ POLISHING SIZE",
+        "BLINDFLANGEASTMA1 N 5N NORMALIZED CL1 N 0RFBLDASMEB1 N .5DN2 N",
+        "CAP SMLS BW A2 N WPB STD XS SIZE",
+        "CAP SMLS STD A4 N WP3 N BE THK SIZE",
+        "CAP STD GR.WP3 N 6L SMLS BW STD N 0SDN1 N",
         "CON REDUCER A2 N 4GR.WPB SMLS BW STD JACKET SIZE THK",
         "CON REDUCER A2 N 4GR.WPB SMLS BW STD SIZE THK",
         "CON REDUCER A2 N 4GR.WPB WELD BW STD SIZE THK",
-        "CON REDUCER A4 N 3GR.WP3 N 4L SMLS BW STD CORE SIZE THK",
         "CON REDUCER STEEL REINFORCED POLYETHYLENE PRESS CJ T N SIZE",
-        "CON SWAGE NIPPLE PBE STD GRADE F3 N 6L MSS SP- N THK SIZE",
+        "CON. REDUCER BW SMLS STD GRADE WP3 N 6L-S STD THK SIZE",
         "CON. SWAGE A4 N WP3 N 4L SMLS PLE X TSE THK MSS SP- N 1X SIZE",
-        "CON.REDUCER STD GR.WP3 N 6L SMLS BW STD N 0S SIZE",
         "CONC REDUCER N 6L SS A4 N -WP3 N 6L-S SMLS BE THK B1 N SIZE X SIZE",
-        "CONC. REDUCER SMLS STD A4 N WP3 N BE THK SIZE"
+        "CONC. REDUCER SMLS STD A4 N WP3 N BE THK POLISHING SIZE"
       ]
     },
     "train_test": {
       "description_overlap": 0,
-      "surface_skeleton_overlap": 913,
+      "surface_skeleton_overlap": 935,
       "surface_skeleton_overlap_examples": [
-        "ANGLE 3D ELBOW A4 N WP3 N 4L INSIDE POLISHED RA= N .8UM RMAX< N 5UM SMLS BW THK STD SIZE",
+        "ANGLE 3D ELBOW A4 N WP3 N 4L SMLS BW THK STD SIZE",
         "ANGLE ELBOW A1 N 5N GALV. CL. N SCRD STD SIZE",
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD AISI N 6TI BW ENDS - STD N 6TIS- N 0S SIZE",
         "ANGLE ELBOW LR S3 N STD WELD BW STD THK SIZE",
         "ANGLE ELBOW PRESS N 0GLASSLINED MFR STD SIZE",
         "ANGLE ELBOW SMLS LR PRESS N STD + PTFE LINED 3MM STD LJ FLANGEXFLANGE N STD STD SIZE",
-        "ANGLE ELBOW SMLS LR STD A4 N WP3 N BE THK SIZE",
-        "ANGLE ELBOW SMLS LR STD THK STD WP3 N 4H-S BE SIZE",
+        "ANGLE ELBOW SMLS LR STD THK STD WP3 N 4H-S BE POLISHING SIZE",
         "ANGLE LATERAL TEE N 0S STD GR.WP3 N 6L SEAMLESS MANUFACTURER STANDARD 参照 STD N N 设计温度 ANGLE C 设计压力 FV 6BAR 插焊 SIZE",
+        "ANGLE LR ELBOW A4 N WP3 N N 4L SMLS BW THK STD SIZE",
         "ANGLE MITER X6CRNITI1 N - N N BW N .1X3. N N SKM1 N - N SIZE",
         "ANGLE PIGGABLE TEE S3 N STD SMLS BW STD THK SIZE",
-        "ANGLE 异径斜三通 CF4 N 5K NACE STD BE N -MC0 N - N SMLS SIZE N .0MM X THK",
+        "ANGLE 对焊弯头 R= N .5D SIZE Q2 N 5R STD STD N 8X7. N",
         "ANGLE 异径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK",
         "ANGLE 异径斜三通 SF3 N 4L STD BE N -MC0 N - N SMLS SIZE THK",
         "ANGLE 异径斜三通 SMLS BW STD STD - THK SIZE",
         "ANGLE 异径斜三通 STD -Q2 N 5R BE N -MC0 N - N WELDED SIZE THK",
+        "ANGLE 弯头 1D SF3 N 4L STD BE STD SERIES I SMLS SIZE THK",
         "ANGLE 弯头 1D STD -SF3 N BE STD SERIES I SMLS SIZE THK _GB T_ N -SF3 N",
-        "ANGLE 弯头 ELBOW ANGLE LR SMLS BW STD SERIES I THK SIZE SF3 N 6L STD -",
+        "ANGLE 弯头 ELBOWE L SIZE I= N CLASSI PE STD N CF4 N",
         "ANGLE 弯头 N 0EL- SIZE - THK N # STD STD",
-        "ANGLE 弯头 N 2CR17NI12MO2 N 6L SIZE IA- THK N 0E L STD",
-        "ANGLE 弯头 N ELBOW STD LR SEAMLESS STD GR. WPB BW THK SIZE",
         "ANGLE 弯头 N STD FTE PRESS STD GALVANIZED SIZE",
-        "ANGLE 弯头 R= N .5D SMLS STD ANTI-SCC N STD BW THK SIZE",
+        "ANGLE 弯头 N 衬胶 SMLS LR RF PRESS STD STD THK THK= N .3X3.0MM SIZE",
         "ANGLE 弯头 SIZE BW A4 N -WP3 N STD THK",
+        "ANGLE 弯头 SIZE BW N 0EL N +ZN STD THK",
         "ANGLE 弯头 SIZE THK N NACE STD BW",
-        "ANGLE 弯头 SIZE THK S3 N S STD BW",
+        "ANGLE 弯头 WELDED LR BW SF3 N STD STD STD Φ N 0XSCH10S SIZE",
+        "ANGLE 弯头1D STD -SF3 N BE STD SERIESI SMLS SIZE THK _GB T_ N -SF3 N",
+        "ANGLE 弯头1D STD -SF3 N BE STD SERIESI SMLS SIZE THK _GB T_ N -SF3 N SIZE",
+        "ANGLE 弯头DN1 N N 0E L BW II= N STD CF4 N 5K",
         "ANGLE 法兰弯头 N 衬胶 RF PRESS STD SMLS SIZE N MM",
         "ANGLE 法兰弯头 PTFELINED STD RF PRESS STD SMLS SIZE N MM",
-        "ANGLE 短半径弯头 SMLS SR BW SF3 N STD STD Φ N .7XSCH10S SIZE",
+        "ANGLE 等径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK",
         "ANGLE 等径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK _CF4 N _ STD",
-        "ANGLE 等径斜三通 STD -SF3 N BE N -MC0 N - N SMLS SIZE THK",
+        "ANGLE 螺纹弯头 STD N GA1V. STD FNPT PRESS SIZE",
         "ANGLE 钢板制对焊弯头 R= N .5D SIZE Q2 N 5R STD STD N 8X7. N",
         "ANGLE 锻制弯头 FNPT STD N 0GALV. STD SERIES I - PRESS SIZE",
-        "ANGLE 锻制弯头 FNPT STD N GALV. STD - PRESS SIZE",
-        "ANGLE 长半径弯头 CF4 N 5K STD BE STD SERIES I SMLS 附录B SIZE THK",
-        "ANGLE 长半径弯头 N 5EL2 N -II- N STD N STD",
+        "ANGLE 长半径弯头 AF12G NACE STD BE STD SERIES I SMLS 符合 STD 附录B SIZE THK _AF12G NACE _ STD",
+        "ANGLE 长半径弯头 S3 N STD 无缝 BW STD STD 方法C THK SIZE",
         "ANGLE 长半径弯头 SF3 N STD BE STD SERIES I SMLS 符合 STD 附录B SIZE THK",
-        "ANGLE 长半径弯头 SF3 N STD BE STD SERIES I SMLS 附录B SIZE THK",
-        "ANGLE 长半径弯头 SIZE THK N STD BW",
-        "ANGLE 长半径弯头 SIZE THK SF3 N S STD",
-        "ANGLE 长半径弯头 SMLS BW STD STD STD SERIES II - N 0MM SIZE",
-        "ANGLE 长半径弯头 STD -SF3 N 6L BE STD SERIESI SMLS SIZE THK _GB T_ N -SF3 N 6L",
-        "ANGLE 长半径弯头 STD -SF3 N 6L BE STD SERIESI WELDED SIZE N .0MM _GB T_ N -SF3 N 6L SIZE",
+        "ANGLE 长半径弯头 SMLS BW STD STD STD SERIES II ANTI-H2S N 0MM SIZE",
+        "ANGLE 长半径弯头 STD -SF3 N 6L BE STD SERIES I SMLS SIZE THK _GB T_ N -SF3 N 6L",
+        "ANGLE 长半径弯头 STD -SF3 N BE STD SERIES I SMLS SIZE THK",
+        "ANGLE 长半径弯头 STD GRADE WP3 N UNS S3 N BE STD TYPE WX SIZE THK",
         "BEND SMLS BE N STD STD Φ N .9XSCH10S SIZE",
+        "BLANK AND SPACER STD F3 N 6L STD PRESS RF SIZE",
         "BLIND FLANGE PRESS N STD + PTFE LINED STD STD RF SIZE",
         "BLIND FLANGE STD PRESS A1 N F3 N RF POLISHING SIZE",
-        "BLIND FLANGE STD PRESS RF A1 N F3 N 4L SIZE",
-        "BLIND FLANGE STD PRESS RF TYPE B STD -X5CRNI1 N - N SIZE -",
+        "BLIND FLANGE STD PRESS A1 N F3 N RF SIZE",
         "BLIND FLANGE STD PRESS STD F3 N 4H RJ POLISHING SIZE",
-        "BLINDFLANGECL1 N 0RFASTMA1 N 5N NACE STD SIZE"
+        "BLINDFLANGEASTMA1 N 5CL1 N 0RFBLDASMEB1 N .5DN1 N"
       ]
     },
     "val_test": {
       "description_overlap": 0,
-      "surface_skeleton_overlap": 485,
+      "surface_skeleton_overlap": 464,
       "surface_skeleton_overlap_examples": [
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD AISI N 6TI BW ENDS - STD N 6TIS- N 0S SIZE",
         "ANGLE ELBOW LONG RADIUS R= N .5D SEAMLESS STD STD GR.WP3 N 4L BW ENDS THK SIZE",
         "ANGLE ELBOW LR S3 N STD WELD BW STD THK SIZE",
+        "ANGLE ELBOW PRESS N 0GLASSLINED MFR STD SIZE",
         "ANGLE ELBOW SIZE THK BW A2 N WP1 N PRESS STD HPS SIZE",
         "ANGLE ELBOW SIZE THK BW A4 N WP3 N N 4L-S STD HPS SIZE",
         "ANGLE ELBOW SIZE THK BW A4 N WP3 N N 4L-S STD SIZE",
         "ANGLE ELBOW SMLS LR PRESS N STD + PTFE LINED 3MM STD LJ FLANGEXFLANGE N STD STD SIZE",
+        "ANGLE ELBOW SMLS LR STD SERIES I THK CF4 N STD BE SIZE",
         "ANGLE ELBOW STEEL REINFORCED POLYETHYLENE PRESS CJ T N SIZE",
         "ANGLE LATERAL TEE N 0S STD GR.WP3 N 6L SEAMLESS MANUFACTURER STANDARD 参照 STD N N 设计温度 ANGLE C 设计压力 FV 6BAR 插焊 SIZE",
+        "ANGLE LR ELBOW A4 N WP3 N 4L SMLS BW THK STD SIZE",
         "ANGLE PIGGABLE TEE S3 N STD SMLS BW STD THK SIZE",
         "ANGLE 对焊弯头 R= N .5D SIZE Q2 N 5R 钢板制 STD N 8X7. N",
-        "ANGLE 异径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK",
+        "ANGLE 异径斜三通 SF3 N 4L STD BE N -MC0 N - N SMLS SIZE THK",
         "ANGLE 异径斜三通 SMLS BW STD STD - THK SIZE",
-        "ANGLE 弯头 1D STD -SF3 N BE STD SERIES I SMLS SIZE THK _GB T_ N -SF3 N",
         "ANGLE 弯头 3D STD WPS3 N UNS S3 N BE STD EFW STD APPENDIX B SIZE THK _ASTM_A8 N _WPS3 N _ UNS_S3 N",
         "ANGLE 弯头 ELBOW EL SF3 N 6L BW STD THK SIZE",
         "ANGLE 弯头 ELBOWE L SIZE I= N CLASSI BE STD N CF4 N",
         "ANGLE 弯头 N STD FTE PRESS STD GALVANIZED SIZE",
         "ANGLE 弯头 SIZE BW A4 N -WP3 N STD THK",
+        "ANGLE 弯头 SIZE BW N 0EL N +ZN STD THK",
         "ANGLE 弯头 SIZE THK N NACE STD BW",
         "ANGLE 法兰弯头 N 衬胶 RF PRESS STD SMLS SIZE N MM",
         "ANGLE 法兰弯头 PTFELINED STD RF PRESS STD SIZE THK",
         "ANGLE 法兰弯头 PTFELINED STD RF PRESS STD SMLS SIZE N MM",
-        "ANGLE 等径斜三通 CF4 N STD BE N -MC0 N - N SMLS SIZE THK _CF4 N _ STD",
+        "ANGLE 螺纹弯头 SIZE - THK -NPT SIZE N #+ZN THK STD STD",
         "ANGLE 钢板制对焊弯头 R= N .5D SIZE Q2 N 5R STD STD N 8X7. N",
-        "ANGLE 锻制弯头 FNPT STD N 0GALV. STD SERIES I - PRESS SIZE",
         "ANGLE 长半径弯头 SF3 N STD BE STD SERIES I SMLS 符合 STD 附录B SIZE THK",
         "ANGLE 长半径弯头 SIZE PRESS N NACE STD SW",
-        "BLIND FLANGE STD PRESS A1 N F3 N RF POLISHING SIZE",
-        "BLIND FLANGE STD PRESS RF A1 N F3 N 4L SIZE",
+        "BLIND FLANGE STD PRESS A1 N F3 N RF SIZE",
         "BLIND FLANGE STD PRESS STD F3 N 4H RJ POLISHING SIZE",
-        "BLINDFLANGEASTMA1 N 5N NORMALIZED CL1 N 0RFBLDASMEB1 N .5DN2 N",
+        "BLINDFLANGECL1 N 0RFASTMA1 N 5N NACE STD SIZE",
         "CAP TH NPT PRESS STD SIZE S3 N STD -",
         "CON REDUCER A2 N 4GR.WPB SMLS BW STD JACKET SIZE THK",
         "CON REDUCER A2 N 4GR.WPB WELD BW STD SIZE THK",
         "CON REDUCER STEEL REINFORCED POLYETHYLENE PRESS CJ T N SIZE",
-        "CON.REDUCER STD GR.WP3 N 6L SMLS BW STD N 0S SIZE",
         "CONC. REDUCER SMLS PRESS N STD + PTFE LINED 3MM STD LJ FLANGEXFLANGE N STD STD SIZE",
+        "CONCENTRIC REDUCER BW STD WP3 N -W BW STD THK L × THK S SIZE",
         "CONCENTRIC REDUCER BW STD WP3 N 6L-S BW STD THK L × THK S SIZE",
         "CONCENTRIC REDUCER N STD WELD BW STD THK SIZE",
         "CONCENTRIC REDUCER S3 N STD WELD BW STD THK SIZE",
-        "CONCENTRIC REDUCING COUPLING S3 N STD FORGED SW PRESS STD SIZE",
+        "CONCENTRIC REDUCING COUPLING N STD FORGED SW PRESS STD SIZE",
         "COUPLING CS A1 N FNPT PRESS B1 N GALV SIZE",
-        "ECC. REDUCER SMLS STD THK STD WP3 N 4H-S BE POLISHING SIZE",
+        "ECC SWAGE NIPPLE PBE STD MSS SP- N NACE MR N THK SIZE",
         "ECC. REDUCER WELDED STD A4 N WP3 N BE THK POLISHING SIZE",
-        "ECCENTRIC REDUCER BW STD WP3 N 6L-S BW STD THK L × THK S SIZE",
+        "ECC.REDUCER STD GR.WP3 N 6L SMLS BW STD INNER SURFACE TREATMENT ≤ N ΜM N 0S SIZE",
         "ELBOW N REDUING FLANGED STD GR.WPB + INTERNALLY PTFE LINED SMLS BOTH ENDS LOOSE FLANGE N # MFR STD ASME NM. N STD STD SIZE",
         "EQUAL TEE FLANGED STD GR.WPB + INTERNALLY PTFE LINED SMLS RF N # MFR STD ASME NM. N STD STD SIZE",
-        "FIGURE N BLIND SIZE PRESS STD B1 N FF",
-        "FLANGE GROOVED A1 N GALV PRESS RF STD SIZE"
+        "FIGURE N BLIND SIZE PRESS STD B1 N FF"
       ]
     }
   },
   "category_summary": {
     "法兰": {
-      "source_rows": 8484,
-      "train_rows": 6918,
+      "source_rows": 8520,
+      "train_rows": 6954,
       "val_rows": 783,
       "test_rows": 783,
-      "actual_val_ratio": 0.092291,
-      "actual_test_ratio": 0.092291,
+      "actual_val_ratio": 0.091901,
+      "actual_test_ratio": 0.091901,
       "body_coverage": [
         {
           "tag": "BODY:8字盲板",
@@ -1622,6 +1657,13 @@
           "test": 4
         },
         {
+          "tag": "BODY:孔板法兰",
+          "total": 3,
+          "train": 3,
+          "val": 0,
+          "test": 0
+        },
+        {
           "tag": "BODY:对焊法兰",
           "total": 104,
           "train": 84,
@@ -1637,8 +1679,8 @@
         },
         {
           "tag": "BODY:带颈对焊法兰",
-          "total": 1985,
-          "train": 1617,
+          "total": 1991,
+          "train": 1623,
           "val": 184,
           "test": 184
         },
@@ -1679,8 +1721,8 @@
         },
         {
           "tag": "BODY:承插焊法兰",
-          "total": 831,
-          "train": 691,
+          "total": 837,
+          "train": 697,
           "val": 70,
           "test": 70
         },
@@ -1693,8 +1735,8 @@
         },
         {
           "tag": "BODY:松套法兰",
-          "total": 295,
-          "train": 247,
+          "total": 301,
+          "train": 253,
           "val": 24,
           "test": 24
         },
@@ -1707,8 +1749,8 @@
         },
         {
           "tag": "BODY:板式平焊法兰",
-          "total": 240,
-          "train": 192,
+          "total": 243,
+          "train": 195,
           "val": 24,
           "test": 24
         },
@@ -1721,15 +1763,15 @@
         },
         {
           "tag": "BODY:盲板法兰",
-          "total": 1009,
-          "train": 821,
+          "total": 1015,
+          "train": 827,
           "val": 94,
           "test": 94
         },
         {
           "tag": "BODY:螺纹法兰",
-          "total": 452,
-          "train": 366,
+          "total": 458,
+          "train": 372,
           "val": 43,
           "test": 43
         },
@@ -1744,15 +1786,15 @@
       "expression_coverage": [
         {
           "tag": "FORM:BLIND",
-          "total": 1493,
-          "train": 1204,
+          "total": 1494,
+          "train": 1205,
           "val": 145,
           "test": 144
         },
         {
           "tag": "FORM:FLANGE",
-          "total": 2673,
-          "train": 2175,
+          "total": 2685,
+          "train": 2187,
           "val": 251,
           "test": 247
         },
@@ -1765,8 +1807,8 @@
         },
         {
           "tag": "FORM:LAP_JOINT",
-          "total": 284,
-          "train": 236,
+          "total": 288,
+          "train": 240,
           "val": 24,
           "test": 24
         },
@@ -1793,8 +1835,8 @@
         },
         {
           "tag": "FORM:SW",
-          "total": 713,
-          "train": 589,
+          "total": 717,
+          "train": 593,
           "val": 62,
           "test": 62
         },
@@ -1807,8 +1849,8 @@
         },
         {
           "tag": "FORM:WN",
-          "total": 1790,
-          "train": 1451,
+          "total": 1794,
+          "train": 1455,
           "val": 170,
           "test": 169
         },
@@ -1816,41 +1858,43 @@
           "tag": "FORM:法兰",
           "total": 5160,
           "train": 4144,
-          "val": 508,
-          "test": 508
+          "val": 509,
+          "test": 507
         },
         {
           "tag": "LANG:EN",
-          "total": 2587,
-          "train": 2146,
+          "total": 2623,
+          "train": 2183,
           "val": 221,
-          "test": 220
+          "test": 219
         },
         {
           "tag": "LANG:MIXED",
           "total": 5897,
-          "train": 4772,
+          "train": 4771,
           "val": 562,
-          "test": 563
+          "test": 564
         }
       ],
       "missing_body_tags_in_val": [
+        "BODY:孔板法兰",
         "BODY:异径夹套法兰",
         "BODY:异径板式法兰"
       ],
       "missing_body_tags_in_test": [
+        "BODY:孔板法兰",
         "BODY:异径夹套法兰",
         "BODY:异径板式法兰"
       ],
       "missing_body_tags_in_train": []
     },
     "直管": {
-      "source_rows": 3337,
-      "train_rows": 2773,
+      "source_rows": 3380,
+      "train_rows": 2816,
       "val_rows": 282,
       "test_rows": 282,
-      "actual_val_ratio": 0.084507,
-      "actual_test_ratio": 0.084507,
+      "actual_val_ratio": 0.083432,
+      "actual_test_ratio": 0.083432,
       "body_coverage": [
         {
           "tag": "BODY:仪表管",
@@ -1868,8 +1912,8 @@
         },
         {
           "tag": "BODY:直管",
-          "total": 3322,
-          "train": 2762,
+          "total": 3365,
+          "train": 2805,
           "val": 280,
           "test": 280
         }
@@ -1884,8 +1928,8 @@
         },
         {
           "tag": "FORM:FLANGE",
-          "total": 344,
-          "train": 302,
+          "total": 345,
+          "train": 303,
           "val": 21,
           "test": 21
         },
@@ -1905,15 +1949,15 @@
         },
         {
           "tag": "FORM:PIPE",
-          "total": 2869,
-          "train": 2359,
+          "total": 2878,
+          "train": 2368,
           "val": 255,
           "test": 255
         },
         {
           "tag": "FORM:SMLS",
-          "total": 1982,
-          "train": 1640,
+          "total": 1985,
+          "train": 1643,
           "val": 171,
           "test": 171
         },
@@ -1933,8 +1977,8 @@
         },
         {
           "tag": "FORM:WELDED",
-          "total": 704,
-          "train": 546,
+          "total": 707,
+          "train": 549,
           "val": 76,
           "test": 82
         },
@@ -1947,8 +1991,8 @@
         },
         {
           "tag": "LANG:EN",
-          "total": 1023,
-          "train": 854,
+          "total": 1066,
+          "train": 897,
           "val": 84,
           "test": 85
         },
@@ -1976,13 +2020,20 @@
       "missing_body_tags_in_train": []
     },
     "管件": {
-      "source_rows": 12629,
-      "train_rows": 10871,
+      "source_rows": 13741,
+      "train_rows": 11983,
       "val_rows": 879,
       "test_rows": 879,
-      "actual_val_ratio": 0.069602,
-      "actual_test_ratio": 0.069602,
+      "actual_val_ratio": 0.063969,
+      "actual_test_ratio": 0.063969,
       "body_coverage": [
+        {
+          "tag": "BODY:45度坡口半管接头",
+          "total": 23,
+          "train": 19,
+          "val": 2,
+          "test": 2
+        },
         {
           "tag": "BODY:BEND",
           "total": 57,
@@ -2005,30 +2056,37 @@
           "test": 0
         },
         {
+          "tag": "BODY:SWEEPOLET",
+          "total": 25,
+          "train": 21,
+          "val": 2,
+          "test": 2
+        },
+        {
           "tag": "BODY:Y型三通",
-          "total": 56,
-          "train": 48,
+          "total": 68,
+          "train": 60,
           "val": 4,
           "test": 4
         },
         {
           "tag": "BODY:Y型异径三通",
-          "total": 27,
-          "train": 25,
+          "total": 39,
+          "train": 37,
           "val": 1,
           "test": 1
         },
         {
           "tag": "BODY:Y型等径三通",
-          "total": 19,
-          "train": 19,
+          "total": 31,
+          "train": 31,
           "val": 0,
           "test": 0
         },
         {
           "tag": "BODY:三通",
-          "total": 429,
-          "train": 345,
+          "total": 443,
+          "train": 359,
           "val": 42,
           "test": 42
         },
@@ -2062,8 +2120,8 @@
         },
         {
           "tag": "BODY:偏心异径管",
-          "total": 1016,
-          "train": 870,
+          "total": 1092,
+          "train": 946,
           "val": 73,
           "test": 73
         },
@@ -2132,10 +2190,10 @@
         },
         {
           "tag": "BODY:半管接头",
-          "total": 105,
-          "train": 83,
-          "val": 11,
-          "test": 11
+          "total": 86,
+          "train": 70,
+          "val": 8,
+          "test": 8
         },
         {
           "tag": "BODY:单丝头",
@@ -2265,8 +2323,8 @@
         },
         {
           "tag": "BODY:同心异径管",
-          "total": 1041,
-          "train": 895,
+          "total": 1103,
+          "train": 957,
           "val": 73,
           "test": 73
         },
@@ -2356,15 +2414,15 @@
         },
         {
           "tag": "BODY:对焊支管台",
-          "total": 394,
-          "train": 322,
-          "val": 36,
-          "test": 36
+          "total": 641,
+          "train": 551,
+          "val": 45,
+          "test": 45
         },
         {
           "tag": "BODY:异径三通",
-          "total": 2216,
-          "train": 1972,
+          "total": 2298,
+          "train": 2054,
           "val": 122,
           "test": 122
         },
@@ -2391,8 +2449,8 @@
         },
         {
           "tag": "BODY:异径斜三通",
-          "total": 109,
-          "train": 91,
+          "total": 121,
+          "train": 103,
           "val": 9,
           "test": 9
         },
@@ -2405,8 +2463,8 @@
         },
         {
           "tag": "BODY:异径管",
-          "total": 204,
-          "train": 200,
+          "total": 218,
+          "train": 214,
           "val": 2,
           "test": 2
         },
@@ -2426,8 +2484,8 @@
         },
         {
           "tag": "BODY:弯头",
-          "total": 1986,
-          "train": 1636,
+          "total": 2337,
+          "train": 1987,
           "val": 175,
           "test": 175
         },
@@ -2440,8 +2498,8 @@
         },
         {
           "tag": "BODY:承插焊支管台",
-          "total": 326,
-          "train": 268,
+          "total": 404,
+          "train": 346,
           "val": 29,
           "test": 29
         },
@@ -2454,22 +2512,22 @@
         },
         {
           "tag": "BODY:支管台",
-          "total": 149,
-          "train": 119,
-          "val": 15,
-          "test": 15
+          "total": 78,
+          "train": 68,
+          "val": 5,
+          "test": 5
         },
         {
           "tag": "BODY:斜三通",
-          "total": 94,
-          "train": 86,
+          "total": 106,
+          "train": 98,
           "val": 4,
           "test": 4
         },
         {
           "tag": "BODY:斜支管台",
-          "total": 61,
-          "train": 49,
+          "total": 97,
+          "train": 85,
           "val": 6,
           "test": 6
         },
@@ -2517,15 +2575,15 @@
         },
         {
           "tag": "BODY:短节",
-          "total": 81,
-          "train": 65,
+          "total": 85,
+          "train": 69,
           "val": 8,
           "test": 8
         },
         {
           "tag": "BODY:等径三通",
-          "total": 936,
-          "train": 794,
+          "total": 988,
+          "train": 846,
           "val": 71,
           "test": 71
         },
@@ -2545,8 +2603,8 @@
         },
         {
           "tag": "BODY:等径斜三通",
-          "total": 59,
-          "train": 51,
+          "total": 71,
+          "train": 63,
           "val": 4,
           "test": 4
         },
@@ -2559,8 +2617,8 @@
         },
         {
           "tag": "BODY:管帽",
-          "total": 413,
-          "train": 339,
+          "total": 425,
+          "train": 351,
           "val": 37,
           "test": 37
         },
@@ -2573,8 +2631,8 @@
         },
         {
           "tag": "BODY:管箍",
-          "total": 17,
-          "train": 13,
+          "total": 21,
+          "train": 17,
           "val": 2,
           "test": 2
         },
@@ -2587,8 +2645,8 @@
         },
         {
           "tag": "BODY:螺纹支管台",
-          "total": 93,
-          "train": 75,
+          "total": 143,
+          "train": 125,
           "val": 9,
           "test": 9
         },
@@ -2617,8 +2675,8 @@
       "expression_coverage": [
         {
           "tag": "FORM:ELBOW",
-          "total": 1862,
-          "train": 1523,
+          "total": 2086,
+          "train": 1747,
           "val": 169,
           "test": 170
         },
@@ -2645,29 +2703,29 @@
         },
         {
           "tag": "FORM:OLET",
-          "total": 757,
-          "train": 617,
-          "val": 70,
+          "total": 1047,
+          "train": 906,
+          "val": 71,
           "test": 70
         },
         {
           "tag": "FORM:PIPE",
-          "total": 550,
-          "train": 440,
-          "val": 55,
-          "test": 55
+          "total": 555,
+          "train": 443,
+          "val": 56,
+          "test": 56
         },
         {
           "tag": "FORM:REDUCER",
-          "total": 3869,
-          "train": 3324,
+          "total": 4002,
+          "train": 3457,
           "val": 273,
           "test": 272
         },
         {
           "tag": "FORM:SMLS",
-          "total": 4806,
-          "train": 4161,
+          "total": 4949,
+          "train": 4304,
           "val": 322,
           "test": 323
         },
@@ -2680,23 +2738,23 @@
         },
         {
           "tag": "FORM:SW",
-          "total": 1665,
-          "train": 1405,
+          "total": 1717,
+          "train": 1459,
           "val": 127,
-          "test": 133
+          "test": 131
         },
         {
           "tag": "FORM:TEE",
-          "total": 4432,
-          "train": 3909,
+          "total": 4513,
+          "train": 3990,
           "val": 262,
           "test": 261
         },
         {
           "tag": "FORM:WELDED",
-          "total": 1478,
-          "train": 1275,
-          "val": 104,
+          "total": 1579,
+          "train": 1378,
+          "val": 102,
           "test": 99
         },
         {
@@ -2708,16 +2766,16 @@
         },
         {
           "tag": "LANG:EN",
-          "total": 4825,
-          "train": 4205,
-          "val": 312,
+          "total": 5497,
+          "train": 4876,
+          "val": 313,
           "test": 308
         },
         {
           "tag": "LANG:MIXED",
-          "total": 7804,
-          "train": 6666,
-          "val": 567,
+          "total": 8244,
+          "train": 7107,
+          "val": 566,
           "test": 571
         }
       ],

@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 import yaml
 
+from .type_normalizers import normalize_type_radius
+
 TYPE_COMBO_CONFIG = Path(__file__).resolve().parents[1] / "config" / "type_combo_mapping.yaml"
 TYPE_RULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "type_rule_mapping.yaml"
 DEFAULT_TYPE_KEY_ORDER = ["FLANGE_STYLE", "BODY", "ANGLE", "RADIUS", "SEAL", "CONN", "MANU"]
@@ -105,7 +107,7 @@ class TypeEncoder:
 
     @staticmethod
     def _normalize_radius(value: Any) -> str:
-        return str(value or "").strip().upper()
+        return normalize_type_radius(value)
 
     @staticmethod
     def _normalize_flange_style(value: Any) -> str:

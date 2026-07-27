@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple, Optional
 from dataclasses import dataclass
 
+from .type_normalizers import normalize_type_radius
+
 
 @dataclass
 class ExtractionResult:
@@ -277,7 +279,7 @@ class RegexExtractor:
         if m:
             compact = m.group(1).strip()
 
-        return compact
+        return normalize_type_radius(compact)
     
     def extract(self, text: str, exclude_ranges: List[Tuple[int, int]] = None) -> List[ExtractionResult]:
         """

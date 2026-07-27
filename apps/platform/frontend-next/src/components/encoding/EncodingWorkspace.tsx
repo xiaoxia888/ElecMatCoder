@@ -91,13 +91,15 @@ export function EncodingWorkspace() {
             <aside className="min-h-0 overflow-hidden">
               <DataListPanel
                 dataList={workspace.filteredDataList}
-                allItems={workspace.dataList}
+                results={workspace.results}
+                totalCount={workspace.dataList.length}
+                reviewCount={workspace.stats.review}
+                hardCount={workspace.stats.hard}
+                listKey={workspace.activeTaskId || workspace.taskName || 'empty'}
                 currentIndex={workspace.currentIndex}
                 filter={workspace.filter}
                 onFilterChange={workspace.setFilter}
                 onSelect={workspace.setCurrentIndex}
-                getItemStatus={workspace.getItemStatus}
-                getItemDifficulty={workspace.getItemDifficulty}
               />
             </aside>
           </div>

@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { ChevronDown, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { parseExcel } from '@/lib/import-export'
+
+const SUPPORTED_CATEGORIES = new Set(['直管', '管件', '法兰'])
 
 interface DataImportPanelProps {
   hasData: boolean
@@ -25,10 +27,14 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isCategoryErrorOpen, setIsCategoryErrorOpen] = useState(false)
 
-  const filteredRows = selectedColumn
-    ? rows.filter((row) => String(row[selectedColumn] ?? '').trim() !== '')
-    : rows
+  const filteredRows = useMemo(
+    () => selectedColumn
+      ? rows.filter((row) => String(row[selectedColumn] ?? '').trim() !== '')
+      : rows,
+    [rows, selectedColumn],
+  )
   const filteredOutCount = Math.max(0, rows.length - filteredRows.length)
 
   async function processFile(file: File) {
@@ -65,8 +71,29 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
 
   function handleConfirmImport() {
     if (!selectedColumn || filteredRows.length === 0) return
+    if (
+      selectedCategoryColumn
+      && filteredRows.some((row) => {
+        const category = String(row[selectedCategoryColumn] ?? '').trim()
+        return category !== '' && !SUPPORTED_CATEGORIES.has(category)
+      })
+    ) {
+      setIsDialogOpen(false)
+      setRows([])
+      setColumns([])
+      setSelectedColumn('')
+      setSelectedProjectColumn('')
+      setSelectedCategoryColumn('')
+      setIsCategoryErrorOpen(true)
+      return
+    }
     onImport(filteredRows, selectedColumn, fileName, selectedProjectColumn, selectedCategoryColumn)
     setIsDialogOpen(false)
+    setRows([])
+    setColumns([])
+    setSelectedColumn('')
+    setSelectedProjectColumn('')
+    setSelectedCategoryColumn('')
   }
 
   return (
@@ -201,6 +228,40 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                   onClick={handleConfirmImport}
                 >
                   确认导入
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isCategoryErrorOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/28 px-4">
+          <div className="w-full max-w-[420px] rounded-[20px] bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-line px-6 py-5">
+              <h3 className="text-[18px] font-semibold text-ink">分类不可用</h3>
+              <button
+                type="button"
+                className="grid h-8 w-8 place-items-center rounded-md text-muted transition hover:bg-[#f4f6fb] hover:text-ink"
+                onClick={() => setIsCategoryErrorOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="px-6 py-5">
+              <p className="text-sm leading-6 text-ink">
+                所选分类列中存在平台不支持的分类，当前文件无法导入。请将分类修改为“直管”“管件”或“法兰”后重新上传。
+              </p>
+              <div className="mt-5 flex justify-end">
+                <Button
+                  variant="accent"
+                  className="h-11 rounded-[12px] px-5"
+                  onClick={() => {
+                    setIsCategoryErrorOpen(false)
+                    triggerUpload()
+                  }}
+                >
+                  重新上传
                 </Button>
               </div>
             </div>

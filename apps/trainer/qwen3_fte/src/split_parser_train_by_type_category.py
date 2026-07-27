@@ -79,6 +79,8 @@ EXPLICIT_BODY_OVERRIDES: dict[str, tuple[tuple[str, str], ...]] = {
         ("Flange Lapped", "松套法兰"),
     ),
     "支管台": (
+        ("SWEEPOLET", "SWEEPOLET"),
+        ("SWEEP OLET", "SWEEPOLET"),
         ("SOCKOLET", "承插焊支管台"),
         ("SOCKET OLET", "承插焊支管台"),
         ("承插焊支管台", "承插焊支管台"),

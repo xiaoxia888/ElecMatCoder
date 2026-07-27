@@ -37,8 +37,8 @@ ANCHOR_RULES = [
     },
     {
         "name": "SWEEPOLET",
-        "body": "支管台",
-        "patterns": [r"\bSWEEPOLET\b"],
+        "body": "SWEEPOLET",
+        "patterns": [r"\bSWEEP\s*OLET\b"],
     },
     {
         "name": "GENERIC_OLET",

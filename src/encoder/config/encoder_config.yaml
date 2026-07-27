@@ -62,8 +62,8 @@ size_processing:
   reduce_dn_prefix: true    # DN25XDN15 -> 25X15
   strip_units: true         # φ60.3mm -> 60.3
   common_dn_values:
-    - 6
-    - 8
+    # - 6
+    # - 8
     - 10
     - 15
     - 20
@@ -189,30 +189,32 @@ standard_processing:
 
 # TYPE 二阶段制造工艺补提
 # 下列规范本身限定为焊接制造；STANDARD 必须按完整编码精确命中，等级等后缀不忽略。
-# 命中后为 TYPE.MANU 补充泛化 WELDED，具体焊接工艺会通过 MANU.resolution 压掉 WELDED。
+# 仅对支持 MANU 的材料分类生效（直管、管件），法兰等不含 MANU 的分类不补充。
+# 命中后为 TYPE.MANU 补充泛化 WELDED；已有无缝工艺时不补充，
+# 具体焊接工艺会通过 MANU.resolution 压掉 WELDED。
 type_manu_standard_supplement:
   enabled: true
   default_value: WELDED
   trigger_standard_codes:
     - SYT5037
-    - GBT12771
-    - GBT713
+    # - GBT12771
+    # - GBT713
     - GBT3091
-    - GBT13401
-    - EN103052
-    - EN103053
-    - EN103055
-    - EN103056
-    - GBT21832
-    - GBT13793
-    - AA139
-    - AA139M
-    - EN102177
-    - GBT21835
-    - EN10374
-    - EN10217
-    - DIN10374
-    - DIN10357
+    # - GBT13401
+    # - EN103052
+    # - EN103053
+    # - EN103055
+    # - EN103056
+    # - GBT21832
+    # - GBT13793
+    # - AA139
+    # - AA139M
+    # - EN102177
+    # - GBT21835
+    # - EN10374
+    # - EN10217
+    # - DIN10374
+    # - DIN10357
 
 # 磅级处理规则
 pressure_processing:
@@ -289,14 +291,14 @@ type_included_keywords:
 regex_extraction:
   # RADIUS 弯曲半径 - 影响弯头类型编码
   # 支持两种格式：keywords（固定关键词）和 patterns（正则模式）
-  RADIUS:
-    keywords:
-      - SR          # Short Radius 短半径
-      - LR          # Long Radius 长半径
-    patterns:
-      # 数字半径左侧不能粘连数字，右侧不能粘连字母。
-      # 例如允许 5R、15R、R=1.5D；拒绝从 SCH40 R(C) 中截取 0 R，也拒绝 5RA。
-      - '(?<!\d)R?\s*=?\s*\d+(?:\.\d+)?\s*[DdRr](?![A-Za-z])'
+  # RADIUS:
+  #   keywords:
+  #     - SR          # Short Radius 短半径
+  #     - LR          # Long Radius 长半径
+  #   patterns:
+  #     # 数字半径左侧不能粘连数字，右侧不能粘连字母。
+  #     # 例如允许 5R、15R、R=1.5D；拒绝从 SCH40 R(C) 中截取 0 R，也拒绝 5RA。
+  #     - '(?<!\d)R?\s*=?\s*\d+(?:\.\d+)?\s*[DdRr](?![A-Za-z])'
   
   # SEAL 密封面形式 - 需要匹配的关键词列表
   SEAL:
@@ -362,7 +364,7 @@ regex_extraction:
       suppress_rules:
         # 命中更具体的内/外螺纹后，压掉通用 NPT / THD / FTE / MTE
         - when_any: [FNPT, MNPT, NPTF, NPTM]
-          suppress: [NPT, THD, FTE, MTE, SCRD]
+          suppress: [NPT, THD, FTE, MTE, SCRD, TBE]
         # 命中 FTE / MTE 时，压掉更泛化的 NPT
         - when_any: [FTE, MTE]
           suppress: [NPT, THD,SCRD]

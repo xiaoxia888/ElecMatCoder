@@ -14,11 +14,13 @@ from .weak_fallback_processor import WeakFallbackProcessor
 
 
 _OD_NUMERIC_PAIR_RE = re.compile(
-    r'(?i)(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)(\s*MM)?(?!\s*[xX×*]\s*\d)'
+    r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)(\s*MM)?(?!\s*[xX×*]\s*\d)'
 )
 
-_RESIDUAL_SIZE_DN_SINGLE_RE = re.compile(r'(?i)DN\s*(\d+)(?!\.\d)')
-_RESIDUAL_SIZE_DN_PAIR_RE = re.compile(r'(?i)DN\s*(\d+)(?!\.\d)\s*[xX×*]\s*(?:DN\s*)?(\d+)(?!\.\d)')
+_RESIDUAL_SIZE_DN_SINGLE_RE = re.compile(r'(?i)DN\s*(\d+)(?![\d.])')
+_RESIDUAL_SIZE_DN_PAIR_RE = re.compile(
+    r'(?i)DN\s*(\d+)(?![\d.])\s*[xX×*]\s*(?:DN\s*)?(\d+)(?![\d.])'
+)
 _RESIDUAL_SIZE_OD_SINGLE_RE = re.compile(r'(?i)(?:OD|外径|[φΦФф])\s*(\d+(?:\.\d+)?)')
 _RESIDUAL_SIZE_OD_PAIR_RE = re.compile(
     r'(?i)(?:OD|外径|[φΦФф])\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*(?:(?:OD|外径|[φΦФф])\s*)?(\d+(?:\.\d+)?)'

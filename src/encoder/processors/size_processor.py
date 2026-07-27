@@ -351,8 +351,8 @@ class SizeProcessor:
         规则：
         1. 先精确匹配映射表
         2. 再做小容差匹配（±0.5mm）
-        3. 小尺寸（OD < 355.6mm）若未命中表，则取「表中小于等于当前 OD 且最接近的外径」
-           对应的 DN 作为回退
+        3. 小尺寸（OD < 355.6mm）若未命中表，则允许从输入 OD 上下两侧选择
+           绝对距离最近的表内 OD，但通用回退候选必须满足 DN <= 输入 OD
         4. 大尺寸（OD >= 355.6mm）若未命中表，则按标准大口径 NPS 序列近似映射：
            先算 NPS≈OD/25.4，再映射到 `nps_to_dn` 中最近的标准 NPS
         5. 若仍未命中，则返回 None，由上层决定是否回退原始 OD
@@ -372,11 +372,34 @@ class SizeProcessor:
         if od_value >= self.LARGE_OD_THRESHOLD_MM:
             return self._od_to_dn_large_series(od_value)
 
-        # 小尺寸回退：找表中小于等于当前 OD 且最接近的外径，取其对应 DN
-        smaller_ods = [float(od) for od in self._od_candidate_rows.keys() if float(od) <= od_value]
-        if smaller_ods:
-            nearest_od = max(smaller_ods)
-            return self._resolve_candidate_rows(self._od_candidate_rows[nearest_od], thickness_mm)
+        # 小尺寸通用回退：允许向上查找表内 OD，但不允许得到大于输入 OD 的 DN。
+        fallback_candidates: List[Tuple[float, List[Dict[str, Any]]]] = []
+        for mapped_od, rows in self._od_candidate_rows.items():
+            eligible_rows = [
+                row
+                for row in rows
+                if int(row["dn"]) <= od_value
+            ]
+            if eligible_rows:
+                fallback_candidates.append((float(mapped_od), eligible_rows))
+
+        if fallback_candidates:
+            nearest_od, nearest_rows = min(
+                fallback_candidates,
+                key=lambda item: (
+                    abs(item[0] - od_value),
+                    item[0] > od_value,
+                    item[0],
+                ),
+            )
+            resolved_dn = self._resolve_candidate_rows(nearest_rows, thickness_mm)
+            logger.debug(
+                "[SizeProcessor] 小口径OD通用回退: OD=%s -> 表内OD=%s -> DN=%s",
+                od_value,
+                nearest_od,
+                resolved_dn,
+            )
+            return resolved_dn
 
         return None
 
@@ -724,7 +747,7 @@ class SizeProcessor:
         
         # ========== DN 格式 ==========
         # DN25XDN15, DN30XDN30, DN250xDN300
-        dn_cross_pattern = r'DN\s*(\d+(?:\.\d+)?)\s*[xX*×/]\s*DN?\s*(\d+(?:\.\d+)?)'
+        dn_cross_pattern = r'DN\s*(\d+)(?![\d.])\s*[xX*×/]\s*DN?\s*(\d+)(?![\d.])'
         dn_cross_match = re.search(dn_cross_pattern, value, re.IGNORECASE)
         if dn_cross_match:
             size1, size2 = float(dn_cross_match.group(1)), float(dn_cross_match.group(2))
@@ -732,7 +755,7 @@ class SizeProcessor:
             return SizeResult(values=values, original=value, format_type='dn')
         
         # DN150X20, DN300/20
-        dn_num_pattern = r'DN\s*(\d+(?:\.\d+)?)\s*[xX*×/]\s*(\d+(?:\.\d+)?)'
+        dn_num_pattern = r'DN\s*(\d+)(?![\d.])\s*[xX*×/]\s*(\d+)(?![\d.])'
         dn_num_match = re.search(dn_num_pattern, value, re.IGNORECASE)
         if dn_num_match:
             size1, size2 = float(dn_num_match.group(1)), float(dn_num_match.group(2))
@@ -740,7 +763,7 @@ class SizeProcessor:
             return SizeResult(values=values, original=value, format_type='dn')
         
         # 单一 DN 值: DN100
-        dn_pattern = r'DN\s*(\d+(?:\.\d+)?)'
+        dn_pattern = r'DN\s*(\d+)(?![\d.])'
         dn_match = re.search(dn_pattern, value, re.IGNORECASE)
         if dn_match:
             size = float(dn_match.group(1))
@@ -1266,8 +1289,8 @@ class SizeProcessor:
         # DN 侧是强锚点；D 侧仅在命中 common_dn_values 时才按 DN 提取。
         mixed_dn_d_pair_pattern = re.compile(
             r'(?i)(?<![A-Z0-9])(?:'
-            r'DN\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*D\s*(\d+(?:\.\d+)?)'
-            r'|D\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*DN\s*(\d+(?:\.\d+)?)'
+            r'DN\s*(\d+)(?![\d.])\s*[xX×*]\s*D\s*(\d+(?:\.\d+)?)'
+            r'|D\s*(\d+(?:\.\d+)?)\s*[xX×*]\s*DN\s*(\d+)(?![\d.])'
             r')(?!\.\d)(?!\s*(?:MM|毫米))'
         )
         for m in mixed_dn_d_pair_pattern.finditer(normalized):
@@ -1300,7 +1323,7 @@ class SizeProcessor:
             _record(m.group(0), span)
 
         dn_dash_pair_pattern = re.compile(
-            rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*-\s*(\d+\.\d+|{"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})'
+            rf'(?i)(?<![A-Z0-9])DN\s*(\d+)(?![\d.])\s*-\s*(\d+\.\d+|{"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"})'
             r'(?!\s*(?:MM|毫米))'
         )
         for m in dn_dash_pair_pattern.finditer(normalized):
@@ -1321,7 +1344,7 @@ class SizeProcessor:
             _record(m.group(0), span)
 
         dn_pair_pattern = re.compile(
-            rf'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)\s*[xX×*/]\s*(?:(?:DN\s*(\d+(?:\.\d+)?))|({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"}))(?!\.\d)(?!\s*(?:MM|毫米))'
+            rf'(?i)(?<![A-Z0-9])DN\s*(\d+)(?![\d.])\s*[xX×*/]\s*(?:(?:DN\s*(\d+)(?![\d.]))|({"|".join(map(re.escape, sorted((str(v) for v in self._common_dn_values), key=len, reverse=True))) if self._common_dn_values else r"\\d+"}))(?!\.\d)(?!\s*(?:MM|毫米))'
         )
         for m in dn_pair_pattern.finditer(normalized):
             first = m.group(1)
@@ -1345,7 +1368,7 @@ class SizeProcessor:
             _record(m.group(0), span)
 
         dn_single_pattern = re.compile(
-            r'(?i)(?<![A-Z0-9])DN\s*(\d+(?:\.\d+)?)(?!\.\d)'
+            r'(?i)(?<![A-Z0-9])DN\s*(\d+)(?![\d.])'
         )
         for m in dn_single_pattern.finditer(normalized):
             span = (m.start(), m.end())
@@ -1361,7 +1384,7 @@ class SizeProcessor:
         consumed_d_spans: List[Tuple[int, int]] = []
         if not has_explicit_dn_anchor:
             d_pair_pattern = re.compile(
-                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+                r'(?i)(?<![A-Z0-9])D\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?<![A-Z0-9])D\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
             )
             for m in d_pair_pattern.finditer(normalized):
                 first, second = m.group(1), m.group(2)
@@ -1383,7 +1406,7 @@ class SizeProcessor:
         consumed_d_dn_pair_spans: List[Tuple[int, int]] = []
         if not has_explicit_dn_anchor:
             d_dn_pair_pattern = re.compile(
-                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\b'
+                r'(?i)(?<![A-Z0-9])D\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:(?<![A-Z0-9])D\s*)?(\d+(?:\.\d+)?)\b'
             )
             for m in d_dn_pair_pattern.finditer(normalized):
                 first, second = m.group(1), m.group(2)
@@ -1420,10 +1443,10 @@ class SizeProcessor:
             _record(m.group(0), span)
 
         od_double_head_three_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+            r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
         )
         od_three_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\b'
+            r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)\b'
         )
         consumed_od_spans: List[Tuple[int, int]] = []
         for m in od_double_head_three_pattern.finditer(normalized):
@@ -1465,9 +1488,11 @@ class SizeProcessor:
             consumed_od_spans.append(span)
             _record(m.group(0), span)
 
+        # D数字×毫米壁厚：
+        # D 后的首段仍按常见 DN 值判定；未命中常见 DN 时才按 OD 处理。
         if not has_explicit_dn_anchor:
             d_od_pair_pattern = re.compile(
-                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:\bD\s*)?(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
+                r'(?i)(?<![A-Z0-9])D\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:(?<![A-Z0-9])D\s*)?(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×]\s*\d)'
             )
             for m in d_od_pair_pattern.finditer(normalized):
                 span = (m.start(), m.end())
@@ -1479,9 +1504,13 @@ class SizeProcessor:
                     continue
                 if _overlaps_spans(span, consumed_od_spans):
                     continue
-                od_value = self._normalize_number_text(m.group(1))
-                _add_unique(od_values, od_value)
-                _add_ordered_item("OD", od_value, span)
+                size_value = self._normalize_number_text(m.group(1))
+                if self._is_common_dn_integer(size_value):
+                    _add_unique(dn_values, size_value)
+                    _add_ordered_item("DN", size_value, m.span(1))
+                else:
+                    _add_unique(od_values, size_value)
+                    _add_ordered_item("OD", size_value, m.span(1))
                 consumed_od_spans.append(span)
                 _record(m.group(0), span)
 
@@ -1506,9 +1535,11 @@ class SizeProcessor:
             consumed_od_spans.append(span)
             _record(m.group(0), span)
 
+        # D数字×Schedule：
+        # 与毫米壁厚结构一致，首段命中常见 DN 时保留为 DN。
         if not has_explicit_dn_anchor:
             d_od_schedule_pattern = re.compile(
-                r'(?i)\bD\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
+                r'(?i)(?<![A-Z0-9])D\s*(\d+(?:\.\d+)?)\s*[xX×]\s*(?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-\d+S?|S-\d+)'
             )
             for m in d_od_schedule_pattern.finditer(normalized):
                 span = (m.start(), m.end())
@@ -1520,9 +1551,13 @@ class SizeProcessor:
                     continue
                 if _overlaps_spans(span, consumed_od_spans):
                     continue
-                od_value = self._normalize_number_text(m.group(1))
-                _add_unique(od_values, od_value)
-                _add_ordered_item("OD", od_value, span)
+                size_value = self._normalize_number_text(m.group(1))
+                if self._is_common_dn_integer(size_value):
+                    _add_unique(dn_values, size_value)
+                    _add_ordered_item("DN", size_value, m.span(1))
+                else:
+                    _add_unique(od_values, size_value)
+                    _add_ordered_item("OD", size_value, m.span(1))
                 consumed_od_spans.append(span)
                 _record(m.group(0), span)
 
@@ -1547,7 +1582,7 @@ class SizeProcessor:
 
         consumed_d_single_spans: List[Tuple[int, int]] = []
         if not has_explicit_dn_anchor:
-            d_single_pattern = re.compile(r'(?i)\bD\s*(\d+(?:\.\d+)?)\b')
+            d_single_pattern = re.compile(r'(?i)(?<![A-Z0-9])D\s*(\d+(?:\.\d+)?)\b')
             for m in d_single_pattern.finditer(normalized):
                 span = (m.start(), m.end())
                 if _is_astm_d_context(m.start()):
@@ -1763,8 +1798,8 @@ class SizeProcessor:
             re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?(?:\s*[xX×*]\s*\d+(?:\.\d+)?){2,}'),
             # DN 复合尺寸中，第二个 DN 后若直接连小数厚度，整体交给大模型。
             re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*/]\s*DN\s*\d+(?=\d+\.\d+\s*(?:MM|毫米))'),
-            re.compile(r'(?i)(?:\bD|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?(?:\s*[xX×]\s*\d+(?:\.\d+)?){2,}'),
-            re.compile(r'(?i)(?:\bD|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?'),
+            re.compile(r'(?i)(?:(?<![A-Z0-9])D|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?(?:\s*[xX×]\s*\d+(?:\.\d+)?){2,}'),
+            re.compile(r'(?i)(?:(?<![A-Z0-9])D|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?'),
         ]
         return any(pattern.search(text) for pattern in patterns)
 
@@ -1784,7 +1819,7 @@ class SizeProcessor:
         这里 DN250 仍然可安全提取。
         """
         patterns = (
-            re.compile(r'(?i)(?:\bOD|[φΦФфØø]|\bD)\s*\d+\.\d+\.\d+'),
+            re.compile(r'(?i)(?:\bOD|[φΦФфØø]|(?<![A-Z0-9])D)\s*\d+\.\d+\.\d+'),
             re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+\.\d+\.\d+'),
         )
         return any(p.search(text) for p in patterns)

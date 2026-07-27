@@ -43,10 +43,13 @@ from .processors import get_pressure_processor
 from .processors import get_size_processor
 from .processors import get_regex_extractor
 from .processors import get_thickness_table_processor
+from .processors.type_normalizers import normalize_type_radius
 
 logger = logging.getLogger(__name__)
 TYPE_RULE_CONFIG = Path(__file__).parent / "config" / "type_rule_mapping.yaml"
 DEFAULT_TYPE_KEY_ORDER = ['FLANGE_STYLE', 'BODY', 'ANGLE', 'RADIUS', 'SEAL', 'CONN', 'MANU']
+TYPE_STAGE2_INPUT_ORDER = ('BODY', 'ANGLE', 'RADIUS', 'FLANGE_STYLE', 'CONN', 'SEAL', 'MANU')
+TYPE_STAGE2_LIST_FIELDS = frozenset({'CONN', 'SEAL', 'MANU'})
 
 # TYPE 子字段的规则补提必须受材料分类约束，避免同一个缩写在不同种类中串字段。
 TYPE_REGEX_FALLBACK_LABELS = frozenset({
@@ -668,10 +671,18 @@ class PipeEncoderBase:
         if overwrite or not type_dict.get(label):
             type_dict[label] = value
 
-    def _supplement_type_manu_from_standard(self, entities: Dict[str, Any]) -> bool:
-        """在 TYPE 二阶段编码前，按焊接制造规范补充泛化 WELDED。"""
+    def _supplement_type_manu_from_standard(
+        self,
+        entities: Dict[str, Any],
+        material_category: str,
+    ) -> bool:
+        """对支持 MANU 的材料分类，按焊接制造规范补充泛化 WELDED。"""
         supplement_cfg = self.config.get('type_manu_standard_supplement', {}) or {}
         if not supplement_cfg.get('enabled', False):
+            return False
+
+        category = str(material_category or '').strip()
+        if 'MANU' not in REGEX_FALLBACK_LABELS_BY_CATEGORY.get(category, frozenset()):
             return False
 
         trigger_codes = {
@@ -701,8 +712,26 @@ class PipeEncoderBase:
         if not matched_codes:
             return False
 
+        existing_manu = self._get_nested_type_value(entities, 'MANU')
+        existing_manu_values = (
+            existing_manu
+            if isinstance(existing_manu, list)
+            else [existing_manu]
+        )
+        seamless_markers = {'SMLS', 'SEAMLESS', '无缝'}
+        if any(
+            str(value or '').strip().upper() in seamless_markers
+            for value in existing_manu_values
+        ):
+            logger.info(
+                "[TYPE/MANU补提] 规范=%s，但已有无缝工艺=%s，跳过 WELDED",
+                matched_codes,
+                existing_manu_values,
+            )
+            return False
+
         manu_values = self._merge_unique_values(
-            self._get_nested_type_value(entities, 'MANU'),
+            existing_manu,
             [default_value],
         )
         manu_values = self.regex_extractor.resolve_values('MANU', manu_values)
@@ -744,22 +773,63 @@ class PipeEncoderBase:
             geometry[label] = value
 
     def _set_radius_to_type_geometry(self, entities: Dict[str, Any], display_value: str, code_value: str):
-        token = (code_value or display_value or '').strip()
+        token = normalize_type_radius(code_value or display_value)
         if not token:
             return
         if self._get_nested_type_geometry_value(entities, 'RADIUS'):
             return
         self._set_nested_type_geometry_value(entities, 'RADIUS', token)
 
-    def _flatten_type_value_for_stage2(self, value: Any) -> str:
-        type_dict = self._ensure_type_dict(value)
+    def _normalize_type_radius_in_entities(self, entities: Dict[str, Any]) -> None:
+        """原地规范 TYPE.GEOMETRY.RADIUS，供一阶段快照和编码链路共用。"""
+        if not isinstance(entities, dict):
+            return
+        type_dict = self._ensure_type_dict(entities.get('TYPE'))
         if type_dict is None:
-            if isinstance(value, list):
-                parts = [str(v).strip() for v in value if str(v).strip()]
-                return ';'.join(parts)
-            return str(value or '').strip()
+            return
+        geometry = self._get_dict(type_dict.get('GEOMETRY'))
+        if 'RADIUS' in geometry:
+            geometry['RADIUS'] = normalize_type_radius(geometry.get('RADIUS'))
+        if 'RADIUS' in type_dict:
+            type_dict['RADIUS'] = normalize_type_radius(type_dict.get('RADIUS'))
 
-        return self._flatten_type_encoding_key(type_dict)
+    def _flatten_type_value_for_stage2(self, value: Any) -> str:
+        payload = self._normalize_type_stage2_payload(value)
+        if not payload:
+            return ''
+        return json.dumps(payload, ensure_ascii=False, separators=(',', ':'))
+
+    def _normalize_type_stage2_payload(self, value: Any) -> Dict[str, Any]:
+        """转换为 TYPE 兜底模型训练时使用的扁平 JSON 结构。"""
+        type_dict = self._ensure_type_dict(value, create=True) or {}
+        geometry = self._get_dict(type_dict.get('GEOMETRY'))
+        raw_values = {
+            'BODY': type_dict.get('BODY'),
+            'ANGLE': geometry.get('ANGLE') or type_dict.get('ANGLE'),
+            'RADIUS': normalize_type_radius(
+                geometry.get('RADIUS') or type_dict.get('RADIUS')
+            ),
+            'FLANGE_STYLE': type_dict.get('FLANGE_STYLE') or type_dict.get('flange_style'),
+            'CONN': type_dict.get('CONN') or type_dict.get('ENDS'),
+            'SEAL': type_dict.get('SEAL'),
+            'MANU': type_dict.get('MANU'),
+        }
+
+        normalized: Dict[str, Any] = {}
+        for field in TYPE_STAGE2_INPUT_ORDER:
+            raw_value = raw_values.get(field)
+            if raw_value in (None, '', []):
+                continue
+            values = raw_value if isinstance(raw_value, list) else [raw_value]
+            items: List[str] = []
+            for item in values:
+                text = str(item).strip()
+                if text and text not in items:
+                    items.append(text)
+            if not items:
+                continue
+            normalized[field] = items if field in TYPE_STAGE2_LIST_FIELDS else items[0]
+        return normalized
 
     def _flatten_type_encoding_key(self, value: Any, separator: str = ';') -> str:
         type_dict = self._ensure_type_dict(value)
@@ -824,10 +894,12 @@ class PipeEncoderBase:
 
         angle = str(geometry.get('ANGLE') or '').strip()
 
-        radius = str(geometry.get('RADIUS') or '').strip()
+        radius = normalize_type_radius(geometry.get('RADIUS'))
         if not radius:
             radius_info = self._first_regex_info(regex_value_code_map.get('RADIUS'))
-            radius = str(radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS') or '').strip()
+            radius = normalize_type_radius(
+                radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS')
+            )
 
         def _collect_values(field: str) -> List[str]:
             values: List[str] = []
@@ -906,7 +978,7 @@ class PipeEncoderBase:
             'BODY': str(type_input.get('BODY') or '').strip(),
             'GEOMETRY': {
                 'ANGLE': str(geometry.get('ANGLE') or '').strip(),
-                'RADIUS': str(geometry.get('RADIUS') or '').strip(),
+                'RADIUS': normalize_type_radius(geometry.get('RADIUS')),
             },
             'SEAL': list(type_input.get('SEAL') or []),
             'CONN': list(type_input.get('CONN') or []),
@@ -2061,10 +2133,12 @@ class PipeEncoderBase:
                     fallback_text = self._format_type_body_for_fallback(body_text, angle_value)
                     collected_values.append(('TYPE', fallback_text, fallback_text))
 
-            radius_value = str(geometry.get('RADIUS') or '').strip()
+            radius_value = normalize_type_radius(geometry.get('RADIUS'))
             if not radius_value:
                 radius_info = self._first_regex_info(regex_value_code_map.get('RADIUS'))
-                radius_value = str(radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS') or '').strip()
+                radius_value = normalize_type_radius(
+                    radius_info.get('code') or radius_info.get('value') or entities.get('RADIUS')
+                )
             if radius_value:
                 collected_values.append(('RADIUS', radius_value, radius_value))
 
@@ -2136,17 +2210,18 @@ class PipeEncoderBase:
             return EncodedFieldResult(field_type='TYPE')
         
         type_encoding_input = self._build_type_encoding_input(entities, regex_value_code_map)
-        merged_value = self._flatten_type_encoding_key(type_encoding_input)
+        type_stage2_input = self._normalize_type_stage2_payload(type_encoding_input)
+        merged_value = self._flatten_type_value_for_stage2(type_encoding_input)
         original_parts = self._flatten_type_encoding_key(type_encoding_input, separator=' | ')
 
         logger.info(f"[TYPE合并] 合并字段: {[f'{f}={d}({c})' for f, d, c in collected_values]}")
-        logger.info(f"[TYPE合并] 编码用: '{merged_value}', 显示用: '{original_parts}'")
+        logger.info(f"[TYPE合并] 兜底模型输入: '{merged_value}', 显示用: '{original_parts}'")
 
         code, confidence = self._encode_type_value(merged_value, type_encoding_input)
         
         return EncodedFieldResult(
             field_type='TYPE',
-            stage2_input=self._clone_response_value(type_encoding_input),
+            stage2_input=self._clone_response_value(type_stage2_input),
             encode_confidence_v2=getattr(self, '_last_type_encode_meta', {}) or {},
             code=code,
             codes=[code] if code else [],
@@ -3138,6 +3213,8 @@ class PipeEncoderBase:
         raw_entities_snapshot = self._clone_response_value(stage1_raw_snapshot) if isinstance(stage1_raw_snapshot, dict) else (
             self._clone_response_value(entities) if isinstance(entities, dict) else {}
         )
+        self._normalize_type_radius_in_entities(raw_entities_snapshot)
+        self._normalize_type_radius_in_entities(entities)
         
         regex_value_code_map = {}
         
@@ -3149,7 +3226,7 @@ class PipeEncoderBase:
             material_category=material_category,
         )
         self._normalize_standard_body_grade_suffix(entities)
-        self._supplement_type_manu_from_standard(entities)
+        self._supplement_type_manu_from_standard(entities, material_category)
         entities['_STANDARD_MODIFIER_MAP'] = self._build_standard_modifier_map(entities, original_text)
         
         entities = self._preprocess_tee_reducing(entities, original_text)

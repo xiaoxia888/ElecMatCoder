@@ -178,6 +178,8 @@ value_mapping:
   310S:
   - S31008
   - 310s
+  CF370:
+  - CF370
   '316':
   - ASTM A182 Gr.F316
   - ASTM A403 WP316-W
@@ -381,6 +383,8 @@ value_mapping:
   20/304:
    - 20/304
    - 20/S30408
+  FRP/CPVC:
+   - FRP/CPVC
    
 special_req_suffix:
   CE:
@@ -441,7 +445,6 @@ unmapped_values:
 - FRP/PVC
 - S30408/20
 - AF12
-- CF370
 - SF321 S
 - ASTM A240 Gr.S32205
 - ASTM A790 UNS S32205

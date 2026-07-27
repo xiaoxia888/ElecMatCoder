@@ -114492,5 +114492,545 @@
       }
     },
     "来源": "数据增强"
+  },
+  {
+    "input": "NAME:Blind Flange;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "PLATEFLANGE DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "BLFlange DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "ASME B16.5;SW Flange;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "HG/T 20592 ORIFICEFLANGE DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "孔板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "HG/T 20592 LapJointFlange DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "ASME B16.5;SWFlange;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "ASME B16.5;LAPJOINTFLANGE;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "NAME:WNFLANGE;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "ASME B16.5;LJ Flange;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "HG/T 20592 Weld Neck Flange DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "NAME:LJFLANGE;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "HG/T 20592 SocketWeldFlange DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "HG/T 20592 Lap Joint Flange DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "THREADEDFLANGE DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "ASME B16.5;WNFlange;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "ASME B16.5;WN Flange;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "NAME:Plate Flange;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "NAME:ThreadedFlange;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "NAME:PlateFlange;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "板式平焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "THD Flange DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "ASME B16.5;WELDNECKFLANGE;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "HG/T 20592 THDFLANGE DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "NAME:SWFLANGE;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "HG/T 20592 BLFLANGE DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "Orifice Flange DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "孔板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "HG/T 20592 Socket Weld Flange DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "THDFlange DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "BLINDFLANGE DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
+  },
+  {
+    "input": "OrificeFlange DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "孔板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "HG/T 20592 WeldNeckFlange DN100 PN16 RF 20",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "带颈对焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "BL Flange DN80 CL150 RF ASTM A350 LF2",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "NAME:BlindFlange;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "盲板法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "ASME B16.5;LJFlange;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "松套法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连"
+  },
+  {
+    "input": "NAME:Threaded Flange;DN50;PN25;RF;NB/T 47010 S30408",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "螺纹法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体正常空格对照"
+  },
+  {
+    "input": "ASME B16.5;SOCKETWELDFLANGE;4in;CL300;RF;ASTM A105",
+    "output": {
+      "CATEGORY": "法兰",
+      "TYPE": {
+        "BODY": "承插焊法兰",
+        "CONN": [],
+        "SEAL": [
+          "RF"
+        ]
+      }
+    },
+    "来源": "数据增强-制造工艺与主体词粘连专项",
+    "增强模式": "法兰主体内部粘连-大写"
   }
 ]

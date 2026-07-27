@@ -5,8 +5,10 @@
 
 测试环境
 PLATFORM_ENV=test python apps/platform/server.py
+npm run dev:test
 整数环境
 PLATFORM_ENV=prod python apps/platform/server.py
+npm run dev:prod
 """
 
 import os
@@ -221,8 +223,13 @@ def _utc_ts() -> float:
     return time.time()
 
 
-def _batch_job_public(job: Dict[str, Any], *, results: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """构造对外的任务快照。结果体不再来自内存，由调用方从 SQLite 取好后通过 results 传入。"""
+def _batch_job_public(
+    job: Dict[str, Any],
+    *,
+    include_items: bool = False,
+    results: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """构造任务摘要，条目和结果只在明细接口按需返回。"""
     queue_position = 0
     if job.get("status") == "queued":
         try:
@@ -245,8 +252,9 @@ def _batch_job_public(job: Dict[str, Any], *, results: Optional[Dict[str, Any]] 
         "updated_at": job.get("updated_at"),
         "cancel_requested": bool(job.get("cancel_requested")),
         "error": job.get("error", ""),
-        "items": copy.deepcopy(job.get("items_meta", [])),
     }
+    if include_items:
+        result["items"] = copy.deepcopy(job.get("items_meta", []))
     if results is not None:
         result["results"] = results
     return result
@@ -670,7 +678,7 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
         _batch_job_queue.append(job_id)
         if _batch_job_scheduler_task is None or _batch_job_scheduler_task.done():
             _batch_job_scheduler_task = asyncio.create_task(_batch_job_scheduler())
-    return _batch_job_public(job)
+    return _batch_job_public(job, include_items=True)
 
 
 def _resolve_qwen3_stage1_config(qwen3_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -1587,7 +1595,10 @@ async def pipe_batch_encode_get_job(job_id: str):
     if not job:
         raise HTTPException(status_code=404, detail="任务不存在或已过期")
     results = await asyncio.to_thread(_batch_store.get_results, job_id)
-    return {"success": True, "job": _batch_job_public(job, results=results)}
+    return {
+        "success": True,
+        "job": _batch_job_public(job, include_items=True, results=results),
+    }
 
 
 @app.get("/api/pipe/encode/batch/jobs/{job_id}/items/{item_index}")

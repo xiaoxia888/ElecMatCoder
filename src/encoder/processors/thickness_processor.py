@@ -848,7 +848,7 @@ class ThicknessProcessor:
                 _record(raw_token, span)
 
         od_schedule_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×*]\s*((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)))'
+            r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*\d+(?:\.\d+)?\s*[xX×*]\s*((?:SCH[.\s]*\d+S?|SCH[.\s]*(?:STD|XS|XXS)|STD|XS|XXS|S-(?:\d+S?|STD|XS|XXS)))'
         )
         for m in od_schedule_pattern.finditer(normalized):
             span = (m.start(), m.end())
@@ -888,10 +888,10 @@ class ThicknessProcessor:
             _record(m.group(0), span)
 
         od_double_head_thk_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×]\s*(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
+            r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*\d+(?:\.\d+)?\s*[xX×]\s*(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*\d+(?:\.\d+)?\s*[xX×]\s*(\d+(?:\.\d+)?)(?:\s*/\s*(\d+(?:\.\d+)?))?\b'
         )
         od_three_thk_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?'
+            r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*(\d+(?:\.\d+)?)\s*(?:MM)?'
         )
         consumed_thk_spans: List[Tuple[int, int]] = []
         for m in od_double_head_thk_pattern.finditer(normalized):
@@ -929,7 +929,7 @@ class ThicknessProcessor:
             _record(m.group(0), span)
 
         od_thk_pattern = re.compile(
-            r'(?i)(?:\bOD|[φΦФф]|\bD)\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×*]\s*\d)'
+            r'(?i)(?:\bOD|[φΦФф]|(?<![A-Z0-9])D)\s*\d+(?:\.\d+)?\s*[xX×*]\s*(\d+(?:\.\d+)?)\s*(?:MM)?(?!\s*[xX×*]\s*\d)'
         )
         for m in od_thk_pattern.finditer(normalized):
             span = (m.start(), m.end())
@@ -1332,8 +1332,8 @@ class ThicknessProcessor:
             re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?(?:\s*[xX×*]\s*\d+(?:\.\d+)?){2,}'),
             # DN 复合尺寸中，第二个 DN 后若直接连小数厚度，整体交给大模型。
             re.compile(r'(?i)(?<![A-Z0-9])DN\s*\d+(?:\.\d+)?\s*[xX×*/]\s*DN\s*\d+(?=\d+\.\d+\s*(?:MM|毫米))'),
-            re.compile(r'(?i)(?:\bD|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?(?:\s*[xX×]\s*\d+(?:\.\d+)?){2,}'),
-            re.compile(r'(?i)(?:\bD|[φΦФф])\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?'),
+            re.compile(r'(?i)(?:(?<![A-Z0-9])D|[φΦФф]|(?:\bOD))\s*\d+(?:\.\d+)?(?:\s*[xX×]\s*\d+(?:\.\d+)?){2,}'),
+            re.compile(r'(?i)(?:(?<![A-Z0-9])D|[φΦФф])\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*[xX×]\s*\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?'),
         ]
         return any(pattern.search(text) for pattern in patterns)
 

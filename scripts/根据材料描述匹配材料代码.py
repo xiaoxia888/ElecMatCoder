@@ -27,12 +27,12 @@
   - 分流原因
 
 python scripts/根据材料描述匹配材料代码.py \
-    --excel1 /Users/guoxi/Documents/C1库运行/直管C1总数据0701.csv \
-    --excel2 /Users/guoxi/Documents/PCF-IDF材料描述/B1总数据/B1-0615.xlsx \
+    --excel1 /Users/guoxi/Documents/C1库运行/管件/管件总数据0727.xlsx \
+    --excel2 /Users/guoxi/Documents/C1库运行/管件/管件总运行0727.xlsx \
     --excel1-desc-col 材料描述 \
-    --excel2-desc-col 子表.描述 \
-    --excel2-code-col 子表.编码 \
-    --output /Users/guoxi/Documents/idf-测试idf_匹配后.xlsx
+    --excel2-desc-col 原始描述 \
+    --excel2-code-col 原始总编码 \
+    --output /Users/guoxi/Documents/C1库运行/管件/管件总数据0727-匹配后.xlsx
 
 """
 

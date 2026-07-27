@@ -1,0 +1,866 @@
+[
+  {
+    "input": "BW OLET 10\"*1\" SCH20*SCH80 A105 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "RT,4\"*0.5\",SCH40S*SCH80S,BW,A182 F316L,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "BW OLET 8\"*1\" STD*SCH80 A105 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "TEE REDUCING 8\"*1\" STD*SCH80 BW A105 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "OLET,24\"*6\",XS*SCH80,BW,A234 WPB,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "TEE REDUCING 6\"*1\" SCH80*SCH160 BW A182 F304 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "TEE REDUCING 4\"*0.5\" SCH40S*SCH80S BW A182 F316L ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "BW OLET 6\"*1\" SCH80*SCH160 A182 F304 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "BW OLET 12\"*2\" SCH40*SCH80 A105 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "OLET,4\"*0.5\",SCH40S*SCH80S,BW,A182 F316L,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "支管台 24\"*6\" XS*SCH80 BW A234 WPB MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "Olet 10\"*1\" SCH20*SCH80 Olet,10\"*1\",SCH20*SCH80 BW,A105,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "线上误判原句回归-BW"
+  },
+  {
+    "input": "Olet 4\"*0.5\" SCH40S*SCH80S Olet,4\"*0.5\",SCH40S*SCH80S BW,A182 F316L,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "异径三通 10\"*1\" SCH20*SCH80 BW A105 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "Reducing Tee 24\"*6\" XS*SCH80 BW,A234 WPB,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "BW OLET 4\"*0.5\" SCH40S*SCH80S A182 F316L MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "OLET,6\"*1\",SCH80*SCH160,BW,A182 F304,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "Reducing Tee 4\"*0.5\" SCH40S*SCH80S BW,A182 F316L,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "Olet 12\"*2\" SCH40*SCH80 Olet,12\"*2\",SCH40*SCH80 BW,A105,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "支管台 10\"*1\" SCH20*SCH80 BW A105 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "Olet 24\"*6\" XS*SCH80 Olet,24\"*6\",XS*SCH80 BW,A234 WPB,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "异径三通 6\"*1\" SCH80*SCH160 BW A182 F304 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "OLET,8\"*1\",STD*SCH80,BW,A105,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "Reducing Tee 10\"*1\" SCH20*SCH80 BW,A105,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "OLET,12\"*2\",SCH40*SCH80,BW,A105,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "Olet 8\"*1\" STD*SCH80 Olet,8\"*1\",STD*SCH80 BW,A105,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "异径三通 4\"*0.5\" SCH40S*SCH80S BW A182 F316L ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "TEE REDUCING 10\"*1\" SCH20*SCH80 BW A105 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "Reducing Tee 6\"*1\" SCH80*SCH160 BW,A182 F304,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "RT,10\"*1\",SCH20*SCH80,BW,A105,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "Reducing Tee 12\"*2\" SCH40*SCH80 BW,A105,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "TEE REDUCING 12\"*2\" SCH40*SCH80 BW A105 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "Reducing Tee 8\"*1\" STD*SCH80 BW,A105,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "RT,12\"*2\",SCH40*SCH80,BW,A105,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "异径三通 12\"*2\" SCH40*SCH80 BW A105 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "RT,8\"*1\",STD*SCH80,BW,A105,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "RT,24\"*6\",XS*SCH80,BW,A234 WPB,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "支管台 12\"*2\" SCH40*SCH80 BW A105 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "异径三通 24\"*6\" XS*SCH80 BW A234 WPB ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "异径三通 8\"*1\" STD*SCH80 BW A105 ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "TEE REDUCING 24\"*6\" XS*SCH80 BW A234 WPB ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  },
+  {
+    "input": "支管台 8\"*1\" STD*SCH80 BW A105 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "支管台 6\"*1\" SCH80*SCH160 BW A182 F304 MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "Olet 6\"*1\" SCH80*SCH160 Olet,6\"*1\",SCH80*SCH160 BW,A182 F304,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "BW OLET 24\"*6\" XS*SCH80 A234 WPB MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "OLET,10\"*1\",SCH20*SCH80,BW,A105,MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "支管台 4\"*0.5\" SCH40S*SCH80S BW A182 F316L MSS SP-97",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "对焊支管台",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-OLET"
+  },
+  {
+    "input": "RT,6\"*1\",SCH80*SCH160,BW,A182 F304,ASME B16.9",
+    "output": {
+      "CATEGORY": "管件",
+      "TYPE": {
+        "BODY": "异径三通",
+        "GEOMETRY": {
+          "ANGLE": "",
+          "RADIUS": ""
+        },
+        "FLANGE_STYLE": "",
+        "MANU": [],
+        "CONN": []
+      }
+    },
+    "来源": "数据增强-OLET支管台专项对比",
+    "增强模式": "OLET与异径三通同尺寸强对比-异径三通"
+  }
+]

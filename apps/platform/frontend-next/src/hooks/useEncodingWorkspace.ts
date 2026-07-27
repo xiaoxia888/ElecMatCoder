@@ -19,7 +19,6 @@ function normalizeImportedRows(
         ? String(row[projectColumn] ?? '').trim()
         : resolveProjectName(row),
       importedCategory: categoryColumn ? String(row[categoryColumn] ?? '').trim() : '',
-      rawRow: row,
     }))
     .filter((item) => item.text)
 }
@@ -51,10 +50,17 @@ export function useEncodingWorkspace() {
   const [error, setError] = useState('')
   const eventSourceRef = useRef<EventSource | null>(null)
   const activeTaskIdRef = useRef<string | null>(null)
+  const resultsRef = useRef<Record<number, EncodingResult>>({})
+  const pendingResultsRef = useRef<Record<number, EncodingResult>>({})
+  const resultsFlushTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
     activeTaskIdRef.current = activeTaskId
   }, [activeTaskId])
+
+  useEffect(() => {
+    resultsRef.current = results
+  }, [results])
 
   useEffect(() => {
     let mounted = true
@@ -82,6 +88,9 @@ export function useEncodingWorkspace() {
     return () => {
       mounted = false
       eventSourceRef.current?.close()
+      if (resultsFlushTimerRef.current !== null) {
+        window.clearTimeout(resultsFlushTimerRef.current)
+      }
     }
   }, [])
 
@@ -101,11 +110,19 @@ export function useEncodingWorkspace() {
 
   const stats = useMemo(() => {
     const values = Object.values(results)
+    let success = 0
+    let review = 0
+    let hard = 0
+    for (const item of values) {
+      if (item.success) success += 1
+      if (item.success && item.need_review) review += 1
+      if (getDifficultyLabel(item) === '困难') hard += 1
+    }
     return {
       total: values.length,
-      // 只要编码成功就算成功（含需审核）
-      success: values.filter((item) => item.success).length,
-      review: values.filter((item) => item.success && item.need_review).length,
+      success,
+      review,
+      hard,
     }
   }, [results])
 
@@ -196,6 +213,28 @@ export function useEncodingWorkspace() {
     eventSourceRef.current = null
   }
 
+  function flushPendingResults() {
+    resultsFlushTimerRef.current = null
+    const pending = pendingResultsRef.current
+    pendingResultsRef.current = {}
+    if (Object.keys(pending).length === 0) return
+    setResults((prev) => ({ ...prev, ...pending }))
+  }
+
+  function clearPendingResults() {
+    pendingResultsRef.current = {}
+    if (resultsFlushTimerRef.current !== null) {
+      window.clearTimeout(resultsFlushTimerRef.current)
+      resultsFlushTimerRef.current = null
+    }
+  }
+
+  function queueResult(index: number, result: EncodingResult) {
+    pendingResultsRef.current[index] = result
+    if (resultsFlushTimerRef.current !== null) return
+    resultsFlushTimerRef.current = window.setTimeout(flushPendingResults, 100)
+  }
+
   function applyRunningJobSnapshot(job: BatchJobSummary) {
     const running = isBatchJobRunning(job.status)
     setActiveJob(job)
@@ -206,6 +245,7 @@ export function useEncodingWorkspace() {
   }
 
   function applyViewedJobSnapshot(job: BatchJobSummary) {
+    clearPendingResults()
     const items = Array.isArray(job.items) ? job.items : []
     setDataList(
       items
@@ -214,7 +254,6 @@ export function useEncodingWorkspace() {
           text: item.text || '',
           projectName: item.project_name || '',
           importedCategory: item.category || '',
-          rawRow: {},
         }))
         .sort((a, b) => a.index - b.index),
     )
@@ -252,7 +291,7 @@ export function useEncodingWorkspace() {
         return
       }
       if (typeof event.index === 'number' && event.result && activeTaskIdRef.current === jobId) {
-        setResults((prev) => ({ ...prev, [event.index!]: event.result! }))
+        queueResult(event.index, event.result)
       }
       if (event.snapshot) {
         applyRunningJobSnapshot(event.snapshot)
@@ -281,6 +320,7 @@ export function useEncodingWorkspace() {
 
   // 点击任务卡片：加载该任务的数据（运行中则订阅实时进度）
   async function loadTask(id: string) {
+    clearPendingResults()
     if (id === 'local') {
       setIsTaskLoading(false)
       setActiveTaskId('local')
@@ -320,6 +360,7 @@ export function useEncodingWorkspace() {
     projectColumn = '',
     categoryColumn = '',
   ) {
+    clearPendingResults()
     const normalized = normalizeImportedRows(
       rows,
       column,
@@ -443,7 +484,7 @@ export function useEncodingWorkspace() {
       setLocalCurrentIndex(index)
     }
     // 服务端任务：点击描述时按需查询该条结果（F12 可独立查看该条请求/响应），并写回缓存
-    if (activeTaskId && activeTaskId !== 'local') {
+    if (activeTaskId && activeTaskId !== 'local' && !resultsRef.current[index]) {
       try {
         const detail = await api.getBatchJobItem(activeTaskId, index)
         if (detail.result) {
@@ -496,19 +537,6 @@ export function useEncodingWorkspace() {
     window.localStorage.setItem('encoding_max_concurrent', String(nextValue))
   }
 
-  function getItemStatus(index: number) {
-    const result = results[index]
-    if (!result) return 'pending'
-    if (!result.success) return 'failed'
-    if (result.need_review) return 'review'
-    if (result.success) return 'success'
-    return 'pending'
-  }
-
-  function getItemDifficulty(index: number) {
-    return getDifficultyLabel(results[index])
-  }
-
   return {
     dataList,
     filteredDataList,
@@ -542,7 +570,5 @@ export function useEncodingWorkspace() {
     goPrev,
     goNext,
     goTo,
-    getItemStatus,
-    getItemDifficulty,
   }
 }

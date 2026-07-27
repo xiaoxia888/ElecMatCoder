@@ -6,7 +6,6 @@ export interface ImportedRow {
   text: string
   projectName: string
   importedCategory: string
-  rawRow: Record<string, unknown>
 }
 
 export interface Stage1RawPayload {
@@ -61,6 +60,8 @@ export interface EncodingResult {
   final_code: string
   success: boolean
   need_review: boolean
+  skipped_encoding?: boolean
+  skip_reason?: string
   confidence?: number
   material_category?: string
   imported_category?: string

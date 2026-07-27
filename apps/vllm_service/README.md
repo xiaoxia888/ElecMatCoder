@@ -202,6 +202,20 @@ python -m apps.vllm_service.benchmark \
 
 判断方式：如果尺寸单独3秒、材质单独1秒，并发组耗时接近3秒，说明并发有效；接近4秒说明实际接近串行。
 
+## 对比vLLM与MLX输出
+
+向云端vLLM和Mac MLX发送完全相同的请求，并分别测试“使用服务配置提示词”和“强制相同提示词”：
+
+```bash
+python -m apps.vllm_service.compare_vllm_mlx \
+  --text 'Olet 10"*1" SCH20*SCH80 Olet,10"*1",SCH20*SCH80 BW,A105,MSS SP-97' \
+  --repeats 3 \
+  --output vllm_mlx_comparison.json
+```
+
+脚本默认使用项目配置的云端vLLM地址、Mac MLX地址和`type`模型。报告会保存两端的
+instruction、prompt、原始输出、解析JSON、重复调用稳定性和初步诊断。
+
 ## 与现有平台连接
 
 现有平台配置中的后端名称可以暂时保留`mlx_service`，只需把`service_url`改为Linux网关地址。这里复用的是协议，并不代表Linux服务器仍在运行MLX。

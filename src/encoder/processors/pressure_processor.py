@@ -186,19 +186,7 @@ class PressureProcessor:
             ordered_items.append({"type": "PRESSURE", "value": normalized_value, "span": span})
             consumed_spans.append(span)
 
-        token_matches: List[Tuple[int, int, str, str]] = []
-        for m in self.pressure_token_pattern.finditer(source):
-            span = m.span(1)
-            raw = m.group(1)
-            normalized = self._normalize_pressure_token(
-                raw,
-                allow_prefix=self._allow_prefix_normalization(source, span, raw),
-            )
-            if not normalized:
-                continue
-            if not self._is_valid_match_context(source, span, raw):
-                continue
-            token_matches.append((span[0], span[1], raw, normalized))
+        token_matches = self._find_pressure_token_matches(source)
 
         i = 0
         while i < len(token_matches):
@@ -286,15 +274,7 @@ class PressureProcessor:
         if not source:
             return ""
 
-        matches: List[Tuple[int, int, str, str]] = []
-        for match in self.pressure_token_pattern.finditer(source):
-            span = match.span(1)
-            raw = match.group(1)
-            normalized = self._normalize_pressure_token(raw, allow_prefix=False)
-            if normalized:
-                matches.append((span[0], span[1], raw, normalized))
-            if len(matches) >= 2:
-                break
+        matches = self._find_pressure_token_matches(source)[:2]
 
         if len(matches) < 2:
             return ""
@@ -308,6 +288,40 @@ class PressureProcessor:
         if source[parenthetical_end:].strip():
             return ""
         return outer_normalized
+
+    def _find_pressure_token_matches(self, source: str) -> List[Tuple[int, int, str, str]]:
+        """先匹配 CL/CLASS/PN 前置写法，再补充数字在前的后置写法。"""
+        matches: List[Tuple[int, int, str, str]] = []
+        priority_spans: List[Tuple[int, int]] = []
+
+        def add_match(span: Tuple[int, int], raw: str) -> None:
+            normalized = self._normalize_pressure_token(
+                raw,
+                allow_prefix=self._allow_prefix_normalization(source, span, raw),
+            )
+            if not normalized or not self._is_valid_match_context(source, span, raw):
+                return
+            candidate = (span[0], span[1], raw, normalized)
+            if candidate not in matches:
+                matches.append(candidate)
+
+        # 标签在前的写法语义更明确，必须优先于更早开始但与其重叠的“数字 CL”。
+        for pattern in (self.cl_pattern, self.class_pattern, self.pn_pattern):
+            for match in pattern.finditer(source):
+                span = match.span(0)
+                before = len(matches)
+                add_match(span, match.group(0))
+                if len(matches) > before and span not in priority_spans:
+                    priority_spans.append(span)
+
+        for match in self.pressure_token_pattern.finditer(source):
+            span = match.span(1)
+            if any(start < span[1] and span[0] < end for start, end in priority_spans):
+                continue
+            add_match(span, match.group(1))
+
+        matches.sort(key=lambda item: (item[0], item[1]))
+        return matches
 
     @staticmethod
     def _derive_consumed_spans_from_ordered_items(text: str, ordered_items: List[Dict[str, object]]) -> List[Tuple[int, int]]:

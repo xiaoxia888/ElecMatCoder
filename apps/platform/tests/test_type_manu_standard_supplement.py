@@ -35,7 +35,7 @@ class TypeManuStandardSupplementTest(unittest.TestCase):
                     "TYPE": {"BODY": "直管", "MANU": []},
                     "STANDARD": [{"BODY": standard}],
                 }
-                self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities))
+                self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities, "直管"))
                 self.assertEqual(entities["TYPE"]["MANU"], "WELDED")
 
     def test_specific_welding_process_suppresses_welded(self) -> None:
@@ -45,23 +45,25 @@ class TypeManuStandardSupplementTest(unittest.TestCase):
                     "TYPE": {"BODY": "直管", "MANU": [manu]},
                     "STANDARD": [{"BODY": "GB/T 3091"}],
                 }
-                self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities))
+                self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities, "直管"))
                 self.assertEqual(entities["TYPE"]["MANU"], manu)
 
-    def test_non_welding_process_is_kept_with_welded(self) -> None:
-        entities = {
-            "TYPE": {"BODY": "直管", "MANU": ["SMLS"]},
-            "STANDARD": [{"BODY": "GB/T 3091"}],
-        }
-        self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities))
-        self.assertEqual(entities["TYPE"]["MANU"], ["SMLS", "WELDED"])
+    def test_seamless_process_blocks_welded_supplement(self) -> None:
+        for manu in ("SMLS", "SEAMLESS", "无缝"):
+            with self.subTest(manu=manu):
+                entities = {
+                    "TYPE": {"BODY": "直管", "MANU": [manu]},
+                    "STANDARD": [{"BODY": "GB/T 3091"}],
+                }
+                self.assertFalse(self.encoder._supplement_type_manu_from_standard(entities, "直管"))
+                self.assertEqual(entities["TYPE"]["MANU"], [manu])
 
     def test_unrelated_standard_does_not_supplement(self) -> None:
         entities = {
             "TYPE": {"BODY": "直管", "MANU": []},
             "STANDARD": [{"BODY": "GB/T 8163"}],
         }
-        self.assertFalse(self.encoder._supplement_type_manu_from_standard(entities))
+        self.assertFalse(self.encoder._supplement_type_manu_from_standard(entities, "直管"))
         self.assertEqual(entities["TYPE"]["MANU"], [])
 
     def test_standard_grade_suffix_must_match_exactly(self) -> None:
@@ -71,7 +73,7 @@ class TypeManuStandardSupplementTest(unittest.TestCase):
                     "TYPE": {"BODY": "直管", "MANU": ["SMLS"]},
                     "STANDARD": [{"BODY": standard}],
                 }
-                self.assertFalse(self.encoder._supplement_type_manu_from_standard(entities))
+                self.assertFalse(self.encoder._supplement_type_manu_from_standard(entities, "直管"))
                 self.assertEqual(entities["TYPE"]["MANU"], ["SMLS"])
 
     def test_explicit_m_suffix_code_matches_independently(self) -> None:
@@ -79,7 +81,25 @@ class TypeManuStandardSupplementTest(unittest.TestCase):
             "TYPE": {"BODY": "直管", "MANU": []},
             "STANDARD": [{"BODY": "AA 139M"}],
         }
-        self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities))
+        self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities, "直管"))
+        self.assertEqual(entities["TYPE"]["MANU"], "WELDED")
+
+    def test_flange_category_does_not_supplement_manu(self) -> None:
+        entities = {
+            "TYPE": {"BODY": "8字盲板"},
+            "STANDARD": [{"BODY": "GB/T 713"}],
+        }
+
+        self.assertFalse(self.encoder._supplement_type_manu_from_standard(entities, "法兰"))
+        self.assertNotIn("MANU", entities["TYPE"])
+
+    def test_fitting_category_still_supplements_manu(self) -> None:
+        entities = {
+            "TYPE": {"BODY": "弯头", "MANU": []},
+            "STANDARD": [{"BODY": "GB/T 13401"}],
+        }
+
+        self.assertTrue(self.encoder._supplement_type_manu_from_standard(entities, "管件"))
         self.assertEqual(entities["TYPE"]["MANU"], "WELDED")
 
     def test_resolution_removes_generic_welded(self) -> None:

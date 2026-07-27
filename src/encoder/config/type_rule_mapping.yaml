@@ -43,6 +43,8 @@ body_codes:
   带颈对焊夹套法兰: FJ
   带颈平焊夹套法兰: FSOJ
   夹套盲法兰: BFJ
+  全管箍: DCP
+  FULL COUPLING: DCP
 
   三通: T
   等径三通: T
@@ -59,10 +61,11 @@ body_codes:
   Y型等径三通: YT
   Y型异径三通: YRT
   仪表三通: IT
+  仪表异径三通: IT
   加强管咀: O
   马鞍座接头: O
   BEND: BE
-  异径单口管箍: CP
+  异径单口管箍: HC
 
   同心异径管: RC
   同心异径短管: RC
@@ -76,6 +79,11 @@ body_codes:
   同心异径管接头: RC
   偏心异径管接头: RE
   夹套同心异径管: RCJ
+  双承口异径管箍: RDCP
+  双承口管箍: DCP
+ 
+
+
 
   支管台: O
   对焊支管台: O
@@ -93,9 +101,11 @@ body_codes:
   单头短节: N
   双头短节: DN
   翻边短节: SE
-  管箍: HC
+  管箍: CP
   单口管箍: HC
   单口异径管箍: HC
+  单承口管箍: HC
+  单承口异径管箍: HC
   双口管箍: DCP
   双头管箍: DCP
   同心双口管箍: DCP
@@ -180,6 +190,7 @@ conn_codes:
   TBE: N
   GROOVED: G
   SCRD: N
+  BLE/TSE: BN
 
 body_implicit_conn:
   带颈平焊法兰:

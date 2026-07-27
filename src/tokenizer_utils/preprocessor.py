@@ -60,7 +60,7 @@ class TextPreprocessor:
         
         Args:
             text: 原始文本
-            
+
         Returns:
             预处理后的文本
         """
@@ -76,50 +76,56 @@ class TextPreprocessor:
         # 3. 统一罗马数字（半角转全角，匹配训练数据格式）
         text = self.normalize_roman_numerals(text)
 
-        # 4. 标准化常见乘号（不改变 slash 语义）
+        # 4. 切开材质/规范末尾数字与 GR 罗马等级粘连
+        text = self.normalize_glued_grade_marker(text)
+
+        # 5. 切开常见规范前缀与左侧内容粘连
+        text = self.normalize_glued_standard_prefixes(text)
+
+        # 6. 标准化常见乘号（不改变 slash 语义）
         text = self.normalize_multiplication(text)
 
-        # 5. 收紧小数点两侧数字间的误空格：12. 70 -> 12.70, 12 .70 -> 12.70
+        # 7. 收紧小数点两侧数字间的误空格：12. 70 -> 12.70, 12 .70 -> 12.70
         text = self.normalize_decimal_spacing(text)
 
-        # 6. 统一外径前缀写法
+        # 8. 统一外径前缀写法
         text = self.normalize_diameter_prefix(text)
 
-        # 7. 保守分隔符标准化（只处理安全分隔符）
+        # 9. 保守分隔符标准化（只处理安全分隔符）
         text = self.normalize_safe_separators(text)
 
-        # 8. 窄范围规格归一化（只修规则层高频脏写法）
+        # 10. 窄范围规格归一化（只修规则层高频脏写法）
         text = self.normalize_pipe_spec_tokens(text)
 
-        # 9. 切开历史字段标签/规格粘连，后续所有模块统一吃同一份 processed_text
+        # 11. 切开历史字段标签/规格粘连，后续所有模块统一吃同一份 processed_text
         text = self.normalize_section_labels(text)
 
-        # 10. 切开 DN 与壁厚/壁厚号粘连，避免规则层各自私改文本
+        # 12. 切开 DN 与壁厚/壁厚号粘连，避免规则层各自私改文本
         text = self.normalize_glued_dn_wall_thickness(text)
 
-        # 11. 结构字段局部 OCR/录入纠错（只在强锚点局部片段中生效）
-        # text = self.normalize_structural_ocr_tokens(text)
+        # 13. 强上下文 OCR/录入纠错（仅允许加入不会扩大误伤面的规则）
+        text = self.normalize_strong_context_ocr_tokens(text)
 
-        # 12. 材质 token 局部 OCR/录入纠错（只修高置信脏写法）
+        # 14. 材质 token 局部 OCR/录入纠错（只修高置信脏写法）
         text = self.normalize_material_ocr_tokens(text)
 
-        # 13. 种类别名/短写归一化（只修高置信历史简称）
+        # 15. 种类别名/短写归一化（只修高置信历史简称）
         text = self.normalize_type_alias_tokens(text)
 
-        # 14. 删除连接方式噪声词，避免干扰尺寸/壁厚等结构字段
+        # 16. 删除连接方式噪声词，避免干扰尺寸/壁厚等结构字段
         # text = self.remove_connection_noise_tokens(text)
 
-        # 15. OCR 纠偏后再次收紧小数点两侧空格：
+        # 17. OCR 纠偏后再次收紧小数点两侧空格：
         # 例如 S-3. Omm -> S-3. 0mm -> S-3.0mm
         text = self.normalize_decimal_spacing(text)
 
-        # 16. 对强结构 token 做安全切分，避免与前后脏串粘连
+        # 18. 对强结构 token 做安全切分，避免与前后脏串粘连
         text = self.normalize_strong_structural_tokens(text)
 
-        # 17. 删除容易被误判为壁厚的工程标准短语
+        # 19. 删除容易被误判为壁厚的工程标准短语
         text = self.remove_non_thickness_standard_phrases(text)
 
-        # 18. 空白压缩
+        # 20. 空白压缩
         text = self.normalize_whitespace(text)
 
         return text
@@ -148,6 +154,61 @@ class TextPreprocessor:
             else:
                 result.append(char)
         return ''.join(result)
+
+    @staticmethod
+    def normalize_glued_grade_marker(text: str) -> str:
+        """
+        切开数字与带罗马等级的 GR 标识。
+
+        仅处理 `数字 + GR + 罗马数字`，不处理单独的 GR：
+        - S32168Gr.III -> S32168 Gr.III
+        - NB/T47010GR II -> NB/T47010 GR II
+        - 47010GRII -> 47010 GRII
+        """
+        if not text:
+            return ""
+        return re.sub(
+            (
+                r"(?<=\d)(?=GR(?:\s*\.\s*|\s+)?[IVX]+"
+                r"(?=$|[\s,;:()/]|NB/T|HG/T|GB/T|SH/T|ASME|EN\d|DIN\d))"
+            ),
+            " ",
+            text,
+            flags=re.IGNORECASE,
+        )
+
+    @staticmethod
+    def normalize_glued_standard_prefixes(text: str) -> str:
+        """
+        切开常见规范前缀与左侧字母、数字、中文或闭合符号的粘连。
+
+        前缀后必须具有对应规范的强结构，避免把普通单词中的 EN、DIN 等误切：
+        - Gr.IIINB/T47010 -> Gr.III NB/T47010
+        - NB/T47010ASMEB16.5 -> NB/T47010 ASMEB16.5
+        """
+        if not text:
+            return ""
+
+        standard_prefix = (
+            r"(?:"
+            r"(?:GB/T|HG/T|SH/T|NB/T|SY/T|JB/T|DL/T|CJ/T)\s*\d|"
+            r"ASME\s*(?:B\s*\d|BPVC\b|VIII\b|IX\b)|"
+            r"ASTM\s*[A-Z]\s*\d|"
+            r"API\s*\d|"
+            r"EN\s*\d|"
+            r"DIN\s*\d|"
+            r"ISO\s*\d|"
+            r"BS\s*(?:EN\s*)?\d|"
+            r"JIS\s*[A-Z]\s*\d|"
+            r"MSS\s*SP\b"
+            r")"
+        )
+        return re.sub(
+            rf"(?<=[A-Za-z0-9\u4e00-\u9fff.)\]])(?={standard_prefix})",
+            " ",
+            text,
+            flags=re.IGNORECASE,
+        )
 
     @staticmethod
     def normalize_multiplication(text: str) -> str:
@@ -258,7 +319,17 @@ class TextPreprocessor:
             r' \1.',
             text,
         )
-        text = re.sub(r'(?<=[A-Za-z0-9.])(?=DN\s*\d)', ' ', text, flags=re.IGNORECASE)
+        def _separate_glued_dn(match: re.Match[str]) -> str:
+            start = match.start()
+            if start == 0 or not re.fullmatch(r'[A-Za-z0-9.]', text[start - 1]):
+                return match.group(0)
+            # R=1.5DN denotes a radius multiplier followed by the letter D/N,
+            # not a glued nominal-diameter token.
+            if re.search(r'\d+\.\d+$', text[:start]):
+                return match.group(0)
+            return f' {match.group(0)}'
+
+        text = re.sub(r'DN(?=\s*\d)', _separate_glued_dn, text, flags=re.IGNORECASE)
         return text
 
     @classmethod
@@ -366,29 +437,40 @@ class TextPreprocessor:
         def _is_wordlike_neighbor(ch: str) -> bool:
             return ch.isalnum() or ("\u4e00" <= ch <= "\u9fff")
 
-        weak_schedule_base = r'(?:5|10|20|30|40|60|80|100|120|140|160)'
+        # Longest alternatives must come first, otherwise `S-100` is matched as
+        # `S-10` and the remaining `0` is incorrectly separated as a neighbor.
+        weak_schedule_base = r'(?:160|140|120|100|80|60|40|30|20|10|5)'
         weak_schedule_suffix_s = r'(?:5S|10S|20S|30S|40S|60S|80S|120S|160S)'
-        s_dash_schedule_token = rf'S-{weak_schedule_base}S?(?!-)'
+        s_dash_schedule_token = rf'S-{weak_schedule_base}S?(?![\d.-])'
         schedule_token = (
             rf'(?:SCH[.\s-]*\d+S?|{s_dash_schedule_token}|'
-            rf'S{weak_schedule_base}S?|{weak_schedule_suffix_s}|XXS|XS|STD)'
+            rf'S{weak_schedule_base}S?(?!\d)|{weak_schedule_suffix_s}|XXS|XS|STD)'
         )
+        valid_dn_number = r'\d+(?![\d.])'
+        # `SCH20X80` 允许第二段省略 SCH 前缀；X80 属于组合内部，
+        # 不能被单 SCH token 的右边界逻辑当成外部粘连内容。
+        sch_omitted_prefix_pair = r'SCH[.\s-]*\d+S?\s*[xX×*]\s*\d+S?(?!\d)'
         strong_patterns = (
             # 尺寸接壁厚等级：保留 DN20xXS / OD89xSTD 这类完整结构，
             # 避免后面的单尺寸规则只匹配 DN20 / OD89 后在 x 前误插空格。
             re.compile(
-                rf'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*{schedule_token}'
+                rf'(?i)DN\s*{valid_dn_number}\s*[xX×*]\s*{schedule_token}'
             ),
             re.compile(
                 rf'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?\s*[xX×*]\s*{schedule_token}'
             ),
             # 尺寸：DN数字x数字 / DN数字
-            re.compile(r'(?i)DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?'),
-            re.compile(r'(?i)DN\s*\d+(?:\.\d+)?(?!\s*[xX×*]\s*(?:DN\s*)?\d)'),
+            re.compile(
+                rf'(?i)DN\s*{valid_dn_number}\s*[xX×*]\s*(?:DN\s*)?{valid_dn_number}'
+            ),
+            re.compile(
+                rf'(?i)DN\s*{valid_dn_number}(?!\s*[xX×*]\s*(?:DN\s*)?{valid_dn_number})'
+            ),
             # 尺寸：OD/外径/Φ 数字 x 数字 / 单值
             re.compile(r'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:(?:OD|外径|Φ)\s*)?\d+(?:\.\d+)?(?:\s*(?:MM|毫米))?'),
             re.compile(r'(?i)(?:OD|外径|Φ)\s*\d+(?:\.\d+)?(?!\s*[xX×*]\s*(?:(?:OD|外径|Φ)\s*)?\d)'),
-            # 壁厚：SCH数字 / SCH数字S / SCH...xSCH...
+            # 壁厚：SCH数字 / SCH数字S / SCH...xSCH... / SCH...x数字
+            re.compile(rf'(?i){sch_omitted_prefix_pair}'),
             re.compile(rf'(?i){schedule_token}\s*[xX×*]\s*{schedule_token}'),
             re.compile(rf'(?i)SCH[.\s-]*\d+S?(?!\s*[xX×*]\s*{schedule_token})'),
             # 壁厚：S-数字 / S-数字S / S-...xS-...；仅支持常见 schedule 号，避免 CS-1 被切成 C S-1。
@@ -576,6 +658,23 @@ class TextPreprocessor:
         return text
 
     @staticmethod
+    def normalize_strong_context_ocr_tokens(text: str) -> str:
+        """
+        修复具有完整字段锚点和格式约束的 OCR 错误。
+
+        此入口只允许加入强上下文规则，不做全文字符替换。当前覆盖：
+        - 半径 `R=l.0D` / `R=I.0D` -> `R=1.0D`
+        """
+        if not text:
+            return ""
+
+        return re.sub(
+            r"(?i)((?<![A-Za-z0-9])R\s*=\s*)[IL](?=\s*\.\s*\d+\s*D\b)",
+            lambda match: f"{match.group(1)}1",
+            text,
+        )
+
+    @staticmethod
     def normalize_material_ocr_tokens(text: str) -> str:
         """
         只修高置信材质/特殊要求 token 的 OCR 误写。
@@ -640,17 +739,38 @@ class TextPreprocessor:
             ("偏心头", "偏心大小头"),
             ("SW弯头", "承插焊弯头"),
             ("无同头", "无缝同心大小头"),
+            ("有同头", "有缝同心大小头"),
             ("偏头", "偏心大小头"),
             ("偏大", "偏心大小头"),
             ("CAP", "管帽"),
             ("WRE", "焊接偏心异径管"),
             ("WTR", "焊接异径三通"),
+            ("SPCR PDL", "Spectacle Blind"),
             
             # ("TEE", "三通"),
             ("BW Olet", "对焊支管台"),
             ("RTS", "异径三通"),
+            ("TS", "等径三通"),
             ("RK", "同心异径管"),
+            ("RC", "同心异径管"),
+            ("RE", "偏心异径管"),
             ("WOL", "对焊支管台"),
+            ("SOL", "承插焊支管台"),
+            ("WELD BS90", "90度焊接弯头"),
+            ("W90EL", "90度焊接弯头"),
+            ("WELD BS45", "45度焊接弯头"),
+            ("W45EL", "45度焊接弯头"),
+            ("90E(L)", "90度长半径弯头"),
+            ("90E(S)", "90度短半径弯头"),
+
+
+            ("W90ES", "90度焊接短半径弯头"),
+            ("W45ES", "45度焊接短半径弯头"),
+            ("E90SR", "90度短半径弯头"),
+            ("E45SR", "45度短半径弯头"),
+            ("E90LR", "90度长半径弯头"),
+            ("E45LR", "45度长半径弯头"),
+
             ("WOL-90", "90度对焊支管台"),
             ("WOL-45", "45度对焊支管台"),
             ("LJ Flg", "松套法兰"),
@@ -726,6 +846,7 @@ class TextPreprocessor:
             r"(?i)\bMFR\s+STD\b",
             r"(?i)\bMFRS\s+STD\b",
             r"(?i)\bENR\s+STD\b",
+            r"(?i)\bCHENGDA\s+STD\b",
         )
 
         for pattern in patterns:
