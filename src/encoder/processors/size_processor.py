@@ -12,6 +12,7 @@ import logging
 import yaml
 
 from .combo_fallback_extractor import ComboFallbackExtractor
+from src.domain.common.dimension_separator import MULTIPLICATION_SEPARATOR_PATTERN
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
@@ -1634,22 +1635,33 @@ class SizeProcessor:
 
         inch_suffix_pattern = r'(?:["”″]|\'\s*\'|\bIN(?:CH)?\b)'
 
-        inch_pair_pattern = re.compile(
+        imperial_value_pattern = r'\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?'
+        inch_chain_pattern = re.compile(
             r'(?<![A-Za-z0-9])'
-            rf'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*{inch_suffix_pattern}?\s*[xX×*]\s*'
-            rf'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)\s*{inch_suffix_pattern}'
-            r'(?![A-Za-z0-9])'
-            , re.IGNORECASE
+            rf'(?P<chain>{imperial_value_pattern}\s*{inch_suffix_pattern}?'
+            rf'(?:\s*{MULTIPLICATION_SEPARATOR_PATTERN}\s*'
+            rf'{imperial_value_pattern}\s*{inch_suffix_pattern}?)*'
+            rf'\s*{MULTIPLICATION_SEPARATOR_PATTERN}\s*'
+            rf'{imperial_value_pattern}\s*{inch_suffix_pattern})'
+            r'(?![A-Za-z0-9])',
+            re.IGNORECASE,
+        )
+        inch_chain_value_pattern = re.compile(
+            rf'({imperial_value_pattern})\s*{inch_suffix_pattern}?',
+            re.IGNORECASE,
         )
         consumed_inch_spans: List[Tuple[int, int]] = []
-        for m in inch_pair_pattern.finditer(normalized):
+        for m in inch_chain_pattern.finditer(normalized):
             span = (m.start(), m.end())
-            first_value = self._normalize_nps_token(m.group(1))
-            second_value = self._normalize_nps_token(m.group(2))
-            _add_unique(inch_values, first_value)
-            _add_unique(inch_values, second_value)
-            _add_ordered_item("INCH", first_value, m.span(1))
-            _add_ordered_item("INCH", second_value, m.span(2))
+            chain_start = m.start("chain")
+            for value_match in inch_chain_value_pattern.finditer(m.group("chain")):
+                inch_value = self._normalize_nps_token(value_match.group(1))
+                value_span = (
+                    chain_start + value_match.start(1),
+                    chain_start + value_match.end(1),
+                )
+                _add_unique(inch_values, inch_value)
+                _add_ordered_item("INCH", inch_value, value_span)
             consumed_inch_spans.append(span)
             _record(m.group(0), span)
 

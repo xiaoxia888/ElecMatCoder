@@ -3,7 +3,7 @@ import unittest
 from src.encoder.pipe_encoder import PipeEncoderBase
 from src.encoder.processors.regex_extractor import RegexExtractor
 from src.encoder.processors.type_encoder import TypeEncoder
-from src.encoder.processors.type_normalizers import normalize_type_radius
+from src.encoder.processors.type_normalizers import normalize_type_angle, normalize_type_radius
 from src.llm_ner.predictor import Qwen3Predictor
 
 
@@ -80,6 +80,37 @@ class TypeStage2InputTest(unittest.TestCase):
                 self.assertEqual(normalize_type_radius(raw_value), expected)
                 self.assertEqual(TypeEncoder._normalize_radius(raw_value), expected)
 
+    def test_numeric_angle_rounds_half_up_to_two_decimal_places(self) -> None:
+        cases = {
+            "87.709": "87.71",
+            "87.705": "87.71",
+            "87.704": "87.7",
+            "90.00": "90",
+            "45": "45",
+            "87.709 DEG": "87.709 DEG",
+        }
+
+        for raw_value, expected in cases.items():
+            with self.subTest(raw_value=raw_value):
+                self.assertEqual(normalize_type_angle(raw_value), expected)
+                self.assertEqual(TypeEncoder._normalize_angle(raw_value), expected)
+
+    def test_angle_is_rounded_only_in_stage2_payload(self) -> None:
+        stage1 = {
+            "TYPE": {
+                "BODY": "弯头",
+                "GEOMETRY": {"ANGLE": "87.709", "RADIUS": "5D"},
+                "MANU": ["SMLS"],
+            }
+        }
+
+        self.assertEqual(stage1["TYPE"]["GEOMETRY"]["ANGLE"], "87.709")
+        self.assertEqual(
+            self.encoder._normalize_type_stage2_payload(stage1["TYPE"]),
+            {"BODY": "弯头", "ANGLE": "87.71", "RADIUS": "5D", "MANU": ["SMLS"]},
+        )
+        self.assertEqual(stage1["TYPE"]["GEOMETRY"]["ANGLE"], "87.709")
+
     def test_radius_is_normalized_in_stage1_snapshot_and_stage2_payload(self) -> None:
         stage1 = {
             "TYPE": {
@@ -119,6 +150,28 @@ class TypeStage2InputTest(unittest.TestCase):
         self.assertEqual(
             encoder.captured_fallback,
             '{"BODY":"弯头","ANGLE":"90","RADIUS":"1D","MANU":["WELDED"]}',
+        )
+
+    def test_encode_rounds_angle_only_for_stage2(self) -> None:
+        encoder = _CapturingTypeEncoder()
+        result = encoder.encode(
+            {
+                "TYPE": {
+                    "BODY": "弯头",
+                    "GEOMETRY": {"ANGLE": "87.709", "RADIUS": "5D"},
+                    "MANU": ["SMLS"],
+                }
+            },
+            material_category="管件",
+        )
+
+        type_result = result.fields["TYPE"]
+        self.assertEqual(type_result.stage1_raw["GEOMETRY"]["ANGLE"], "87.709")
+        self.assertEqual(type_result.stage2_input["ANGLE"], "87.71")
+        self.assertEqual(encoder.captured_structured["GEOMETRY"]["ANGLE"], "87.71")
+        self.assertEqual(
+            encoder.captured_fallback,
+            '{"BODY":"弯头","ANGLE":"87.71","RADIUS":"5D","MANU":["SMLS"]}',
         )
 
     def test_predictor_uses_canonical_value_label_for_type_only(self) -> None:

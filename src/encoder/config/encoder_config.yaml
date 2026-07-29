@@ -197,8 +197,9 @@ type_manu_standard_supplement:
   default_value: WELDED
   trigger_standard_codes:
     - SYT5037
-    # - GBT12771
-    # - GBT713
+    - GBT12771
+    - GBT12771IV
+    - GBT713
     - GBT3091
     # - GBT13401
     # - EN103052

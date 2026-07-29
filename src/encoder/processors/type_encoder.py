@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 import yaml
 
-from .type_normalizers import normalize_type_radius
+from .type_normalizers import normalize_type_angle, normalize_type_radius
 
 TYPE_COMBO_CONFIG = Path(__file__).resolve().parents[1] / "config" / "type_combo_mapping.yaml"
 TYPE_RULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "type_rule_mapping.yaml"
@@ -103,7 +103,7 @@ class TypeEncoder:
 
     @staticmethod
     def _normalize_angle(value: Any) -> str:
-        return str(value or "").strip()
+        return normalize_type_angle(value)
 
     @staticmethod
     def _normalize_radius(value: Any) -> str:

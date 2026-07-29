@@ -28,6 +28,9 @@ class TextPreprocessorTest(unittest.TestCase):
 
     def test_multiplication_normalization_still_applies(self) -> None:
         self.assertEqual(self.preprocessor.process("DN20*XS"), "DN20×XS")
+        for separator in ("＊", "∗", "﹡", "✕", "✖", "⨉"):
+            with self.subTest(separator=separator):
+                self.assertEqual(self.preprocessor.process(f"DN20{separator}XS"), "DN20×XS")
 
     def test_preserves_numeric_reducing_size(self) -> None:
         self.assertEqual(self.preprocessor.process("DN20x15"), "DN20x15")

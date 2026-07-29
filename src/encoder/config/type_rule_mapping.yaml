@@ -63,6 +63,7 @@ body_codes:
   仪表三通: IT
   仪表异径三通: IT
   加强管咀: O
+  管咀: O
   马鞍座接头: O
   BEND: BE
   异径单口管箍: HC
@@ -106,6 +107,7 @@ body_codes:
   单口异径管箍: HC
   单承口管箍: HC
   单承口异径管箍: HC
+  异径单头管箍: HC
   双口管箍: DCP
   双头管箍: DCP
   同心双口管箍: DCP

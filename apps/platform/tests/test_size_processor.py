@@ -3,6 +3,11 @@ import unittest
 from src.encoder.processors.rule_extraction import extract_size_and_thickness_by_rules
 from src.encoder.processors.size_processor import SizeProcessor
 from src.tokenizer_utils.preprocessor import TextPreprocessor
+from src.domain.common.dimension_separator import (
+    is_multiplication_separator,
+    normalize_multiplication_separators,
+    split_by_multiplication_separator,
+)
 
 
 class SizeProcessorTest(unittest.TestCase):
@@ -133,6 +138,39 @@ class SizeProcessorTest(unittest.TestCase):
         self.assertEqual(result.size.od, ["114.3"])
         self.assertEqual(result.size.size_code, "100")
         self.assertEqual(result.thickness.mm, ["6.02MM"])
+
+    def test_three_part_inch_chain_is_fully_extracted(self) -> None:
+        text = 'Reducing TEE, ASTM A 420 Gr.WPL6,BW, SMLS, SCH XS, ASME B16.9 2"x1"x2"'
+        result = extract_size_and_thickness_by_rules(
+            text,
+            size_processor=self.processor,
+        )
+
+        self.assertEqual(result.size.inch, ["2", "1", "2"])
+        self.assertEqual(result.size.size_code, "50x25")
+        self.assertEqual(
+            result.size.ordered_items,
+            [
+                {"type": "INCH", "value": "2"},
+                {"type": "INCH", "value": "1"},
+                {"type": "INCH", "value": "2"},
+            ],
+        )
+
+    def test_inch_chain_supports_multiplication_separator_variants(self) -> None:
+        for separator in "xX×*＊∗﹡✕✖⨉":
+            with self.subTest(separator=separator):
+                self.assertTrue(is_multiplication_separator(separator))
+                text = f'REDUCING TEE 2"{separator}1"{separator}2"'
+                result = extract_size_and_thickness_by_rules(
+                    text,
+                    size_processor=self.processor,
+                )
+                self.assertEqual(result.size.inch, ["2", "1", "2"])
+                self.assertEqual(result.size.size_code, "50x25")
+
+        self.assertEqual(normalize_multiplication_separators("2＊1∗2"), "2×1×2")
+        self.assertEqual(split_by_multiplication_separator("2✕1⨉2"), ["2", "1", "2"])
 
 
 if __name__ == "__main__":

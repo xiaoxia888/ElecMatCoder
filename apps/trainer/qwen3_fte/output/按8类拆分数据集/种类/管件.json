@@ -15724,11 +15724,11 @@
     }
   },
   {
-    "input": "加强管嘴 平底型 DN250x20-SCH80S-SW 10 x 0.75\" 06Cr19Ni10 SCH 80S NB/T 47010",
+    "input": "加强管咀 平底型 DN250x20-SCH80S-SW 10 x 0.75\" 06Cr19Ni10 SCH 80S NB/T 47010",
     "output": {
       "CATEGORY": "管件",
       "TYPE": {
-        "BODY": "加强管嘴",
+        "BODY": "加强管咀",
         "GEOMETRY": {
           "ANGLE": "",
           "RADIUS": ""
@@ -15814,11 +15814,11 @@
     }
   },
   {
-    "input": "加强管嘴 平底型 DN350x40-SCH80S-SW 14 X 1.5\" 06Cr19Ni10 SCH 80S NB/T 47010",
+    "input": "加强管咀 平底型 DN350x40-SCH80S-SW 14 X 1.5\" 06Cr19Ni10 SCH 80S NB/T 47010",
     "output": {
       "CATEGORY": "管件",
       "TYPE": {
-        "BODY": "加强管嘴",
+        "BODY": "加强管咀",
         "GEOMETRY": {
           "ANGLE": "",
           "RADIUS": ""
@@ -15904,11 +15904,11 @@
     }
   },
   {
-    "input": "加强管嘴 平底型 DN450x25-SCH80S-SW 18 X 1\" 06Cr19Ni10 SCH 80S NB/T 47010",
+    "input": "加强管咀 平底型 DN450x25-SCH80S-SW 18 X 1\" 06Cr19Ni10 SCH 80S NB/T 47010",
     "output": {
       "CATEGORY": "管件",
       "TYPE": {
-        "BODY": "加强管嘴",
+        "BODY": "加强管咀",
         "GEOMETRY": {
           "ANGLE": "",
           "RADIUS": ""

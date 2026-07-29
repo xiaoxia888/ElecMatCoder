@@ -43,7 +43,7 @@ from .processors import get_pressure_processor
 from .processors import get_size_processor
 from .processors import get_regex_extractor
 from .processors import get_thickness_table_processor
-from .processors.type_normalizers import normalize_type_radius
+from .processors.type_normalizers import normalize_type_angle, normalize_type_radius
 
 logger = logging.getLogger(__name__)
 TYPE_RULE_CONFIG = Path(__file__).parent / "config" / "type_rule_mapping.yaml"
@@ -805,7 +805,9 @@ class PipeEncoderBase:
         geometry = self._get_dict(type_dict.get('GEOMETRY'))
         raw_values = {
             'BODY': type_dict.get('BODY'),
-            'ANGLE': geometry.get('ANGLE') or type_dict.get('ANGLE'),
+            'ANGLE': normalize_type_angle(
+                geometry.get('ANGLE') or type_dict.get('ANGLE')
+            ),
             'RADIUS': normalize_type_radius(
                 geometry.get('RADIUS') or type_dict.get('RADIUS')
             ),
@@ -892,7 +894,7 @@ class PipeEncoderBase:
         else:
             body = str(body_value or '').strip()
 
-        angle = str(geometry.get('ANGLE') or '').strip()
+        angle = normalize_type_angle(geometry.get('ANGLE'))
 
         radius = normalize_type_radius(geometry.get('RADIUS'))
         if not radius:
@@ -977,7 +979,7 @@ class PipeEncoderBase:
             'FLANGE_STYLE': str(type_input.get('FLANGE_STYLE') or type_input.get('flange_style') or '').strip(),
             'BODY': str(type_input.get('BODY') or '').strip(),
             'GEOMETRY': {
-                'ANGLE': str(geometry.get('ANGLE') or '').strip(),
+                'ANGLE': normalize_type_angle(geometry.get('ANGLE')),
                 'RADIUS': normalize_type_radius(geometry.get('RADIUS')),
             },
             'SEAL': list(type_input.get('SEAL') or []),

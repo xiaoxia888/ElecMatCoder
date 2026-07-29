@@ -7,6 +7,8 @@ from pathlib import Path
 
 import yaml
 
+from src.domain.common.dimension_separator import normalize_multiplication_glyphs
+
 
 class TextPreprocessor:
     """文本预处理器"""
@@ -215,8 +217,8 @@ class TextPreprocessor:
         """统一乘号写法，便于后续尺寸/壁厚识别。"""
         # 不把 '×' 强转成 'X'。
         # 在管道场景里，`DN15×XS` 若被改成 `DN15XXS`，会直接把原文语义改坏。
-        # 结构提示词和规则层本身都支持 `×`，所以这里只把 `*` 归一到 `×`。
-        return text.replace('*', '×')
+        # 结构提示词和规则层本身都支持 `×`，所以统一归一为 `×`。
+        return normalize_multiplication_glyphs(text)
 
     @staticmethod
     def normalize_decimal_spacing(text: str) -> str:
@@ -743,8 +745,8 @@ class TextPreprocessor:
             ("偏头", "偏心大小头"),
             ("偏大", "偏心大小头"),
             ("CAP", "管帽"),
-            ("WRE", "焊接偏心异径管"),
-            ("WTR", "焊接异径三通"),
+            ("WRE", "焊接偏心异径管;WEldED"),
+            ("WTR", "焊接异径三通;WEldED"),
             ("SPCR PDL", "Spectacle Blind"),
             
             # ("TEE", "三通"),
@@ -756,20 +758,23 @@ class TextPreprocessor:
             ("RE", "偏心异径管"),
             ("WOL", "对焊支管台"),
             ("SOL", "承插焊支管台"),
-            ("WELD BS90", "90度焊接弯头"),
-            ("W90EL", "90度焊接弯头"),
-            ("WELD BS45", "45度焊接弯头"),
-            ("W45EL", "45度焊接弯头"),
+            ("WELD BS90", "90度焊接弯头;WEldED"),
+            ("W90EL", "90度焊接弯头;WEldED"),
+            ("WELD BS45", "45度焊接弯头;WEldED"),
+            ("W45EL", "45度焊接弯头;WEldED"),
             ("90E(L)", "90度长半径弯头"),
             ("90E(S)", "90度短半径弯头"),
 
 
-            ("W90ES", "90度焊接短半径弯头"),
-            ("W45ES", "45度焊接短半径弯头"),
+            ("W90ES", "90度焊接短半径弯头;WEldED"),
+            ("W45ES", "45度焊接短半径弯头;WEldED"),
             ("E90SR", "90度短半径弯头"),
             ("E45SR", "45度短半径弯头"),
             ("E90LR", "90度长半径弯头"),
             ("E45LR", "45度长半径弯头"),
+            ("S90E", "90度承插焊弯头"),
+            ("S45E", "45度承插焊弯头"),
+            
 
             ("WOL-90", "90度对焊支管台"),
             ("WOL-45", "45度对焊支管台"),
