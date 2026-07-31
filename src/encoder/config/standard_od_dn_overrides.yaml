@@ -1,0 +1,198 @@
+# 按最终规范主编码维护 OD -> DN 精确补充映射。
+#
+# 数据边界：
+# 1. 只录入标准机构或制造商官方技术资料能够确认的尺寸。
+# 2. EN 10357-A 本身按 OD 定义；其 DN 值采用与其尺寸相同的
+#    DIN 11866-A nominal size，用于本系统的工程换算。
+# 3. DIN 17455、DIN 17457、EN 10217-7、EN 10296-2、EN 10312 和
+#    EN ISO 1127 属于交付条件或 OD/壁厚尺寸标准，不能仅凭规范号
+#    唯一确定 DN，因此不得在此文件中强行配置。
+#
+# 依据：
+# - DIN EN 10357:2022-10（DIN Media）
+#   https://www.dinmedia.de/de/norm/din-en-10357/352773289
+# - Alfa Laval Hygienic Fittings DIN EN 10357-A：
+#   EN 10357-A = former DIN 11850 Reihe 2 = DIN 11866-A，并给出 DN/OD 表。
+#   https://assets.alfalaval.com/documents/p1d5118c5/alfa-laval-hygienic-fittings-din-en-10357-a-product-leaflets-en-gb.pdf
+# - DIN EN 10220:2003-03（DIN Media）
+#   https://www.dinmedia.de/de/norm/din-en-10220/54122066
+# - EN 10220 DN/OD 产品技术表（Aalberts hydronic flow control）
+#   https://flamco.aalberts-hfc.com/media/files/documentation/doc_exp_dimensionsandweightstubes.pdf
+
+# 项目中的 DIN 10357 作为 DIN EN 10357-A 的历史/简写编码处理。
+DIN10357:
+  - OD: 13
+    DN: 10
+  - OD: 19
+    DN: 15
+  - OD: 23
+    DN: 20
+  - OD: 29
+    DN: 25
+  - OD: 35
+    DN: 32
+  - OD: 41
+    DN: 40
+  - OD: 53
+    DN: 50
+  - OD: 70
+    DN: 65
+  - OD: 85
+    DN: 80
+  - OD: 104
+    DN: 100
+  - OD: 129
+    DN: 125
+  - OD: 154
+    DN: 150
+  - OD: 204
+    DN: 200
+
+# DIN EN 10357-A。当前标准还包含其他系列；无系列标识时仅采用项目中
+# 已确认使用的 A 系列，不混入 C/D 系列。
+EN10357:
+  - OD: 13
+    DN: 10
+  - OD: 19
+    DN: 15
+  - OD: 23
+    DN: 20
+  - OD: 29
+    DN: 25
+  - OD: 35
+    DN: 32
+  - OD: 41
+    DN: 40
+  - OD: 53
+    DN: 50
+  - OD: 70
+    DN: 65
+  - OD: 85
+    DN: 80
+  - OD: 104
+    DN: 100
+  - OD: 129
+    DN: 125
+  - OD: 154
+    DN: 150
+  - OD: 204
+    DN: 200
+
+# 已撤销的 DIN 11850：Reihe 1（12~52）与 Reihe 2（13~204）。
+# 两个系列的 OD 不冲突，可以共用一个最终规范编码。
+DIN11850:
+  - OD: 12
+    DN: 10
+  - OD: 13
+    DN: 10
+  - OD: 18
+    DN: 15
+  - OD: 19
+    DN: 15
+  - OD: 22
+    DN: 20
+  - OD: 23
+    DN: 20
+  - OD: 28
+    DN: 25
+  - OD: 29
+    DN: 25
+  - OD: 34
+    DN: 32
+  - OD: 35
+    DN: 32
+  - OD: 40
+    DN: 40
+  - OD: 41
+    DN: 40
+  - OD: 52
+    DN: 50
+  - OD: 53
+    DN: 50
+  - OD: 70
+    DN: 65
+  - OD: 85
+    DN: 80
+  - OD: 104
+    DN: 100
+  - OD: 129
+    DN: 125
+  - OD: 154
+    DN: 150
+  - OD: 204
+    DN: 200
+
+DIN11866A:
+  - OD: 13
+    DN: 10
+  - OD: 19
+    DN: 15
+  - OD: 23
+    DN: 20
+  - OD: 29
+    DN: 25
+  - OD: 35
+    DN: 32
+  - OD: 41
+    DN: 40
+  - OD: 53
+    DN: 50
+  - OD: 70
+    DN: 65
+  - OD: 85
+    DN: 80
+  - OD: 104
+    DN: 100
+  - OD: 129
+    DN: 125
+  - OD: 154
+    DN: 150
+  - OD: 204
+    DN: 200
+
+# DIN EN 10220 常用 Series 1 工业钢管尺寸。
+EN10220:
+  - OD: 10.2
+    DN: 6
+  - OD: 13.5
+    DN: 8
+  - OD: 17.2
+    DN: 10
+  - OD: 21.3
+    DN: 15
+  - OD: 26.9
+    DN: 20
+  - OD: 33.7
+    DN: 25
+  - OD: 42.4
+    DN: 32
+  - OD: 48.3
+    DN: 40
+  - OD: 60.3
+    DN: 50
+  - OD: 76.1
+    DN: 65
+  - OD: 88.9
+    DN: 80
+  - OD: 114.3
+    DN: 100
+  - OD: 139.7
+    DN: 125
+  - OD: 168.3
+    DN: 150
+  - OD: 219.1
+    DN: 200
+  - OD: 273
+    DN: 250
+  - OD: 323.9
+    DN: 300
+  - OD: 355.6
+    DN: 350
+  - OD: 406.4
+    DN: 400
+  - OD: 457
+    DN: 450
+  - OD: 508
+    DN: 500
+  - OD: 610
+    DN: 600

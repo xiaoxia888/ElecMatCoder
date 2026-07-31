@@ -67,15 +67,23 @@ class SizeProcessor:
         self,
         od_mapping_path: Optional[Union[str, Path]] = None,
         nps_config_path: Optional[Union[str, Path]] = None,
+        standard_od_dn_path: Optional[Union[str, Path]] = None,
     ):
         self.od_mapping_path = Path(od_mapping_path) if od_mapping_path else Path(__file__).parent.parent / "config" / "壁厚对照汇总表.xlsx"
         self.nps_config_path = Path(nps_config_path) if nps_config_path else Path(__file__).parent.parent / "config" / "encoder_config.yaml"
+        self.standard_od_dn_path = (
+            Path(standard_od_dn_path)
+            if standard_od_dn_path
+            else Path(__file__).parent.parent / "config" / "standard_od_dn_overrides.yaml"
+        )
         self._od_to_dn_mapping = {}
         self._od_candidate_rows = {}
+        self._standard_od_dn_mapping: Dict[str, Dict[float, int]] = {}
         self._nps_to_dn_mapping = {}
         self._common_dn_values = set()
         self._pressure_suffix_values = set()
         self._load_od_mapping_for_instance()
+        self._load_standard_od_dn_mapping_for_instance()
         self._load_nps_mapping_for_instance()
 
     def _load_od_mapping_for_instance(self) -> None:
@@ -111,6 +119,45 @@ class SizeProcessor:
                     continue
         except Exception as e:
             logger.warning(f"[SizeProcessor] 加载管外径映射失败: {e}")
+
+    def _load_standard_od_dn_mapping_for_instance(self) -> None:
+        """加载按最终规范主编码维护的 OD -> DN 补充映射。"""
+        try:
+            if not self.standard_od_dn_path.exists():
+                logger.warning(
+                    "[SizeProcessor] 规范OD映射文件不存在: %s",
+                    self.standard_od_dn_path,
+                )
+                return
+
+            with open(self.standard_od_dn_path, "r", encoding="utf-8") as f:
+                config = yaml.safe_load(f) or {}
+
+            if not isinstance(config, dict):
+                raise ValueError("配置根节点必须是规范编码到映射列表的对象")
+
+            for raw_standard_code, raw_items in config.items():
+                standard_code = str(raw_standard_code or "").strip().upper()
+                if not standard_code or not isinstance(raw_items, list):
+                    continue
+
+                mappings: Dict[float, int] = {}
+                for raw_item in raw_items:
+                    if not isinstance(raw_item, dict):
+                        continue
+                    try:
+                        od = float(raw_item.get("OD"))
+                        dn = int(float(raw_item.get("DN")))
+                    except (TypeError, ValueError):
+                        continue
+                    if od <= 0 or dn <= 0:
+                        continue
+                    mappings[od] = dn
+
+                if mappings:
+                    self._standard_od_dn_mapping[standard_code] = mappings
+        except Exception as e:
+            logger.warning(f"[SizeProcessor] 加载规范OD映射失败: {e}")
 
     def _load_nps_mapping_for_instance(self) -> None:
         """实例化加载 NPS -> DN 映射。"""
@@ -345,19 +392,53 @@ class SizeProcessor:
         )
         return int(best_dn)
 
-    def _od_to_dn(self, od_value: float, thickness_mm: Optional[float] = None) -> Optional[int]:
+    def _lookup_standard_od_dn(
+        self,
+        od_value: float,
+        standard_codes: Optional[List[str]] = None,
+    ) -> Optional[int]:
+        """按最终规范主编码精确查询补充 OD -> DN 映射。"""
+        for raw_code in standard_codes or []:
+            standard_code = str(raw_code or "").strip().upper()
+            if not standard_code:
+                continue
+            mappings = self._standard_od_dn_mapping.get(standard_code)
+            if not mappings:
+                continue
+            for configured_od, dn in mappings.items():
+                if abs(float(configured_od) - float(od_value)) <= 1e-6:
+                    logger.debug(
+                        "[SizeProcessor] 规范OD补充映射: standard=%s, OD=%s -> DN=%s",
+                        standard_code,
+                        od_value,
+                        dn,
+                    )
+                    return int(dn)
+        return None
+
+    def _od_to_dn(
+        self,
+        od_value: float,
+        thickness_mm: Optional[float] = None,
+        standard_codes: Optional[List[str]] = None,
+    ) -> Optional[int]:
         """
         将管外径转换为公称直径。
 
         规则：
-        1. 先精确匹配映射表
-        2. 再做小容差匹配（±0.5mm）
-        3. 小尺寸（OD < 355.6mm）若未命中表，则允许从输入 OD 上下两侧选择
+        1. 先按最终规范主编码精确查询补充映射
+        2. 再精确匹配通用映射表
+        3. 再做小容差匹配（±0.5mm）
+        4. 小尺寸（OD < 355.6mm）若未命中表，则允许从输入 OD 上下两侧选择
            绝对距离最近的表内 OD，但通用回退候选必须满足 DN <= 输入 OD
-        4. 大尺寸（OD >= 355.6mm）若未命中表，则按标准大口径 NPS 序列近似映射：
+        5. 大尺寸（OD >= 355.6mm）若未命中表，则按标准大口径 NPS 序列近似映射：
            先算 NPS≈OD/25.4，再映射到 `nps_to_dn` 中最近的标准 NPS
-        5. 若仍未命中，则返回 None，由上层决定是否回退原始 OD
+        6. 若仍未命中，则返回 None，由上层决定是否回退原始 OD
         """
+        standard_dn = self._lookup_standard_od_dn(od_value, standard_codes)
+        if standard_dn is not None:
+            return standard_dn
+
         if not self._od_to_dn_mapping:
             return None
         
@@ -514,7 +595,12 @@ class SizeProcessor:
         except Exception:
             return ""
 
-    def _build_positioned_size_items(self, value: Dict[str, Any], original_text: str = "") -> List[Dict[str, Any]]:
+    def _build_positioned_size_items(
+        self,
+        value: Dict[str, Any],
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> List[Dict[str, Any]]:
         """
         构建带位置的尺寸对象列表。
 
@@ -552,7 +638,11 @@ class SizeProcessor:
                     od = self._extract_numeric_value(raw)
                     if od is None:
                         continue
-                    dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, od_idx))
+                    dn = self._od_to_dn(
+                        od,
+                        thickness_mm=self._pick_mm_for_index(mm_context, od_idx),
+                        standard_codes=standard_codes,
+                    )
                     od_idx += 1
                     if dn is not None:
                         converted_items.append({
@@ -655,19 +745,39 @@ class SizeProcessor:
             return length_token
         return f"{code}{length_token}"
 
-    def _collect_structured_values(self, value: Dict[str, Any], original_text: str = "") -> List[float]:
+    def _collect_structured_values(
+        self,
+        value: Dict[str, Any],
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> List[float]:
         """
         处理新 schema 的 SIZE 结构：
         - DN 直接取值
         - OD / INCH 先转换为 DN
         - 最终统一按原始出现顺序去重
         """
-        ordered_values = self._collect_ordered_item_values(value)
+        ordered_values = self._collect_ordered_item_values(
+            value,
+            standard_codes=standard_codes,
+        )
         if ordered_values:
             return self._sort_sizes(ordered_values)
-        return self._sort_sizes([float(item["encode_value"]) for item in self._build_positioned_size_items(value, original_text=original_text)])
+        return self._sort_sizes([
+            float(item["encode_value"])
+            for item in self._build_positioned_size_items(
+                value,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
+        ])
 
-    def _analyze_structured_values(self, value: Dict[str, Any], original_text: str = "") -> Tuple[List[float], bool]:
+    def _analyze_structured_values(
+        self,
+        value: Dict[str, Any],
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> Tuple[List[float], bool]:
         """
         分析结构化 SIZE 值。
 
@@ -676,14 +786,28 @@ class SizeProcessor:
         2. 若同时存在 OD/INCH，先换算成 DN；只要换算结果不在显式 DN 集合中，则标记待审。
         3. 若没有 DN，则优先按映射、公差或向下最近工程直径将 OD/INCH 换算为 DN 后编码。
         """
-        ordered_values = self._collect_ordered_item_values(value)
+        ordered_values = self._collect_ordered_item_values(
+            value,
+            standard_codes=standard_codes,
+        )
         if ordered_values:
             return self._sort_sizes(ordered_values), False
 
-        merged = self._sort_sizes([float(item["encode_value"]) for item in self._build_positioned_size_items(value, original_text=original_text)])
+        merged = self._sort_sizes([
+            float(item["encode_value"])
+            for item in self._build_positioned_size_items(
+                value,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
+        ])
         return merged, False
 
-    def _collect_ordered_item_values(self, value: Dict[str, Any]) -> List[float]:
+    def _collect_ordered_item_values(
+        self,
+        value: Dict[str, Any],
+        standard_codes: Optional[List[str]] = None,
+    ) -> List[float]:
         items = value.get("_ITEMS")
         if not isinstance(items, list):
             return []
@@ -715,7 +839,11 @@ class SizeProcessor:
             elif subtype == "OD":
                 od = self._extract_numeric_value(raw_value)
                 if od is not None:
-                    dn = self._od_to_dn(od, thickness_mm=self._pick_mm_for_index(mm_context, od_idx))
+                    dn = self._od_to_dn(
+                        od,
+                        thickness_mm=self._pick_mm_for_index(mm_context, od_idx),
+                        standard_codes=standard_codes,
+                    )
                     encoded = float(dn) if dn is not None else float(od)
                     od_idx += 1
             elif subtype == "INCH":
@@ -730,7 +858,11 @@ class SizeProcessor:
             result.append(float(encoded))
         return result
     
-    def parse(self, value: str) -> SizeResult:
+    def parse(
+        self,
+        value: str,
+        standard_codes: Optional[List[str]] = None,
+    ) -> SizeResult:
         """
         解析尺寸值，返回数值列表
         
@@ -852,8 +984,8 @@ class SizeProcessor:
             od1, od2 = float(phi_cross_match.group(1)), float(phi_cross_match.group(2))
             
             # 尝试转换为公称直径
-            dn1 = self._od_to_dn(od1)
-            dn2 = self._od_to_dn(od2)
+            dn1 = self._od_to_dn(od1, standard_codes=standard_codes)
+            dn2 = self._od_to_dn(od2, standard_codes=standard_codes)
             
             if dn1 is not None and dn2 is not None:
                 values = self._sort_sizes([float(dn1), float(dn2)])
@@ -868,7 +1000,7 @@ class SizeProcessor:
         phi_match = re.search(phi_pattern, value)
         if phi_match:
             od = float(phi_match.group(1))
-            dn = self._od_to_dn(od)
+            dn = self._od_to_dn(od, standard_codes=standard_codes)
             size = float(dn) if dn is not None else od
             return SizeResult(values=[size], original=value, format_type='phi')
         
@@ -945,7 +1077,12 @@ class SizeProcessor:
         
         return 'x'.join(formatted)
     
-    def process(self, value: Any, original_text: str = "") -> str:
+    def process(
+        self,
+        value: Any,
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> str:
         """
         处理单个尺寸值，返回编码字符串
         
@@ -957,12 +1094,20 @@ class SizeProcessor:
         """
         length_prefix = self._extract_length_prefix(value, original_text=original_text)
         if isinstance(value, dict):
-            values, _ = self._analyze_structured_values(value, original_text=original_text)
+            values, _ = self._analyze_structured_values(
+                value,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
             return self._append_length_suffix(self.format_code(values), length_prefix)
         if isinstance(value, list):
-            return self.process_multi(value, original_text=original_text)
+            return self.process_multi(
+                value,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
 
-        result = self.parse(str(value))
+        result = self.parse(str(value), standard_codes=standard_codes)
         return self._append_length_suffix(self.format_code(result.values), length_prefix)
 
     def extract_by_rules(self, text: str) -> RuleSizeExtraction:
@@ -1957,7 +2102,12 @@ class SizeProcessor:
             "span": match.span(2),
         }
 
-    def process_multi(self, values: Any, original_text: str = "") -> str:
+    def process_multi(
+        self,
+        values: Any,
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> str:
         """
         处理多个尺寸值
         
@@ -1979,10 +2129,18 @@ class SizeProcessor:
         length_prefix = self._extract_length_prefix(values, original_text=original_text)
 
         if isinstance(values, dict):
-            return self.process(values, original_text=original_text)
+            return self.process(
+                values,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
 
         if not isinstance(values, list):
-            return self.process(values, original_text=original_text)
+            return self.process(
+                values,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
 
         # 新 schema：若包含结构化 dict，则按显式 DN 优先、其他尺寸换算校验的逻辑处理
         if any(isinstance(v, dict) for v in values):
@@ -1991,10 +2149,19 @@ class SizeProcessor:
                 if not v:
                     continue
                 if isinstance(v, dict):
-                    normalized_values, _ = self._analyze_structured_values(v, original_text=original_text)
+                    normalized_values, _ = self._analyze_structured_values(
+                        v,
+                        original_text=original_text,
+                        standard_codes=standard_codes,
+                    )
                     all_values.extend(normalized_values)
                 else:
-                    all_values.extend(self.parse(str(v).strip()).values)
+                    all_values.extend(
+                        self.parse(
+                            str(v).strip(),
+                            standard_codes=standard_codes,
+                        ).values
+                    )
             return self._append_length_suffix(self.format_code(self._sort_sizes(all_values)), length_prefix)
         
         # 分离不同格式
@@ -2005,7 +2172,7 @@ class SizeProcessor:
         for v in values:
             if not v or not v.strip():
                 continue
-            result = self.parse(v.strip())
+            result = self.parse(v.strip(), standard_codes=standard_codes)
             if result.format_type == 'dn':
                 dn_results.append(result)
             elif result.format_type == 'phi':
@@ -2033,7 +2200,12 @@ class SizeProcessor:
 
         return length_prefix
 
-    def process_multi_with_review(self, values: Any, original_text: str = "") -> Tuple[str, bool]:
+    def process_multi_with_review(
+        self,
+        values: Any,
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> Tuple[str, bool]:
         """
         返回 SIZE 编码和是否需要审核。
         """
@@ -2043,11 +2215,19 @@ class SizeProcessor:
         length_prefix = self._extract_length_prefix(values, original_text=original_text)
 
         if isinstance(values, dict):
-            normalized_values, need_review = self._analyze_structured_values(values, original_text=original_text)
+            normalized_values, need_review = self._analyze_structured_values(
+                values,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
             return self._append_length_suffix(self.format_code(normalized_values), length_prefix), need_review
 
         if not isinstance(values, list):
-            return self.process(values), False
+            return self.process(
+                values,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            ), False
 
         if any(isinstance(v, dict) for v in values):
             all_values: List[float] = []
@@ -2056,14 +2236,27 @@ class SizeProcessor:
                 if not v:
                     continue
                 if isinstance(v, dict):
-                    normalized_values, item_review = self._analyze_structured_values(v, original_text=original_text)
+                    normalized_values, item_review = self._analyze_structured_values(
+                        v,
+                        original_text=original_text,
+                        standard_codes=standard_codes,
+                    )
                     all_values.extend(normalized_values)
                     need_review = need_review or item_review
                 else:
-                    all_values.extend(self.parse(str(v).strip()).values)
+                    all_values.extend(
+                        self.parse(
+                            str(v).strip(),
+                            standard_codes=standard_codes,
+                        ).values
+                    )
             return self._append_length_suffix(self.format_code(self._sort_sizes(all_values)), length_prefix), need_review
 
-        return self.process_multi(values, original_text=original_text), False
+        return self.process_multi(
+            values,
+            original_text=original_text,
+            standard_codes=standard_codes,
+        ), False
 
     def extract_dn_values(self, value: Any, original_text: str = "") -> List[str]:
         """

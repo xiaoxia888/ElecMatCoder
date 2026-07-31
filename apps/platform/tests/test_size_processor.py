@@ -1,5 +1,6 @@
 import unittest
 
+from src.encoder.pipe_encoder import EncodedFieldResult, PipeEncoderBase
 from src.encoder.processors.rule_extraction import extract_size_and_thickness_by_rules
 from src.encoder.processors.size_processor import SizeProcessor
 from src.tokenizer_utils.preprocessor import TextPreprocessor
@@ -8,6 +9,40 @@ from src.domain.common.dimension_separator import (
     normalize_multiplication_separators,
     split_by_multiplication_separator,
 )
+
+
+class _StandardAwareSizeEncoder(PipeEncoderBase):
+    def __init__(self) -> None:
+        super().__init__()
+        self.processing_trace = []
+        self.received_standard_codes = []
+
+    def _should_use_type_combined(self) -> bool:
+        return False
+
+    def _process_standard_multi(self, values, modifier_map=None, original_text=""):
+        self.processing_trace.append("STANDARD")
+        return EncodedFieldResult(
+            field_type="STANDARD",
+            code="DIN10357II",
+            codes=["DIN10357II"],
+            detail_items=[{"code": "DIN10357II", "base_code": "DIN10357"}],
+        )
+
+    def _encode_size_multi(self, values, original_text="", standard_codes=None):
+        self.processing_trace.append("SIZE")
+        self.received_standard_codes = list(standard_codes or [])
+        code, need_review = self.size_processor.process_multi_with_review(
+            values,
+            original_text=original_text,
+            standard_codes=standard_codes,
+        )
+        return EncodedFieldResult(
+            field_type="SIZE",
+            code=code,
+            codes=[code] if code else [],
+            need_review=need_review,
+        )
 
 
 class SizeProcessorTest(unittest.TestCase):
@@ -60,6 +95,113 @@ class SizeProcessorTest(unittest.TestCase):
         }
 
         self.assertEqual(processor._od_to_dn(19), 15)
+
+    def test_standard_specific_od_mapping_precedes_generic_fallback(self) -> None:
+        self.assertEqual(
+            self.processor._od_to_dn(23, standard_codes=["DIN10357"]),
+            20,
+        )
+        self.assertEqual(self.processor._od_to_dn(23), 15)
+
+    def test_en10357_a_series_od_mapping(self) -> None:
+        expected = {
+            13: 10,
+            23: 20,
+            85: 80,
+            204: 200,
+        }
+
+        for od, dn in expected.items():
+            with self.subTest(od=od):
+                self.assertEqual(
+                    self.processor._lookup_standard_od_dn(od, ["EN10357"]),
+                    dn,
+                )
+
+    def test_din11850_supports_reihe_1_and_reihe_2(self) -> None:
+        expected = {
+            12: 10,
+            13: 10,
+            52: 50,
+            53: 50,
+        }
+
+        for od, dn in expected.items():
+            with self.subTest(od=od):
+                self.assertEqual(
+                    self.processor._lookup_standard_od_dn(od, ["DIN11850"]),
+                    dn,
+                )
+
+    def test_din11866_a_series_od_mapping(self) -> None:
+        self.assertEqual(
+            self.processor._lookup_standard_od_dn(23, ["DIN11866A"]),
+            20,
+        )
+
+    def test_en10220_series_1_od_mapping(self) -> None:
+        expected = {
+            10.2: 6,
+            17.2: 10,
+            60.3: 50,
+            114.3: 100,
+            273: 250,
+            457: 450,
+            610: 600,
+        }
+
+        for od, dn in expected.items():
+            with self.subTest(od=od):
+                self.assertEqual(
+                    self.processor._lookup_standard_od_dn(od, ["EN10220"]),
+                    dn,
+                )
+
+    def test_delivery_standards_do_not_force_od_mapping(self) -> None:
+        for standard_code in (
+            "DIN17455",
+            "DIN17457",
+            "EN102177",
+            "EN102962",
+            "EN10312",
+            "ENI1127",
+        ):
+            with self.subTest(standard_code=standard_code):
+                self.assertIsNone(
+                    self.processor._lookup_standard_od_dn(85, [standard_code])
+                )
+
+    def test_structured_od_uses_final_standard_base_code(self) -> None:
+        size_value = {
+            "OD": ["23"],
+            "_ITEMS": [{"type": "OD", "value": "23"}],
+        }
+
+        self.assertEqual(
+            self.processor.process(
+                size_value,
+                standard_codes=["DIN10357"],
+            ),
+            "20",
+        )
+
+    def test_standard_is_processed_before_size_without_changing_code_order(self) -> None:
+        encoder = _StandardAwareSizeEncoder()
+        result = encoder.encode(
+            {
+                "SIZE": {
+                    "OD": ["23"],
+                    "_ITEMS": [{"type": "OD", "value": "23"}],
+                },
+                "STANDARD": [{"BODY": "DIN 10357", "GRADE": "II"}],
+            },
+            material_category="直管",
+        )
+
+        self.assertEqual(encoder.processing_trace, ["STANDARD", "SIZE"])
+        self.assertEqual(encoder.received_standard_codes, ["DIN10357"])
+        self.assertEqual(result.fields["SIZE"].code, "20")
+        self.assertEqual(result.final_code, "20DIN10357II")
 
     def test_en10374_reducer_uses_nearest_valid_od_fallback(self) -> None:
         text = (

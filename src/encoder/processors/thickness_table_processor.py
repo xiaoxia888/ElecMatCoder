@@ -172,6 +172,7 @@ class ThicknessTableProcessor:
                 'converted': str(mm or '').strip(),
                 'dn': dn_part,
                 'source_type': str(thickness_item.get('type') or '').strip().upper(),
+                'role': str(thickness_item.get('role') or '').strip().upper(),
                 'target_standard': target,
             })
 
@@ -286,6 +287,7 @@ class ThicknessTableProcessor:
                 "type": subtype or self._infer_thickness_item_type(normalized),
                 "value": str(raw_value or "").strip(),
                 "normalized": normalized,
+                "role": str(item.get("role") or "").strip().upper(),
             })
         return result
 

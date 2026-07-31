@@ -1,0 +1,474 @@
+{
+  "schema_version": "v3",
+  "schema": {
+    "MATERIAL": [
+      {
+        "PART": "物理部件",
+        "VALUE": "原文语义完整的材质表达",
+        "SPECIAL_REQ": [
+          "参与材质编码的附加要求"
+        ]
+      }
+    ],
+    "STANDARD": [
+      {
+        "BODY": "产品/制造/尺寸/检验规范编码"
+      }
+    ],
+    "removed_fields": [
+      "MATERIAL[].STANDARD",
+      "MATERIAL[].GRADE",
+      "MATERIAL[].CLASS",
+      "MATERIAL_RELATION"
+    ]
+  },
+  "source": {
+    "train": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/材质规范/结构化原始牌号/重新划分_v2/材质规范_结构化原始牌号_train.json",
+    "val": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/材质规范/结构化原始牌号/重新划分_v2/材质规范_结构化原始牌号_val.json",
+    "train_rows": 69720,
+    "val_rows": 7747
+  },
+  "output": {
+    "train_rows": 69718,
+    "val_rows": 7747,
+    "review_rows": 0,
+    "removed_rows": 1,
+    "rows_preserved": 77465,
+    "duplicate_inputs_removed": 1
+  },
+  "conversion_statistics": {
+    "从原文恢复完整VALUE": 119,
+    "原关系_ALTERNATIVE": 7,
+    "原关系_COMPOSITE": 3002,
+    "原关系_DUAL_CERTIFIED": 950,
+    "原关系_SINGLE": 73507,
+    "同部件多标签已合并": 997,
+    "新部件数_1": 74504,
+    "新部件数_2": 2888,
+    "新部件数_3": 74,
+    "材质修复_恢复原文明示的JIS SUS牌号前缀": 139,
+    "材质修复_恢复原文明示的PE100等级": 2,
+    "材质修复_恢复原文明示的SS牌号前缀": 58,
+    "材质修复_恢复双牌号第二项前缀": 65,
+    "材质修复_移除牌号后的Class残片": 2,
+    "材质修复_补充4PE加强级外防腐": 2,
+    "规则删除项": 1,
+    "规范修复_删除原文无证据的MS97": 165,
+    "规范修复_补充原文明示的02S403": 2,
+    "部件_BODY": 77273,
+    "部件_FLANGE": 95,
+    "部件_INNER_PIPE": 193,
+    "部件_LINING": 2748,
+    "部件_OUTER_PIPE": 193,
+    "重复输入已删除": 1
+  },
+  "part_distribution": {
+    "BODY": 77272,
+    "LINING": 2748,
+    "INNER_PIPE": 193,
+    "OUTER_PIPE": 193,
+    "FLANGE": 95
+  },
+  "top_values": [
+    {
+      "value": "20",
+      "count": 16957
+    },
+    {
+      "value": "ASTM A105",
+      "count": 5337
+    },
+    {
+      "value": "S30408",
+      "count": 4687
+    },
+    {
+      "value": "06Cr19Ni10",
+      "count": 3646
+    },
+    {
+      "value": "SF304",
+      "count": 3507
+    },
+    {
+      "value": "ASTM A234 WPB",
+      "count": 2837
+    },
+    {
+      "value": "S31603",
+      "count": 2559
+    },
+    {
+      "value": "CF415",
+      "count": 2451
+    },
+    {
+      "value": "S30403",
+      "count": 2291
+    },
+    {
+      "value": "CF415K",
+      "count": 2133
+    },
+    {
+      "value": "PTFE",
+      "count": 2031
+    },
+    {
+      "value": "ASTM A403 WP304",
+      "count": 1819
+    },
+    {
+      "value": "ASTM A106 Gr.B",
+      "count": 1660
+    },
+    {
+      "value": "SF304L",
+      "count": 1318
+    },
+    {
+      "value": "ASTM A182 F304",
+      "count": 1181
+    },
+    {
+      "value": "L245",
+      "count": 1065
+    },
+    {
+      "value": "ASTM A403 WP316L",
+      "count": 997
+    },
+    {
+      "value": "ASTM A350 LF2",
+      "count": 946
+    },
+    {
+      "value": "ASTM A420 WPL6",
+      "count": 936
+    },
+    {
+      "value": "SF321",
+      "count": 934
+    },
+    {
+      "value": "022Cr17Ni12Mo2",
+      "count": 899
+    },
+    {
+      "value": "Q235B",
+      "count": 887
+    },
+    {
+      "value": "Q245R",
+      "count": 865
+    },
+    {
+      "value": "304",
+      "count": 746
+    },
+    {
+      "value": "S32168",
+      "count": 742
+    },
+    {
+      "value": "ASTM A182 F316L",
+      "count": 736
+    },
+    {
+      "value": "20G",
+      "count": 652
+    },
+    {
+      "value": "SF316L",
+      "count": 644
+    },
+    {
+      "value": "ASTM A403 WP304L",
+      "count": 618
+    },
+    {
+      "value": "15CrMo",
+      "count": 537
+    },
+    {
+      "value": "ASTM A312 TP304",
+      "count": 527
+    },
+    {
+      "value": "15CrMoG",
+      "count": 527
+    },
+    {
+      "value": "ASTM A182 F304L",
+      "count": 436
+    },
+    {
+      "value": "F304",
+      "count": 427
+    },
+    {
+      "value": "16Mn",
+      "count": 346
+    },
+    {
+      "value": "ASTM A333 Gr.6",
+      "count": 317
+    },
+    {
+      "value": "FRP",
+      "count": 312
+    },
+    {
+      "value": "AF12G",
+      "count": 311
+    },
+    {
+      "value": "SF2205",
+      "count": 300
+    },
+    {
+      "value": "ASTM A182 F304/304L",
+      "count": 288
+    },
+    {
+      "value": "ASTM A312 TP316L",
+      "count": 258
+    },
+    {
+      "value": "ASTM A234 WP11",
+      "count": 256
+    },
+    {
+      "value": "PVC",
+      "count": 247
+    },
+    {
+      "value": "06Cr18Ni11Ti",
+      "count": 234
+    },
+    {
+      "value": "ASTM A403 WP304/304L",
+      "count": 233
+    },
+    {
+      "value": "316L",
+      "count": 228
+    },
+    {
+      "value": "LF485K2",
+      "count": 219
+    },
+    {
+      "value": "TA2",
+      "count": 210
+    },
+    {
+      "value": "S32168 Gr.III",
+      "count": 187
+    },
+    {
+      "value": "ASTM A182 F11",
+      "count": 181
+    },
+    {
+      "value": "S22053",
+      "count": 178
+    },
+    {
+      "value": "Q345E",
+      "count": 174
+    },
+    {
+      "value": "AISI 316L",
+      "count": 174
+    },
+    {
+      "value": "L245N",
+      "count": 166
+    },
+    {
+      "value": "20 Gr.III",
+      "count": 166
+    },
+    {
+      "value": "2205",
+      "count": 158
+    },
+    {
+      "value": "CF370",
+      "count": 157
+    },
+    {
+      "value": "ASTM A312 TP304/304L",
+      "count": 152
+    },
+    {
+      "value": "X5CrNi18-10",
+      "count": 132
+    },
+    {
+      "value": "20 Gr.II",
+      "count": 131
+    },
+    {
+      "value": "S31608/S31603",
+      "count": 131
+    },
+    {
+      "value": "ASTM A312 TP304L",
+      "count": 130
+    },
+    {
+      "value": "API 5L Gr.B",
+      "count": 121
+    },
+    {
+      "value": "PP",
+      "count": 116
+    },
+    {
+      "value": "搪玻璃管",
+      "count": 116
+    },
+    {
+      "value": "2205(A182 F51)",
+      "count": 113
+    },
+    {
+      "value": "ASTM A182 F321",
+      "count": 112
+    },
+    {
+      "value": "CS",
+      "count": 111
+    },
+    {
+      "value": "16MnD",
+      "count": 109
+    },
+    {
+      "value": "1.4301",
+      "count": 109
+    },
+    {
+      "value": "ASTM A335 P11",
+      "count": 107
+    },
+    {
+      "value": "SUS 316",
+      "count": 106
+    },
+    {
+      "value": "1.4404",
+      "count": 105
+    },
+    {
+      "value": "ASTM A403 WP321",
+      "count": 104
+    },
+    {
+      "value": "X6CrNiTi18-10(1.4541)",
+      "count": 99
+    },
+    {
+      "value": "F316L",
+      "count": 98
+    },
+    {
+      "value": "12Cr5MoNT",
+      "count": 98
+    },
+    {
+      "value": "衬胶",
+      "count": 98
+    },
+    {
+      "value": "15CrMo Gr.III",
+      "count": 96
+    },
+    {
+      "value": "PE",
+      "count": 91
+    },
+    {
+      "value": "ASTM A403 WP304H",
+      "count": 89
+    },
+    {
+      "value": "Q235-B",
+      "count": 85
+    },
+    {
+      "value": "16MnDG",
+      "count": 79
+    },
+    {
+      "value": "ASTM A516 Gr.70",
+      "count": 73
+    },
+    {
+      "value": "STEEL REINFORCED POLYETHYLENE",
+      "count": 73
+    },
+    {
+      "value": "S30408 Gr.II",
+      "count": 71
+    },
+    {
+      "value": "ASTM A182 F347H",
+      "count": 68
+    },
+    {
+      "value": "GLASS",
+      "count": 67
+    },
+    {
+      "value": "ZECOR-310M",
+      "count": 66
+    },
+    {
+      "value": "SUS F316",
+      "count": 64
+    },
+    {
+      "value": "022Cr19Ni10",
+      "count": 64
+    },
+    {
+      "value": "ASTM A815 WPS32205",
+      "count": 64
+    },
+    {
+      "value": "ASTM A403 WP347H",
+      "count": 62
+    },
+    {
+      "value": "ASTM A358 304",
+      "count": 60
+    },
+    {
+      "value": "06Cr17Ni12Mo2",
+      "count": 59
+    },
+    {
+      "value": "ASTM A182 F316/F316L",
+      "count": 59
+    },
+    {
+      "value": "16Mn Gr.II",
+      "count": 58
+    },
+    {
+      "value": "ASTM A53 Gr.B",
+      "count": 56
+    },
+    {
+      "value": "X2CrNiMo17-12-2",
+      "count": 54
+    },
+    {
+      "value": "Q345R",
+      "count": 53
+    }
+  ]
+}

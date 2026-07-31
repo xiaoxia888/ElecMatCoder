@@ -41,6 +41,12 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
       --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2400-种类
 
+  # 新结构材质规范模型交互模式
+  python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
+      --task material_standard \
+      --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-4000-材质规范v2
+
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task code \
@@ -99,6 +105,7 @@ STRUCTURAL_INSTRUCTION = (
     "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，"
     "并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。"
     "LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，"
+    "描述中同时存在SCHEDULE和MM类型壁厚，需要按照描述原文顺序同时提取出，"
     "不要输出 JSON 以外的内容。"
 )
 CODE_INSTRUCTION = "你是工业管道材料字段编码助手。请根据字段类型和原始字段值，输出唯一的标准化编码。只输出编码，不要解释。"
@@ -109,11 +116,12 @@ DEFAULT_INSTRUCTIONS = {
     "code": CODE_INSTRUCTION,
 }
 
-TYPE_INSTRUCTION_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "prompt"
-    / "type_extraction_sft_instruction_v1.txt"
-)
+PROMPT_DIR = Path(__file__).resolve().parent.parent / "prompt"
+TASK_INSTRUCTION_PATHS = {
+    "type": PROMPT_DIR / "type_extraction_sft_instruction_v1.txt",
+    "material_standard": PROMPT_DIR / "material_standard_extraction_sft_instruction_v2.txt",
+}
+JSON_TASKS = frozenset({"extract", "type", "structural", "material_standard"})
 
 CODE_FIELDS = ("TYPE", "SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "STANDARD")
 
@@ -124,13 +132,14 @@ def resolve_instruction(task: str, override: str = "") -> tuple[str, Path | None
     if custom_instruction:
         return custom_instruction, None
 
-    if task == "type":
-        if not TYPE_INSTRUCTION_PATH.is_file():
-            raise FileNotFoundError(f"种类模型提示词文件不存在: {TYPE_INSTRUCTION_PATH}")
-        instruction = TYPE_INSTRUCTION_PATH.read_text(encoding="utf-8").strip()
+    instruction_path = TASK_INSTRUCTION_PATHS.get(task)
+    if instruction_path is not None:
+        if not instruction_path.is_file():
+            raise FileNotFoundError(f"{task} 提示词文件不存在: {instruction_path}")
+        instruction = instruction_path.read_text(encoding="utf-8").strip()
         if not instruction:
-            raise ValueError(f"种类模型提示词文件为空: {TYPE_INSTRUCTION_PATH}")
-        return instruction, TYPE_INSTRUCTION_PATH
+            raise ValueError(f"{task} 提示词文件为空: {instruction_path}")
+        return instruction, instruction_path
 
     return DEFAULT_INSTRUCTIONS[task], None
 
@@ -459,7 +468,7 @@ def interactive_mode(
         elapsed = time.time() - t0
 
         print(f"\n耗时: {elapsed:.2f}s")
-        if task in {"extract", "type", "structural"}:
+        if task in JSON_TASKS:
             parsed = parse_json_output(raw_output)
             if parsed:
                 print(json.dumps(parsed, ensure_ascii=False, indent=2))
@@ -752,7 +761,7 @@ def predict_mode(
         )
         elapsed = time.time() - t0
 
-        if task in {"extract", "type", "structural"}:
+        if task in JSON_TASKS:
             predicted = parse_json_output(raw_output)
             if predicted is None:
                 fail_count += 1
@@ -907,7 +916,7 @@ def excel_predict_mode(
             data.at[row_index, "模型原始输出"] = raw_output
             data.at[row_index, "模型耗时_秒"] = round(elapsed, 3)
 
-            if task in {"extract", "type", "structural"}:
+            if task in JSON_TASKS:
                 predicted = parse_json_output(raw_output)
                 if predicted is None:
                     status = "PARSE_FAIL"
@@ -965,10 +974,11 @@ def main() -> None:
     )
     parser.add_argument(
         "--task",
-        choices=["extract", "type", "structural", "code"],
+        choices=["extract", "type", "material_standard", "structural", "code"],
         default="extract",
         help=(
             "评测任务类型。extract=通用结构化抽取；type=种类抽取（自动读取种类提示词文件）；"
+            "material_standard=新结构材质规范抽取（自动读取材质规范提示词文件）；"
             "structural=尺寸/长度/壁厚/磅级抽取；code=字段编码纯文本"
         ),
     )
@@ -1041,7 +1051,7 @@ def main() -> None:
         parser.error("--test-file 和 --excel-file 不能同时使用")
     instruction, instruction_path = resolve_instruction(args.task, args.instruction)
     if instruction_path:
-        print(f"种类模型提示词: {instruction_path}")
+        print(f"{args.task} 模型提示词: {instruction_path}")
     max_new_tokens = args.max_new_tokens
     if max_new_tokens is None:
         max_new_tokens = 64 if args.task == "code" else 512
@@ -1108,7 +1118,7 @@ def main() -> None:
                 max_new_tokens=max_new_tokens,
                 temperature=args.temperature,
                 top_p=args.top_p,
-                preserve_list_order=args.task == "structural",
+                preserve_list_order=args.task in {"structural", "material_standard"},
             )
     else:
         interactive_mode(

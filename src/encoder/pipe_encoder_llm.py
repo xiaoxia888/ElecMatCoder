@@ -6,7 +6,7 @@ LLM 管道材料编码器
 
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from .pipe_encoder import PipeEncoderBase, EncodedFieldResult
 from .processors import get_type_encoder, get_material_encoder
@@ -300,9 +300,18 @@ class LlmPipeEncoder(PipeEncoderBase):
             }
         return None
 
-    def _encode_size_multi(self, values: List[Any], original_text: str = "") -> EncodedFieldResult:
+    def _encode_size_multi(
+        self,
+        values: List[Any],
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> EncodedFieldResult:
         display_values = [self._stringify_field_value(v) for v in values if self._stringify_field_value(v)]
-        merged, size_need_review = self.size_processor.process_multi_with_review(values, original_text=original_text)
+        merged, size_need_review = self.size_processor.process_multi_with_review(
+            values,
+            original_text=original_text,
+            standard_codes=standard_codes,
+        )
         normalized_merged = merged
         final_code = merged
         sim = 1.0 if final_code else 0.0

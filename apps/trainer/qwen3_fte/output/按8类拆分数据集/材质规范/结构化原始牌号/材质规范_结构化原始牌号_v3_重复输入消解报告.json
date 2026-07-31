@@ -1,0 +1,52 @@
+[
+  {
+    "source": "train",
+    "input": "管子 DN2200焊接钢管 GB/T9711.1-1997(HG20553Ib) BE THK=12mm 100% RT SY/T5037-Q235B",
+    "candidate_indices": [
+      62483,
+      69524
+    ],
+    "chosen_index": 69524,
+    "reason": "同输入标签冲突，选择全数据中更一致的规范编码",
+    "chosen_output": {
+      "MATERIAL": [
+        {
+          "PART": "BODY",
+          "VALUE": "Q235B",
+          "SPECIAL_REQ": []
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT9711.1"
+        },
+        {
+          "BODY": "HGT20553Ib"
+        },
+        {
+          "BODY": "SYT5037"
+        }
+      ]
+    },
+    "discarded_output": {
+      "MATERIAL": [
+        {
+          "PART": "BODY",
+          "VALUE": "Q235B",
+          "SPECIAL_REQ": []
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT97111"
+        },
+        {
+          "BODY": "HGT20553IB"
+        },
+        {
+          "BODY": "SYT5037"
+        }
+      ]
+    }
+  }
+]

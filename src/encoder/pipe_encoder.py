@@ -397,7 +397,12 @@ class PipeEncoderBase:
         """编码合并后的 TYPE 值，返回 (code, confidence)"""
         raise NotImplementedError
 
-    def _encode_size_multi(self, values: List[str], original_text: str = "") -> EncodedFieldResult:
+    def _encode_size_multi(
+        self,
+        values: List[str],
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> EncodedFieldResult:
         raise NotImplementedError
 
     def _encode_thickness_value(self, value: str, original_text: str = "") -> str:
@@ -1553,6 +1558,12 @@ class PipeEncoderBase:
             for item in thickness_items
             if self._is_mm_code(item.get("normalized"))
         ]
+        explicit_mm_codes_by_role: Dict[str, List[str]] = {}
+        for item in thickness_items:
+            normalized = str(item.get("normalized") or "").strip().upper()
+            role = str(item.get("role") or "").strip().upper()
+            if self._is_mm_code(normalized) and role in {"BASE", "LINING"}:
+                explicit_mm_codes_by_role.setdefault(role, []).append(normalized)
         has_explicit_mm = bool(explicit_mm_codes)
         has_schedule_like = any(
             self.thickness_table_processor.is_schedule_like(item.get("normalized"))
@@ -1574,23 +1585,35 @@ class PipeEncoderBase:
 
         changed = False
         formatted_parts: List[str] = []
+        formatted_items: List[Dict[str, str]] = []
         note_lines: List[str] = []
         explicit_mm_text = " / ".join(list(dict.fromkeys(explicit_mm_codes)))
         for detail in conversion_details:
             converted = str(detail.get('converted') or '').strip()
             source_part = str(detail.get('source') or '').strip()
             source_type = str(detail.get('source_type') or '').strip().upper()
+            role = str(detail.get('role') or '').strip().upper()
             if not converted:
                 formatted_parts.append(source_part)
+                formatted_items.append({
+                    "type": source_type,
+                    "value": source_part,
+                    "role": role,
+                })
                 continue
             formatted = self._format_mm_code(converted) if re.fullmatch(r'\d+(?:\.\d+)?', converted) else converted
 
             if self.thickness_table_processor.is_schedule_like(source_part):
                 if has_explicit_mm and self.thickness_mm_dedup_enabled:
                     dn = str(detail.get('dn') or '').strip()
+                    comparable_mm_codes = (
+                        explicit_mm_codes_by_role.get(role, [])
+                        if role in {"BASE", "LINING"} and explicit_mm_codes_by_role
+                        else explicit_mm_codes
+                    )
                     if any(
                         self.thickness_table_processor.mm_values_equivalent(formatted, existing_mm)
-                        for existing_mm in explicit_mm_codes
+                        for existing_mm in comparable_mm_codes
                     ):
                         changed = True
                         note = self._build_thickness_conversion_note(
@@ -1612,6 +1635,11 @@ class PipeEncoderBase:
                     if note:
                         note_lines.append(note)
                     formatted_parts.append(source_part)
+                    formatted_items.append({
+                        "type": source_type,
+                        "value": source_part,
+                        "role": role,
+                    })
                     continue
 
                 if self.thickness_mm_conversion_enabled and not has_explicit_mm:
@@ -1627,16 +1655,36 @@ class PipeEncoderBase:
                         if note:
                             note_lines.append(note)
                     formatted_parts.append(formatted)
+                    formatted_items.append({
+                        "type": "MM",
+                        "value": formatted,
+                        "role": role,
+                    })
                     continue
 
                 formatted_parts.append(source_part)
+                formatted_items.append({
+                    "type": source_type,
+                    "value": source_part,
+                    "role": role,
+                })
                 continue
 
             if source_type == 'MM':
                 formatted_parts.append(source_part)
+                formatted_items.append({
+                    "type": "MM",
+                    "value": source_part,
+                    "role": role,
+                })
                 continue
 
             formatted_parts.append(source_part)
+            formatted_items.append({
+                "type": source_type,
+                "value": source_part,
+                "role": role,
+            })
 
         merged_note_lines: List[str] = []
         for note in list(_field_obj_get(thk_field, "notes", []) or []) + note_lines:
@@ -1655,7 +1703,19 @@ class PipeEncoderBase:
             if part not in deduped_parts:
                 deduped_parts.append(part)
 
-        final_code = deduped_parts[0] if len(deduped_parts) == 1 else 'X'.join(deduped_parts)
+        has_layer_roles = any(
+            item.get("role") in {"BASE", "LINING"}
+            for item in formatted_items
+        )
+        if has_layer_roles:
+            final_code = self.thickness_processor.process(
+                {"_ITEMS": formatted_items},
+                original_text=result.original_text,
+            )
+        else:
+            final_code = deduped_parts[0] if len(deduped_parts) == 1 else 'X'.join(deduped_parts)
+        if not final_code:
+            return
         thk_field.code = final_code
         thk_field.codes = [final_code]
 
@@ -2235,7 +2295,13 @@ class PipeEncoderBase:
 
     # ──────────────────── 多值字段处理（公共逻辑） ────────────────────
 
-    def _process_field_multi(self, field_type: str, values: List[str], original_text: str = "") -> EncodedFieldResult:
+    def _process_field_multi(
+        self,
+        field_type: str,
+        values: List[str],
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> EncodedFieldResult:
         """处理多值字段"""
         if not values:
             return EncodedFieldResult(field_type=field_type)
@@ -2244,7 +2310,11 @@ class PipeEncoderBase:
             return self._process_material_structured(values[0])
         
         if field_type == 'SIZE':
-            return self._encode_size_multi(values, original_text=original_text)
+            return self._encode_size_multi(
+                values,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
         
         if field_type == 'STANDARD':
             return self._process_standard_multi(values, {})
@@ -2943,7 +3013,14 @@ class PipeEncoderBase:
         material_category: str = "",
     ):
         """按字段顺序编码并写入结果对象。"""
-        for field_type in self.FIELD_ORDER:
+        # STANDARD 先于 SIZE 处理，供规范专用 OD→DN 映射使用；
+        # 最终编码仍由 _assemble_code 按 FIELD_ORDER 拼接。
+        processing_order = list(self.FIELD_ORDER)
+        if 'STANDARD' in processing_order and 'SIZE' in processing_order:
+            processing_order.remove('STANDARD')
+            processing_order.insert(processing_order.index('SIZE'), 'STANDARD')
+
+        for field_type in processing_order:
             if type_combined_processed and field_type in self.TYPE_COMBINED_FIELDS:
                 continue
 
@@ -3050,7 +3127,27 @@ class PipeEncoderBase:
                 modifier_map = entities.get('_STANDARD_MODIFIER_MAP', {})
                 field_result = self._process_standard_multi(values, modifier_map, original_text=original_text)
             else:
-                field_result = self._process_field_multi(field_type, values, original_text=original_text)
+                standard_codes: List[str] = []
+                if field_type == 'SIZE':
+                    standard_field = result.fields.get('STANDARD')
+                    for detail_item in getattr(standard_field, 'detail_items', []) or []:
+                        base_code = str(detail_item.get('base_code') or '').strip().upper()
+                        if base_code and base_code not in standard_codes:
+                            standard_codes.append(base_code)
+
+                    if not standard_codes and standard_field:
+                        for code in getattr(standard_field, 'codes', []) or []:
+                            code_parts = self.standard_processor._split_code_and_grade(str(code))
+                            base_code = str(code_parts.get('base') or '').strip().upper()
+                            if base_code and base_code not in standard_codes:
+                                standard_codes.append(base_code)
+
+                field_result = self._process_field_multi(
+                    field_type,
+                    values,
+                    original_text=original_text,
+                    standard_codes=standard_codes,
+                )
                 if field_type == 'THICKNESS' and thickness_pruned_to_mm:
                     note = "当前尺寸最终编码为同径，SCHEDULE与MM同时存在时二阶段仅使用MM壁厚"
                     if note not in field_result.notes:

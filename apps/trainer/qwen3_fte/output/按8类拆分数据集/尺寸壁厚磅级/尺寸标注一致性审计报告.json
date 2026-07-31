@@ -1,0 +1,268 @@
+{
+  "dataset": "/Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/output/按8类拆分数据集/尺寸壁厚磅级/尺寸壁厚磅级C1训练集.json",
+  "rows": 71759,
+  "issue_records": 12,
+  "unique_issue_rows": 12,
+  "category_counts": {
+    "dn_without_dn_semantics": 9,
+    "explicit_od_missing": 2,
+    "pipe_od_mislabeled_as_dn": 1
+  },
+  "issues_by_category": {
+    "dn_without_dn_semantics": [
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 30803,
+        "input": "异径三通;SW;NB/T 47008 20;GB/T 14383 Series II;-;CL300040x32",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "40"
+          },
+          {
+            "type": "DN",
+            "value": "32"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "40"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 30805,
+        "input": "同心大小头(SW)06Cr19Ni10 NB/T47010 SW  GB/T14383(II) CL300065x40",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "65"
+          },
+          {
+            "type": "DN",
+            "value": "40"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "65"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 30806,
+        "input": "异径三通(SW)06Cr19Ni10 NB/T47010 SW GB/T14383(II) CL300065x40",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "65"
+          },
+          {
+            "type": "DN",
+            "value": "40"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "65"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 30807,
+        "input": "偏心大小头(SW)06Cr19Ni10 GB/T14976 SW GB/T14383(II) CL300050x25",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "50"
+          },
+          {
+            "type": "DN",
+            "value": "25"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "50"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 30808,
+        "input": "异径三通(SW)06Cr19Ni10 NB/T47010 SW GB/T14383(II) CL300050x25",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "50"
+          },
+          {
+            "type": "DN",
+            "value": "25"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "50"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 30809,
+        "input": "异径三通(SW)06Cr19Ni10 NB/T47010 SW GB/T14383(II) CL300050x20",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "50"
+          },
+          {
+            "type": "DN",
+            "value": "20"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "50"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 31385,
+        "input": "等径三通;SW;NB/T47010 06Cr19Ni10;GB/T 14383 Series II;-;CL300050X32",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "50"
+          },
+          {
+            "type": "DN",
+            "value": "32"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "50"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 68041,
+        "input": "碳钢管道安装 1.规格材质：30mm,SMLS,GB/T 8163 20,PE,SCH80,SH/T 3405 2.使用场所：地上",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "30"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "30"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      },
+      {
+        "category": "dn_without_dn_semantics",
+        "source_index": 70082,
+        "input": "无缝钢管 SMLS HG2O553(II) BE THK=3. 0mm 20G, GB/T5310-17 DNI5",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "15"
+          }
+        ],
+        "evidence": {
+          "unexplained_dn_values": [
+            "15"
+          ],
+          "conflicting_size_evidence": [],
+          "explicit_inch_values": [],
+          "radius_material_values": []
+        }
+      }
+    ],
+    "explicit_od_missing": [
+      {
+        "category": "explicit_od_missing",
+        "source_index": 63723,
+        "input": "24“ Pipeline; OD:609.6mm; THK:19.05mm; SMLS（API 5L X65Q, PSL-2); 277.44kg/m; ASME B31.8",
+        "current_size_items": [
+          {
+            "type": "INCH",
+            "value": "24"
+          }
+        ],
+        "evidence": {
+          "missing_od_values": [
+            "609.6"
+          ]
+        }
+      },
+      {
+        "category": "explicit_od_missing",
+        "source_index": 68216,
+        "input": "镀锌钢管 Φ33.7XS,GB/T3091 20镀锌",
+        "current_size_items": [
+          {
+            "type": "OD",
+            "value": "33"
+          }
+        ],
+        "evidence": {
+          "missing_od_values": [
+            "33.7"
+          ]
+        }
+      }
+    ],
+    "pipe_od_mislabeled_as_dn": [
+      {
+        "category": "pipe_od_mislabeled_as_dn",
+        "source_index": 66407,
+        "input": "GB/T 8163;SH/T 3405 Pipe 48.3 SCH40 PE20",
+        "current_size_items": [
+          {
+            "type": "DN",
+            "value": "40"
+          }
+        ],
+        "evidence": {
+          "missing_od_values": [
+            "48.3"
+          ],
+          "has_explicit_dn_semantics": false,
+          "has_explicit_inch_semantics": false
+        }
+      }
+    ]
+  }
+}

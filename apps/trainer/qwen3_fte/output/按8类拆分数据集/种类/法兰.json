@@ -36422,7 +36422,7 @@
     }
   },
   {
-    "input": "8字盲板;CL900;Female RJ;A105;ASME B16.48;- DN150",
+    "input": "8字盲板;CL900;Female RJ(RTJ);A105;ASME B16.48;- DN150",
     "output": {
       "CATEGORY": "法兰",
       "TYPE": {

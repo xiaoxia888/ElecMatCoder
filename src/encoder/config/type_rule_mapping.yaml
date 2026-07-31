@@ -187,6 +187,7 @@ conn_codes:
   FTE: FT
   MNPT: MN
   FNPT: FN
+  NPTF: N
   SCRN: N
   SW: S
   TBE: N

@@ -173,7 +173,7 @@ value_mapping:
   - SF304L Gr.III
   - S30403 Gr.III
   - 304L Gr.III
-  304PTFE:
+  304/PTFE:
   - 304/PTFE
   310S:
   - S31008
@@ -286,9 +286,18 @@ value_mapping:
   A106:
   - ASTM A106 Gr.B
   - ASTM A106
+  - A106
   A234:
   - ASTM A234
   - ASTM A234M
+  GI:
+  - 灰口铸铁
+  P11:
+  - 1-1/4Cr-1/2Mo
+  - 1 1/4Cr-1/2Mo
+  P11/410:
+  - 1-1/4Cr-1/2Mo/410
+  - 1 1/4Cr-1/2Mo/410
   A333:
   - ASTM A333 Gr.6
   A516:

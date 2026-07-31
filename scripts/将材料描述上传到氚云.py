@@ -51,7 +51,7 @@ STANDARD_原始结果 STANDARD_原始编码 STANDARD_修正结果 STANDARD_修�
     --h3-engine-secret '你的EngineSecret'
 
 python apps/trainer/qwen3_fte/src/convert_code_review_excel.py \
-    /Users/guoxi/Downloads/管件处理0629.xlsx \
+    '/Users/guoxi/Downloads/编码结果 (47).csv' \
     --upload-h3 \
     --chunk-size 500 \
     --no-shuffle \

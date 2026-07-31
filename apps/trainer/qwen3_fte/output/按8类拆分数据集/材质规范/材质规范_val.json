@@ -157188,7 +157188,7 @@
       ]
     }
   },
-   {
+  {
     "input": "无缝钢管 SMLS RF PN16 HG/T20538-16 DN50 20#",
     "output": {
       "MATERIAL": [
@@ -159916,6 +159916,624 @@
       "family": "3PE",
       "base_material": "WPB",
       "skeleton": "CAP"
+    }
+  },
+  {
+    "input": "REDUCING TEE, ASTM A403 WP304H, SMLS, BW, SCH20S, ASME B16.9, DN250x100",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90 DEG ELBOW (ASTM A403 WP304) - ASME B16.9 - LR - BE - SCH40S - DN80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "CL300 RJ WN FLANGE ASME B16.5 DN25, FORGED ASTM A182 F304L",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
+    }
+  },
+  {
+    "input": "ASME B16.9 90DEG ELBOW, MATERIAL:ASTM A403 WP304L, BW, SCH80S, SIZE:80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "REDUCING TEE, ASTM A403 WP304L, SMLS, BW, SCH10S, ASME B16.9, DN250x100",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90度长半径弯头;材质 07Cr19Ni10;DN250;SCH20S;SH/T3408;GB/T14976",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3408"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90度长半径弯头;材质 06Cr19Ni10;DN80;SCH10S;SH/T3408;GB/T14976",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3408"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90 DEG ELBOW (A403 WP304H-WX) - ASME B16.9 - LR - BE - SCH20S - DN80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "REDUCING TEE, ASTM A403 WP304L-S, SMLS, BW, SCH20S, ASME B16.9, DN25x15",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "GB/T14976 07Cr19Ni10 PIPE OD33.4 THK4.0 SH/T3405 DN25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "ASME B16.9 TEE STRAIGHT, MATERIAL:ASTM A403 WP304H-S, BW, SCH20S, SIZE:25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "GB/T14976 S30409 PIPE OD273.1 THK3.05 SH/T3405 DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "ASME B16.9 ECC. REDUCER, MATERIAL:A403 WP304H-WX, BW, SCH80S, SIZE:250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "WELD NECK FLANGE DN250 CL900 RF, MATERIAL ASTM A182 F304, ASME B16.5",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90 DEG ELBOW (ASTM A403 WP304H-S) - ASME B16.9 - LR - BE - SCH10S - DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90 DEG ELBOW (ASTM A403 WP304-S) - ASME B16.9 - LR - BE - SCH80S - DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "WELD NECK FLANGE DN250 CL900 RF, MATERIAL ASTM A182 F304H, ASME B16.5",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
+    }
+  },
+  {
+    "input": "REDUCING TEE, A403 WP304H-WX, SMLS, BW, SCH10S, ASME B16.9, DN25x15",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "不锈钢无缝管 06Cr19Ni10 φ33.4×9.27 GB/T14976 SH/T3405 DN25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "GB/T14976 022Cr19Ni10 PIPE OD88.9 THK4.5 SH/T3405 DN80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90度长半径弯头;材质 S30403;DN80;SCH10S;SH/T3408;GB/T14976",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3408"
+        }
+      ]
+    }
+  },
+  {
+    "input": "不锈钢无缝管 07Cr19Ni10 φ88.9×9.27 GB/T14976 SH/T3405 DN80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "不锈钢无缝管 S30403 φ33.4×3.68 GB/T14976 SH/T3405 DN25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90度长半径弯头;材质 S30408;DN250;SCH20S;SH/T3408;GB/T14976",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3408"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90 DEG ELBOW (ASTM A403 WP304L-S) - ASME B16.9 - LR - BE - SCH40S - DN80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "不锈钢无缝管 022Cr19Ni10 φ273.1×9.53 GB/T14976 SH/T3405 DN250",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "ASME B16.5 BLIND FLANGE / DN250 / RF / CL150 / MOC:ASTM A182 F304L",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304L"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
+    }
+  },
+  {
+    "input": "REDUCING TEE, ASTM A403 WP304H-S, SMLS, BW, SCH40S, ASME B16.9, DN80x40",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90 DEG ELBOW (ASTM A403 WP304H) - ASME B16.9 - LR - BE - SCH40S - DN25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "REDUCING TEE, ASTM A403 WP304, SMLS, BW, SCH20S, ASME B16.9, DN25x15",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "90度长半径弯头;材质 S30409;DN80;SCH40S;SH/T3408;GB/T14976",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3408"
+        }
+      ]
+    }
+  },
+  {
+    "input": "GB/T14976 S30408 PIPE OD33.4 THK9.53 SH/T3405 DN25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "ASME B16.9 90DEG ELBOW, MATERIAL:ASTM A403 WP304H, BW, SCH80S, SIZE:80",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB169"
+        }
+      ]
+    }
+  },
+  {
+    "input": "ASME B16.5 WN FLANGE / DN25 / RJ / CL150 / MOC:ASTM A182 F304H",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
+    }
+  },
+  {
+    "input": "不锈钢无缝管 S30409 φ33.4×4.5 GB/T14976 SH/T3405 DN25",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "GBT14976"
+        },
+        {
+          "BODY": "SHT3405"
+        }
+      ]
+    }
+  },
+  {
+    "input": "CL300 FF WN FLANGE ASME B16.5 DN80, FORGED ASTM A182 F304H",
+    "output": {
+      "MATERIAL": [
+        {
+          "ROLE": "MAIN",
+          "VALUE": "304H"
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
     }
   }
 ]

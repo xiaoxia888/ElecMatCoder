@@ -307,6 +307,7 @@ regex_extraction:
     keywords_strict:
       - FF          # Flat Face 平面
       # - RF        # Raised Face 突面（暂不提取）
+      - Female RJ
       - RTJ         # Ring Type Joint 环连接面
       - RJ
       - SO
