@@ -365,6 +365,9 @@ class PipeEncoderBase:
         self.extract_conf_weight = float(self.review_rules_config.get('extract_weight', 0.55))
         self.encode_conf_weight = float(self.review_rules_config.get('encode_weight', 0.45))
         self.review_threshold = float(self.review_rules_config.get('review_threshold', 0.80))
+        self.legacy_confidence_threshold_enabled = bool(
+            self.review_rules_config.get('legacy_confidence_threshold_enabled', True)
+        )
         self.hard_rule_force_review = bool(self.review_rules_config.get('hard_rule_force_review', True))
         calibration_cfg = self.review_rules_config.get('calibration', {}) or {}
         self.conf_calibration_enabled = bool(calibration_cfg.get('enabled', False))
@@ -2012,7 +2015,11 @@ class PipeEncoderBase:
             result.need_review = True
             return
         any_field_need_review = any(field.need_review for field in result.fields.values())
-        result.need_review = bool(any_field_need_review or result.confidence < self.review_threshold)
+        legacy_confidence_review = bool(
+            self.legacy_confidence_threshold_enabled
+            and result.confidence < self.review_threshold
+        )
+        result.need_review = bool(any_field_need_review or legacy_confidence_review)
 
     def _map_validation_target_field(self, field: str) -> str:
         """将验证失败项映射到字段级置信度所属字段。"""

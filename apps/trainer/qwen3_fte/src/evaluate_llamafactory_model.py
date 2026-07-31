@@ -45,7 +45,7 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task material_standard \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-4000-材质规范v2
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-材质规范v3
 
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -119,9 +119,14 @@ DEFAULT_INSTRUCTIONS = {
 PROMPT_DIR = Path(__file__).resolve().parent.parent / "prompt"
 TASK_INSTRUCTION_PATHS = {
     "type": PROMPT_DIR / "type_extraction_sft_instruction_v1.txt",
-    "material_standard": PROMPT_DIR / "material_standard_extraction_sft_instruction_v2.txt",
+    "material_standard": PROMPT_DIR / "material_standard_extraction_sft_instruction_v3.txt",
 }
 JSON_TASKS = frozenset({"extract", "type", "structural", "material_standard"})
+
+MATERIAL_V3_PARTS = frozenset({"BODY", "LINING", "INNER_PIPE", "OUTER_PIPE", "FLANGE"})
+MATERIAL_V3_SPECIAL_REQS = frozenset(
+    {"NACE", "GALVANIZED", "ANTI-H2S", "ANTI-HIC", "ANTI-SCC", "CE", "3PE", "4PE", "PE", "EP"}
+)
 
 CODE_FIELDS = ("TYPE", "SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "STANDARD")
 
@@ -287,6 +292,79 @@ def expected_to_json(expected: Any) -> dict | None:
     return None
 
 
+def validate_material_standard_v3(output: Any) -> list[str]:
+    """校验材质规范 v3 的固定输出结构，不对模型结果做静默修复。"""
+    errors: list[str] = []
+    if not isinstance(output, dict):
+        return ["顶层必须是 JSON 对象"]
+
+    expected_root_keys = {"MATERIAL", "STANDARD"}
+    actual_root_keys = set(output)
+    missing_root_keys = sorted(expected_root_keys - actual_root_keys)
+    extra_root_keys = sorted(actual_root_keys - expected_root_keys)
+    if missing_root_keys:
+        errors.append(f"顶层缺少字段: {', '.join(missing_root_keys)}")
+    if extra_root_keys:
+        errors.append(f"顶层存在 v3 未定义字段: {', '.join(extra_root_keys)}")
+
+    materials = output.get("MATERIAL")
+    if not isinstance(materials, list):
+        errors.append("MATERIAL 必须是数组")
+    else:
+        expected_material_keys = {"PART", "VALUE", "SPECIAL_REQ"}
+        for index, item in enumerate(materials):
+            path = f"MATERIAL[{index}]"
+            if not isinstance(item, dict):
+                errors.append(f"{path} 必须是对象")
+                continue
+            item_keys = set(item)
+            if item_keys != expected_material_keys:
+                missing = sorted(expected_material_keys - item_keys)
+                extra = sorted(item_keys - expected_material_keys)
+                if missing:
+                    errors.append(f"{path} 缺少字段: {', '.join(missing)}")
+                if extra:
+                    errors.append(f"{path} 存在 v3 未定义字段: {', '.join(extra)}")
+            part = item.get("PART")
+            if part not in MATERIAL_V3_PARTS:
+                errors.append(f"{path}.PART 非法: {part!r}")
+            if not isinstance(item.get("VALUE"), str):
+                errors.append(f"{path}.VALUE 必须是字符串")
+            special_reqs = item.get("SPECIAL_REQ")
+            if not isinstance(special_reqs, list):
+                errors.append(f"{path}.SPECIAL_REQ 必须是数组")
+            else:
+                invalid_reqs = [
+                    req
+                    for req in special_reqs
+                    if not isinstance(req, str) or req not in MATERIAL_V3_SPECIAL_REQS
+                ]
+                if invalid_reqs:
+                    errors.append(f"{path}.SPECIAL_REQ 存在非法值: {invalid_reqs!r}")
+
+    standards = output.get("STANDARD")
+    if not isinstance(standards, list):
+        errors.append("STANDARD 必须是数组")
+    else:
+        for index, item in enumerate(standards):
+            path = f"STANDARD[{index}]"
+            if not isinstance(item, dict):
+                errors.append(f"{path} 必须是对象")
+            elif set(item) != {"BODY"}:
+                errors.append(f"{path} 只能包含 BODY 字段")
+            elif not isinstance(item.get("BODY"), str):
+                errors.append(f"{path}.BODY 必须是字符串")
+
+    return errors
+
+
+def validate_task_output(task: str, output: Any) -> list[str]:
+    """返回任务结构错误；空数组表示结构合法。"""
+    if task == "material_standard":
+        return validate_material_standard_v3(output)
+    return []
+
+
 # ──────────────────────────────────────────────
 # 评测指标
 # ──────────────────────────────────────────────
@@ -365,12 +443,14 @@ def aggregate_report(results: list[dict]) -> dict:
     """汇总所有记录的评测结果。"""
     total_records = len(results)
     json_parse_fail = sum(1 for r in results if r.get("json_parse_fail"))
+    schema_fail = sum(1 for r in results if r.get("schema_errors"))
     evaluated = [r for r in results if not r.get("json_parse_fail")]
 
     if not evaluated:
         return {
             "total_records": total_records,
             "json_parse_fail": json_parse_fail,
+            "schema_fail": schema_fail,
             "field_accuracy": 0,
         }
 
@@ -405,6 +485,7 @@ def aggregate_report(results: list[dict]) -> dict:
     return {
         "total_records": total_records,
         "json_parse_fail": json_parse_fail,
+        "schema_fail": schema_fail,
         "evaluated_records": len(evaluated),
         "perfect_records": perfect,
         "perfect_rate": round(perfect / len(evaluated), 4),
@@ -470,8 +551,13 @@ def interactive_mode(
         print(f"\n耗时: {elapsed:.2f}s")
         if task in JSON_TASKS:
             parsed = parse_json_output(raw_output)
-            if parsed:
+            if parsed is not None:
                 print(json.dumps(parsed, ensure_ascii=False, indent=2))
+                schema_errors = validate_task_output(task, parsed)
+                if schema_errors:
+                    print("\n[v3 结构校验失败]")
+                    for error in schema_errors:
+                        print(f"- {error}")
             else:
                 print(f"[JSON 解析失败] 原始输出:\n{raw_output}")
         else:
@@ -623,6 +709,7 @@ def batch_mode(
     detail_file: Path | None,
     max_samples: int | None = None,
     *,
+    task: str,
     instruction: str,
     max_new_tokens: int = 512,
     temperature: float = 0.0,
@@ -670,13 +757,15 @@ def batch_mode(
             status = "PARSE_FAIL"
         else:
             result["json_parse_fail"] = False
+            schema_errors = validate_task_output(task, predicted)
+            result["schema_errors"] = schema_errors
             result["comparison"] = compare_record(
                 expected,
                 predicted,
                 preserve_list_order=preserve_list_order,
             )
             acc = result["comparison"]["field_accuracy"]
-            status = f"ACC={acc:.0%}"
+            status = "SCHEMA_FAIL" if schema_errors else f"ACC={acc:.0%}"
             if acc < 1.0:
                 result["expected"] = expected
                 result["predicted"] = predicted
@@ -694,6 +783,8 @@ def batch_mode(
     print("=" * 60)
     print(f"  总样本:          {report['total_records']}")
     print(f"  JSON解析失败:    {report['json_parse_fail']}")
+    if task == "material_standard":
+        print(f"  v3结构校验失败: {report.get('schema_fail', 0)}")
     print(f"  完美匹配:        {report.get('perfect_records', 0)} / {report.get('evaluated_records', 0)}"
           f" ({report.get('perfect_rate', 0):.1%})")
     print(f"  平均字段准确率:  {report.get('avg_field_accuracy', 0):.1%}")
@@ -745,6 +836,7 @@ def predict_mode(
 
     results = []
     fail_count = 0
+    schema_fail_count = 0
     for i, rec in enumerate(data):
         input_text = rec["input"]
         sample_instruction = str(rec.get("instruction") or instruction).strip() or instruction
@@ -772,11 +864,18 @@ def predict_mode(
                     "_raw": raw_output,
                 }
             else:
-                status = "OK"
+                schema_errors = validate_task_output(task, predicted)
+                if schema_errors:
+                    schema_fail_count += 1
+                    status = "SCHEMA_FAIL"
+                else:
+                    status = "OK"
                 result = {
                     "input": input_text,
                     "output": predicted,
                 }
+                if schema_errors:
+                    result["_schema_errors"] = schema_errors
         else:
             predicted = clean_text_output(raw_output)
             status = "OK"
@@ -799,7 +898,10 @@ def predict_mode(
     output_file.write_text(
         json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    print(f"\n完成: {len(results)} 条, JSON解析失败: {fail_count}")
+    print(
+        f"\n完成: {len(results)} 条, JSON解析失败: {fail_count}, "
+        f"结构校验失败: {schema_fail_count}"
+    )
     print(f"输出: {output_file}")
 
 
@@ -922,8 +1024,13 @@ def excel_predict_mode(
                     status = "PARSE_FAIL"
                     fail_count += 1
                 else:
-                    status = "OK"
-                    ok_count += 1
+                    schema_errors = validate_task_output(task, predicted)
+                    if schema_errors:
+                        status = "SCHEMA_FAIL: " + " | ".join(schema_errors)
+                        fail_count += 1
+                    else:
+                        status = "OK"
+                        ok_count += 1
                     data.at[row_index, "TYPE_模型结果"] = json.dumps(
                         predicted, ensure_ascii=False, separators=(",", ":")
                     )
@@ -978,7 +1085,7 @@ def main() -> None:
         default="extract",
         help=(
             "评测任务类型。extract=通用结构化抽取；type=种类抽取（自动读取种类提示词文件）；"
-            "material_standard=新结构材质规范抽取（自动读取材质规范提示词文件）；"
+            "material_standard=v3 材质规范抽取（自动读取 v3 提示词并校验固定结构）；"
             "structural=尺寸/长度/壁厚/磅级抽取；code=字段编码纯文本"
         ),
     )
@@ -1114,6 +1221,7 @@ def main() -> None:
                 report_file=args.report_file,
                 detail_file=args.detail_file,
                 max_samples=args.max_samples,
+                task=args.task,
                 instruction=instruction,
                 max_new_tokens=max_new_tokens,
                 temperature=args.temperature,

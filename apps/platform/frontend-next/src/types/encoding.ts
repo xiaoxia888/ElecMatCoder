@@ -44,6 +44,19 @@ export interface EncodeConfidencePayload {
   evidence?: Record<string, unknown>
 }
 
+export interface CorrectnessConfidencePayload {
+  available: boolean
+  score?: number | null
+  percent?: number | null
+  threshold?: number | null
+  would_auto_pass?: boolean
+  review_triggered?: boolean
+  mode?: 'shadow' | 'enforce' | string
+  model_version?: string
+  difficulty?: number | null
+  reason?: string
+}
+
 export interface FieldPayload {
   field_type: string
   stage1_raw: Stage1RawPayload
@@ -63,6 +76,7 @@ export interface EncodingResult {
   skipped_encoding?: boolean
   skip_reason?: string
   confidence?: number
+  correctness_confidence?: CorrectnessConfidencePayload
   material_category?: string
   imported_category?: string
   model_material_category?: string

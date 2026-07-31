@@ -204,8 +204,9 @@ review_rules:
   # 最终是否待审的基础阈值
   #
   # 当前逻辑：
-  # - 命中硬规则 -> 待审
-  # - 或最终总置信度 < review_threshold -> 待审
+  # - 旧总置信度继续保留用于对照展示
+  # - 最终审核阈值已迁移到 platform_config.yaml 的 encoding_confidence
+  legacy_confidence_threshold_enabled: false
   review_threshold: 0.80
 
   # 硬规则命中后是否强制待审

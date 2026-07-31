@@ -90,6 +90,7 @@ class EncodeResultPayload:
     success: bool
     need_review: bool
     confidence: float | None
+    correctness_confidence: dict[str, Any] = field(default_factory=dict)
     fields: dict[str, FieldResultPayload] = field(default_factory=dict)
     material_category: str = ""
     route_info: dict[str, Any] | None = None
@@ -109,6 +110,7 @@ class EncodeResultPayload:
             "success": self.success,
             "need_review": self.need_review,
             "confidence": self.confidence,
+            "correctness_confidence": dict(self.correctness_confidence or {}),
             "fields": {key: value.to_dict() for key, value in self.fields.items()},
             "material_category": self.material_category,
             "route_info": self.route_info,

@@ -40,6 +40,7 @@ from src.domain.pipeline import (
     EncodeResultPayload,
     Stage1DecisionNormalizer,
 )
+from src.confidence import EncodingCorrectnessPredictor
 
 from src.tokenizer_utils.preprocessor import TextPreprocessor
 
@@ -129,6 +130,8 @@ async def startup_event():
     except Exception:
         logger.exception("批量任务存储初始化清理失败")
 
+    _get_encoding_correctness_predictor()
+
     if _batch_maintenance_enabled() and (
         _batch_job_maintenance_task is None or _batch_job_maintenance_task.done()
     ):
@@ -162,6 +165,153 @@ _batch_job_active_id: Optional[str] = None
 _batch_job_scheduler_task: Optional[asyncio.Task] = None
 _batch_job_maintenance_task: Optional[asyncio.Task] = None
 _batch_job_lock = asyncio.Lock()
+_encoding_correctness_predictor: Optional[EncodingCorrectnessPredictor] = None
+_encoding_correctness_initialized = False
+_encoding_correctness_load_error = ""
+
+
+def _get_encoding_confidence_config() -> Dict[str, Any]:
+    return get_platform_config().get("encoding_confidence", {}) or {}
+
+
+def _get_encoding_correctness_predictor() -> Optional[EncodingCorrectnessPredictor]:
+    """Load the CPU confidence model once per platform process."""
+    global _encoding_correctness_predictor
+    global _encoding_correctness_initialized
+    global _encoding_correctness_load_error
+
+    config = _get_encoding_confidence_config()
+    if not bool(config.get("enabled", False)):
+        return None
+    if _encoding_correctness_initialized:
+        return _encoding_correctness_predictor
+
+    _encoding_correctness_initialized = True
+    configured_path = str(config.get("model_path", "") or "").strip()
+    if not configured_path:
+        _encoding_correctness_load_error = "未配置置信度模型路径"
+        logger.error(_encoding_correctness_load_error)
+        return None
+
+    model_path = Path(configured_path)
+    if not model_path.is_absolute():
+        model_path = PROJECT_ROOT / model_path
+    try:
+        _encoding_correctness_predictor = EncodingCorrectnessPredictor(model_path)
+    except Exception as exc:
+        _encoding_correctness_load_error = str(exc)
+        logger.exception("最终编码正确概率模型加载失败: %s", model_path)
+        return None
+
+    logger.info(
+        "最终编码正确概率模型已加载: version=%s path=%s mode=%s",
+        config.get("model_version", ""),
+        model_path,
+        config.get("mode", "shadow"),
+    )
+    return _encoding_correctness_predictor
+
+
+def _attach_correctness_confidence(result: Dict[str, Any]) -> Dict[str, Any]:
+    """Attach calibrated correctness probability without changing review routing."""
+    if not isinstance(result, dict):
+        return result
+
+    config = _get_encoding_confidence_config()
+    if not bool(config.get("enabled", False)):
+        result.pop("correctness_confidence", None)
+        return result
+
+    threshold = float(
+        config.get(
+            "review_threshold",
+            config.get("auto_pass_threshold", 0.90),
+        )
+    )
+    mode = str(config.get("mode", "shadow") or "shadow").strip().lower()
+    model_version = str(config.get("model_version", "") or "")
+    unavailable_reason = ""
+    if result.get("skipped_encoding"):
+        unavailable_reason = "该分类未进入编码流程"
+    elif not result.get("success"):
+        unavailable_reason = "编码失败"
+    elif not str(result.get("final_code", "") or "").strip():
+        unavailable_reason = "最终编码为空"
+
+    predictor = _get_encoding_correctness_predictor()
+    if unavailable_reason or predictor is None:
+        review_triggered = bool(
+            mode == "enforce"
+            and str(config.get("on_error", "review") or "review").lower() == "review"
+        )
+        result["correctness_confidence"] = {
+            "available": False,
+            "score": None,
+            "percent": None,
+            "threshold": threshold,
+            "would_auto_pass": False,
+            "review_triggered": review_triggered,
+            "mode": mode,
+            "model_version": model_version,
+            "difficulty": None,
+            "reason": unavailable_reason
+            or _encoding_correctness_load_error
+            or "置信度模型不可用",
+        }
+        if review_triggered:
+            result["need_review"] = True
+        return result
+
+    try:
+        score, difficulty = predictor.predict_result(result)
+    except Exception as exc:
+        logger.exception("最终编码正确概率计算失败")
+        review_triggered = bool(
+            mode == "enforce"
+            and str(config.get("on_error", "review") or "review").lower() == "review"
+        )
+        result["correctness_confidence"] = {
+            "available": False,
+            "score": None,
+            "percent": None,
+            "threshold": threshold,
+            "would_auto_pass": False,
+            "review_triggered": review_triggered,
+            "mode": mode,
+            "model_version": model_version,
+            "difficulty": None,
+            "reason": str(exc),
+        }
+        if review_triggered:
+            result["need_review"] = True
+        return result
+
+    result["correctness_confidence"] = {
+        "available": True,
+        "score": round(float(score), 8),
+        "percent": round(float(score) * 100.0, 4),
+        "threshold": threshold,
+        "would_auto_pass": bool(score >= threshold),
+        "review_triggered": bool(mode == "enforce" and score < threshold),
+        "mode": mode,
+        "model_version": model_version,
+        "difficulty": difficulty,
+        "reason": "编码正确概率低于审核阈值" if mode == "enforce" and score < threshold else "",
+    }
+    if mode == "enforce" and score < threshold:
+        result["need_review"] = True
+    return result
+
+
+def _attach_correctness_confidence_many(
+    results: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    return [
+        _attach_correctness_confidence(result)
+        if isinstance(result, dict)
+        else result
+        for result in results
+    ]
 
 
 def _get_batch_processing_config() -> Dict[str, Any]:
@@ -416,10 +566,12 @@ async def _run_batch_job(job_id: str) -> None:
             converted["routing"] = None
             converted["difficulty_split"] = None
             converted["second_pass"] = None
-            return _attach_category_metadata(
-                converted,
-                imported_category=imported_category,
-                model_category=model_category,
+            return _attach_correctness_confidence(
+                _attach_category_metadata(
+                    converted,
+                    imported_category=imported_category,
+                    model_category=model_category,
+                )
             )
 
         extract_confidence = predict_result.get("extract_confidence", {}) or {}
@@ -440,10 +592,12 @@ async def _run_batch_job(job_id: str) -> None:
         converted["processed_text"] = processed_text
         converted["stage1"] = stage1
         converted = attach_routing(converted)
-        return _attach_category_metadata(
-            converted,
-            imported_category=imported_category,
-            model_category=model_category,
+        return _attach_correctness_confidence(
+            _attach_category_metadata(
+                converted,
+                imported_category=imported_category,
+                model_category=model_category,
+            )
         )
 
     async def worker() -> None:
@@ -480,6 +634,7 @@ async def _run_batch_job(job_id: str) -> None:
                     "fields": {},
                 }
 
+            converted = _attach_correctness_confidence(converted)
             converted_results[order_index] = converted
             now = _utc_ts()
             duration_seconds = max(0.0, now - float(job["started_at"])) if job.get("started_at") else None
@@ -537,6 +692,7 @@ async def _run_batch_job(job_id: str) -> None:
             [converted if isinstance(converted, dict) else {} for converted in converted_results],
             [str(item.get("project_name", "") or "").strip() for item in items],
         )
+        finalized = _attach_correctness_confidence_many(finalized)
 
         final_success_count = 0
         final_review_count = 0
@@ -1160,17 +1316,19 @@ def _run_pipe_encode_flow(
 ) -> Dict[str, Any]:
     """单次/批量共用的完整编码流程：预处理 -> 一阶段抽取 -> 二阶段编码 -> 分流。"""
     if not text or not str(text).strip():
-        return {
-            "original_text": text or "",
-            "processed_text": text or "",
-            "final_code": "",
-            "success": False,
-            "need_review": True,
-            "confidence": 0.0,
-            "fields": {},
-            "errors": ["文本为空"],
-            "warnings": [],
-        }
+        return _attach_correctness_confidence(
+            {
+                "original_text": text or "",
+                "processed_text": text or "",
+                "final_code": "",
+                "success": False,
+                "need_review": True,
+                "confidence": 0.0,
+                "fields": {},
+                "errors": ["文本为空"],
+                "warnings": [],
+            }
+        )
 
     processed_text = _preprocessor.process(text) if preprocess else text
     predictor = get_ner_predictor()
@@ -1208,10 +1366,12 @@ def _run_pipe_encode_flow(
         payload["routing"] = None
         payload["difficulty_split"] = None
         payload["second_pass"] = None
-        return _attach_category_metadata(
-            payload,
-            imported_category=imported_category,
-            model_category=model_category,
+        return _attach_correctness_confidence(
+            _attach_category_metadata(
+                payload,
+                imported_category=imported_category,
+                model_category=model_category,
+            )
         )
 
     result = encoder.encode(
@@ -1224,10 +1384,12 @@ def _run_pipe_encode_flow(
     )
     converted = _convert_pipe_result(result, processed_text=processed_text, route_info=route_info)
     converted["stage1"] = stage1.to_dict()
-    return _attach_category_metadata(
-        attach_routing(converted),
-        imported_category=imported_category,
-        model_category=model_category,
+    return _attach_correctness_confidence(
+        _attach_category_metadata(
+            attach_routing(converted),
+            imported_category=imported_category,
+            model_category=model_category,
+        )
     )
 
 
@@ -1534,6 +1696,7 @@ async def pipe_batch_encode(request: PipeBatchEncodeRequest):
         [converted if isinstance(converted, dict) else {} for converted in converted_results],
         [str(item.get("project_name", "") or "").strip() for item in request.items],
     )
+    converted_results = _attach_correctness_confidence_many(converted_results)
 
     review_count = sum(1 for r in converted_results if isinstance(r, dict) and r.get("need_review"))
 
@@ -1553,6 +1716,7 @@ async def pipe_finalize_difficulty(request: PipeDifficultyFinalizeRequest):
         [item if isinstance(item, dict) else {} for item in request.items],
         [str((item or {}).get("project_name", "") or "").strip() for item in request.items],
     )
+    finalized = _attach_correctness_confidence_many(finalized)
     return {
         "success": True,
         "total": len(finalized),
