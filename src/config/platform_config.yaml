@@ -101,7 +101,7 @@ ner:
         share_group: "material_standard"
         hf_lazy_service:
           service_url: "http://192.168.31.201:8200"
-          model_name: "material-standard"
+          model_name: "material-standard-v2"
         # backend: "transformers"
         # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/material"
         # device: "mps"
@@ -114,7 +114,7 @@ ner:
         share_group: "material_standard"
         hf_lazy_service:
           service_url: "http://192.168.31.201:8200"
-          model_name: "material-standard"
+          model_name: "material-standard-v2"
         # backend: "transformers"
         # model_path: "/Users/guoxi/Desktop/workspace/NJNCC/python_code/LlamaFactory/saves/qwen3-4b-base/lora/standard"
         # device: "mps"

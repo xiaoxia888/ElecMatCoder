@@ -139,7 +139,12 @@ class VLLMGateway:
             raise RuntimeError("HTTP client 尚未启动")
 
         instruction = route.instruction if request.instruction is None else request.instruction
-        max_tokens = route.max_tokens if request.max_new_tokens is None else request.max_new_tokens
+        requested_max_tokens = (
+            route.max_tokens if request.max_new_tokens is None else request.max_new_tokens
+        )
+        # Route limits are hard safety limits. A stale client must not be able to
+        # consume the model's context window by requesting a larger completion.
+        max_tokens = min(route.max_tokens, requested_max_tokens)
         temperature = route.temperature if request.temperature is None else request.temperature
         top_p = route.top_p if request.top_p is None else request.top_p
         messages = []

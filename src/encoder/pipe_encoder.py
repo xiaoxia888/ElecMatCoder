@@ -50,6 +50,21 @@ TYPE_RULE_CONFIG = Path(__file__).parent / "config" / "type_rule_mapping.yaml"
 DEFAULT_TYPE_KEY_ORDER = ['FLANGE_STYLE', 'BODY', 'ANGLE', 'RADIUS', 'SEAL', 'CONN', 'MANU']
 TYPE_STAGE2_INPUT_ORDER = ('BODY', 'ANGLE', 'RADIUS', 'FLANGE_STYLE', 'CONN', 'SEAL', 'MANU')
 TYPE_STAGE2_LIST_FIELDS = frozenset({'CONN', 'SEAL', 'MANU'})
+MATERIAL_PART_ORDER = ('BODY', 'LINING', 'FLANGE', 'INNER_PIPE', 'OUTER_PIPE')
+MATERIAL_PART_ALIASES = {
+    'MAIN': 'BODY',
+    'BODY': 'BODY',
+    'LINING': 'LINING',
+    'INNER_PIPE': 'INNER_PIPE',
+    'OUTER_PIPE': 'OUTER_PIPE',
+    'FLANGE': 'FLANGE',
+}
+MATERIAL_PART_COMBINATIONS = frozenset({
+    frozenset({'BODY', 'LINING'}),
+    frozenset({'BODY', 'FLANGE'}),
+    frozenset({'INNER_PIPE', 'OUTER_PIPE'}),
+    frozenset({'BODY', 'LINING', 'FLANGE'}),
+})
 
 # TYPE 子字段的规则补提必须受材料分类约束，避免同一个缩写在不同种类中串字段。
 TYPE_REGEX_FALLBACK_LABELS = frozenset({
@@ -1107,8 +1122,8 @@ class PipeEncoderBase:
         if not isinstance(item, dict):
             return str(item).strip()
 
-        # 新结构: {"ROLE": "...", "VALUE": "...", "SPECIAL_REQ": [...]}
-        if 'VALUE' in item or 'ROLE' in item:
+        # 新结构: {"PART": "...", "VALUE": "...", "SPECIAL_REQ": [...]}
+        if 'VALUE' in item or 'PART' in item or 'ROLE' in item:
             base_value = str(item.get('VALUE') or '').strip()
             special_parts = PipeEncoder._normalize_material_special_req(item.get('SPECIAL_REQ'))
             item_parts = [p for p in [base_value, *special_parts] if p]
@@ -1132,12 +1147,12 @@ class PipeEncoderBase:
         if isinstance(value, list):
             for item in value:
                 if isinstance(item, dict):
-                    role = str(item.get('ROLE') or 'MAIN').strip() or 'MAIN'
+                    part = PipeEncoder._normalize_material_part(item.get('PART') or item.get('ROLE'))
                     item_value = str(item.get('VALUE') or '').strip()
                     special_req = PipeEncoder._normalize_material_special_req(item.get('SPECIAL_REQ'))
                     if item_value or special_req:
                         entries.append({
-                            'ROLE': role,
+                            'PART': part,
                             'VALUE': item_value,
                             'SPECIAL_REQ': special_req,
                         })
@@ -1145,7 +1160,7 @@ class PipeEncoderBase:
                     item_text = str(item).strip()
                     if item_text:
                         entries.append({
-                            'ROLE': 'MAIN',
+                            'PART': 'BODY',
                             'VALUE': item_text,
                             'SPECIAL_REQ': [],
                         })
@@ -1153,13 +1168,13 @@ class PipeEncoderBase:
 
         if isinstance(value, dict):
             # 新结构单项兜底
-            if 'VALUE' in value or 'ROLE' in value:
-                role = str(value.get('ROLE') or 'MAIN').strip() or 'MAIN'
+            if 'VALUE' in value or 'PART' in value or 'ROLE' in value:
+                part = PipeEncoder._normalize_material_part(value.get('PART') or value.get('ROLE'))
                 item_value = str(value.get('VALUE') or '').strip()
                 special_req = PipeEncoder._normalize_material_special_req(value.get('SPECIAL_REQ'))
                 if item_value or special_req:
                     entries.append({
-                        'ROLE': role,
+                        'PART': part,
                         'VALUE': item_value,
                         'SPECIAL_REQ': special_req,
                     })
@@ -1181,7 +1196,7 @@ class PipeEncoderBase:
                         ]).strip()
                     if item_text or special_req:
                         entries.append({
-                            'ROLE': 'MAIN',
+                            'PART': 'BODY',
                             'VALUE': item_text,
                             'SPECIAL_REQ': special_req,
                         })
@@ -1190,19 +1205,70 @@ class PipeEncoderBase:
         scalar_text = str(value).strip()
         if scalar_text:
             entries.append({
-                'ROLE': 'MAIN',
+                'PART': 'BODY',
                 'VALUE': scalar_text,
                 'SPECIAL_REQ': [],
             })
         return entries
 
+    @staticmethod
+    def _normalize_material_part(value: Any) -> str:
+        text = str(value or 'BODY').strip().upper() or 'BODY'
+        return MATERIAL_PART_ALIASES.get(text, text)
+
+    @staticmethod
+    def _has_explicit_material_parts(value: Any) -> bool:
+        if isinstance(value, list):
+            return any(isinstance(item, dict) and 'PART' in item for item in value)
+        return isinstance(value, dict) and 'PART' in value
+
+    def _order_material_entries(self, entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        indexed = list(enumerate(entries))
+        composition_cfg = self.config.get('material_part_composition', {}) or {}
+        if any(str(item.get('PART') or '').upper() in {'INNER_PIPE', 'OUTER_PIPE'} for _, item in indexed):
+            configured_order = composition_cfg.get('inner_outer_order') or [
+                'INNER_PIPE', 'OUTER_PIPE', 'BODY', 'LINING', 'FLANGE'
+            ]
+        else:
+            configured_order = composition_cfg.get('default_order') or list(MATERIAL_PART_ORDER)
+        order = {
+            str(part).strip().upper(): index
+            for index, part in enumerate(configured_order)
+            if str(part).strip()
+        }
+        indexed.sort(key=lambda pair: (order.get(str(pair[1].get('PART') or '').upper(), 99), pair[0]))
+        return [item for _, item in indexed]
+
+    def _validate_material_part_structure(self, entries: List[Dict[str, Any]]) -> tuple[bool, str]:
+        parts = [str(item.get('PART') or '').strip().upper() for item in entries]
+        if not parts or any(part not in MATERIAL_PART_ALIASES.values() for part in parts):
+            return False, 'unknown_part'
+        if len(parts) == 1:
+            return True, 'single_part'
+        if len(set(parts)) != len(parts):
+            return False, 'duplicate_part'
+        composition_cfg = self.config.get('material_part_composition', {}) or {}
+        configured_combinations = composition_cfg.get('supported_combinations') or []
+        supported_combinations = {
+            frozenset(str(part).strip().upper() for part in combination if str(part).strip())
+            for combination in configured_combinations
+            if isinstance(combination, list)
+        } or set(MATERIAL_PART_COMBINATIONS)
+        if frozenset(parts) not in supported_combinations:
+            return False, 'unsupported_part_combination'
+        return True, 'supported_part_combination'
+
     def _process_material_structured(self, value: Any) -> EncodedFieldResult:
         relation = ""
         is_legacy_material = isinstance(value, dict) and isinstance(value.get('ITEMS'), list)
+        has_explicit_parts = self._has_explicit_material_parts(value)
         if is_legacy_material:
             relation = self._normalize_material_relation(value.get('RELATION'))
 
         entries = self._normalize_material_entries(value)
+        if has_explicit_parts:
+            entries = self._order_material_entries(entries)
+        part_structure_valid, part_structure_reason = self._validate_material_part_structure(entries)
         item_texts = [
             self._flatten_material_item_for_stage2(item)
             for item in entries
@@ -1221,7 +1287,9 @@ class PipeEncoderBase:
             if item_result is None:
                 item_result = self._process_single_value('MATERIAL', item_text)
             item_results.append(item_result)
-        separator = '/' if relation == 'alternative' else ''
+        composition_cfg = self.config.get('material_part_composition', {}) or {}
+        part_separator = str(composition_cfg.get('separator') or '/')
+        separator = part_separator if relation == 'alternative' or (has_explicit_parts and len(entries) > 1) else ''
 
         items = []
         for entry, item_text, item_result in zip(entries, item_texts, item_results):
@@ -1235,7 +1303,10 @@ class PipeEncoderBase:
                 'candidates': item_result.get('candidates', []),
                 'category': '',
                 'relation': relation,
-                'role': str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN',
+                'part': str(entry.get('PART') or 'BODY').strip() or 'BODY',
+                'uses_part_structure': has_explicit_parts,
+                'part_structure_valid': part_structure_valid,
+                'part_structure_reason': part_structure_reason,
             })
 
         unique_codes: List[str] = []
@@ -1254,7 +1325,9 @@ class PipeEncoderBase:
             ]
 
         min_similarity = min((r['similarity'] for r in item_results), default=1.0)
-        any_need_review = any(r['need_review'] for r in item_results)
+        any_need_review = any(r['need_review'] for r in item_results) or (
+            has_explicit_parts and not part_structure_valid
+        )
         all_exact = all(r['is_exact'] for r in item_results)
 
         candidates = []
@@ -1269,7 +1342,7 @@ class PipeEncoderBase:
                 continue
             normalized_stage2_input.append(
                 MaterialItem(
-                    role=str(entry.get('ROLE') or 'MAIN').strip() or 'MAIN',
+                    part=str(entry.get('PART') or 'BODY').strip() or 'BODY',
                     # stage2_input 表示“实际送入二阶段编码前的结构”，
                     # 这里只保留编码前材质项本身，不再回写最终编码结果。
                     value=str(entry.get('VALUE') or '').strip(),
@@ -1899,9 +1972,18 @@ class PipeEncoderBase:
             if material_count <= 1 and mat_field.detail_items:
                 material_count = len(mat_field.detail_items)
             material_relation = ""
+            uses_part_structure = False
+            part_structure_valid = False
             if mat_field.detail_items:
                 material_relation = str(mat_field.detail_items[0].get('relation') or '').strip().lower()
-            if material_count > 1 and material_relation != 'alternative':
+                uses_part_structure = bool(mat_field.detail_items[0].get('uses_part_structure'))
+                part_structure_valid = all(
+                    bool(item.get('part_structure_valid'))
+                    for item in mat_field.detail_items
+                    if isinstance(item, dict)
+                )
+            valid_part_composite = uses_part_structure and part_structure_valid
+            if material_count > 1 and material_relation != 'alternative' and not valid_part_composite:
                 self._mark_field_review(
                     result,
                     'MATERIAL',

@@ -11,16 +11,14 @@ function normalizeImportedRows(
   projectColumn?: string,
   categoryColumn?: string,
 ): ImportedRow[] {
-  return rows
-    .map((row, index) => ({
-      index,
-      text: String(row[column] ?? '').trim(),
-      projectName: projectColumn
-        ? String(row[projectColumn] ?? '').trim()
-        : resolveProjectName(row),
-      importedCategory: categoryColumn ? String(row[categoryColumn] ?? '').trim() : '',
-    }))
-    .filter((item) => item.text)
+  return rows.map((row, index) => ({
+    index,
+    text: String(row[column] ?? '').trim(),
+    projectName: projectColumn
+      ? String(row[projectColumn] ?? '').trim()
+      : resolveProjectName(row),
+    importedCategory: categoryColumn ? String(row[categoryColumn] ?? '').trim() : '',
+  }))
 }
 
 function isBatchJobRunning(status: string | undefined) {

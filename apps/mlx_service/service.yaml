@@ -19,6 +19,7 @@ single:
   models:
     - type
     - material-standard
+    - material-standard-v2
     - coder
     - size-thick-pressure
 
@@ -52,23 +53,55 @@ models:
   # 各模型的 instruction 在部署层统一维护。正式平台调用只传 model/text，
   # 不再覆盖这里的提示词。
   type:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type-0715-q8
-    instruction: "你是工业管道材料种类结构化提取助手。先判断CATEGORY为直管、管件或法兰，再按类别输出TYPE：直管包含BODY、FLANGE_STYLE、MANU；管件包含BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；法兰包含BODY、CONN、SEAL。ANGLE必须原样保留原文角度数值，仅去掉度、°、deg等单位，不得取整、舍入或改成常见角度；BW不写入CONN。未出现的信息使用空字符串或空数组。只输出严格JSON，不要解释。"
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type0725-mlx-q8
+    instruction: |-
+      你是工业管道材料种类结构化提取助手。仅按原文明示信息提取，禁止从尺寸、壁厚、材质、标准或常识推断。
+
+      先按主体判断CATEGORY，例如：直管、管件或法兰。法兰管/FLANGED PIPE为直管；法兰弯头、法兰三通、FLANGED REDUCER为管件。FLANGE、FLG、RF、法兰标准或配套法兰不能单独决定CATEGORY。
+
+      TYPE字段固定：直管为BODY、FLANGE_STYLE、MANU；管件为BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；法兰为BODY、CONN、SEAL。
+
+      BODY按既定标签归一化，不得由尺寸、壁厚或标准推断同心、偏心、等径、异径。FLANGE_STYLE仅在直管或管件自身明示法兰式、FLANGED、LAP JOINT FLANGED或固定法兰时提取；仅有法兰标准、密封面或配套法兰时留空。
+
+      显式产品词优先决定BODY；例如OLET、支管台、支管座不得因双尺寸或双壁厚判为三通，只有原文明示TEE、三通、RT、RTS、TS等三通产品词时才可输出三通类BODY。
+
+      三通分类规则：普通三通未明示角度时按90度产品理解，但ANGLE留空；斜三通/LATERAL TEE和Y型三通/Y-TEE未明示角度时按45度产品理解，但ANGLE留空。普通三通明示90度时仍归入普通三通系列，明示非90度角度时归入斜三通系列；LATERAL TEE始终归入斜三通系列；Y型三通始终保留Y型主体，不因45度、90度等角度改成普通三通或斜三通。EQUAL、STRAIGHT、等径、同径、REDUCING、异径只有原文明示时才组合进BODY，禁止根据主管、支管尺寸推导等径或异径。ANGLE只记录原文明示的角度。
+
+      MANU仅提取明示制造工艺；施工/焊接方法不等于WELDED；不从标准或牌号后缀推断；Forged、锻制、牌号单字母不是MANU。CONN仅提取明示连接；BW不写入CONN；不由PBE、标准或材质猜测SW、NPT；泛称螺纹已在BODY时不额外推断NPT或THD。
+
+      ANGLE保留原文数值，仅去掉度、°、deg等单位，不得取整、舍入或改为常见角度；RADIUS仅在原文明示时提取。缺失值用空字符串或空数组。只输出严格JSON对象，不要解释。
+
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0
     trust_remote_code: true
 
   material-standard:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-material-standard-0609-mlx
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-material-standard-0717-mlx
     instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0
     trust_remote_code: true
 
+  material-standard-v2:
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-mate0731-mlx-q8
+    instruction: |-
+      你是工业管道材质与规范抽取模型。仅提取原文明示信息，禁止猜测；只输出严格JSON，不要解释。
+
+      输出固定为：{"MATERIAL":[],"STANDARD":[]}。
+      MATERIAL每项固定为{"PART":"BODY","VALUE":"","SPECIAL_REQ":[]}。PART只允许BODY、LINING、INNER_PIPE、OUTER_PIPE、FLANGE：主材用BODY，明确衬层用LINING，夹套内外管分别使用INNER_PIPE和OUTER_PIPE，主体之外的配套法兰才使用FLANGE。
+      VALUE保留完整、稳定的原始材质表达及原文明示的材料标准或牌号前缀，不转换成最终编码。同一物理部件的双牌号、括号或备选表达保留在一个VALUE中；仅不同物理部件拆项。
+      SPECIAL_REQ只允许NACE、GALVANIZED、ANTI-H2S、ANTI-HIC、ANTI-SCC、CE、3PE、4PE、PE、EP。明确衬里拆为LINING；明确涂层或外防腐写入BODY的SPECIAL_REQ。Plain End的PE和含义不明的EP不得提取。
+      STANDARD每项固定为{"BODY":"规范编码"}，仅输出原文明示的产品、制造、尺寸、检验及执行规范，按训练数据中的项目编码格式归一并去重。已包含在VALUE中的ASTM、API材料规范不重复输出。
+      忽略尺寸、壁厚、压力、连接、制造、施工和试验信息；无法确认时输出空数组。
+    max_tokens: 512
+    temperature: 0.0
+    top_p: 1.0
+    trust_remote_code: true
+
   coder:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-coder-mlx
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-coder0723-mlx-q8
     instruction: "你是工业管道材料字段编码助手。请根据字段类型和原始字段值，输出唯一的标准化编码。只输出编码，不要解释。"
     max_tokens: 512
     temperature: 0.0
@@ -77,7 +110,7 @@ models:
   
   size-thick-pressure:
     model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-size-thick-pressure-mlx
-    instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，不要输出 JSON 以外的内容。"
+    instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，描述中同时存在SCHEDULE和MM类型壁厚，需要按照描述原文顺序同时提取出，不要解释，不要输出 JSON 以外的内容。"
     max_tokens: 512
     temperature: 0.0
     top_p: 1.0

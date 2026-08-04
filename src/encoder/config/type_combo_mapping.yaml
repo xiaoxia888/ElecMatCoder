@@ -10,6 +10,19 @@ FN:
   - 螺纹法兰;MFM;NPT
   - 螺纹法兰;RJ;NPT
   - 螺纹法兰;RTJ;NPT
+  - 螺纹法兰;RF;SCRD
+  - 螺纹法兰;SCRD
+
+RFSOJ:
+  - 异径带颈平焊法兰;RF;JACKET
+  - 异径带颈平焊法兰;JACKET
+  - 异径带颈平焊夹套法兰
+  - 异径带颈平焊夹套法兰;RF
+
+FP:
+  - FLANGED;PIPE;SMLS
+  - FLANGED;PIPE;SMLS
+
 
 FTH:
   - 螺纹法兰

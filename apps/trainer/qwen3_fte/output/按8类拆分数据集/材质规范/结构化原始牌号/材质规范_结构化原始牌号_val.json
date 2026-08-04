@@ -74158,7 +74158,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A105",
+          "VALUE": "ASTM A105N",
           "SPECIAL_REQ": []
         }
       ],
@@ -74175,7 +74175,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A105",
+          "VALUE": "ASTM A105N",
           "SPECIAL_REQ": [
             "GALVANIZED"
           ]
@@ -74194,7 +74194,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A105",
+          "VALUE": "ASTM A105N",
           "SPECIAL_REQ": [
             "GALVANIZED"
           ]
@@ -74213,7 +74213,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A105",
+          "VALUE": "ASTM A105N",
           "SPECIAL_REQ": [
             "GALVANIZED"
           ]
@@ -127238,7 +127238,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A105",
+          "VALUE": "ASTM A105N",
           "SPECIAL_REQ": []
         }
       ],

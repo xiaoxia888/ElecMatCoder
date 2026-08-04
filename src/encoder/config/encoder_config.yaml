@@ -55,6 +55,29 @@ material_special_req_supplement:
       - CE
       - ANTI-H2S
       - ANTI-HIC
+      - ANTI-SCC
+
+# v3 材质结构按物理部件逐项编码，再按固定顺序组合。
+# 组合规则只负责顺序和分隔，不负责猜测部件或材质。
+material_part_composition:
+  separator: "/"
+  default_order:
+    - BODY
+    - LINING
+    - FLANGE
+    - INNER_PIPE
+    - OUTER_PIPE
+  inner_outer_order:
+    - INNER_PIPE
+    - OUTER_PIPE
+    - BODY
+    - LINING
+    - FLANGE
+  supported_combinations:
+    - [BODY, LINING]
+    - [BODY, FLANGE]
+    - [INNER_PIPE, OUTER_PIPE]
+    - [BODY, LINING, FLANGE]
 
 # 尺寸处理规则
 size_processing:
@@ -196,11 +219,12 @@ type_manu_standard_supplement:
   enabled: true
   default_value: WELDED
   trigger_standard_codes:
-    - SYT5037
-    - GBT12771
-    - GBT12771IV
-    - GBT713
-    - GBT3091
+    # - SYT5037
+    # - GBT12771
+    # - GBT12771IV
+    # - GBT713
+    # - GBT3091
+
     # - GBT13401
     # - EN103052
     # - EN103053
@@ -350,6 +374,8 @@ regex_extraction:
       - NPTF        # 干密封内螺纹
       - NPTM        # 外螺纹
       - SCRD
+      - JACKET
+      - 夹套
     no_boundary:
       - 插焊
       # - 承插
@@ -362,6 +388,7 @@ regex_extraction:
       承插焊: SW
       插焊: SW
       承插: SW
+      夹套: JACKET
     resolution:
       suppress_rules:
         # 命中更具体的内/外螺纹后，压掉通用 NPT / THD / FTE / MTE

@@ -45,7 +45,7 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task material_standard \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-材质规范v3
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-8500-材质规范v3
 
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -102,11 +102,7 @@ EXTRACT_INSTRUCTION = (
     "请从材料描述中提取结构化信息，并以 JSON 格式返回。"
 )
 STRUCTURAL_INSTRUCTION = (
-    "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，"
-    "并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。"
-    "LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，"
-    "描述中同时存在SCHEDULE和MM类型壁厚，需要按照描述原文顺序同时提取出，"
-    "不要输出 JSON 以外的内容。"
+    "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，不要输出 JSON 以外的内容。"
 )
 CODE_INSTRUCTION = "你是工业管道材料字段编码助手。请根据字段类型和原始字段值，输出唯一的标准化编码。只输出编码，不要解释。"
 

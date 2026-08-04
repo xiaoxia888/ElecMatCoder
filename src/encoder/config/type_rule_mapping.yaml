@@ -31,6 +31,9 @@ body_codes:
   带径平焊法兰: FSO
   板式平焊法兰: FPL
   承插焊法兰: FS
+  异径法兰: RF
+  异径带颈平焊法兰: RFSO
+  异径带颈平焊夹套法兰: RFJSO
   盲法兰: BF
   盲板法兰: BF
   法兰盖: BF
@@ -169,7 +172,9 @@ seal_codes:
   FLRF: ""
   FF: FF
   RTJ: RJ
+  FRJ: FRJ
   MFM: MFM
+  LFM: LFM
   LM: LM
   MF: M
   FM: FM

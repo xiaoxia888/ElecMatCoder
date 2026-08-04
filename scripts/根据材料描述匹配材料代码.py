@@ -27,12 +27,12 @@
   - 分流原因
 
 python scripts/根据材料描述匹配材料代码.py \
-    --excel1 /Users/guoxi/Documents/C1库运行/管件/管件总数据0727.xlsx \
-    --excel2 /Users/guoxi/Documents/C1库运行/管件/管件总运行0727.xlsx \
+    --excel1 /Users/guoxi/Documents/C1库运行/法兰/法兰总数据0724.xlsx \
+    --excel2 '/Users/guoxi/Downloads/编码结果 (53).csv'\
     --excel1-desc-col 材料描述 \
     --excel2-desc-col 原始描述 \
     --excel2-code-col 原始总编码 \
-    --output /Users/guoxi/Documents/C1库运行/管件/管件总数据0727-匹配后.xlsx
+    --output /Users/guoxi/Documents/C1库运行/法兰/法兰总数据0731-匹配后.xlsx
 
 """
 

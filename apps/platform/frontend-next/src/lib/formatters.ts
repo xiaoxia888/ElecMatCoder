@@ -106,12 +106,12 @@ function formatTypeValue(value: JsonValue | undefined): string {
 function formatMaterialItem(item: JsonValue): string {
   if (!isObject(item)) return s(item)
   const o = item as Record<string, JsonValue>
-  const role = s(o.ROLE)
+  const part = s(o.PART) || s(o.ROLE)
   const value = s(o.VALUE)
   const sreq = arr(o.SPECIAL_REQ)
   const body = sreq.length ? `${value}${sreq.join('')}` : value
-  if (!role || role === 'MAIN') return body
-  return body ? `${role}:${body}` : role
+  if (!part || part === 'BODY' || part === 'MAIN') return body
+  return body ? `${part}:${body}` : part
 }
 
 function formatStandardItem(item: JsonValue): string {

@@ -231,7 +231,11 @@ def call_hf_lazy_service_predict(
         },
         timeout=timeout,
     )
-    resp.raise_for_status()
+    if resp.status_code >= 400:
+        raise RuntimeError(
+            "HF Lazy Service prediction failed: "
+            f"model={model_name}, status={resp.status_code}, response={resp.text[:2000]}"
+        )
     payload = resp.json()
     raw = payload.get("raw_response")
     parsed = payload.get("parsed_json")

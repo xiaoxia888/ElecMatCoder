@@ -315,6 +315,15 @@ class Qwen3Predictor:
             return
 
         if isinstance(material_value, list):
+            explicit_parts = [
+                item
+                for item in material_value
+                if isinstance(item, dict) and item.get("PART") not in (None, "")
+            ]
+            # 多部件材质必须由模型把特殊要求绑定到具体 PART；全局补提会把
+            # “法兰镀锌”错误地补到主体或衬层。
+            if len(explicit_parts) > 1:
+                return
             for item in material_value:
                 if not isinstance(item, dict):
                     continue
@@ -322,7 +331,7 @@ class Qwen3Predictor:
             return
 
         if isinstance(material_value, dict):
-            if "VALUE" in material_value or "ROLE" in material_value:
+            if "VALUE" in material_value or "PART" in material_value or "ROLE" in material_value:
                 self._supplement_material_item_special_req(material_value, matched_suffixes)
                 return
             items = material_value.get("ITEMS")
@@ -783,16 +792,16 @@ class Qwen3Predictor:
                 continue
 
             if field == "MATERIAL":
-                # 新结构: [{"ROLE":"MAIN","VALUE":"...","SPECIAL_REQ":[...]}]
+                # 新结构: [{"PART":"BODY","VALUE":"...","SPECIAL_REQ":[...]}]
                 if isinstance(values, list):
                     for idx, item in enumerate(values):
                         if isinstance(item, dict):
-                            role = item.get("ROLE")
-                            if role not in (None, ""):
+                            part = item.get("PART") or item.get("ROLE")
+                            if part not in (None, ""):
                                 entities.append({
                                     "type": field,
-                                    "subtype": "ROLE",
-                                    "value": str(role).strip(),
+                                    "subtype": "PART",
+                                    "value": str(part).strip(),
                                     "bind_to_index": idx,
                                     "confidence": default_confidence,
                                 })

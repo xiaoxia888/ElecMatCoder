@@ -83,10 +83,15 @@ export async function parseExcel(file: File): Promise<ParsedImportPayload> {
   const data = await file.arrayBuffer()
   const workbook = XLSX.read(data)
   const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
-  const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet)
+  // 保留工作表范围内的空行和空单元格；重复行按原始顺序完整保留。
+  const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, {
+    blankrows: true,
+    defval: '',
+  })
+  const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))))
   return {
     rows,
-    columns: rows[0] ? Object.keys(rows[0]) : [],
+    columns,
   }
 }
 

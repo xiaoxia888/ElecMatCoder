@@ -1,0 +1,1646 @@
+[
+  {
+    "input": "碳素无缝钢管 0.5PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "0.5"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-000",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 0.5 SCH40 ASTM A106 Gr.B, ASME B36.10M DN15",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "0.5"
+        },
+        {
+          "type": "DN",
+          "value": "15"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-000",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 21.3 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "21.3"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-000",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 15",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "15"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-000",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 0.75PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "0.75"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-001",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 0.75 SCH10S ASTM A106 Gr.B, ASME B36.10M DN20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "0.75"
+        },
+        {
+          "type": "DN",
+          "value": "20"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-001",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 26.7 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "26.7"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-001",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "20"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-001",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 1PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-002",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 1 SCH40 ASTM A106 Gr.B, ASME B36.10M DN25",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1"
+        },
+        {
+          "type": "DN",
+          "value": "25"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-002",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 33.4 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "33.4"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-002",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 25",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "25"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-002",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 1.5PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1.5"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-003",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 1.5 SCH10S ASTM A106 Gr.B, ASME B36.10M DN40",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1.5"
+        },
+        {
+          "type": "DN",
+          "value": "40"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-003",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 48.3 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "48.3"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-003",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 40",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "40"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-003",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 2PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "2"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-004",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 2 SCH40 ASTM A106 Gr.B, ASME B36.10M DN50",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "2"
+        },
+        {
+          "type": "DN",
+          "value": "50"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-004",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 60.3 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "60.3"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-004",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 50",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "50"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-004",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 2.5PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "2.5"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-005",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 2.5 SCH10S ASTM A106 Gr.B, ASME B36.10M DN65",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "2.5"
+        },
+        {
+          "type": "DN",
+          "value": "65"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-005",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 73 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "73"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-005",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 65",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "65"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-005",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 3PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "3"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-006",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 3 SCH40 ASTM A106 Gr.B, ASME B36.10M DN80",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "3"
+        },
+        {
+          "type": "DN",
+          "value": "80"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-006",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 88.9 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "88.9"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-006",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 80",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "80"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-006",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 4PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "4"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-007",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 4 SCH10S ASTM A106 Gr.B, ASME B36.10M DN100",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "4"
+        },
+        {
+          "type": "DN",
+          "value": "100"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-007",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 114.3 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "114.3"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-007",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 100",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "100"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-007",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 6PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "6"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-008",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 6 SCH40 ASTM A106 Gr.B, ASME B36.10M DN150",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "6"
+        },
+        {
+          "type": "DN",
+          "value": "150"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-008",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 168.3 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "168.3"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-008",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 150",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "150"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-008",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 8PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "8"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-009",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 8 SCH10S ASTM A106 Gr.B, ASME B36.10M DN200",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "8"
+        },
+        {
+          "type": "DN",
+          "value": "200"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-009",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 219.1 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "219.1"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-009",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 200",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "200"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-009",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 10PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "10"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-010",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 10 SCH40 ASTM A106 Gr.B, ASME B36.10M DN250",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "10"
+        },
+        {
+          "type": "DN",
+          "value": "250"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-010",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 273.1 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "273.1"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-010",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 250",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "250"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-010",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 12PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "12"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-011",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 12 SCH10S ASTM A106 Gr.B, ASME B36.10M DN300",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "12"
+        },
+        {
+          "type": "DN",
+          "value": "300"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-011",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 323.9 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "323.9"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-011",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 300",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "300"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-011",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 16PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "16"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-012",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 16 SCH40 ASTM A106 Gr.B, ASME B36.10M DN400",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "16"
+        },
+        {
+          "type": "DN",
+          "value": "400"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-012",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 406.4 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "406.4"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-012",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 400",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "400"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-012",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 20PIPE 20 GB/T8163 SMLS BE SCH10S HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "20"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-013",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 20 SCH10S ASTM A106 Gr.B, ASME B36.10M DN500",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "20"
+        },
+        {
+          "type": "DN",
+          "value": "500"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-013",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 508 SCH10S BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "508"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-013",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH10S, A312 TP304, BE 500",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "500"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-013",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "碳素无缝钢管 24PIPE 20 GB/T8163 SMLS BE SCH40 HG/T20553(Ia)",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "24"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-014",
+    "原型来源": "用户反馈：数字与PIPE粘连表示寸径"
+  },
+  {
+    "input": "CS PIPE 24 SCH40 ASTM A106 Gr.B, ASME B36.10M DN600",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "24"
+        },
+        {
+          "type": "DN",
+          "value": "600"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-014",
+    "原型来源": "用户反馈：裸寸径与明确DN同时保留"
+  },
+  {
+    "input": "GB/T 8163;SH/T 3405 Pipe 610 SCH40 BE 20",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "OD",
+          "value": "610"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-014",
+    "原型来源": "用户反馈：Pipe后的管系外径不是英寸"
+  },
+  {
+    "input": "PIPE, SMLS, ASME B36.19M SCH40, A312 TP304, BE 600",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "DN",
+          "value": "600"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH40"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "INCH-014",
+    "原型来源": "用户反馈：管道尾部常见DN裸数字不是英寸"
+  },
+  {
+    "input": "PIPE,A106 GR.B,SMLS,BE,SCH80,ASME B36.10M 1/2\"",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1/2"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH80"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "FRACTION-000",
+    "原型来源": "用户反馈：英制分数及粘连变体"
+  },
+  {
+    "input": "PIPE,A106 GR.B,SMLS,BE,SCH80,ASME B36.10M 3/4\"",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "3/4"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH80"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "FRACTION-001",
+    "原型来源": "用户反馈：英制分数及粘连变体"
+  },
+  {
+    "input": "PIPE,A106 GR.B,SMLS,BE,SCH80,ASME B36.10M 11/2\"",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1-1/2"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH80"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "FRACTION-002",
+    "原型来源": "用户反馈：英制分数及粘连变体"
+  },
+  {
+    "input": "PIPE,A106 GR.B,SMLS,BE,SCH80,ASME B36.10M 1-1/2\"",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "1-1/2"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH80"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "FRACTION-003",
+    "原型来源": "用户反馈：英制分数及粘连变体"
+  },
+  {
+    "input": "PIPE,A106 GR.B,SMLS,BE,SCH80,ASME B36.10M 2 1/2\"",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "2-1/2"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH80"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "FRACTION-004",
+    "原型来源": "用户反馈：英制分数及粘连变体"
+  },
+  {
+    "input": "PIPE,A106 GR.B,SMLS,BE,SCH80,ASME B36.10M 2 in",
+    "output": {
+      "SIZE_ITEMS": [
+        {
+          "type": "INCH",
+          "value": "2"
+        }
+      ],
+      "LENGTH": "",
+      "THICKNESS_ITEMS": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH80"
+        }
+      ],
+      "PRESSURE": ""
+    },
+    "来源": "数据增强",
+    "数据增强标识": true,
+    "增强类型": "裸尺寸与英制格式专项",
+    "增强组ID": "FRACTION-005",
+    "原型来源": "用户反馈：英制分数及粘连变体"
+  }
+]

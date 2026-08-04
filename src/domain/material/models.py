@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 class MaterialItem:
     """材质字段单项结构。"""
 
-    # 材质角色，例如 MAIN / LINING。
-    role: str = "MAIN"
+    # 物理部件，例如 BODY / LINING / INNER_PIPE / OUTER_PIPE / FLANGE。
+    part: str = "BODY"
     # 二阶段输入材质值。这里表示编码前的材质项，不应回写最终编码结果。
     value: str = ""
     # 特殊要求，例如 ZN / CE。
@@ -16,7 +16,7 @@ class MaterialItem:
 
     def to_dict(self) -> dict[str, object]:
         return {
-            "ROLE": self.role,
+            "PART": self.part,
             "VALUE": self.value,
             "SPECIAL_REQ": list(self.special_req),
         }

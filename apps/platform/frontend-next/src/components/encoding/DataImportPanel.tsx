@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { ChevronDown, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { parseExcel } from '@/lib/import-export'
@@ -28,14 +28,6 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   const [error, setError] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isCategoryErrorOpen, setIsCategoryErrorOpen] = useState(false)
-
-  const filteredRows = useMemo(
-    () => selectedColumn
-      ? rows.filter((row) => String(row[selectedColumn] ?? '').trim() !== '')
-      : rows,
-    [rows, selectedColumn],
-  )
-  const filteredOutCount = Math.max(0, rows.length - filteredRows.length)
 
   async function processFile(file: File) {
     if (!/\.(xlsx|xls|csv)$/i.test(file.name)) {
@@ -70,10 +62,10 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
   }
 
   function handleConfirmImport() {
-    if (!selectedColumn || filteredRows.length === 0) return
+    if (!selectedColumn || rows.length === 0) return
     if (
       selectedCategoryColumn
-      && filteredRows.some((row) => {
+      && rows.some((row) => {
         const category = String(row[selectedCategoryColumn] ?? '').trim()
         return category !== '' && !SUPPORTED_CATEGORIES.has(category)
       })
@@ -87,7 +79,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
       setIsCategoryErrorOpen(true)
       return
     }
-    onImport(filteredRows, selectedColumn, fileName, selectedProjectColumn, selectedCategoryColumn)
+    onImport(rows, selectedColumn, fileName, selectedProjectColumn, selectedCategoryColumn)
     setIsDialogOpen(false)
     setRows([])
     setColumns([])
@@ -214,8 +206,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                 </div>
               </div>
               <div className="rounded-[14px] bg-[#f7f9fc] px-4 py-3 text-sm text-muted">
-                文件：{fileName}，有效 {filteredRows.length} 条数据
-                {filteredOutCount > 0 ? `，已过滤空描述 ${filteredOutCount} 条` : ''}
+                文件：{fileName}，共 {rows.length} 条数据（不去重，不跳过空描述）
               </div>
               <div className="flex justify-end gap-3">
                 <Button variant="outline" className="h-11 rounded-[12px] px-5" onClick={() => setIsDialogOpen(false)}>
@@ -224,7 +215,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                 <Button
                   variant="accent"
                   className="h-11 rounded-[12px] px-5"
-                  disabled={!selectedColumn || filteredRows.length === 0}
+                  disabled={!selectedColumn || rows.length === 0}
                   onClick={handleConfirmImport}
                 >
                   确认导入

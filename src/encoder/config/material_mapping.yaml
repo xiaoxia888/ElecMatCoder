@@ -11,6 +11,7 @@ value_mapping:
   - B60ZN
   B60:
   - B60
+  - ASTM A672 B60
   灰口铸铁:
   - GI
   A1063PE:
@@ -18,12 +19,11 @@ value_mapping:
   L360M:
   - L360M
   - L360M/X52M
-  '321':
-  - '321'
   Q245RCE:
   - Q245RCE
   FRPP:
   - FRPP
+  PP:
   - PP
   15CrMoG:
   - 15CrMoG
@@ -35,11 +35,15 @@ value_mapping:
   - 16MnD
   16MnDII:
   - 16MnD II
+  - 16MnD Gr.II
   16MnDIII:
   - 16MnD III
   - 16MnDIII
   16MnII:
   - 16Mn II
+  - 16Mn Gr.II
+  16MnIII:
+  - 16Mn Gr.III
   A106/PTFE:
   - A106/PTFE
   A105/PTFE:
@@ -48,6 +52,7 @@ value_mapping:
   - '20'
   - 20#
   - CS20
+  - 20号钢
   20/PTFE:
   - 20/PTFE
   - 20PTFE
@@ -68,17 +73,40 @@ value_mapping:
   - 20 GLASS LINED
   20II:
   - 20II
+  - 20 Gr.II
   20III:
   - 20 Gr.III
   '2205':
   - '2205'
+  - 2205(A182 F51)
   - ASTM A182 F51
+  - ASTM A182 F60
   - SF2205
   - ASTM A182 2205
+  - S31803
+  - ASTM A790 S31803
   - ASTM A790 S32205
+  - S32205
   - S22053
+  - ASTM A815 WPS32205
+  - F2205
+  2205II:
+  - 2205 Gr.II
+  - 2205(A182 F51) Gr.II
+  - ASTM A182 F51 Gr.II
+  - ASTM A182 F60 Gr.II
+  - SF2205 Gr.II
+  - ASTM A182 2205 Gr.II
+  - S31803 Gr.II
+  - ASTM A790 S31803 Gr.II
+  - ASTM A790 S32205 Gr.II
+  - S32205 Gr.II
+  - S22053 Gr.II
+  - ASTM A815 WPS32205 Gr.II
+  - F2205 Gr.II
   '2507':
   - 022Cr25Ni7Mo4N
+  - S25073
   '304':
   - '1.4301'
   - ASTM A312 Gr.TP304
@@ -114,13 +142,23 @@ value_mapping:
   - ASTM A182 Gr.F 304(UNS S30400)
   - ASTM A240 Gr.TP304
   - ASTM A182 F304(UNS S30400)
+  - ASTM A358 304
+  - WP304
+  - SUS 304TP
+  - SUS F304
+  - ASTM A240 304
   304/304L:
   - S30408/S30403
+  - ASTM A182 F304/304L
+  - ASTM A403 WP304/304L
+  - ASTM A312 TP304/304L
   304H:
+  - ASTM A403 WP304H
   - ASTM A403 WP304H-S
   - ASTM A182 F304H
   - ASTM A312 TP304H
   - 07Cr19Ni10
+  - S30409
   304I:
   - 304 Gr.I
   - S30408 Gr.I
@@ -133,8 +171,10 @@ value_mapping:
   - 304 Gr.II
   - S30408II
   - 06Cr19Ni10 II
+  - 06Cr19Ni10 Gr.II
   304III:
   - 06Cr19Ni10 III
+  - 06Cr19Ni10 Gr.III
   - 304 Gr.III
   - F304 Gr.III
   - S30408 Gr.III
@@ -160,6 +200,7 @@ value_mapping:
   - WP304L-S
   - X2CrNi19-11(1.4306)
   - 00Cr19Ni10
+  - X2CrNi19-11
   304LI:
   - S30403 Gr.I
   - SF304L Gr.I
@@ -178,6 +219,7 @@ value_mapping:
   310S:
   - S31008
   - 310s
+  - 06Cr25Ni20
   CF370:
   - CF370
   '316':
@@ -195,6 +237,9 @@ value_mapping:
   - ASTM A312 Gr.TP 316
   - 06Cr17Ni12Mo2
   - '316'
+  - SUS 316
+  - SUS F316
+  - SUS 316TP
   316/316L:
   - S31608/S31603
   - ASTM A182 F316/F316L
@@ -206,6 +251,7 @@ value_mapping:
   - ASTM A312 Gr.TP316/Gr.TP316L
   - ASTM A403 Gr.WP316/Gr.WP316L
   - 316/316L
+  - ASTM A312 TP316/316L
   316I:
   - SF316 Gr.I
   - F316 Gr.I
@@ -217,6 +263,8 @@ value_mapping:
   - F316 Gr.III
   316L:
   - '1.4404'
+  - SUS 316LTP
+  - 316LTP
   - ASTM A403 WP316L
   - S31603
   - ASTM A312 Gr.TP316L
@@ -244,6 +292,13 @@ value_mapping:
   - ASTM A182 F316L-S
   - TP316L
   - ASTM A403 316L
+  - ASTM A358 TP316L
+  - ASTM A358 316L
+  - ASTM A240 316L
+  - X2CrNiMo17-12-2
+  - SS31603
+  - SUS 316L
+  - SS316L
   316LI:
   - S31603 Gr.I
   - 316L Gr.I
@@ -262,7 +317,14 @@ value_mapping:
   316Ti:
   - X6CrNiMoTi17-12-2(1.4571)
   - ASTM A182 Gr.F316Ti
+  - ASTM A182 F316Ti
+  - ASTM A312 TP316Ti
+  - 316Ti
   '321':
+  - '321'
+  - SF321
+  - ASTM A182 F321
+  - ASTM A403 WP321
   - X6CrNiTi18-10(S32100)
   - F321
   - S32168
@@ -295,6 +357,10 @@ value_mapping:
   P11:
   - 1-1/4Cr-1/2Mo
   - 1 1/4Cr-1/2Mo
+  - ASTM A335 Gr.P11
+  - ASTM A335 P11
+  - ASTM A234 WP11
+  - ASTM A333 P11
   P11/410:
   - 1-1/4Cr-1/2Mo/410
   - 1 1/4Cr-1/2Mo/410
@@ -303,6 +369,7 @@ value_mapping:
   A516:
   - ASTM A516
   - ASTM A516 Gr.70
+  - ASTM A516 Gr.65
   A53:
   - ASTM A53
   - ASTM A53 Gr.B
@@ -310,8 +377,10 @@ value_mapping:
   - AF12G
   API5L:
   - API 5L
+  - API 5L Gr.B
   C60:
   - A672 C60
+  - ASTM A672 C60
   CF415:
   - CF415
   CF415K:
@@ -340,7 +409,6 @@ value_mapping:
   - L245/B
   L245N:
   - L245N
-  L245NS:
   - L245NS
   LF2:
   - ASTM A350 LF2
@@ -348,22 +416,55 @@ value_mapping:
   M400:
   - UNS N04400
   - N04400
-  P11:
-  - ASTM A335 Gr.P11
+  - ASTM B564 UNS N04400
   UPVC:
   - PVC-U
   - UPVC
   - PVCU
   Q235B:
   - Q235B
+  - Q235-B
   Q245R:
   - Q245R
   Q345R:
   - Q345R
+  F65:
+  - ASTM A694 F65
+  C65:
+  - ASTM A672 C65
+  '2200':
+  - ASTM B366 N02200
+  - ASTM B366 WPNC
+  - ASTM B725 N02200
+  - N02200
+  DI:
+  - DI
+  TA10:
+  - TA10
+  WPHY65:
+  - ASTM A860 WPHY65
+  CF8:
+  - ASTM A351 CF8
+  12Cr5Mo:
+  - 12Cr5Mo
+  12Cr2Mo1:
+  - 12Cr2Mo1
+  347H:
+  - ASTM A182 F347H
+  - ASTM A403 WP347H
+  - ASTM A312 TP347H
+  310M:
+  - ZECOR-310M
+  - 310M
+  '410':
+  - '410'
+  P235GH:
+  - P235GH
   WCB:
   - ASTM A216 WCB
   WP11:
   - ASTM A234 Gr.WP11
+  - ASTM A234 WP11
   WPB:
   - ASTM A234 WPB-S
   - ASTM A234M WPB
@@ -377,10 +478,12 @@ value_mapping:
   - 16MnDG
   CC60:
   - ASTM A671 Gr.CC60
+  - ASTM A671 CC60
   'A420':
   - ASTM A420 Gr.20
   GL:
   - 搪玻璃
+  - GLASS LINED
   C276:
   - '276'
   - C276
@@ -394,15 +497,67 @@ value_mapping:
    - 20/S30408
   FRP/CPVC:
    - FRP/CPVC
+
+  # 可独立作为衬层或主体编码的实际描述。
+  PTFE:
+  - PTFE
+  RPTFE:
+  - RPTFE
+  PE:
+  - PE
+  - STEEL REINFORCED POLYETHYLENE
+  EAA:
+  - EAA
+  PVC:
+  - PVC
+  CPVC:
+  - CPVC
+  衬胶:
+  - 衬胶
+  L245M:
+  - L245M
+  LF485K2:
+  - LF485K2
+  TA2:
+  - TA2
+  Q345E:
+  - Q345E
+  CF3M:
+  - ASTM A351 CF3M
+  '6600':
+  - ASTM B366 WPNCI
+  - ASTM B167 N06600
+  '6625':
+  - ASTM B444 N06625
+  11/4Cr:
+  - ASTM A691 1.25Cr
+  - ASTM A691 1 1/4Cr
+  - ASTM A691 1-1/4Cr
+  '8825':
+  - ASTM A234 WPB+UNS N08825 Clad
+  - ASTM B366 UNS N08825
+  - ASTM B564 UNS N08825
+  - ASTM B423 N08825
    
 special_req_suffix:
   CE:
   - CE
   - ANTI-H2S
   - ANTI-HIC
+  - ANTI-SCC
   - NACE
   ZN:
+  - ZN
   - GALV
+  - GALVANIZED
+  3PE:
+  - 3PE
+  4PE:
+  - 4PE
+  PE:
+  - PE
+  EP:
+  - EP
 
 
 

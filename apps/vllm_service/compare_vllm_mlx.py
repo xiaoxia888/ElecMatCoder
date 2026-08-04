@@ -14,7 +14,7 @@ import httpx
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_VLLM_URL = (
-    "https://ed0cae6cd5fe480e97b68bb1d4413014.region2.waas.aigate.cc"
+    "https://f98b8bda606b412895aac9fb355f023e.region2.waas.aigate.cc"
 )
 DEFAULT_MLX_URL = "http://192.168.31.201:8200"
 DEFAULT_PROMPT = (
@@ -193,8 +193,12 @@ def diagnosis(configured: dict[str, Any], forced: dict[str, Any]) -> list[str]:
         messages.append("两端配置中的 instruction 不同。")
     if configured.get("all_paired_responses_equal"):
         messages.append("两端使用各自配置时输出已经一致。")
+        return messages
     if forced.get("all_paired_responses_equal"):
-        messages.append("强制相同 instruction 后输出一致，差异来自服务端提示词配置。")
+        if not configured.get("instructions_equal"):
+            messages.append("强制相同 instruction 后输出一致，差异来自服务端提示词配置。")
+        else:
+            messages.append("相同 instruction 和生成参数下输出一致。")
         return messages
     if not forced.get("paired_successes"):
         messages.append(

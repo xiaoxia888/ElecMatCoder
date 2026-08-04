@@ -599,6 +599,16 @@ class Stage1FieldOrchestrator:
         if not isinstance(material_value, list):
             return
 
+        explicit_parts = [
+            item
+            for item in material_value
+            if isinstance(item, dict) and item.get("PART") not in (None, "")
+        ]
+        # 原文级附加要求无法确定属于哪个物理部件。多部件结构必须使用
+        # 模型已绑定到各 PART 的 SPECIAL_REQ，不能把法兰镀锌广播给主体。
+        if len(explicit_parts) > 1:
+            return
+
         reverse_map = _load_material_special_req_reverse_map()
         if not reverse_map:
             return

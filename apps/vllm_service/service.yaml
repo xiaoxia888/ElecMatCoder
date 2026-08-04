@@ -1,6 +1,6 @@
 # Linux NVIDIA部署示例。把基座和LoRA路径替换为服务器实际路径。
 # 硬件参数来自profiles目录；启动时无需再传--profile。
-profile: dual-5090
+profile: dual-3090
 
 gateway:
   host: 0.0.0.0
@@ -20,7 +20,7 @@ engines:
     max_cpu_loras: 1
     max_lora_rank: 16
     lora_modules:
-      type: /home/waas/lora/checkpoint-2400-种类
+      type: /home/waas/lora/checkpoint-2250-种类
 
   qwen3_4b:
     host: 127.0.0.1
@@ -34,7 +34,7 @@ engines:
     max_lora_rank: 16
     lora_modules:
       size-thick-pressure: /home/waas/lora/size-thick-pressure
-      material-standard: /home/waas/lora/material-standard
+      material-standard: /home/waas/lora/checkpoint-8500-材质规范v3
       coder: /home/waas/lora/coder
 
 models:
@@ -70,7 +70,7 @@ models:
     engine: qwen3_4b
     upstream_model: size-thick-pressure
     instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，描述中同时存在SCHEDULE和MM类型壁厚，需要按照描述原文顺序同时提取出，不要解释，不要输出 JSON 以外的内容。"
-    max_tokens: 512
+    max_tokens: 256
     temperature: 0.0
     top_p: 1.0
     extra_body:
@@ -81,8 +81,17 @@ models:
   material-standard:
     engine: qwen3_4b
     upstream_model: material-standard
-    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
-    max_tokens: 512
+    instruction: |-
+      你是工业管道材质与规范抽取模型。仅提取原文明示信息，禁止猜测；只输出严格JSON，不要解释。
+
+      输出固定为：{"MATERIAL":[],"STANDARD":[]}。
+      MATERIAL每项固定为{"PART":"BODY","VALUE":"","SPECIAL_REQ":[]}。PART只允许BODY、LINING、INNER_PIPE、OUTER_PIPE、FLANGE：主材用BODY，明确衬层用LINING，夹套内外管分别使用INNER_PIPE和OUTER_PIPE，主体之外的配套法兰才使用FLANGE。
+      VALUE保留完整、稳定的原始材质表达及原文明示的材料标准或牌号前缀，不转换成最终编码。同一物理部件的双牌号、括号或备选表达保留在一个VALUE中；仅不同物理部件拆项。
+      SPECIAL_REQ只允许NACE、GALVANIZED、ANTI-H2S、ANTI-HIC、ANTI-SCC、CE、3PE、4PE、PE、EP。明确衬里拆为LINING；明确涂层或外防腐写入BODY的SPECIAL_REQ。Plain End的PE和含义不明的EP不得提取。
+      STANDARD每项固定为{"BODY":"规范编码"}，仅输出原文明示的产品、制造、尺寸、检验及执行规范，按训练数据中的项目编码格式归一并去重。已包含在VALUE中的ASTM、API材料规范不重复输出。
+      忽略尺寸、壁厚、压力、连接、制造、施工和试验信息；无法确认时输出空数组。
+    # v3 多部件材质 JSON 通常远低于 256 tokens；避免与 1024 上下文上限相加后溢出。
+    max_tokens: 256
     temperature: 0.0
     top_p: 1.0
     extra_body:
@@ -94,7 +103,7 @@ models:
     engine: qwen3_4b
     upstream_model: coder
     instruction: "你是工业管道材料字段编码助手。请输出唯一的标准化编码，只输出编码，不要解释。"
-    max_tokens: 512
+    max_tokens: 128
     temperature: 0.0
     top_p: 1.0
     extra_body:

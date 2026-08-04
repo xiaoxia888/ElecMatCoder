@@ -445,12 +445,16 @@ class StructuredLlamaFactoryPredictor:
         material_value = structured.get("MATERIAL")
         material_items = material_value if isinstance(material_value, list) else []
         material_valid = sum(1 for item in material_items if isinstance(item, dict) and _is_non_empty(item.get("VALUE")))
-        material_roles = sum(1 for item in material_items if isinstance(item, dict) and _is_non_empty(item.get("ROLE")))
+        material_parts = sum(
+            1
+            for item in material_items
+            if isinstance(item, dict) and _is_non_empty(item.get("PART") or item.get("ROLE"))
+        )
         material_present = material_valid > 0
         material_ratio = (material_valid / len(material_items)) if material_items else 0.0
         material_conf = 0.0
         if material_present:
-            material_conf = min(0.95, 0.58 + 0.22 * material_ratio + (0.10 if material_roles == material_valid else 0.0) + (0.05 if material_valid > 1 else 0.0))
+            material_conf = min(0.95, 0.58 + 0.22 * material_ratio + (0.10 if material_parts == material_valid else 0.0) + (0.05 if material_valid > 1 else 0.0))
         result["MATERIAL"] = {
             "source": "finetuned_model",
             "confidence": round(material_conf, 4),
@@ -459,7 +463,7 @@ class StructuredLlamaFactoryPredictor:
                 "field_present": material_present,
                 "item_count": len(material_items),
                 "valid_item_count": material_valid,
-                "role_present_count": material_roles,
+                "part_present_count": material_parts,
                 "valid_ratio": round(material_ratio, 4),
             },
         }
