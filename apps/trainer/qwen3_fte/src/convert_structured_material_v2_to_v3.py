@@ -66,6 +66,18 @@ SS_DESIGNATION_RE = re.compile(
     r"(?![A-Za-z0-9])",
     re.IGNORECASE,
 )
+ASTM_FITTING_GRADE_RE = re.compile(
+    r"(?<![A-Za-z0-9])"
+    r"(?:ASTM\s*)?A\s*(?P<standard>234|403|420)"
+    r"(?:\s*(?:GRADE|GR\.?))?\s*"
+    r"(?P<grade>WP(?:L)?\s*[A-Za-z0-9]+"
+    r"(?:\s*/\s*(?:WP(?:L)?\s*)?[A-Za-z0-9]+)?)",
+    re.IGNORECASE,
+)
+ASTM_FITTING_TYPE_RE = re.compile(
+    r"\bTYPE\s*(?P<class>WX|W)\b",
+    re.IGNORECASE,
+)
 
 
 def clean(value: Any) -> str:
@@ -161,6 +173,54 @@ def recover_source_ss_designation(
         source_designation = match.group("designation").upper()
         if source_designation == f"S{computed}":
             return source_designation
+    return None
+
+
+def extract_source_astm_fitting_class_designation(source_text: str) -> str | None:
+    """Return an explicit A234/A403/A420 W/WX designation from source."""
+    match = ASTM_FITTING_GRADE_RE.search(source_text)
+    if not match:
+        return None
+
+    standard = match.group("standard")
+    grade = re.sub(r"\s+", "", match.group("grade")).upper()
+    # A compact class marker such as WP11Cl.2 is not part of the grade.
+    grade = re.sub(r"CL$", "", grade, flags=re.IGNORECASE)
+    suffix_text = source_text[match.end() :]
+    direct = re.match(
+        r"\s*-\s*(WX|W)(?=[^A-Za-z]|$)",
+        suffix_text,
+        re.IGNORECASE,
+    )
+    if direct:
+        material_class = direct.group(1).upper()
+    else:
+        # Type W/WX may follow UNS, end-form and product-standard fragments.
+        type_match = ASTM_FITTING_TYPE_RE.search(suffix_text[:240])
+        if not type_match:
+            return None
+        material_class = type_match.group("class").upper()
+
+    return f"ASTM A{standard} {grade}-{material_class}"
+
+
+def recover_source_astm_fitting_class_designation(
+    source_text: str,
+    computed_value: str,
+) -> str | None:
+    """Restore explicit fitting-class suffixes without inferring from WELDED."""
+    source_designation = extract_source_astm_fitting_class_designation(source_text)
+    if not source_designation:
+        return None
+
+    source_compact = compact_designation(source_designation)
+    value_compact = compact_designation(computed_value)
+    suffix = "WX" if source_designation.endswith("-WX") else "W"
+    base_compact = source_compact[: -len(suffix)]
+    if value_compact == base_compact:
+        return f"{computed_value}-{suffix}"
+    if value_compact == source_compact and computed_value != source_designation:
+        return source_designation
     return None
 
 
@@ -325,6 +385,14 @@ def repair_materials_from_source(
         if recovered_sus:
             repaired = recovered_sus
             changes.append("恢复原文明示的JIS SUS牌号前缀")
+
+        recovered_fitting_class = recover_source_astm_fitting_class_designation(
+            source_text,
+            repaired,
+        )
+        if recovered_fitting_class:
+            repaired = recovered_fitting_class
+            changes.append("恢复原文明示的ASTM管件W/WX等级后缀")
 
         dual = re.fullmatch(
             r"(?P<head>.*?\s)?"

@@ -357,6 +357,9 @@ regex_extraction:
         # 命中更具体的环连接面后，压掉泛化 RJ
         - when_any: [RTJ, FLRJ]
           suppress: [RJ]
+        - when_any: [MFM]
+          suppress: [MF]
+        
   
   # CONN 连接/端部结构 - 基于 pipe_code_mapping.yaml 中已有的关键词
   CONN:

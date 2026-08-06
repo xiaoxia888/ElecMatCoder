@@ -996,6 +996,25 @@ class PipeEncoderBase:
                 filtered.append(item_text)
         return filtered
 
+    def _filter_configured_seal_values(self, values: List[str]) -> List[str]:
+        """仅将已配置的密封面标签送入二阶段，保留一阶段原始结果。"""
+        seal_codes = self.type_rule_config.get('seal_codes') or {}
+        canonical_by_upper = {
+            str(key).strip().upper(): str(key).strip()
+            for key in seal_codes
+            if str(key).strip()
+        }
+        filtered: List[str] = []
+        for value in values:
+            raw_value = str(value or '').strip()
+            canonical = canonical_by_upper.get(raw_value.upper())
+            if not canonical:
+                logger.debug(f"[TYPE二阶段过滤] 忽略未配置密封面 '{raw_value}'")
+                continue
+            if canonical not in filtered:
+                filtered.append(canonical)
+        return filtered
+
     def _filter_type_encoding_input(self, type_input: Dict[str, Any]) -> Dict[str, Any]:
         geometry = self._get_dict(type_input.get('GEOMETRY'))
         filtered_input = {
@@ -1012,6 +1031,7 @@ class PipeEncoderBase:
         type_text = self._get_type_included_text(filtered_input)
         for field in ('SEAL', 'CONN', 'MANU'):
             filtered_input[field] = self._filter_type_component_list(type_text, filtered_input[field])
+        filtered_input['SEAL'] = self._filter_configured_seal_values(filtered_input['SEAL'])
         # 直管/管子类的端部或连接方式不参与 TYPE 编码，只保留在 stage1_raw 中展示。
         if filtered_input['BODY'].strip().upper() in {'直管', '钢管', '管子', 'PIPE'}:
             filtered_input['CONN'] = []

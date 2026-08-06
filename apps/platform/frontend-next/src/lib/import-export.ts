@@ -79,15 +79,28 @@ export interface ParsedImportPayload {
   columns: string[]
 }
 
+function isBlankImportValue(value: unknown): boolean {
+  return value == null || (typeof value === 'string' && value.trim() === '')
+}
+
+export function trimTrailingBlankRows(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+  let endIndex = rows.length
+  while (endIndex > 0 && Object.values(rows[endIndex - 1]).every(isBlankImportValue)) {
+    endIndex -= 1
+  }
+  return endIndex === rows.length ? rows : rows.slice(0, endIndex)
+}
+
 export async function parseExcel(file: File): Promise<ParsedImportPayload> {
   const data = await file.arrayBuffer()
   const workbook = XLSX.read(data)
   const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
-  // 保留工作表范围内的空行和空单元格；重复行按原始顺序完整保留。
-  const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, {
+  // 中间空白行必须保留，只裁掉工作表末尾因格式或历史内容产生的连续空白行。
+  const parsedRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, {
     blankrows: true,
     defval: '',
   })
+  const rows = trimTrailingBlankRows(parsedRows)
   const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))))
   return {
     rows,

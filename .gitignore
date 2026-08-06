@@ -1,12 +1,13 @@
 apps/platform/frontend/dist/
 apps/platform/frontend/node_modules/
 apps/trainer/qwen3_fte/*
+!apps/trainer/qwen3_fte/prompt/
+apps/trainer/qwen3_fte/prompt/*
+!apps/trainer/qwen3_fte/prompt/type_extraction_sft_instruction_v1.txt
 !apps/trainer/qwen3_fte/output/
 apps/trainer/qwen3_fte/output/*
 !apps/trainer/qwen3_fte/output/按8类拆分数据集/
 !apps/trainer/qwen3_fte/output/按8类拆分数据集/**
-!apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/
-!apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/**
 !apps/trainer/qwen3_fte/output/微调指令/
 !apps/trainer/qwen3_fte/output/微调指令/**
 !apps/trainer/qwen3_fte/skeletons/
@@ -16,7 +17,17 @@ apps/trainer/qwen3_fte/output/*
 data/
 outputs/
 wheels/
+scripts/
+!apps/trainer/qwen3_fte/output/按8类拆分数据集/scripts/
+!apps/trainer/qwen3_fte/output/按8类拆分数据集/scripts/**
 models/
+!models/
+models/*
+!models/encoding-confidence/
+models/encoding-confidence/*
+!models/encoding-confidence/20260731-no-old-confidence/
+models/encoding-confidence/20260731-no-old-confidence/*
+!models/encoding-confidence/20260731-no-old-confidence/encoding_confidence_model.npz
 checkpoint/
 
 # Python bytecode & caches
@@ -34,3 +45,7 @@ tmp_modelfile_f16
 测试.txt
 src/encoder/.DS_Store
 src/.DS_Store
+src/.DS_Store
+src/encoder/.DS_Store
+apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集
+同步到C1库复核/同步预览.json

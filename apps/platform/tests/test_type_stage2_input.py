@@ -212,6 +212,29 @@ class TypeStage2InputTest(unittest.TestCase):
             {"BODY": "异径斜三通", "ANGLE": "45", "MANU": ["WELDED"]},
         )
 
+    def test_unconfigured_seal_is_removed_only_from_stage2_input(self) -> None:
+        encoder = _CapturingTypeEncoder()
+        entities = {
+            "TYPE": {
+                "BODY": "8字盲板",
+                "CONN": [],
+                "SEAL": ["FWRF", "RJ", "lmfe", "TYPE E SPIGOT"],
+            }
+        }
+
+        result = encoder.encode(entities, material_category="法兰")
+
+        self.assertEqual(
+            result.fields["TYPE"].stage1_raw["SEAL"],
+            ["FWRF", "RJ", "lmfe", "TYPE E SPIGOT"],
+        )
+        self.assertEqual(result.fields["TYPE"].stage2_input["SEAL"], ["RJ", "LMFE"])
+        self.assertEqual(entities["TYPE"]["SEAL"], ["FWRF", "RJ", "lmfe", "TYPE E SPIGOT"])
+        self.assertEqual(
+            encoder.captured_fallback,
+            '{"BODY":"8字盲板","SEAL":["RJ","LMFE"]}',
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

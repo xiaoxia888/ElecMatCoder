@@ -206,7 +206,7 @@ export function DataImportPanel({ onImport }: DataImportPanelProps) {
                 </div>
               </div>
               <div className="rounded-[14px] bg-[#f7f9fc] px-4 py-3 text-sm text-muted">
-                文件：{fileName}，共 {rows.length} 条数据（不去重，不跳过空描述）
+                文件：{fileName}，共 {rows.length} 条数据（保留中间空白行，忽略末尾连续空白行）
               </div>
               <div className="flex justify-end gap-3">
                 <Button variant="outline" className="h-11 rounded-[12px] px-5" onClick={() => setIsDialogOpen(false)}>

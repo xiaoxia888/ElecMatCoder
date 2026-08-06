@@ -1,0 +1,3562 @@
+[
+  {
+    "input": "无缝钢管 DN300 SCH20 L245 PLS1 GB/T9711 焊接",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 10.2 316L 管子;SMLS;BE;316L;GB/T14976;HG/T20553(Ia);φ10.2XSCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子, 15CrMo GB/T9948, BE, HG/T 20553(Ia), SMLS , DN50, S-160",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN600 S-20 L245 PSL1 GB/T9711SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子;SMLS;BE;316L;GB/T14976;HG/T20553(Ia);φ10.2XSCH80,DN6",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管 SMLS,GB/T14976,DN25×SCH40S 06Cr19Ni10",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,GB/T14976-S31603,BE,HG/T20553(Ia),SMLS,DN250,4.5mm,_GB/T_14976-S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "输送流体用无缝钢管 DN50-SCH30 20#+Zn SH/T3405 GB/T8163",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "石油裂化用无缝钢管 DN400-SCH60 16\" 15CrMo SCH 60 SH/T3405 GB/T9948",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN200X8.0mm,管子,S30408GB/T14976,SMLS,BE,HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子 DN150XSCH40-SMLS-BE-SH/T3405 GB/T8163-20#",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "钢衬四氟管道（紧衬） 1.名称：钢衬四氟管道（紧衬） 2.材料或性能等级：20/PTFE 3.规格型号：DN32（钢管外径φ38*3.0，衬层：2.5mm），PN16，长度：1000mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "不锈钢管道 1.安装部位:四套硫铵厂房 2.规格、压力等级:DN600 管子 PIPE GB/T14976 022Cr17Ni12Mo2 SMLS BE 7.92mm SH/T3405 3.连接形式:焊接 4.管道安装 5.压力试验及吹扫、清洗等设计要求:详见设计图纸",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 21.3 316L 管子;SMLS;PE;316L;GB/T14976;HG/T20553(Ia);φ21.3XSCH160",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称：钢衬PE管道 2.材料或性能等级：20/PE 3.规格型号：DN32（钢管外径φ38*3.0，衬层：2.5mm），PN16，长度：500mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN300 S-30 20 GB/T8163SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "石油裂化用无缝钢管,SCH30,GB/T9948 SMLS,SH/T340520#-ANTI-H2S DN450",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子 DN700 16.0 mm S32168 GB/T12771(I)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "钢衬四氟管道（模压） 1.名称：钢衬四氟管道（模压） 2.材料或性能等级：20/PTFE 3.规格型号：DN32（钢管外径φ38*3.0，衬层：模压），PN16，长度：1000mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "DN40 X 5.0mm, 管子, 15CrMo GB/T 9948, 无缝, PE, HG/T 20553 (Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,SMLS，GB/T8163,DN80xSCH30 20#",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "流体输送用不锈钢无缝钢管 DN40-SCH80S 1.5\" 06Cr19Ni10 SCH 80S SH/T3405 GB/T14976",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN15 S-80 20(NACE) GB/T9948SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "石油裂化用无缝钢管 DN25-SCH160 20# SH/T3405 GB/T9948",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道安装 15mm,SMLS,PE,SCH80,SH/T 3405 GB/T 3087 20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子, 20 GB/T6479, PE, HG/T 20553(Ia), SMLS , DN20, S-160 ,_20_GB/T6479",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管道 PIPE,SMLS,PE,XS,CS ASTM A106 GRADE B ,ASME B36.10 SIZE2\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质:PIPE , BE , GB/T 6479 20# , SMLS , S-40 2.规格:NPS2\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 7mm, 20, SMLS, GB8163 DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE API5LGR.B SMLS BE ASME B36.10M DN300 S-30",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝碳钢管DN125 Sch40 20 GB/T8163",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,BE,T=3.0 mmDN25, GB/T14976-2012,HG/T20553(Ia),高硅不锈钢",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管道 DN100 PIPE GB/T3091-2015 Q235B BE Φ114.3x4.0mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "接管 NPS1 1/2 SCH80 DN40 A106 GB/T9948-2013",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道DN25,PIPE,SCH80,BE,SMLS,GB/T8163 20,SH/T3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,WELDED,ASME B36.19M SCH10S,A358 GR.304 CL.3,BE,DN400",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN100X8.8mm,管子,20GGB/T5310,SMLS,BE,HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "螺旋缝埋弧焊接钢管 DN250 Thk6.0 HG/T20553(Ia) Q235B SY/T5037",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    }
+  },
+  {
+    "input": "钢管 DN250 Thk6.0 HG/T20553(Ia) Q235B SY/T5037",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 88.9 2205 管子;SMLS;PE;2205;GB/T21833.2;GB/T14976;HG/T20553(Ia);φ88.9XSCH40S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈钢无缝钢管 1.材质、规格：DN40，SMLS,A312 TP304,ASME B36.19M SCH40S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝不锈钢管 8\" Sch20 抛光 GB/T14976-06Cr19Ni10",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管 DN25 SCH40S ASTM B167 N06600 焊接",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子 ;SMLS;BE;GB/T 9948;20;ANTI-SCC;SCH80;SH/T 3405 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, CL150, RF, 20 GLASS LINED, MFR, SH/T 3406, LOOSE FLANGE A105 PLASTIC DIPPING;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "DN25 X 4.5mm, 管子, 20 GB/T 3087, 无缝, PE, HG/T 20553 (Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压无缝钢管DN200 20# GB/T8163 SMLS SH/T3405 SCH20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe , EN10220 Series 1, BE, EN10217-7-X5CrNi18-10, EFW Ej=1.0 DN350 8.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE / WELDED / ASME B36.19M SCH5S / A312 TP304L / BE DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - SEAMLESS OR WELDED 88.9x2.3 AISI 316L;DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质:PIPE , PE , GB/T 6479 20# , SMLS , S-80 2.规格:NPS1 3.焊接方法:氩电联焊 4.充氩保护方式、部位:焊口充氩保护，方式综合考虑 5.压力试验、吹扫与清洗设计要求:水压试验，空气吹扫，氮气或热空气干燥 6.脱脂 7.无损检测 8.泄露性试验",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN40 X 3.6mm, 管子, S30408 GB/T 14976, 无缝, PE, HG/T 20553 (Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈钢管道安装 20mm,PIPE,SMLS,A312 TP304,ASME B36.19M,SCH40S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管BE,T=3.5mm DN50,GB/T8163(Ⅱ)，20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN450 S-20 20 GB/T8163SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子, GB/T 14976-S31603, BE, HG/T 20553(Ia), SMLS , DN200, 4.0 mm ,_GB/T_14976-S31603",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,ASTMA312GradeTP304(UNSS30400),PE,ASMEB36.19M,SMLS,DN15,S-40S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,BE,SMLS,GB/T 5310 20G，HG/T 20553(II),16mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN500X8.0mm,管子,Q235BSY/T5037,SAWH,BE,HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE , CS A672-C65 CL. 32, EFW, 100% X-RAY , BE , STD , B36.10M 24\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE;EFW STR SM; 316SS; ASTM A312 TP316;EJ=1.0;ASME B36.19;S-10S DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压流体输送用焊接钢管 (SAWL) DN750-T=10mm 30\" Q235B 10mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压流体输送用焊接钢管 (SAWL) DN700-T=10mm 28\" Q235B 10mm SH/T3405 GB/T3274 GB/T3091",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "螺旋缝埋弧焊接钢管DN250 Thk6.0 SH/T3405 L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    }
+  },
+  {
+    "input": "(1)输送流体用无缝钢管DN200（D219.6*6.3) (2)规格、压力等级:20 GB/T 8163, SMLS BE HG/T20553(Ia)，外防腐漆：环氧富锌底漆+环氧云铁中间漆+丙烯酸聚氨酯面漆，漆膜总厚度240μm (3)连接形式: (4)安装部位:管廊管道 (5)介质: (6)压力试验及吹、洗设计要求:压力试验及冲洗、吹扫 (7)内含管件",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,BE,Sch.20DN200,GB/T3087-2022,HG/T20553(Ia),20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN150 GB/T 8163 20,SMLS,PE,SH/T 3405 STD SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN2000 钢管自带3PE加强级外防腐,SAW,SPS,SY/T 5037 Q235B,SH/T 3405 22.23mm 埋地",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN100X11.0mm,管子,20SGB/T9948APPENDIXD,SMLS,BE,HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, BE, HG/T20553II, 5mm, 20, SMLS, GB8163 DN150X80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 60.3*8.74 PIPE,PE,SMLS,ASTM B444 GRADE N06625,ASME B36.10M,SCH160 N06625",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈钢无缝钢管, BE Seamless stain sted Pipe φ48. 3×2. 9 ，GB/T14976-2012,S30408",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,DN80,PE,,A312-TP304,ASME B36.19M-2004(R2015),SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管Φ108×4.0 GB/T8163 20#",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 15 API5L PIPE,SEAMLESS,API 5L Gr.B,SCH 80,ASME B36.10",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN40 S-160  20 GB/T9948SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN200 S-20 20 GB/T8163SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子;SMLS;BE;GB/T 8163 20;HG/T 20553 Series Ia;-;Sch20 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE A358GR.TP304 CL.1 EFW PE ASME B36.19M DN500 S-10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,A358 GR.304L CL.1,EFW,Ej=1.0,BE,STD,ASME B36.10M,DN28",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,A312 TP304L(Inside Polished,Ra=0.8um,Rmax&lt;4,5um),EFW,SINGLE STRAIGHT SEAM,Ej=0.8,BE,SCH 40S,ASME B36.19M,DN400",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称：钢衬PE管道 2.材料或性能等级：20/PE 3.规格型号：DN25（钢管外径φ35*3.5，衬层：2.5mm），PN16，长度：4000mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "1.名称：钢衬PE管道 2.材料或性能等级：20/PE 3.规格型号：DN40（钢管外径φ48*4.0，衬层：2.5mm），PN16，长度：1000mm 4.参照标准HG/T 20538-2016 5.包括但不限于水压试验、泄漏性试验、空气吹扫、水冲洗等",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "1.材质:不锈钢无缝钢管  （SMLS;PE;GB/T 14976 06Cr19Ni10;HG/T 20553 Series II;-;3.00mm）2.规格:DN20 Ф25×3.03.焊接方法:国标钢制对焊4.充氩保护方式、部位:满足设计要求5.压力试验、吹扫与清洗设计要求:气体泄漏试验，试验压力为管线设计压力",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE ASTM A312 Gr.TP316L SMLS ASME B36.19 SCH40S;DN20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "中压碳钢管 [项目特征] 1.材质:中压碳钢管 DN20 SCH80 PIPE,SMLS PE GB/T 8163 20 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.焊前预热及焊缝热处理 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压碳钢管 [项目特征] 1.材质:低压碳钢管DN200 SCH30 PIPE,SMLS BE GB/T 8163 20 SH/T 3405 - [工程内容] 1.管道安装 2.管件、法兰等安装、补强圈制作安装 3.焊前预热 4.压力试验、系统吹扫及冲洗 5.管道预制平台及临时管线摊销",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管Ø114.3X6.3,PE,Sch40,GB/T8163-2018(Ⅰa),20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "石油天然气工业管线输送钢管 DN600-T=12mm 24\" Q245R-CE 12mm SH/T3405 GB/T713 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 40 A106 PIPE ASTM A106 Gr.B SMLS ASME B36.10 SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 60.3*3.91 DN50 seamless carbon steel pipeline according to ASME B36.10M, Sch 40 made of ASTM A106 Gr B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管 1、SMLS;BE;GB/T 9948;20;ANTI-SCC;SCH80;SH/T 3405 2、规格：DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN250 PIPE, SCH30, PE, SMLS,GB/T 8163 20,SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN200 SMLS,GB/T 8163 20,SH/T 3405 SCH10 钢管自带3PE加强级外防腐",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN200 钢管自带3PE加强级外防腐,GB/T 8163 20,SMLS,PE,SH/T 3405,SCH30 埋地",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN200 钢管自带3PE加强级外防腐SMLS,GB/T 8163 20,SH/T 3405 SCH30 埋地",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子 PIPE XS WT SMS STL A106-B A106 DN400 C150 XS ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子, S30408 GB/T14976, PE, HG/T 20553(Ia), SMLS , DN20, S-40S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子, GB/T 14976-S31603, BE, HG/T 20553(Ia), SMLS , DN250, 8.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE A358GR.TP304 CL.1 EFW PE ASME B36.19M BB.01 DN 400 S-10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE(WS) ASTM A358 Gr.304 CL1 LONGITUDE DOUBLE SUBMERGED-ARC WELDED BE ASME B36.19 SCH10S;DN350",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE(WS) API 5L Gr.B LONGITUDE DOUBLE SUBMERGED-ARC WELDED BE ASME B36.10 STD;DN800",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, S30408 GB/T 12771 TYPE V, EFW, BE, SH/T 3405,S-10S;DN250",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE/WELDED/ ASME B36.19M SCH5S/A312 TP304/BE-DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "钢管 PIPE , BE, HG/T20553-2011 Ia SCH20 DN600 Q235-B,SY/T5037 -",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "钢管 (100%RT)DN600 Thk10 Q235B GB/T3091",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子, Q235B SY/T 5037, BE, HG/T 20553(Ia), DN500, S-20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "埋弧焊钢管1、材质、规格：φ325×7 SY/T5037-2018 Q235B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "钢管1、材质、规格：φ325×7 SY/T5037-2018 Q235B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "螺旋缝焊接碳钢管DN500 Thk10 L245 PSL1 SAWH GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    }
+  },
+  {
+    "input": "(1)低压流体输送用镀锌钢管 Φ2“ (2)Q235A，螺纹连接 (3)管道及管件、管卡安装 (4)强度和气密泄漏性试验",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "(1)材质:SMLS PIPE, SCH40S, S30408 GB/T 14976, BE, SH/T 3405(2)规格:DN100(3)压力试验、吹扫与清洗设计要求:中压 水压试验 水冲洗(4)焊接方法:氩弧焊(5)焊口充氩保护",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称:无缝钢管 2.材质:A333 Gr.6 SMLS 3.规格:D219.1×6.35 4.压力等级:Class 150 5.焊接方法:钨极惰性气体保护电弧焊 6.压力试验、吹扫与清洗设计要求:管道液压试验、泄露试验、吹扫、吹干 7.执行标准:ASTM A333/A333M-24 8.除锈防腐:除锈等级为 Sa2.5级；管道外表面涂刷环氧酚醛底漆1道，涂层最小干膜厚度≥100μm；涂刷环氧酚",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称:无缝钢管 2.材质:A333 Gr.6 SMLS 3.规格:D114.3×6.02 4.压力等级:Class 150 5.焊接方法:钨极惰性气体保护电弧焊 6.压力试验、吹扫与清洗设计要求:管道液压试验、泄露试验、吹扫、吹干 7.执行标准:ASTM A333/A333M-24 8.除锈防腐:除锈等级为 Sa2.5级；管道外表面涂刷环氧酚醛底漆1道，涂层最小干膜厚度≥100μm；涂刷环氧酚",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称:无缝钢管 2.材质:L245 SMLS 3.规格:D114.3×6.02 4.压力等级:Class 150 4.焊接方法:钨极惰性气体保护电弧焊 5.压力试验、吹扫与清洗设计要求:管道液压试验、水冲洗 6.执行标准:GB/T 9711-2023 7.除锈防腐:除锈等级为 Sa2.5级；管道外表面涂刷环氧富锌底漆1道，涂层最小干膜厚度1×50μm；环氧云铁中间漆1道，涂层最小干膜厚度 1×",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称:无缝钢管 2.材质:A333.Gr6 SMLS 3.规格:D60.3×3.91 4.压力等级:Class 150 5.焊接方法:钨极惰性气体保护电弧焊 6.压力试验、吹扫与清洗设计要求:管道液压试验、泄露试验、吹扫、吹干 7.执行标准:ASTM A333/A333M-24 8.除锈防腐:除锈等级为 Sa2.5级；管道外表面涂刷环氧酚醛底漆1道，涂层最小干膜厚度≥100μm；涂刷环氧酚醛面",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质:PIPE , PE , GB/T 6479 20# , SMLS , S-40 2.规格:NPS1 1/2\" 3.焊接方法:氩电联焊 4.充氩保护方式、部位:焊口充氩保护，方式综合考虑 5.压力试验、吹扫与清洗设计要求:水压试验，空气吹扫，氮气或热空气干燥 6.无损检测 7.泄露性试验",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质:不锈钢无缝钢管（06Cr19Ni10 GB/T14976 SMLS HG/T20553(II) T=3.5mm）2.规格:DN50 Ф57×3.53.焊接方法:国标钢制对焊4.充氩保护方式、部位:满足设计要求5.压力试验、吹扫与清洗设计要求:气体泄漏试验，试验压力为管线设计压力",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质:无缝钢管 （20# GB/T8163 SMLS HG/T20553(II) T=4mmm) 2.规格:Ф57×4 DN50 3.连接形式、焊接方法:国标钢制对焊 4.压力试验、吹扫与清洗设计要求:满足设计要求，详见设计说明",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.材质:无缝钢管 （20# GB/T8163 SMLS HG/T20553(II) T=3.5mm) 2.规格:Ф89×3.5 DN80 3.连接形式、焊接方法:国标钢制对焊 4.压力试验、吹扫与清洗设计要求:满足设计要求，详见设计说明",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "3“ PIPE; ASME B36.10; ASTM A106 GR.B; SMLS; BE; SCH40;",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN50 X 4.0mm, 管子, 20 GB/T 8163, 无缝, BE, HG/T 20553 (Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN100 管子 PIPE EN10305 SMLS,E235 Sch40 BE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN150-SCH40 PIPE,SMLS BE GB 9948 20 SH/T 3405 ANTI-H2S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN400X17.5mm,管子,15CrMoGB/T9948,SMLS,BE,HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, 20 GB/T 3087, SMLS, BE, SH/T 3405,S-20;DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, 20/Galv,GB/T8163,SMLS,BE,HG/T20553 Ia系列，DN50,4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,BE,SEAMLESS,API 5L Gr.B,galvanized,SCH40,ASME B36.10 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Seamless, Pipes, ASME B36.19/B36.10, ASTM A312 UNS N08904, BE, DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 60.3*2.77 S32205 DN50PIPE(SMLS)ASTM A790 S32205SMLS BE ASMEB6.19 SCH10S",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "不锈钢管道 1.名称、材质、规格：DN50 SMLS,A312 TP304,for drinking water,ASMEB36.19M SCH10S 2.安装位置：地上 3.连接形式：综合考虑",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "低压无缝钢管DN200 PIPE,SMLS BE GB/T 8163 20 SH/T 3405 - SCH30",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "内外热镀锌无缝钢管 1、安装部位：室外 2、材质、规格：6寸 SCH40 SMLS GB/T 6479 20# GALV 3、连接方式：焊接法兰 4、钢管镀锌 5、压力试验及冲洗设计要求：水压试验、清水冲洗 6、管道标识",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "内外热镀锌无缝钢管 GB/T 8163-2018 20# φ377x9.00",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "内外热镀锌无缝钢管1、安装部位：球罐区 室外 2、材质、规格：1寸 SCH80 SMLS GB/T 6479 20# GALV 3、连接方式：NPT螺纹 4、钢管镀锌 5、压力试验及冲洗设计要求：水压试验、清水冲洗 6、管道标识",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,FRP,DARKANE 470HT-400/LAP JOINT FLANGE:A105.GALV,CL150,LJ FLG,1.0MPa,DIN16965/ASME B16.5. 2657mm;2 in;",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "PIPE,FRP,DARKANE 470HT-400/LAP JOINT FLANGE:A105.GALV,CL150,LJ FLG,1.0MPa,DIN16965/ASME B16.5. 2231mm;2 in;",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "内外热镀锌无缝钢管1、安装部位：球罐区 室外 2、材质、规格：6寸 SCH40 SMLS GB/T 6479 20# GALV 3、连接方式：焊接法兰 4、钢管镀锌 5、压力试验及冲洗设计要求：水压试验、清水冲洗 6、管道标识",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "合金无缝钢管 DN20 A335 Gr.P11 PIPE ASTM A335 Gr.P11 SMLS ASME B36.10 SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钛管 TA2,GB/T3624,SMLS,BE HG/T20553-2011 Ia系列 Sch10S THK=2.6mm DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管 S30408, GB/T14976, SMLS, PE, HG/T20553-2011 Ia系列 Sch40S THK=mm DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,GB/T8163,SMLS,BE,HG/T20553-2011 Ia系列,THK=7.1mm DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,BE,Sch.40SDN150,GB/T14976-2012,HG/T20553(Ia),310s",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,PE, Sch. 30 Seamless Pipe φ33.7X2. 9,GB/T3087-2018,20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管,SMLS，GB/T8163,DN100xSCH30 20#+GALV",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管DN40 Sch40S SH/T3405 S30408 GB/T14976",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "流体碳素无缝钢管\\Φ60.3×3.91mm 20 GB/T 8163DN50SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 1 ASME B 36.10 管子 PIPE ASME B 36.10 Seamless,API 5L GR.B PE Sch 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 DN50 A53+镀锌 PIPE(SMLS) ASTM A53 Gr.B GALVANIZED SMLS NPT ASME B36.10 SCH80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 DN400X6 A283 Gr.C ASME B36.10 DN400",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢无缝管 1.名称、材质、规格：DN40,管子,PE,SMLS,??GB/T 8163 20 GALV,SH/T 3405 SCH10",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢无缝管 1.材质、规格：DN50,PIPE,SMLS,GB/T 8163 20 GALV,SH/T 3405,PE,XS SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管 1、安装部位：室外埋地，埋深综合考虑； 2、介质：生产给水； 3、规格、压力等级：20#钢 GB/T 6479 SMLS，DN100，SH/T 3405，CL150； 4、连接形式：法兰/焊接/螺纹，参考《管道材料等级规定》（DD-SPC-OST-PI-90003)执行； 5、压力试验、吹扫与清洗设计要求：工作压力0.15MPa，试验压力1.0MPa。 6、警示带形式：彩色条文",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 20#+EAA 1.安装部位:四套丙烯酰胺装置 2.规格、压力等级:DN100 管子 PIPE GB/T8163 HG/T20538 SH/T3406 20#+EAA(3.0mm) SMLS PN20(CL150) SO×LJ RF φ114.3×6.02 3.连接形式:焊接 4.管道安装 5.压力试验及吹扫、清洗等设计要求:详见设计图纸",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN40 SMLS,GB/T 8163 20,SH/T 3405 SCH80 阀门井内放净",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道 1.名称、材质、规格：DN100 管子,GB/T 8163 20,SMLS,PE,SH/T 3405,SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道安装 1.规格材质：D168.3*7.11 管子,GB/T 8163 20,SMLS,PE,SH/T 3405 2.使用场所：埋地",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道安装 1.规格材质：D323.9*9.53 管子,GB/T 8163 20,SMLS,PE,SH/T 3405 出厂带3PE外防腐 2.使用场所：埋地",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道安装 1.规格材质：D114.3*6.02 GB/T 8163 20 SMLS PE STD 2.使用场所：地上",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道安装 50mm,PIPE,SMLS,GB/T 8163 20 GALV,SH/T 3405,XS",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN900 12.0 mm ASTM A333 GR.6ASME B36.10M",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN20 S-80 20 GB/T3087SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN40 S-80 20(NACE) GB/T9948SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN20 S-80 20(NACE) GB/T9948SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "碳钢管道管子 DN100 S-120 20 GB/T9948SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子 DN15XSCH80-SMLS-BE-SH/T3405 GB/T8163-20#",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子, S30408 GB/T14976, BE, HG/T 20553(II), SMLS , DN20, 2.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,PE,SMLS,ASTM A312 TP347H,ASME B36.10M,DN400,SCH120",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管道 2 SCH10S 304-2-S1S PE,GB/T 14976 06Cr19Ni10,SH/T 3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管道 DN40 PIPE GB/T14976 06Cr19Ni10 SMLS PE Sch 40S HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "镀锌无缝钢管 3\" 20+GALV, GB/T8163, SMLS, BE, SCH40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "镀锌无缝钢管 DN15 API 5L Gr.B,galvanized PIPE,TBE,SEAMLESS,API 5L Gr.B,galvanized,SCH80,ASME B36.10",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "镀锌无缝钢管 50 API5L GALV PIPE,BE,SEAMLESS,API 5L Gr.B,galvanized,SCH40,ASME B36.10",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "1.名称:直缝埋弧焊钢管（主材甲供） 2.材质:L290M PSL2（满足GB/T9711-2023规范要求） 3.规格:Φ323.9x8 4.连接形式、焊接方法:氩电联焊 5.外壁防腐:含三层PE防腐加强级 6.压力试验、吹扫与清洗设计要求:满足设计和规范要求 7.标识:参照《民用机场飞行区技术标准》（MH 5001-2021）、《民用航空油料设备完好技术规范》（MH/T 6002-2008）、",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "DN200×Sch20 Pipe EFW Bevelled Ends SH/T 3405 S30408 SS GB/T 12771 E=1.0",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE , 316L SS A358-316L CL.1 , EFW, 100% X-RAY , BE , SCH 10S , B36.19M 14\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE , 304L SS A312-TP304L , EFW, SINGLE STRAIGHT SEAM, Ej=0.8, BE , SCH 10S , B36.19M 8\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE,A358 GR.304L CL.1,EFW,Ej=1.0,BE,XS,ASME B36.10M,DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "伴热管安装 1/2\" Tubing,OD:0.5,THK:0.035,A269-TP316,EFW,ANNEALED,PE,MFRS,按卷材供货 ASTM A312 TP316（06Cr17Ni12Mo2）",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "焊接钢管 PIPE SAWL, BE, HG/T20553-2011 Ia THK=10.0mm DN650 L245 PSL1 GB/T9711 -",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "焊缝钢管 DN900 THK=15.88mm L245N PSL2 GB/T9711(NACE) 焊接",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子(WS),Q235B GB/T3091 ERW HG/T20553(I) T=3.8mm DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,PE,DASW LGS,GB/T 9711 PSL1 L245,SH/T 3405,100%RT,12MM DN900",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 管子;SMLS;BE;20#;GB/T3087;HG/T20553(Ia);φ42.4XSCH80DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "FRP/PVC管 FRP/PVC,SF, HG/T3731 59X50 THK=2.4X4.0mm DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "FRP/PVC管 FRP/PVC,SF, HG/T3731 84X75 THK=3.6X4.0mm DN65",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "夹套钢管 Seamless Pipeφ88.9 x5.6/φ141.3x6.3 I系列 ClassI BE GB/T3087-2008,20/20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "夹套钢管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝钢管 Seamless Pipeφ33.7x4.5/φ60.3x3.2 I系列 ClassI BE GB/T3087-2008,20/20",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "FRP/PVC管 FRP/PVC,SF, HG/T3731 72X63 THK=3.0X4.0mm DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "Pipe , EN ISO1127 Series 1, BE, EN10217-7-X5CrNi18-10, EFW Ej=1.0 DN300 7.1 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "直管,PL-RF,150LBDN100,HG/T2437-2006,HG/T20615(A),PTFE/CS,L=2477MM",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "不锈钢钢管, BE stain sted Pipe φ10.2X1.2 ，GB/T14976-2012,S30408",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管道 DN350 PIPE GB/T3091-2015 Q235B BE Φ355.6x5.4mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管道 DN500 PIPE GB/T3091-2015 Q235B BE Φ508x6.3mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - WELDED 273x3 AISI 316L;DN250",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - SEAMLESS OR WELDED 33.7x2 AISI 316L;DN25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - WELDED 323.9x4 AISI 316L;DN300",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE API5L PSL1 Gr.B DASW100% RT BE ASME B36.10 STD DN500",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子 DN1200 10.0 mm L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子 DN1400 10.0 mm L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子 DN2000 10.0 mm L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子 DN2000 14.0 mm L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子 DN1400 12.0 mm L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管子 DN1400 16.0 mm L245 PSL1 GB/T9711",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "不锈无缝钢管 10 2205 直管 Φ10X1.5 2205 GB/T14976",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "碳素无缝钢管 管子;SMLS;BE;20;GB/T3087;HG/T20553(II);φ18X3.5mmDN15",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,BE,SMLS,GB/T 5310 20G，HG/T 20553(II),16mm DN300",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, X6CrNiTi18-10(1.4541), SMLS, BE, 273x6.3, EN 10216-5;10\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子,BE,SMLS,GB/T 5310 12Cr1MoVG，HG/T 20553(II),22mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe,X6CrNiTi18-10(1.4541),SMLS,BE,323.9x3.6,EN10216-5;12\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管道 DN20 PIPE GB/T3091-2015 Q235B BE Φ26.9x3.2mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管道 DN400 PIPE GB/T3091-2015 Q235B BE Φ406.4x5.6mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "管道 DN600 PIPE GB/T3091-2015 Q235B BE Φ610x7.1mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "DN150X8.8mm,管子,15CrMoGGB/T5310,SMLS,BE,HG/T20553(Ia)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - SEAMLESS OR WELDED 114.3x2.6 AISI 316L;DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - SEAMLESS OR WELDED 48.3x2 AISI 316L;DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - SEAMLESS OR WELDED 60.3x2 AISI 316L;DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE DIN EN ISO 1127 - SEAMLESS OR WELDED 168.3x2.6 AISI 316L;DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝碳钢管DN50 Sch20 20 GB/T8163",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "流体不锈无缝钢管\\Φ76.1×3.2mm 022Cr17Ni12Mo2",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "管子 DN80 S30408 GB/T14976 SH/T3405",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "直管 60.3x3.91 PN16 20/PTFE DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "SMLS PIPE DN50 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "无缝直管 60.3x3.91 PN16 20/PTFE DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "WELDED PIPE DN50 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Submerged Arc Welded Pipe DN200 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Spiral Submerged Arc Welded Pipe DN250 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWH"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Longitudinal Submerged Arc Welded Pipe DN250 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Longitudinal Double Submerged Arc Welded Pipe DN350 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAWL"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Spiral Double Submerged Arc Welded Pipe DN350 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "DSAWH"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Electric Resistance Welded Pipe DN80 SCH40 RF CL150 A106-B",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "EFW PIPE DN100 SCH40 RF CL150 TP304",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Electric Fusion Welded Pipe DN100 SCH40 RF CL150 TP304",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE WELDED DN50 RF CL150 60.3x3.91 S30408/PP",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE ERW DN50 RF CL150 60.3x3.91 S30408/PP",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "ERW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE EFW DN50 RF CL150 60.3x3.91 S30408/PP",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE, SMLS / PTFE LINED(3MM) / PN16 / RF / DN50 / 60.3x3.91 / 20(GB/T8163)",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE Lined Welded L=690.3mm CL150 RF 114.3x6.02(3.0) 20#/PTFE DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE Lined EFW L=601.012mm CL150 RF 60.3x3.91(2.5) S30408/PP DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "EFW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE Lined SAW L=3000mm CL150 RF 219.1x6.35(3.0) 20#/PTFE DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SAW"
+        ]
+      }
+    }
+  },
+  {
+    "input": "HG/T20538;GB/T 14976;SH/T 3405 PIPE Lined RF WELDED L=601.012mm CL150 60.3x3.91(2.5) S30408/PP DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "WELDED"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 757mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN40, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN150,4.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN100,4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN200,6.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406, HG/T 20538 , DN50, S-40 647mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "钢衬聚四氟乙烯管 SMLS RF 1.6MPa HG/T20592(B) HG/T20538-16 DN150 20/PTFE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "钢衬聚四氟乙烯管 SMLS RF 1.6MPa HG/T20592(B) HG/T20538-16 DN300 20/PTFE",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN80, 4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN200",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "PIPE, SMLS / HG/T 20553(Ia) SCH 40 /PN 16/ 20(GB/T 8163) + PTFE LINED(3MM) / HG/T 20538 / LJ FLANGEXFLANGE, 20(NB/T47008), HG/T 20592 25",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "LAP_JOINT_FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN50, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 100",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 647mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN50, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 1\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN40",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 80",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 1 1/2\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 8\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 4\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN 50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 2\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN25,HG/T 20592,HG/T 20538, SMLS , DN40, 3.5 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 6\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN50",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN65, 4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN65, 4.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 DN150",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 3206.2mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": []
+      }
+    }
+  },
+  {
+    "input": "法兰管, PTFE lined GB/T 8163-20, RF, PN16,HG/T 20592,HG/T 20538, SMLS , DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Pipe, ASTM A106 Gr.B + Internally PTFE Lined, SMLS, Flanged, RF, 150#, ASME B36.10, ASME NM.1 / ASTM D4894 / ASTM D4895 3\"",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  },
+  {
+    "input": "Flgd Pipe, PTFE lined GB/T 8163-20, RF, PN16, HG/T 20592, HG/T 20538, SMLS , DN25, 3.0 mm",
+    "output": {
+      "CATEGORY": "直管",
+      "TYPE": {
+        "BODY": "直管",
+        "FLANGE_STYLE": "FLANGED",
+        "MANU": [
+          "SMLS"
+        ]
+      }
+    }
+  }
+]

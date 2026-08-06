@@ -10,7 +10,7 @@ FN:
   - 螺纹法兰;MFM;NPT
   - 螺纹法兰;RJ;NPT
   - 螺纹法兰;RTJ;NPT
-  - 螺纹法兰;RF;SCRD
+  - 螺纹法兰;SCRD;RF
   - 螺纹法兰;SCRD
 
 RFSOJ:
@@ -107,6 +107,7 @@ FFN:
 NMN:
   - 单头螺纹短节;MNPT
   - 单头外螺纹短节;MNPT
+  - 单头螺纹短节;MNPT;SMLS
 DNMN:
   - 双头螺纹短节;MNPT
   - 双头短节;MNPT
@@ -247,6 +248,7 @@ O:
 OS:
   - 支管台;SW
   - 承插焊支管台
+  - 承插支管台
   - 90;支管台;SW
   - 90;对焊支管台;SW
   - 90;焊接支管台;SW

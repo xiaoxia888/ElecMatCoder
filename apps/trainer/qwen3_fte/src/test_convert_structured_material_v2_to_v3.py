@@ -93,6 +93,106 @@ class ConvertStructuredMaterialV3Test(unittest.TestCase):
             "ASTM A403 WP304/304L",
         )
 
+    def test_a403_direct_wx_suffix_is_retained(self):
+        converted, _ = convert_row(
+            row(
+                "TEE WELDED A403 WP304-WX ASME B16.9",
+                [old_item("ASTM A403", "WP304")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A403 WP304-WX",
+        )
+
+    def test_a403_dual_grade_wx_suffix_is_retained(self):
+        converted, _ = convert_row(
+            row(
+                "ELBOW A403 WP304/304L-WX ASME B16.9",
+                [
+                    old_item("ASTM A403", "WP304"),
+                    old_item("ASTM A403", "WP304L"),
+                ],
+                relation="DUAL_CERTIFIED",
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A403 WP304/304L-WX",
+        )
+
+    def test_a403_type_wx_is_normalized_into_value(self):
+        converted, _ = convert_row(
+            row(
+                "ASTM A403 Grade WP304 (UNS S30400), ASME B16.9, Type WX",
+                [old_item("ASTM A403", "WP304")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A403 WP304-WX",
+        )
+
+    def test_a403_welded_word_does_not_infer_material_class(self):
+        converted, _ = convert_row(
+            row(
+                "TEE WELDED ASTM A403 WP304 ASME B16.9",
+                [old_item("ASTM A403", "WP304")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A403 WP304",
+        )
+
+    def test_a234_w_suffix_is_retained_before_rt_requirement(self):
+        converted, _ = convert_row(
+            row(
+                "REDUCER ASTM A234 Gr.WPB-W100%RT BW ASME B16.9",
+                [old_item("ASTM A234", "WPB")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A234 WPB-W",
+        )
+
+    def test_a234_type_w_is_normalized_into_value(self):
+        converted, _ = convert_row(
+            row(
+                "ASTM A234 WP11 Cl.2, ASME B16.9, Type W",
+                [old_item("ASTM A234", "WP11")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A234 WP11-W",
+        )
+
+    def test_a234_type_w_ignores_tightly_joined_class_marker(self):
+        converted, _ = convert_row(
+            row(
+                "ASTM A234 WP11Cl.2, ASME B16.9, TypeW",
+                [old_item("ASTM A234", "WP11")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A234 WP11-W",
+        )
+
+    def test_a420_w_suffix_is_retained(self):
+        converted, _ = convert_row(
+            row(
+                "ASTM A420 Gr.WPL6-W, 100% X-RAY, ASME B16.9",
+                [old_item("ASTM A420", "WPL6")],
+            )
+        )
+        self.assertEqual(
+            converted["output"]["MATERIAL"][0]["VALUE"],
+            "ASTM A420 WPL6-W",
+        )
+
     def test_alternatives_are_not_fake_parts(self):
         converted, _ = convert_row(
             row(

@@ -31369,7 +31369,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A234 WPB",
+          "VALUE": "ASTM A234 WPB-W",
           "SPECIAL_REQ": []
         }
       ],
@@ -31386,7 +31386,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A234 WPB",
+          "VALUE": "ASTM A234 WPB-W",
           "SPECIAL_REQ": []
         }
       ],
@@ -31403,7 +31403,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A234 WPB",
+          "VALUE": "ASTM A234 WPB-W",
           "SPECIAL_REQ": []
         }
       ],
@@ -66226,7 +66226,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304/304L",
+          "VALUE": "ASTM A403 WP304/304L-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -79528,7 +79528,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-W",
           "SPECIAL_REQ": []
         }
       ],
@@ -116636,7 +116636,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A234 WP11",
+          "VALUE": "ASTM A234 WP11-W",
           "SPECIAL_REQ": []
         }
       ],
@@ -132019,7 +132019,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304H",
+          "VALUE": "ASTM A403 WP304H-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -136835,7 +136835,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -137485,7 +137485,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -137502,7 +137502,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -146234,7 +146234,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -146251,7 +146251,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -146268,7 +146268,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -146285,7 +146285,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -146302,7 +146302,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304",
+          "VALUE": "ASTM A403 WP304-WX",
           "SPECIAL_REQ": []
         }
       ],
@@ -148121,7 +148121,7 @@
       "MATERIAL": [
         {
           "PART": "BODY",
-          "VALUE": "ASTM A403 WP304H",
+          "VALUE": "ASTM A403 WP304H-WX",
           "SPECIAL_REQ": []
         }
       ],
