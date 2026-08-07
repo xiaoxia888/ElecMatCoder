@@ -272,6 +272,7 @@ class MLXModelManager:
         top_p: float,
         include_logprobs: bool,
     ) -> dict[str, Any]:
+        import mlx.core as mx
         from mlx_lm.generate import generate, stream_generate
         from mlx_lm.sample_utils import make_logits_processors, make_sampler
 
@@ -282,11 +283,11 @@ class MLXModelManager:
             if len(token_ids) == 1:
                 think_token_ids[token_ids[0]] = -1e9
 
-        logits_processors = (
-            make_logits_processors(logit_bias=think_token_ids)
-            if think_token_ids
-            else None
-        )
+        # MLX models commonly emit fp16/bf16 logits. Computing logsumexp in that
+        # dtype can round a highly likely token's logprob to exactly zero.
+        logits_processors = [lambda _tokens, logits: logits.astype(mx.float32)]
+        if think_token_ids:
+            logits_processors.extend(make_logits_processors(logit_bias=think_token_ids))
         started = time.perf_counter()
         generation_kwargs = {
             "prompt": prompt,
@@ -348,6 +349,7 @@ class MLXModelManager:
             "parsed_json": parsed,
             "json_parse_ok": parsed is not None,
             "token_logprobs": token_logprobs,
+            "logprob_extractor_version": "mlx-selected-fp32-v2",
         }
 
     async def predict(self, request: PredictRequest) -> dict[str, Any]:
