@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from typing import Iterable
+
 from .models import StandardCodeCheck, StandardSecondPassResult
 from .standard_surface_matcher import ParsedStandardCode, StandardSurfaceMatcher
 
@@ -11,7 +13,13 @@ class StandardSecondPassSplitter:
     def __init__(self, matcher: StandardSurfaceMatcher | None = None) -> None:
         self.matcher = matcher or StandardSurfaceMatcher()
 
-    def analyze(self, text: str, standard_code: str) -> StandardSecondPassResult:
+    def analyze(
+        self,
+        text: str,
+        standard_code: str,
+        *,
+        consumed_spans: Iterable[tuple[int, int]] = (),
+    ) -> StandardSecondPassResult:
         clean_text = str(text or "").strip()
         raw_code = str(standard_code or "").strip()
         if not clean_text:
@@ -62,6 +70,7 @@ class StandardSecondPassSplitter:
                 ),
                 item.base_hits[0],
                 consumed_hits=global_consumed_suffix_hits,
+                consumed_spans=consumed_spans,
             )
             item.suspicious_suffix_hits = suspicious_suffix_hits
             if suspicious_suffix_hits:
@@ -91,7 +100,13 @@ class StandardSecondPassSplitter:
             has_unmatched_standard_risk=False,
         )
 
-    def analyze_items(self, text: str, standard_items: object) -> StandardSecondPassResult:
+    def analyze_items(
+        self,
+        text: str,
+        standard_items: object,
+        *,
+        consumed_spans: Iterable[tuple[int, int]] = (),
+    ) -> StandardSecondPassResult:
         clean_text = str(text or "").strip()
         items = self._normalize_standard_items(standard_items)
         if not clean_text:
@@ -146,6 +161,7 @@ class StandardSecondPassSplitter:
                 ),
                 item.base_hits[0],
                 consumed_hits=global_consumed_suffix_hits,
+                consumed_spans=consumed_spans,
             )
             item.suspicious_suffix_hits = suspicious_suffix_hits
             if suspicious_suffix_hits:
@@ -176,7 +192,14 @@ class StandardSecondPassSplitter:
             has_unmatched_standard_risk=False,
         )
 
-    def _analyze_single_code(self, text: str, raw_code: str, check_suspicious: bool = True) -> StandardCodeCheck:
+    def _analyze_single_code(
+        self,
+        text: str,
+        raw_code: str,
+        check_suspicious: bool = True,
+        *,
+        consumed_spans: Iterable[tuple[int, int]] = (),
+    ) -> StandardCodeCheck:
         parsed = self.matcher.parse_code(raw_code)
         if parsed is None:
             return StandardCodeCheck(raw_code=raw_code, passed=False, reason="无法解析规范编码")
@@ -273,7 +296,11 @@ class StandardSecondPassSplitter:
         if check_suspicious:
             primary_base_hit = sorted(valid_base_hits, key=lambda hit: (hit.start, -(hit.end - hit.start)))[0]
             suspicious_suffix_hits = self.matcher.find_suspicious_suffix_hits(
-                text, parsed, primary_base_hit, consumed_hits=suffix_hits
+                text,
+                parsed,
+                primary_base_hit,
+                consumed_hits=suffix_hits,
+                consumed_spans=consumed_spans,
             )
             if not parsed.suffix and suspicious_suffix_hits:
                 return StandardCodeCheck(

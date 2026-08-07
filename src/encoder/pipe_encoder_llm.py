@@ -16,10 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class LlmPipeEncoder(PipeEncoderBase):
-    LLM_DIRECT_SIMILARITY = 0.90
-    RULE_FALLBACK_SIMILARITY = 0.75
-    NORMALIZED_FALLBACK_SIMILARITY = 0.80
-
     def __init__(self):
         super().__init__()
         self.type_encoder = get_type_encoder()
@@ -67,98 +63,13 @@ class LlmPipeEncoder(PipeEncoderBase):
         return ' ; '.join(parts)
 
     def _score_from_model_conf(self, model_conf: float) -> float:
-        """将模型 token 级概率映射到字段置信度分数。"""
-        conf = max(0.0, min(1.0, float(model_conf)))
-        # 拉伸低区间，避免分数过低导致全部待审
-        return round(0.5 + 0.5 * conf, 4)
-
-    def _is_known_code(self, field_type: str, code: str) -> bool:
-        mapping_data = self.matcher.mapping.get(field_type, {})
-        code_upper = (code or "").strip().upper()
-        if not code_upper:
-            return False
-        for _, info in mapping_data.items():
-            if isinstance(info, dict):
-                c = str(info.get('code', '')).strip().upper()
-            else:
-                c = str(info).strip().upper()
-            if c and c == code_upper:
-                return True
-        return False
-
-    def _score_ollama_encoding(self, field_type: str, value: str, code: str) -> float:
-        """
-        ollama 无 logprob 时的字段级编码置信度（启发式，不是常量）。
-        """
-        if not code:
-            return 0.0
-        v = (value or "").strip().upper()
-        c = (code or "").strip().upper()
-        score = 0.68
-
-        # 全局可读性信号
-        if len(c) <= 2:
-            score -= 0.08
-        elif len(c) <= 8:
-            score += 0.05
-        else:
-            score += 0.02
-
-        if field_type == 'TYPE':
-            if self._is_known_code('TYPE', c):
-                score += 0.16
-            if '90' in v and '90' in c:
-                score += 0.04
-
-        elif field_type == 'MATERIAL':
-            if self._is_known_code('MATERIAL', c):
-                score += 0.14
-            if '+' in v and '+' in c:
-                score += 0.03
-            if ('GR' in v or '#' in v) and ('GR' in c or '#' in c):
-                score += 0.03
-
-        elif field_type == 'SIZE':
-            has_pair = bool(re.search(r'[X×]', v))
-            code_pair = bool(re.search(r'[X×]', c))
-            if has_pair == code_pair:
-                score += 0.10
-            if re.match(r'^\d+(?:\.\d+)?(?:[X×]\d+(?:\.\d+)?)*$', c):
-                score += 0.10
-            if has_pair and c.count('X') != v.replace('×', 'X').count('X'):
-                score -= 0.08
-
-        elif field_type == 'THICKNESS':
-            value_parts = [p for p in re.split(r'[X×*/]+', v.replace(' ', '')) if p]
-            code_parts = [p for p in re.split(r'[X×*/]+', c.replace(' ', '')) if p]
-            if len(value_parts) == len(code_parts):
-                score += 0.08
-            if any('MM' in p for p in code_parts) or any('S' in p for p in code_parts):
-                score += 0.07
-            if re.search(r'XXS|XS|STD|SCH|S\d+', c):
-                score += 0.05
-
-        elif field_type == 'PRESSURE':
-            if re.search(r'^(PN\s*)?\d+|C\d+|CL\d+', c):
-                score += 0.15
-            if ('PN' in v and 'PN' in c) or ('LB' in v and ('C' in c or 'CL' in c)):
-                score += 0.05
-
-        elif field_type == 'STANDARD':
-            if re.search(r'^[A-Z0-9]+$', c):
-                score += 0.08
-            if self._is_known_code('STANDARD', c):
-                score += 0.12
-            if 'GB/T' in v and c.startswith('GBT'):
-                score += 0.05
-
-        return float(max(0.35, min(0.95, score)))
+        """Use the generated value-token probability without heuristic stretching."""
+        return round(max(0.0, min(1.0, float(model_conf))), 6)
 
     def _encode_with_llm_meta(self, field_type: str, value: str):
         """
         返回 (code, similarity, used_model_confidence)。
-        - transformers: 使用真实生成概率
-        - ollama: 无原生概率，回退到经验分
+        模型未返回 logprob 时不伪造经验分，置信度记为 0。
         """
         if not self.llm_encoder or not value:
             return "", 0.0, False
@@ -173,7 +84,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 if used_model_conf:
                     similarity = self._score_from_model_conf(model_conf)
                 else:
-                    similarity = self._score_ollama_encoding(field_type, value, code)
+                    similarity = 0.0
             else:
                 similarity = 0.0
             logger.info(
@@ -206,7 +117,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 )
                 self._last_type_encode_meta = self._make_encode_meta(
                     source='type_mapping',
-                    confidence=0.98,
+                    confidence=1.0,
                     reason='type_mapping_resolved',
                     evidence={
                         'strategy': str(type_result.strategy or ''),
@@ -214,7 +125,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                         'body_present': bool((type_value or {}).get('BODY')),
                     },
                 )
-                return type_result.code, 0.995
+                return type_result.code, 1.0
             logger.info(
                 "[TYPE编码器] unresolved, fallback to LLM. merged='%s', type_value=%s",
                 merged_value,
@@ -261,10 +172,10 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'original': original,
                 'matched': ' '.join([p for p in matched_parts if p]).strip() or original,
                 'code': material_result.code,
-                'similarity': 0.995,
+                'similarity': 1.0,
                 'encode_meta': self._make_encode_meta(
                     source='material_mapping',
-                    confidence=0.98,
+                    confidence=1.0,
                     reason='material_mapping_resolved',
                     evidence={
                         'strategy': str(material_result.strategy or ''),
@@ -318,7 +229,7 @@ class LlmPipeEncoder(PipeEncoderBase):
 
         encode_meta = self._make_encode_meta(
             source='size_processor',
-            confidence=0.96 if final_code and not size_need_review else (0.72 if final_code else 0.0),
+            confidence=1.0 if final_code else 0.0,
             reason='size_processor_resolved' if final_code else 'size_processor_failed',
             evidence={
                 'item_count': len(display_values),
@@ -456,7 +367,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'similarity': 1.0 if normalized else 0.0,
                 'encode_meta': self._make_encode_meta(
                     source='thickness_processor',
-                    confidence=0.96 if normalized else 0.0,
+                    confidence=1.0 if normalized else 0.0,
                     reason='thickness_processor_resolved' if normalized else 'thickness_processor_failed',
                     evidence={'code_present': bool(normalized)},
                 ),
@@ -511,7 +422,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'similarity': 1.0,
                 'encode_meta': self._make_encode_meta(
                     source='pressure_processor',
-                    confidence=0.96,
+                    confidence=1.0,
                     reason='pressure_processor_resolved',
                     evidence={'code_present': bool(normalized)},
                 ),
@@ -527,7 +438,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 'similarity': 1.0 if normalized else 0.0,
                 'encode_meta': self._make_encode_meta(
                     source='size_processor',
-                    confidence=0.96 if normalized else 0.0,
+                    confidence=1.0 if normalized else 0.0,
                     reason='size_processor_resolved' if normalized else 'size_processor_failed',
                     evidence={'code_present': bool(normalized)},
                 ),
@@ -647,7 +558,7 @@ class LlmPipeEncoder(PipeEncoderBase):
                 )
                 encode_meta = self._make_encode_meta(
                     source='standard_processor',
-                    confidence=0.98,
+                    confidence=1.0,
                     reason='standard_processor_resolved',
                     evidence={
                         'formatted_present': bool(formatted),

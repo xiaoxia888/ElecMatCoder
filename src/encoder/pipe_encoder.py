@@ -170,7 +170,7 @@ class PipeEncodingResult:
         return payload.to_dict()
 
     def _extract_stage1_meta(self, field_type: str) -> dict[str, Any]:
-        item = self.extract_confidence_v2.get(field_type)
+        item = (self.extract_confidence_v2 or {}).get(field_type)
         if not isinstance(item, dict):
             item = {}
         return {
@@ -2047,65 +2047,19 @@ class PipeEncoderBase:
                     )
 
     def _compute_result_confidence(self, result: PipeEncodingResult) -> float:
-        """计算整条编码置信度（按字段最终执行度做加权几何平均）。"""
+        """整条编码取有效字段最低分，避免确定性字段 1.0 抬高模型分。"""
         if not result.fields:
             return 0.0
-
-        weights = self.review_rules_config.get('confidence_weights', {}) or {}
-        default_weights = {
-            'TYPE': 0.22,
-            'SIZE': 0.20,
-            'THICKNESS': 0.18,
-            'MATERIAL': 0.16,
-            'STANDARD': 0.16,
-            'MANU': 0.04,
-            'CONN': 0.02,
-            'ENDS': 0.01,
-            'SEAL': 0.01,
-        }
-        merged_weights = {**default_weights, **weights}
-
-        selected = []
-        total_w = 0.0
-        for ft, field in result.fields.items():
-            w = float(merged_weights.get(ft, 0.0))
-            if w <= 0:
-                continue
-            raw_conf = field.field_confidence if field.field_confidence is not None else field.similarity
-            s = max(1e-6, min(1.0, float(raw_conf)))
-            selected.append((w, s))
-            total_w += w
-
-        if not selected:
-            sims = [
-                max(
-                    1e-6,
-                    min(1.0, float(f.field_confidence if f.field_confidence is not None else f.similarity))
-                )
-                for f in result.fields.values()
-            ]
-            if not sims:
-                return 0.0
-            p = 1.0
-            for s in sims:
-                p *= s
-            return p ** (1.0 / len(sims))
-
-        log_sum = 0.0
-        for w, s in selected:
-            log_sum += (w / total_w) * math.log(s)
-        return float(math.exp(log_sum))
+        scores = [
+            max(0.0, min(1.0, float(field.field_confidence)))
+            for field in result.fields.values()
+            if field.field_confidence is not None
+        ]
+        return min(scores) if scores else 0.0
 
     def _temperature_scale_confidence(self, p: float) -> float:
-        """对置信度做温度缩放，缓解过度自信。"""
-        p = max(1e-6, min(1 - 1e-6, float(p)))
-        if not self.conf_calibration_enabled:
-            return p
-        t = max(1e-6, float(self.conf_temperature))
-        # p' = sigmoid(logit(p)/T)
-        logit = math.log(p / (1 - p))
-        scaled = 1.0 / (1.0 + math.exp(-(logit / t)))
-        return float(max(0.0, min(1.0, scaled)))
+        """保留旧调用入口，但模型置信分不再执行人工温度缩放。"""
+        return float(max(0.0, min(1.0, float(p))))
 
     def _finalize_review_decision(self, result: PipeEncodingResult):
         """
@@ -2228,21 +2182,16 @@ class PipeEncoderBase:
 
     def _blend_extract_and_encode_conf(self, extract_conf: Optional[float], encode_conf: float) -> float:
         """
-        融合两阶段置信度：
-        C_field = C_extract^a * C_encode^b
+        串行两阶段置信度：
+        C_field = C_extract * C_encode
+
+        二阶段为确定性规则/映射时 C_encode=1，不改变一阶段模型分。
         """
-        e = max(1e-6, min(1.0, float(encode_conf)))
+        e = max(0.0, min(1.0, float(encode_conf)))
         if extract_conf is None:
             return float(e)
-        x = max(1e-6, min(1.0, float(extract_conf)))
-        a = max(0.0, min(1.0, self.extract_conf_weight))
-        b = max(0.0, min(1.0, self.encode_conf_weight))
-        if a + b <= 0:
-            a, b = 0.55, 0.45
-        else:
-            s = a + b
-            a, b = a / s, b / s
-        return float((x ** a) * (e ** b))
+        x = max(0.0, min(1.0, float(extract_conf)))
+        return float(x * e)
 
     @staticmethod
     def _get_field_stage2_confidence(field_result: EncodedFieldResult) -> Optional[float]:
@@ -2269,18 +2218,22 @@ class PipeEncoderBase:
         """回填字段级三层执行度：一阶段、二阶段、字段最终。"""
         field_result.stage1_confidence = stage1_confidence
         field_result.stage2_confidence = stage2_confidence
-        try:
-            field_result.field_confidence = max(0.0, min(1.0, float(field_result.similarity)))
-        except Exception:
+        if stage1_confidence is None or stage2_confidence is None:
             field_result.field_confidence = None
+            return
+        field_result.field_confidence = self._blend_extract_and_encode_conf(
+            stage1_confidence,
+            stage2_confidence,
+        )
 
     def _refresh_field_confidence_snapshot(self, result: PipeEncodingResult):
-        """在所有审查/封顶规则执行后，同步字段最终执行度。"""
+        """Keep model confidence independent from rule-based review penalties."""
         for field in result.fields.values():
-            try:
-                field.field_confidence = max(0.0, min(1.0, float(field.similarity)))
-            except Exception:
-                field.field_confidence = None
+            if field.field_confidence is None and field.stage1_confidence is not None and field.stage2_confidence is not None:
+                field.field_confidence = self._blend_extract_and_encode_conf(
+                    field.stage1_confidence,
+                    field.stage2_confidence,
+                )
 
     # ──────────────────── TYPE 组合处理（公共逻辑） ────────────────────
 
@@ -2450,7 +2403,7 @@ class PipeEncoderBase:
                 stage2_input=self._clone_response_value(values[0] if len(values) == 1 else values),
                 encode_confidence_v2=self._build_processor_encode_confidence(
                     source='thickness_processor',
-                    confidence=0.96 if processed else 0.0,
+                    confidence=1.0 if processed else 0.0,
                     reason='thickness_processor_resolved' if processed else 'thickness_processor_failed',
                     evidence={
                         'value_present': bool(input_values),
@@ -2484,7 +2437,7 @@ class PipeEncoderBase:
                 stage2_input=self._clone_response_value(values),
                 encode_confidence_v2=self._build_processor_encode_confidence(
                     source='thickness_processor',
-                    confidence=0.96 if processed else 0.0,
+                    confidence=1.0 if processed else 0.0,
                     reason='thickness_processor_resolved' if processed else 'thickness_processor_failed',
                     evidence={
                         'value_present': bool(values),
@@ -3219,7 +3172,7 @@ class PipeEncoderBase:
                     stage2_input=copy.deepcopy(info.get('value')),
                     encode_confidence_v2={
                         'source': 'regex_direct',
-                        'confidence': 0.98,
+                        'confidence': 1.0,
                         'reason': 'regex_direct_match',
                         'evidence': {
                             'value_present': bool(info.get('value')),
@@ -3440,10 +3393,8 @@ class PipeEncoderBase:
         entities = self._preprocess_tee_reducing(entities, original_text)
         stage1_final_snapshot = self._clone_response_value(entities) if isinstance(entities, dict) else {}
         field_verified = self._validate_fields_against_text(entities, original_text)
-        adjusted_extract_confidence_v2 = self._apply_field_verification_to_stage1_confidence(
-            extract_confidence_v2,
-            field_verified,
-        )
+        # Evidence checks control review routing, not the model's own token probability.
+        adjusted_extract_confidence_v2 = self._clone_response_value(extract_confidence_v2)
         result.extract_confidence_v2 = self._clone_response_value(adjusted_extract_confidence_v2)
         
         type_combined_processed = False

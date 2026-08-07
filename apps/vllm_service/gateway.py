@@ -50,6 +50,7 @@ class PredictRequest(BaseModel):
     max_new_tokens: Optional[int] = None
     temperature: Optional[float] = None
     top_p: Optional[float] = None
+    include_logprobs: bool = False
 
 
 class VLLMGateway:
@@ -160,6 +161,8 @@ class VLLMGateway:
             "top_p": float(top_p),
             "stream": False,
         }
+        if request.include_logprobs:
+            body["logprobs"] = True
         if route.chat_template_kwargs:
             body["chat_template_kwargs"] = route.chat_template_kwargs
         body.update(route.extra_body)
@@ -181,6 +184,39 @@ class VLLMGateway:
         if choices:
             message = choices[0].get("message") or {}
             raw = str(message.get("content") or "").strip()
+        token_logprobs: list[dict[str, Any]] = []
+        if request.include_logprobs and choices:
+            cursor = 0
+            content_items = ((choices[0].get("logprobs") or {}).get("content") or [])
+            for item in content_items:
+                if not isinstance(item, dict) or item.get("logprob") is None:
+                    continue
+                token = str(item.get("token") or "")
+                raw_bytes = item.get("bytes")
+                if isinstance(raw_bytes, list):
+                    try:
+                        token = bytes(int(value) for value in raw_bytes).decode("utf-8")
+                    except (TypeError, ValueError, UnicodeDecodeError):
+                        pass
+                token_logprobs.append(
+                    {
+                        "token": token,
+                        "logprob": float(item["logprob"]),
+                        "start": cursor,
+                        "end": cursor + len(token),
+                    }
+                )
+                cursor += len(token)
+            if token_logprobs:
+                unstripped = "".join(str(item["token"]) for item in token_logprobs)
+                left = len(unstripped) - len(unstripped.lstrip())
+                adjusted = []
+                for record in token_logprobs:
+                    start = max(0, int(record["start"]) - left)
+                    end = min(len(raw), int(record["end"]) - left)
+                    if end > start:
+                        adjusted.append({**record, "token": raw[start:end], "start": start, "end": end})
+                token_logprobs = adjusted
         parsed = parse_json_output(raw)
         return {
             "model": request.model,
@@ -193,6 +229,7 @@ class VLLMGateway:
             "parsed_json": parsed,
             "json_parse_ok": parsed is not None,
             "usage": payload.get("usage") or {},
+            "token_logprobs": token_logprobs,
         }
 
 

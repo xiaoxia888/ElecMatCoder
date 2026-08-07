@@ -23,8 +23,6 @@ def _is_empty_structural_value(field: str, value: Any) -> bool:
     return True
 
 
-_DN_PAIR_RE = re.compile(r"DN\s*\d+(?:\.\d+)?\s*[xX×*]\s*(?:DN\s*)?\d+(?:\.\d+)?", re.IGNORECASE)
-_LENGTH_RE = re.compile(r"\b(?:L|LEN|LENGTH)\s*=\s*\d+(?:\.\d+)?\s*(?:MM|M)?\b|长度\s*[=:：]?\s*\d+(?:\.\d+)?", re.IGNORECASE)
 _PRESSURE_RE = re.compile(r"\b(?:PN\s*\d+(?:\.\d+)?|CL\s*\d+|CLASS\s*\d+|\d+\s*(?:LB|LBS)|\d+#|\d+(?:\.\d+)?\s*MPA|\d+(?:\.\d+)?\s*BAR)\b", re.IGNORECASE)
 _THICKNESS_ANCHOR_RE = re.compile(r"(?:THK|壁厚|厚度|T=|S=|SCH|STD|XS|XXS|BWG)", re.IGNORECASE)
 _SIZE_ANCHOR_RE = re.compile(r"(?:DN\s*\d|OD\s*\d|[Φφ]\s*\d|\bL\s*=)", re.IGNORECASE)
@@ -102,16 +100,6 @@ def _summarize_stage1_structural_field(value: Any) -> Any:
                 result[key] = item
         return result
     return value
-
-
-def _non_empty_structural_reason(source: str, default_reason: str) -> str:
-    if source == "finetuned_structural_model":
-        return "finetuned_model_extraction"
-    if source == "complex_prompt_extraction":
-        return "complex_prompt_extraction"
-    if source == "rule_extraction":
-        return "rule_extraction"
-    return default_reason
 
 
 class Stage1FieldOrchestrator:
@@ -330,9 +318,9 @@ class Stage1FieldOrchestrator:
         return str(model_output.get("CATEGORY") or model_output.get("category") or "").strip()
 
     @staticmethod
-    def _extract_field_confidence(model_result: Dict[str, Any], field: str) -> float:
+    def _extract_field_confidence(model_result: Dict[str, Any], field: str) -> Optional[float]:
         if not isinstance(model_result, dict):
-            return 0.0
+            return None
         conf = model_result.get("extract_confidence")
         if isinstance(conf, dict):
             value = conf.get(field)
@@ -340,8 +328,8 @@ class Stage1FieldOrchestrator:
                 try:
                     return float(value)
                 except Exception:
-                    return 0.0
-        return 0.0
+                    return None
+        return None
 
     @staticmethod
     def _extract_field_confidence_v2(model_result: Dict[str, Any], field: str) -> Optional[Dict[str, Any]]:
@@ -379,77 +367,20 @@ class Stage1FieldOrchestrator:
                 evidence=evidence,
             )
 
-        if field == "SIZE":
-            items = []
-            if isinstance(field_value, dict):
-                items = field_value.get("_ITEMS") or []
-            item_count = len(items) if isinstance(items, list) else 0
-            explicit_anchor = bool(_SIZE_ANCHOR_RE.search(text))
-            dn_pair_present = bool(_DN_PAIR_RE.search(text))
-            length_present = bool(_LENGTH_RE.search(text))
-            complete_pair = not dn_pair_present or item_count >= 2
-            confidence = 0.50 + (0.18 if explicit_anchor else 0.0) + (0.12 if item_count > 0 else 0.0) + (0.10 if complete_pair else 0.0) + (0.05 if length_present else 0.0)
+        if source == "rule_extraction":
             return {
                 "source": source,
-                "confidence": round(min(0.95, confidence), 4),
-                "reason": _non_empty_structural_reason(
-                    source,
-                    "explicit_pattern_match" if explicit_anchor else "implicit_pattern_match",
-                ),
-                "evidence": {
-                    "field_present": True,
-                    "item_count": item_count,
-                    "explicit_anchor": explicit_anchor,
-                    "dn_pair_present": dn_pair_present,
-                    "length_present": length_present,
-                    "complete_pair": complete_pair,
-                },
+                "confidence": 1.0,
+                "reason": "deterministic_rule_extraction",
+                "evidence": {"field_present": True, "deterministic": True},
             }
 
-        if field == "THICKNESS":
-            items = []
-            if isinstance(field_value, dict):
-                items = field_value.get("_ITEMS") or []
-            item_values = []
-            if isinstance(items, list):
-                item_values = [str(item.get("value", "")).strip() for item in items if isinstance(item, dict)]
-            explicit_anchor = bool(_THICKNESS_ANCHOR_RE.search(text))
-            grouped_layer = any("/" in value for value in item_values if value)
-            item_count = len(item_values)
-            confidence = 0.50 + (0.18 if explicit_anchor else 0.0) + (0.12 if item_count > 0 else 0.0) + (0.10 if grouped_layer else 0.0)
-            return {
-                "source": source,
-                "confidence": round(min(0.95, confidence), 4),
-                "reason": _non_empty_structural_reason(
-                    source,
-                    "explicit_pattern_match" if explicit_anchor else "contextual_pattern_match",
-                ),
-                "evidence": {
-                    "field_present": True,
-                    "item_count": item_count,
-                    "explicit_anchor": explicit_anchor,
-                    "grouped_layer": grouped_layer,
-                },
-            }
-
-        if field == "PRESSURE":
-            explicit_anchor = bool(_PRESSURE_RE.search(text))
-            confidence = 0.52 + (0.28 if explicit_anchor else 0.0) + (0.12 if isinstance(field_value, str) and field_value.strip() else 0.0)
-            return {
-                "source": source,
-                "confidence": round(min(0.95, confidence), 4),
-                "reason": _non_empty_structural_reason(
-                    source,
-                    "explicit_pressure_anchor" if explicit_anchor else "contextual_pressure_match",
-                ),
-                "evidence": {
-                    "field_present": True,
-                    "explicit_anchor": explicit_anchor,
-                    "value_present": bool(isinstance(field_value, str) and field_value.strip()),
-                },
-            }
-
-        return _make_empty_extract_conf_v2(source)
+        return {
+            "source": source,
+            "confidence": None,
+            "reason": "model_token_logprobs_unavailable",
+            "evidence": {"field_present": True, "token_count": 0},
+        }
 
     def _merge_results(
         self,
@@ -496,7 +427,9 @@ class Stage1FieldOrchestrator:
             value = self._extract_field(result, field)
             if value not in (None, "", [], {}):
                 decisions[field] = value
-                extract_confidence[field] = self._extract_field_confidence(result, field)
+                field_confidence = self._extract_field_confidence(result, field)
+                if field_confidence is not None:
+                    extract_confidence[field] = field_confidence
             field_conf_v2 = self._extract_field_confidence_v2(result, field)
             if isinstance(field_conf_v2, dict):
                 extract_confidence_v2[field] = field_conf_v2
@@ -505,6 +438,7 @@ class Stage1FieldOrchestrator:
 
         structural_visible = None
         structural_sources: Dict[str, str] = {}
+        structural_model_confidences: Dict[str, Any] = {}
         if isinstance(structural_result, dict):
             structural_visible = {
                 k: copy.deepcopy(v)
@@ -516,6 +450,9 @@ class Stage1FieldOrchestrator:
                 for k, v in (structural_result.get("_sources") or {}).items()
                 if k in {"SIZE", "THICKNESS", "PRESSURE"}
             }
+            structural_model_confidences = copy.deepcopy(
+                structural_result.get("_extract_confidence_v2", {}) or {}
+            )
             for field in ("SIZE", "THICKNESS", "PRESSURE"):
                 field_value = copy.deepcopy(structural_result.get(field))
                 if field in {"SIZE", "THICKNESS"} and isinstance(field_value, dict):
@@ -527,15 +464,21 @@ class Stage1FieldOrchestrator:
                     structural_visible[field] = copy.deepcopy(field_value)
                 if not _is_empty_structural_value(field, field_value):
                     decisions[field] = field_value
-                    extract_confidence[field] = 1.0
-                extract_confidence_v2[field] = self._build_structural_field_confidence_v2(
-                    text=text,
-                    field=field,
-                    field_value=field_value,
-                    source=structural_sources.get(field, "prompt_extraction"),
-                    prompt_status="",
-                    prompt_error="",
-                )
+                provided_confidence = structural_model_confidences.get(field)
+                if isinstance(provided_confidence, dict):
+                    extract_confidence_v2[field] = provided_confidence
+                else:
+                    extract_confidence_v2[field] = self._build_structural_field_confidence_v2(
+                        text=text,
+                        field=field,
+                        field_value=field_value,
+                        source=structural_sources.get(field, "prompt_extraction"),
+                        prompt_status="",
+                        prompt_error="",
+                    )
+                structural_confidence = extract_confidence_v2[field].get("confidence")
+                if structural_confidence is not None and not _is_empty_structural_value(field, field_value):
+                    extract_confidence[field] = float(structural_confidence)
             logger.debug(
                 "[结构字段最终] sources=%s, SIZE=%s, THICKNESS=%s, PRESSURE=%s, complex_trigger=%s",
                 structural_sources,

@@ -199,8 +199,14 @@ class StandardSurfaceMatcher:
         parsed: ParsedStandardCode,
         base_hit: StandardSurfaceHit,
         consumed_hits: Iterable[StandardSurfaceHit] = (),
+        consumed_spans: Iterable[tuple[int, int]] = (),
     ) -> list[StandardSurfaceHit]:
-        consumed_spans = [(hit.start, hit.end) for hit in consumed_hits]
+        excluded_spans = [(hit.start, hit.end) for hit in consumed_hits]
+        excluded_spans.extend(
+            (int(start), int(end))
+            for start, end in consumed_spans
+            if int(end) > int(start)
+        )
         suspicious: list[StandardSurfaceHit] = []
         for suffix_key, rule in self.suffix_patterns.items():
             if suffix_key == parsed.suffix.upper():
@@ -212,7 +218,7 @@ class StandardSurfaceMatcher:
                 for match in pattern.finditer(text):
                     abs_start = match.start()
                     abs_end = match.end()
-                    if self._overlaps_consumed(abs_start, abs_end, consumed_spans):
+                    if self._overlaps_consumed(abs_start, abs_end, excluded_spans):
                         continue
                     suspicious.append(
                         StandardSurfaceHit(

@@ -6,6 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import re
 
+from .adaptive_boundary import adaptive_guards
 from .models import PressureSecondPassItem, PressureSurfaceHit
 
 TOKEN_HEAD = r"(?:(?<=^)|(?<=[^A-Z0-9])|(?<=[xX×*/-]))"
@@ -169,17 +170,22 @@ class PressureSurfaceMatcher:
 
     @staticmethod
     def _build_pn_patterns(number: str) -> list[tuple[str, re.Pattern[str]]]:
+        left_guard, right_guard = adaptive_guards(f"PN{number}")
         return [
-            (f"PN{number}", re.compile(rf'{TOKEN_HEAD}(PN\s*{re.escape(number)}){TOKEN_TAIL}', re.IGNORECASE)),
+            (f"PN{number}", re.compile(rf'{left_guard}(PN\s*{re.escape(number)}){right_guard}', re.IGNORECASE)),
         ]
 
     @staticmethod
     def _build_class_patterns(number: str) -> list[tuple[str, re.Pattern[str]]]:
+        cl_left, cl_right = adaptive_guards(f"CL{number}")
+        class_left, class_right = adaptive_guards(f"CLASS{number}")
+        lb_left, lb_right = adaptive_guards(f"{number}LB")
+        pound_left, pound_right = adaptive_guards(f"{number}#")
         return [
-            (f"CL{number}", re.compile(rf'{TOKEN_HEAD}(CL\s*\.?\s*{re.escape(number)}){TOKEN_TAIL}', re.IGNORECASE)),
-            (f"CLASS{number}", re.compile(rf'{TOKEN_HEAD}(CLASS\s*{re.escape(number)}){TOKEN_TAIL}', re.IGNORECASE)),
-            (f"{number}LB", re.compile(rf'{TOKEN_HEAD}({re.escape(number)}\s*LBS?){TOKEN_TAIL}', re.IGNORECASE)),
-            (f"{number}#", re.compile(rf'{TOKEN_HEAD}({re.escape(number)}\s*#){TOKEN_TAIL}', re.IGNORECASE)),
+            (f"CL{number}", re.compile(rf'{cl_left}(CL\s*\.?\s*{re.escape(number)}){cl_right}', re.IGNORECASE)),
+            (f"CLASS{number}", re.compile(rf'{class_left}(CLASS\s*{re.escape(number)}){class_right}', re.IGNORECASE)),
+            (f"{number}LB", re.compile(rf'{lb_left}({re.escape(number)}\s*LBS?){lb_right}', re.IGNORECASE)),
+            (f"{number}#", re.compile(rf'{pound_left}({re.escape(number)}\s*#){pound_right}', re.IGNORECASE)),
         ]
 
     @staticmethod

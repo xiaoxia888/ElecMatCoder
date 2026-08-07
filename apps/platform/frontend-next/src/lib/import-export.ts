@@ -30,10 +30,7 @@ function buildExportRecord(item: ImportedRow, result?: EncodingResult): Record<s
     原始描述: item.text,
     原始总编码: isRecognized ? (result?.final_code || '') : '',
     是否需审核: isRecognized ? (result?.need_review ? '是' : '否') : '',
-    总置信度: isRecognized ? formatPercent(result?.confidence) : '',
-    编码正确概率: isRecognized && result?.correctness_confidence?.available
-      ? formatPercent(result.correctness_confidence.score)
-      : '',
+    模型置信分: isRecognized ? formatPercent(result?.confidence) : '',
     [DIFFICULTY_HEADER]: difficultyLevel ?? '',
     分流原因: isRecognized ? getRouteReason(result) : '',
   }
@@ -66,8 +63,7 @@ function getExportHeaders(): string[] {
     '原始描述',
     '原始总编码',
     '是否需审核',
-    '总置信度',
-    '编码正确概率',
+    '模型置信分',
     DIFFICULTY_HEADER,
     '分流原因',
     ...EXPORT_FIELDS.flatMap(({ label }) => [`${label}_原始结果`, `${label}_原始编码`]),

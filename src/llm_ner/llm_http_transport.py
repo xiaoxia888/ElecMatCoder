@@ -218,6 +218,7 @@ def call_hf_lazy_service_predict(
     max_new_tokens: int,
     temperature: float,
     top_p: float,
+    include_logprobs: bool = True,
 ) -> LlmHttpResponse:
     resp = _HF_SERVICE_SESSION.post(
         f"{service_url.rstrip('/')}/predict",
@@ -228,6 +229,7 @@ def call_hf_lazy_service_predict(
             "max_new_tokens": max_new_tokens,
             "temperature": temperature,
             "top_p": top_p,
+            "include_logprobs": bool(include_logprobs),
         },
         timeout=timeout,
     )

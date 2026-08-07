@@ -229,6 +229,7 @@ common_types:
       - 异径三通
       - REDUCING TEE
       - RED TEE
+      - Red.Tee
       - TEE REDUCED
       - TEE(TR)
     block_if_matches:
@@ -270,6 +271,21 @@ common_types:
       - WELD
       - WELDED
       - WTR
+
+  RTN :
+    direct:
+      - WTR
+      - 有缝异径三通
+      - 焊接异径三通
+    body:
+      - 异径三通(NPT)
+      - REDUCING TEE(NPT)
+      - RED TEE(NPT)
+      - REDTEE(NPT)
+      - TEE REDUCED(NPT)
+      - TEE(NPT)
+    manu:
+      - NPT
 
   T:
     body:
@@ -315,6 +331,17 @@ common_types:
       - 焊接
       - WELD
       - WELDED
+  
+  TFN:
+    body:
+      - 等径三通
+      - 同径三通
+      - 三通
+      - STRAIGHT TEE
+      - TEE
+    manu:
+      - FNPT
+      - NPTF
 
   RE:
     body:

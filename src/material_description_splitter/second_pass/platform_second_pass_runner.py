@@ -112,6 +112,7 @@ class PlatformSecondPassRunner:
             }
 
         consumed_spans: list[tuple[int, int]] = []
+        material_consumed_spans: list[tuple[int, int]] = []
 
         if not self._is_empty_value(size_value):
             size_result = self.size_splitter.analyze(clean_text, size_value)
@@ -137,7 +138,12 @@ class PlatformSecondPassRunner:
 
         material_code = self._clean(material_code)
         if material_code:
-            results["MATERIAL"] = self.material_splitter.analyze(clean_text, material_code).to_dict()
+            material_result = self.material_splitter.analyze(clean_text, material_code)
+            results["MATERIAL"] = material_result.to_dict()
+            material_consumed_spans = [
+                (hit.start, hit.end)
+                for hit in (*material_result.base_hits, *material_result.suffix_hits)
+            ]
 
         type_code = self._clean(type_code)
         if type_code:
@@ -145,7 +151,11 @@ class PlatformSecondPassRunner:
 
         normalized_standard_items = self._normalize_standard_items(standard_items)
         if normalized_standard_items:
-            results["STANDARD"] = self.standard_splitter.analyze_items(clean_text, normalized_standard_items).to_dict()
+            results["STANDARD"] = self.standard_splitter.analyze_items(
+                clean_text,
+                normalized_standard_items,
+                consumed_spans=material_consumed_spans,
+            ).to_dict()
 
         final_level = self._build_final_level(
             clean_difficulty,

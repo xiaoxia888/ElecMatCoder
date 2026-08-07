@@ -23,6 +23,7 @@ from .llm_http_transport import (
     call_hf_lazy_service_predict,
     call_ollama_generate,
 )
+from ..confidence.model_token_confidence import build_field_token_confidences
 
 INSTRUCTION = (
     "你是一个工业管道材料结构化信息提取助手。"
@@ -280,7 +281,7 @@ class StructuredLlamaFactoryPredictor:
             }
 
         started = time.perf_counter()
-        raw = self._generate(text)
+        raw, token_logprobs = self._generate(text)
         elapsed = time.perf_counter() - started
         logger.debug("[结构化适配器] 推理耗时: %.2fs", elapsed)
 
@@ -305,11 +306,12 @@ class StructuredLlamaFactoryPredictor:
 
         structured = self._normalize_model_output(parsed)
         type_class = self._infer_type_class(structured)
+        field_scores = build_field_token_confidences(raw, structured, token_logprobs)
         extract_confidence = {
-            field: 1.0 for field, value in structured.items()
-            if field and value not in (None, "", [], {})
+            field: float(payload["confidence"])
+            for field, payload in field_scores.items()
         }
-        extract_confidence_v2 = self._build_extract_confidence_v2(structured)
+        extract_confidence_v2 = self._build_extract_confidence_v2(structured, field_scores)
 
         return {
             "text": text,
@@ -322,7 +324,7 @@ class StructuredLlamaFactoryPredictor:
             "model_raw_response": raw,
         }
 
-    def _generate(self, input_text: str) -> str:
+    def _generate(self, input_text: str) -> tuple[str, list[dict[str, Any]]]:
         if self.backend == "ollama":
             return self._generate_ollama(input_text)
         if self.backend == "hf_lazy_service":
@@ -351,12 +353,19 @@ class StructuredLlamaFactoryPredictor:
             generate_kwargs["bad_words_ids"] = bad_words_ids
 
         with torch.no_grad():
-            outputs = self.model.generate(**inputs, **generate_kwargs)
+            outputs = self.model.generate(
+                **inputs,
+                **generate_kwargs,
+                return_dict_in_generate=True,
+                output_scores=True,
+            )
 
-        new_tokens = outputs[0][inputs["input_ids"].shape[1]:]
-        return self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+        new_tokens = outputs.sequences[0][inputs["input_ids"].shape[1]:]
+        raw_unstripped = self.tokenizer.decode(new_tokens, skip_special_tokens=True)
+        token_logprobs = self._build_transformers_token_logprobs(new_tokens, outputs.scores)
+        return self._strip_response_with_offsets(raw_unstripped, token_logprobs)
 
-    def _generate_ollama(self, input_text: str) -> str:
+    def _generate_ollama(self, input_text: str) -> tuple[str, list[dict[str, Any]]]:
         prompt = _build_raw_chatml_prompt(input_text, self.instruction)
         response = call_ollama_generate(
             base_url=self.ollama_url,
@@ -368,9 +377,9 @@ class StructuredLlamaFactoryPredictor:
             raw=True,
             format_json=True,
         )
-        return response.text
+        return response.text, []
 
-    def _generate_hf_lazy_service(self, input_text: str) -> str:
+    def _generate_hf_lazy_service(self, input_text: str) -> tuple[str, list[dict[str, Any]]]:
         response = call_hf_lazy_service_predict(
             service_url=self.service_url,
             model_name=self.model_name,
@@ -380,7 +389,55 @@ class StructuredLlamaFactoryPredictor:
             temperature=self.temperature,
             top_p=0.9 if self.temperature > 0 else 1.0,
         )
-        return response.text
+        return response.text, list(response.payload.get("token_logprobs") or [])
+
+    def _build_transformers_token_logprobs(
+        self,
+        generated: Any,
+        scores: Any,
+    ) -> list[dict[str, Any]]:
+        import torch
+
+        records: list[dict[str, Any]] = []
+        previous = ""
+        max_steps = min(len(generated), len(scores or []))
+        for index in range(max_steps):
+            token_id = int(generated[index].item())
+            decoded = self.tokenizer.decode(generated[: index + 1], skip_special_tokens=True)
+            if decoded.startswith(previous):
+                piece = decoded[len(previous):]
+                start = len(previous)
+            else:
+                piece = self.tokenizer.decode([token_id], skip_special_tokens=True)
+                start = len(previous)
+                decoded = previous + piece
+            if piece:
+                logprob = float(torch.log_softmax(scores[index][0], dim=-1)[token_id].item())
+                records.append({
+                    "token": piece,
+                    "logprob": logprob,
+                    "start": start,
+                    "end": start + len(piece),
+                })
+            previous = decoded
+        return records
+
+    @staticmethod
+    def _strip_response_with_offsets(
+        raw: str,
+        records: list[dict[str, Any]],
+    ) -> tuple[str, list[dict[str, Any]]]:
+        stripped = raw.strip()
+        if stripped == raw:
+            return raw, records
+        left = len(raw) - len(raw.lstrip())
+        adjusted: list[dict[str, Any]] = []
+        for item in records:
+            start = max(0, int(item["start"]) - left)
+            end = min(len(stripped), int(item["end"]) - left)
+            if end > start:
+                adjusted.append({**item, "token": stripped[start:end], "start": start, "end": end})
+        return stripped, adjusted
 
     @staticmethod
     def _parse_json_output(raw: str) -> Optional[dict]:
@@ -412,82 +469,30 @@ class StructuredLlamaFactoryPredictor:
             }
         return self._apply_type_value_whitelist(structured)
 
-    def _build_extract_confidence_v2(self, structured: Dict[str, Any]) -> Dict[str, Any]:
+    def _build_extract_confidence_v2(
+        self,
+        structured: Dict[str, Any],
+        field_scores: Dict[str, Dict[str, Any]],
+    ) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
-
-        type_value = structured.get("TYPE")
-        type_present = _type_present(type_value)
-        type_body_present = isinstance(type_value, dict) and _is_non_empty(type_value.get("BODY"))
-        type_aux_count = 0
-        if isinstance(type_value, dict):
-            for key in ("MANU", "CONN", "SEAL", "ENDS"):
-                value = type_value.get(key)
-                if isinstance(value, list) and any(_is_non_empty(item) for item in value):
-                    type_aux_count += 1
-            geometry = type_value.get("GEOMETRY")
-            if isinstance(geometry, dict) and any(_is_non_empty(v) for v in geometry.values()):
-                type_aux_count += 1
-        type_conf = 0.0
-        if type_present:
-            type_conf = min(0.95, 0.55 + (0.20 if isinstance(type_value, dict) else 0.0) + (0.15 if type_body_present else 0.0) + min(type_aux_count, 2) * 0.05)
-        result["TYPE"] = {
-            "source": "finetuned_model",
-            "confidence": round(type_conf, 4),
-            "reason": "field_present_and_schema_valid" if type_present else "field_missing",
-            "evidence": {
-                "field_present": type_present,
-                "structure_valid": isinstance(type_value, dict),
-                "body_present": bool(type_body_present),
-                "aux_signal_count": type_aux_count,
-            },
-        }
-
-        material_value = structured.get("MATERIAL")
-        material_items = material_value if isinstance(material_value, list) else []
-        material_valid = sum(1 for item in material_items if isinstance(item, dict) and _is_non_empty(item.get("VALUE")))
-        material_parts = sum(
-            1
-            for item in material_items
-            if isinstance(item, dict) and _is_non_empty(item.get("PART") or item.get("ROLE"))
-        )
-        material_present = material_valid > 0
-        material_ratio = (material_valid / len(material_items)) if material_items else 0.0
-        material_conf = 0.0
-        if material_present:
-            material_conf = min(0.95, 0.58 + 0.22 * material_ratio + (0.10 if material_parts == material_valid else 0.0) + (0.05 if material_valid > 1 else 0.0))
-        result["MATERIAL"] = {
-            "source": "finetuned_model",
-            "confidence": round(material_conf, 4),
-            "reason": "field_present_and_items_valid" if material_present else "field_missing",
-            "evidence": {
-                "field_present": material_present,
-                "item_count": len(material_items),
-                "valid_item_count": material_valid,
-                "part_present_count": material_parts,
-                "valid_ratio": round(material_ratio, 4),
-            },
-        }
-
-        standard_value = structured.get("STANDARD")
-        standard_items = standard_value if isinstance(standard_value, list) else []
-        standard_valid = sum(1 for item in standard_items if isinstance(item, dict) and _is_non_empty(item.get("BODY")))
-        standard_present = standard_valid > 0
-        standard_ratio = (standard_valid / len(standard_items)) if standard_items else 0.0
-        standard_conf = 0.0
-        if standard_present:
-            standard_conf = min(0.95, 0.58 + 0.24 * standard_ratio + (0.08 if standard_valid > 1 else 0.0) + (0.05 if all(isinstance(item, dict) for item in standard_items) else 0.0))
-        result["STANDARD"] = {
-            "source": "finetuned_model",
-            "confidence": round(standard_conf, 4),
-            "reason": "field_present_and_items_valid" if standard_present else "field_missing",
-            "evidence": {
-                "field_present": standard_present,
-                "item_count": len(standard_items),
-                "valid_item_count": standard_valid,
-                "valid_ratio": round(standard_ratio, 4),
-            },
-        }
-
+        for field, value in structured.items():
+            if str(field).startswith("_"):
+                continue
+            score = field_scores.get(str(field))
+            present = value not in (None, "", [], {})
+            result[str(field)] = {
+                "source": "model_token_logprobs" if score else "model_token_logprobs_unavailable",
+                "confidence": round(float(score["confidence"]), 6) if score else None,
+                "reason": "generated_value_token_probability" if score else (
+                    "field_missing" if not present else "token_logprobs_unavailable"
+                ),
+                "evidence": {
+                    "field_present": present,
+                    "token_count": int(score["token_count"]) if score else 0,
+                    "mean_logprob": round(float(score["mean_logprob"]), 6) if score else None,
+                    "min_probability": round(float(score["min_probability"]), 6) if score else None,
+                },
+            }
         return result
 
     def _apply_type_value_whitelist(self, structured: Dict[str, Any]) -> Dict[str, Any]:

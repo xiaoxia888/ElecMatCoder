@@ -96,6 +96,9 @@ def _stage1_failed_checks(features: Any) -> list[dict[str, str]]:
         if name == "special_token":
             checks.append(_make_check("SPECIAL", reason, stage="stage1", rule=name))
             continue
+        if name == "parenthesized_content":
+            checks.append(_make_check("STRUCTURE", reason, stage="stage1", rule=name))
+            continue
 
         if hits:
             for hit in hits:

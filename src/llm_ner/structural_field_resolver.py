@@ -331,6 +331,7 @@ class StructuralFieldResolver:
                 "_status": {},
                 "_errors": {},
                 "_usage": {},
+                "_extract_confidence_v2": {},
             }
             sources = {}
 
@@ -356,6 +357,9 @@ class StructuralFieldResolver:
                 model_structural["_status"].update(copy.deepcopy(partial_result.get("_status", {}) or {}))
                 model_structural["_errors"].update(copy.deepcopy(partial_result.get("_errors", {}) or {}))
                 model_structural["_usage"].update(copy.deepcopy(partial_result.get("_usage", {}) or {}))
+                model_structural["_extract_confidence_v2"].update(
+                    copy.deepcopy(partial_result.get("_extract_confidence_v2", {}) or {})
+                )
 
                 if "SIZE" in group["fields"] and not _is_size_empty_for_rule_fallback(partial_result.get("SIZE")):
                     model_structural["SIZE"] = _copy_structural_field(partial_result.get("SIZE"))
@@ -405,6 +409,7 @@ class StructuralFieldResolver:
             "_errors": {},
             "_usage": {},
             "_field_sources": {},
+            "_extract_confidence_v2": {},
         }
 
         for group in self.extractor_groups:
@@ -436,6 +441,9 @@ class StructuralFieldResolver:
             model_structural["_status"].update(copy.deepcopy(partial_result.get("_status", {}) or {}))
             model_structural["_errors"].update(copy.deepcopy(partial_result.get("_errors", {}) or {}))
             model_structural["_usage"].update(copy.deepcopy(partial_result.get("_usage", {}) or {}))
+            model_structural["_extract_confidence_v2"].update(
+                copy.deepcopy(partial_result.get("_extract_confidence_v2", {}) or {})
+            )
 
             if run_size and not _is_size_empty_for_rule_fallback(partial_result.get("SIZE")):
                 model_structural["SIZE"] = _copy_structural_field(partial_result.get("SIZE"))
@@ -454,6 +462,9 @@ class StructuralFieldResolver:
         merged["_raw"] = str(model_structural.get("_raw", "") or "")
         merged["_status"] = copy.deepcopy(model_structural.get("_status", {}) or {})
         merged["_errors"] = copy.deepcopy(model_structural.get("_errors", {}) or {})
+        merged["_extract_confidence_v2"] = copy.deepcopy(
+            model_structural.get("_extract_confidence_v2", {}) or {}
+        )
 
         if need_size_model:
             prompt_size = model_structural.get("SIZE")

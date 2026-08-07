@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import logging
+import math
 from typing import Any, Dict, List, Optional
 
 from .structural_field_output_normalizer import StructuralFieldOutputNormalizer
@@ -61,6 +62,7 @@ class StructuralFieldModelExtractor:
             normalized = self._normalize(model_output if isinstance(model_output, dict) else {})
             result.update(normalized)
             result["_raw"] = str((predict_result or {}).get("model_raw_response", "") or "")
+            result["_extract_confidence_v2"] = self._map_model_confidences(predict_result or {})
         except Exception as exc:  # pragma: no cover - 运行时兜底
             logger.warning("[结构字段模型] 调用失败: %s", exc)
             if run_size_length:
@@ -88,6 +90,33 @@ class StructuralFieldModelExtractor:
         result["_errors"] = errors
         result["_usage"] = {}
         return result
+
+    @staticmethod
+    def _map_model_confidences(predict_result: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+        source = predict_result.get("extract_confidence_v2")
+        source = source if isinstance(source, dict) else {}
+
+        def aggregate(*keys: str) -> Optional[Dict[str, Any]]:
+            items = [source.get(key) for key in keys if isinstance(source.get(key), dict)]
+            values = [item.get("confidence") for item in items if item.get("confidence") is not None]
+            if not values:
+                return None
+            confidences = [max(1e-12, min(1.0, float(value))) for value in values]
+            confidence = math.exp(sum(math.log(value) for value in confidences) / len(confidences))
+            token_count = sum(int((item.get("evidence") or {}).get("token_count") or 0) for item in items)
+            return {
+                "source": "model_token_logprobs",
+                "confidence": confidence,
+                "reason": "generated_value_token_probability",
+                "evidence": {"source_fields": list(keys), "token_count": token_count},
+            }
+
+        mapped = {
+            "SIZE": aggregate("SIZE_ITEMS", "LENGTH"),
+            "THICKNESS": aggregate("THICKNESS_ITEMS"),
+            "PRESSURE": aggregate("PRESSURE"),
+        }
+        return {field: value for field, value in mapped.items() if value is not None}
 
     @classmethod
     def _normalize(cls, parsed: Dict[str, Any]) -> Dict[str, Any]:

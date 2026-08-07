@@ -118,7 +118,7 @@ class EntityNormalizer:
                     is_cached=True,
                     is_new_category=False,
                     is_new_code=False,
-                    confidence=0.95,
+                    confidence=1.0,
                     reason=f"从缓存获取: {value} -> {cached_category}"
                 )
         
@@ -394,4 +394,3 @@ class EntityNormalizer:
         for v in values:
             results.append(await self.normalize(entity_type, v, use_llm))
         return results
-

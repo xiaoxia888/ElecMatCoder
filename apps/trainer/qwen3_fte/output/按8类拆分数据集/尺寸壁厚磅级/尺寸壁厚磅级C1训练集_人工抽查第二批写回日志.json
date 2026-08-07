@@ -1,0 +1,441 @@
+{
+  "说明": "第二批200条人工审核结果写回日志。",
+  "写回时间": "2026-08-07T14:21:23",
+  "正式训练集": "apps/trainer/qwen3_fte/output/按8类拆分数据集/尺寸壁厚磅级/尺寸壁厚磅级C1训练集.json",
+  "写回前条数": 71759,
+  "写回后条数": 71757,
+  "修正条数": 6,
+  "删除条数": 2,
+  "写回前SHA256": "4af3f971c565b987390be764ae1a0826af2e37005691067e8991b7f36d3702d7",
+  "写回后SHA256": "07fc1ed2c52ccbf9ec52e31634c9acf619383ca552fa93ff306a253a1cabd14b",
+  "修正明细": [
+    {
+      "抽查序号": 30,
+      "写回前source_index": 36407,
+      "原始描述": "无缝三通\\D450×200 S20/S20 SH3408 20# GB 8163",
+      "修改字段": [
+        "SIZE_ITEMS"
+      ],
+      "修正前output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "DN",
+            "value": "450"
+          },
+          {
+            "type": "DN",
+            "value": "200"
+          },
+          {
+            "type": "OD",
+            "value": "200"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "SCHEDULE",
+            "value": "SCH20"
+          }
+        ],
+        "PRESSURE": ""
+      },
+      "修正后output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "DN",
+            "value": "450"
+          },
+          {
+            "type": "DN",
+            "value": "200"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "SCHEDULE",
+            "value": "SCH20"
+          }
+        ],
+        "PRESSURE": ""
+      }
+    },
+    {
+      "抽查序号": 45,
+      "写回前source_index": 58267,
+      "原始描述": "碳素无缝钢管 0.5 22*3.5 PIPE 20 GB/T8163 SMLS PE SCH80 HG/T20553(Ia)",
+      "修改字段": [
+        "THICKNESS_ITEMS"
+      ],
+      "修正前output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "INCH",
+            "value": "0.5"
+          },
+          {
+            "type": "OD",
+            "value": "22"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "SCHEDULE",
+            "value": "SCH80"
+          }
+        ],
+        "PRESSURE": ""
+      },
+      "修正后output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "INCH",
+            "value": "0.5"
+          },
+          {
+            "type": "OD",
+            "value": "22"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "3.5"
+          },
+          {
+            "type": "SCHEDULE",
+            "value": "SCH80"
+          }
+        ],
+        "PRESSURE": ""
+      }
+    },
+    {
+      "抽查序号": 115,
+      "写回前source_index": 7537,
+      "原始描述": "偏心异径管, GB/T 13401-SF316L, BE, GB/T 12459, Series I, SMLS , DN200 x DN100, 4.0 mm x 3.5 mm;8x4\"",
+      "修改字段": [
+        "THICKNESS_ITEMS"
+      ],
+      "修正前output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "DN",
+            "value": "200"
+          },
+          {
+            "type": "DN",
+            "value": "100"
+          },
+          {
+            "type": "INCH",
+            "value": "8"
+          },
+          {
+            "type": "INCH",
+            "value": "4"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "3.5"
+          },
+          {
+            "type": "MM",
+            "value": "4"
+          }
+        ],
+        "PRESSURE": ""
+      },
+      "修正后output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "DN",
+            "value": "200"
+          },
+          {
+            "type": "DN",
+            "value": "100"
+          },
+          {
+            "type": "INCH",
+            "value": "8"
+          },
+          {
+            "type": "INCH",
+            "value": "4"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "4"
+          },
+          {
+            "type": "MM",
+            "value": "3.5"
+          }
+        ],
+        "PRESSURE": ""
+      }
+    },
+    {
+      "抽查序号": 126,
+      "写回前source_index": 15973,
+      "原始描述": "三通 无缝三通\\D200×100 S20/S40 SH3408 20# GB 8163",
+      "修改字段": [
+        "SIZE_ITEMS"
+      ],
+      "修正前output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "DN",
+            "value": "200"
+          },
+          {
+            "type": "DN",
+            "value": "100"
+          },
+          {
+            "type": "OD",
+            "value": "100"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "SCHEDULE",
+            "value": "SCH20"
+          },
+          {
+            "type": "SCHEDULE",
+            "value": "SCH40"
+          }
+        ],
+        "PRESSURE": ""
+      },
+      "修正后output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "DN",
+            "value": "200"
+          },
+          {
+            "type": "DN",
+            "value": "100"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "SCHEDULE",
+            "value": "SCH20"
+          },
+          {
+            "type": "SCHEDULE",
+            "value": "SCH40"
+          }
+        ],
+        "PRESSURE": ""
+      }
+    },
+    {
+      "抽查序号": 144,
+      "写回前source_index": 7356,
+      "原始描述": "TEE, X6CrNiTi18-10(1.4541), SMLS, BW, 33.7x2.0/2.0 - 33.7x2.0, DIN 2615-1 DN25",
+      "修改字段": [
+        "SIZE_ITEMS"
+      ],
+      "修正前output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "OD",
+            "value": "33.7"
+          },
+          {
+            "type": "OD",
+            "value": "33.7"
+          },
+          {
+            "type": "DN",
+            "value": "25"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "2"
+          }
+        ],
+        "PRESSURE": ""
+      },
+      "修正后output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "OD",
+            "value": "33.7"
+          },
+          {
+            "type": "DN",
+            "value": "25"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "2"
+          }
+        ],
+        "PRESSURE": ""
+      }
+    },
+    {
+      "抽查序号": 186,
+      "写回前source_index": 68295,
+      "原始描述": "钢管:φ168X7,DN150,20#,GB/T8163 φ168X7",
+      "修改字段": [
+        "SIZE_ITEMS"
+      ],
+      "修正前output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "OD",
+            "value": "168"
+          },
+          {
+            "type": "DN",
+            "value": "150"
+          },
+          {
+            "type": "OD",
+            "value": "168"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "7"
+          }
+        ],
+        "PRESSURE": ""
+      },
+      "修正后output": {
+        "SIZE_ITEMS": [
+          {
+            "type": "OD",
+            "value": "168"
+          },
+          {
+            "type": "DN",
+            "value": "150"
+          }
+        ],
+        "LENGTH": "",
+        "THICKNESS_ITEMS": [
+          {
+            "type": "MM",
+            "value": "7"
+          }
+        ],
+        "PRESSURE": ""
+      }
+    }
+  ],
+  "删除明细": [
+    {
+      "抽查序号": 111,
+      "删除前source_index": 67352,
+      "数据": {
+        "input": "管线钢螺旋焊管 DN240 Q235B DN450，Q235B,φ457*8.0，SCH20，HG/T 20553(la)-2011，SY/T 5037-2023",
+        "output": {
+          "SIZE_ITEMS": [
+            {
+              "type": "DN",
+              "value": "240"
+            },
+            {
+              "type": "DN",
+              "value": "450"
+            },
+            {
+              "type": "OD",
+              "value": "457"
+            }
+          ],
+          "LENGTH": "",
+          "THICKNESS_ITEMS": [
+            {
+              "type": "MM",
+              "value": "8"
+            },
+            {
+              "type": "SCHEDULE",
+              "value": "SCH20"
+            }
+          ],
+          "PRESSURE": ""
+        }
+      },
+      "原因": "DN240与DN450/φ457冲突，人工确认为脏数据。"
+    },
+    {
+      "抽查序号": 111,
+      "删除前source_index": 64335,
+      "数据": {
+        "input": "管线钢螺旋焊管 DN240 Q235B DN450，Q235B,φ457*8.0，SCH20，HG/T 20553(la)-2011，SY/T 5037-2023",
+        "output": {
+          "SIZE_ITEMS": [
+            {
+              "type": "DN",
+              "value": "240"
+            },
+            {
+              "type": "DN",
+              "value": "450"
+            },
+            {
+              "type": "OD",
+              "value": "457"
+            }
+          ],
+          "LENGTH": "",
+          "THICKNESS_ITEMS": [
+            {
+              "type": "MM",
+              "value": "8"
+            },
+            {
+              "type": "SCHEDULE",
+              "value": "SCH20"
+            }
+          ],
+          "PRESSURE": ""
+        }
+      },
+      "原因": "同一脏描述的重复项，一并删除。"
+    }
+  ],
+  "保持不变": [
+    {
+      "抽查序号": 92,
+      "结论": "THK=3.54.0mm按两个壁厚3.5和4标注，当前标签正确。"
+    },
+    {
+      "抽查序号": 106,
+      "结论": "末尾300mm是长度，当前LENGTH=300MM正确。"
+    },
+    {
+      "抽查序号": 134,
+      "结论": "末尾150mm既不确定为DN也不确定为长度，保持不标注。"
+    }
+  ]
+}

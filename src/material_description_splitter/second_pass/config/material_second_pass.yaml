@@ -4,6 +4,7 @@ suffix_surfaces:
     - GALVANIZED
     - GALV
     - 镀锌
+    - Galv.
   CE:
     - NACE
     - CE
@@ -139,6 +140,32 @@ common_materials:
     - CF370
   "16MnD":
     - 16MnD
+  "16MnDIII":
+    - 16MnDIII
+    - 16MnD III
+    - 16MnD Gr.III
+  "16MnDII":
+    - 16MnDII
+    - 16MnD II
+    - 16MnD Gr.II
+  "16MnDI":
+    - 16MnDI
+    - 16MnD I
+    - 16MnD Gr.I
+  "16Mn":
+    - 16Mn
+  "16MnIII":
+    - 16MnIII
+    - 16Mn III
+    - 16Mn Gr.III
+  "16MnII":
+    - 16MnII
+    - 16Mn II
+    - 16Mn Gr.II
+  "16MnI":
+    - 16MnI
+    - 16Mn I
+    - 16Mn Gr.I
   "347H":
     - F347H
     - WP347H

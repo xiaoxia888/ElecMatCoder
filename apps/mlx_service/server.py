@@ -95,6 +95,7 @@ class PredictRequest(BaseModel):
     max_new_tokens: Optional[int] = None
     temperature: Optional[float] = None
     top_p: Optional[float] = None
+    include_logprobs: bool = Field(default=False, description="返回生成 token 的 logprob 与字符区间")
 
 
 class MLXModelManager:
@@ -251,8 +252,9 @@ class MLXModelManager:
         max_new_tokens: int,
         temperature: float,
         top_p: float,
+        include_logprobs: bool,
     ) -> dict[str, Any]:
-        from mlx_lm.generate import generate
+        from mlx_lm.generate import generate, stream_generate
         from mlx_lm.sample_utils import make_logits_processors, make_sampler
 
         prompt = _build_raw_chatml_prompt(instruction, text)
@@ -268,18 +270,63 @@ class MLXModelManager:
             else None
         )
         started = time.perf_counter()
-        raw = generate(
-            item.model,
-            item.tokenizer,
-            prompt=prompt,
-            verbose=False,
-            max_tokens=int(max_new_tokens),
-            sampler=make_sampler(
-                temp=float(temperature),
-                top_p=float(top_p),
-            ),
-            logits_processors=logits_processors,
-        ).strip()
+        generation_kwargs = {
+            "prompt": prompt,
+            "max_tokens": int(max_new_tokens),
+            "sampler": make_sampler(temp=float(temperature), top_p=float(top_p)),
+            "logits_processors": logits_processors,
+        }
+        token_logprobs: list[dict[str, Any]] = []
+        if include_logprobs:
+            parts: list[str] = []
+            cursor = 0
+            for response in stream_generate(
+                item.model,
+                item.tokenizer,
+                **generation_kwargs,
+            ):
+                piece = str(getattr(response, "text", "") or "")
+                token_id = int(getattr(response, "token", -1))
+                logprobs = getattr(response, "logprobs", None)
+                selected_logprob = None
+                if logprobs is not None and token_id >= 0:
+                    try:
+                        selected_logprob = float(logprobs[token_id])
+                    except Exception:
+                        try:
+                            selected_logprob = float(logprobs)
+                        except Exception:
+                            selected_logprob = None
+                if piece:
+                    parts.append(piece)
+                    if selected_logprob is not None:
+                        token_logprobs.append(
+                            {
+                                "token": piece,
+                                "logprob": selected_logprob,
+                                "start": cursor,
+                                "end": cursor + len(piece),
+                            }
+                        )
+                    cursor += len(piece)
+            raw_unstripped = "".join(parts)
+        else:
+            raw_unstripped = generate(
+                item.model,
+                item.tokenizer,
+                verbose=False,
+                **generation_kwargs,
+            )
+        raw = raw_unstripped.strip()
+        if raw != raw_unstripped and token_logprobs:
+            left = len(raw_unstripped) - len(raw_unstripped.lstrip())
+            adjusted = []
+            for record in token_logprobs:
+                start = max(0, int(record["start"]) - left)
+                end = min(len(raw), int(record["end"]) - left)
+                if end > start:
+                    adjusted.append({**record, "token": raw[start:end], "start": start, "end": end})
+            token_logprobs = adjusted
         elapsed = time.perf_counter() - started
         parsed = _parse_json_output(raw)
         return {
@@ -290,6 +337,7 @@ class MLXModelManager:
             "raw_response": raw,
             "parsed_json": parsed,
             "json_parse_ok": parsed is not None,
+            "token_logprobs": token_logprobs,
         }
 
     async def predict(self, request: PredictRequest) -> dict[str, Any]:
@@ -311,6 +359,7 @@ class MLXModelManager:
                     max_new_tokens=max_new_tokens,
                     temperature=temperature,
                     top_p=top_p,
+                    include_logprobs=request.include_logprobs,
                 )
             result["loaded_models"] = len(self.loaded)
             return result

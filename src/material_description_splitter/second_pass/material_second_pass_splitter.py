@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from .material_surface_matcher import MaterialSurfaceMatcher
-from .models import MaterialSecondPassResult
+from .models import MaterialSecondPassResult, MaterialSurfaceHit
 
 
 class MaterialSecondPassSplitter:
@@ -12,12 +12,29 @@ class MaterialSecondPassSplitter:
         self.matcher = matcher or MaterialSurfaceMatcher()
 
     @staticmethod
-    def _filter_conflict_codes(text: str, conflict_map: dict[str, list], *, base_code: str) -> list[str]:
+    def _filter_conflict_codes(
+        conflict_map: dict[str, list[MaterialSurfaceHit]],
+        *,
+        base_code: str,
+        base_hits: list[MaterialSurfaceHit],
+    ) -> list[str]:
         if str(base_code or "").strip().upper() == "20":
             return []
         filtered: list[str] = []
         for code, hits in conflict_map.items():
             if code == "20":
+                continue
+            meaningful_hits = [
+                hit
+                for hit in hits
+                if not any(
+                    base_hit.start <= hit.start
+                    and hit.end <= base_hit.end
+                    and (base_hit.end - base_hit.start) > (hit.end - hit.start)
+                    for base_hit in base_hits
+                )
+            ]
+            if not meaningful_hits:
                 continue
             filtered.append(code)
         return filtered
@@ -109,7 +126,11 @@ class MaterialSecondPassSplitter:
         if "/" in clean_code:
             excluded.update(part for part in clean_code.split("/") if part)
         conflict_map = self.matcher.find_conflict_hits(clean_text, excluded_codes=excluded)
-        conflict_codes = self._filter_conflict_codes(clean_text, conflict_map, base_code=base_code)
+        conflict_codes = self._filter_conflict_codes(
+            conflict_map,
+            base_code=base_code,
+            base_hits=base_hits,
+        )
         if conflict_codes:
             return MaterialSecondPassResult(
                 text=clean_text,

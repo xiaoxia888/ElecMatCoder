@@ -50,7 +50,8 @@ class DescriptionCompletenessChecker:
 
         features = [
             self.standard_detector.analyze(normalized),
-            self.structure_detector.analyze(raw_text, normalized_text=normalized),
+            # 暂时不以尺寸、壁厚或磅级的规则命中情况判断描述完整性。
+            # self.structure_detector.analyze(raw_text, normalized_text=normalized),
         ]
         reasons = [feature.reason for feature in features if feature.matched and feature.reason]
         return DescriptionCompletenessResult(

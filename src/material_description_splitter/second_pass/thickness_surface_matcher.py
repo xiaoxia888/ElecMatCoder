@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Iterable
 
+from .adaptive_boundary import adaptive_guards
 from .models import ThicknessSecondPassItem, ThicknessSurfaceHit
 
 
@@ -277,12 +278,13 @@ class ThicknessSurfaceMatcher:
     @staticmethod
     def _build_schedule_patterns(norm: str) -> list[tuple[str, re.Pattern[str]]]:
         patterns: list[tuple[str, re.Pattern[str]]] = []
+        left_guard, right_guard = adaptive_guards(norm)
         if norm in {"STD", "XS", "XXS"}:
             patterns.append(
                 (
                     norm,
                     re.compile(
-                        rf'{TOKEN_HEAD}({re.escape(norm)}){TOKEN_TAIL}',
+                        rf'{left_guard}({re.escape(norm)}){right_guard}',
                         re.IGNORECASE,
                     ),
                 )
@@ -299,7 +301,7 @@ class ThicknessSurfaceMatcher:
                 (
                     norm,
                     re.compile(
-                        rf'{TOKEN_HEAD}((?:SCH\s*-?|S\s*-?)\s*{re.escape(number)}\s*S){TOKEN_TAIL}',
+                        rf'{left_guard}((?:SCH\s*-?|S\s*-?)\s*{re.escape(number)}\s*S){right_guard}',
                         re.IGNORECASE,
                     ),
                 )
@@ -309,7 +311,7 @@ class ThicknessSurfaceMatcher:
                 (
                     norm,
                     re.compile(
-                        rf'{TOKEN_HEAD}((?:SCH\s*-?|S\s*-?)\s*{re.escape(number)}){TOKEN_TAIL}',
+                        rf'{left_guard}((?:SCH\s*-?|S\s*-?)\s*{re.escape(number)}){right_guard}',
                         re.IGNORECASE,
                     ),
                 )
@@ -319,11 +321,13 @@ class ThicknessSurfaceMatcher:
     @staticmethod
     def _build_mm_patterns(value: str) -> list[tuple[str, re.Pattern[str]]]:
         number_pattern = ThicknessSurfaceMatcher._build_equivalent_numeric_pattern(value)
+        mm_left, mm_right = adaptive_guards(f"{value}MM")
+        thk_left, thk_right = adaptive_guards(f"THK{value}")
         return [
             # 数值等价匹配：8 可命中 8mm / 8.0mm / 8.00mm，
             # 但仍不能误命中 18mm 或 4.8mm 的尾部。
-            (f"{value}MM", re.compile(rf'(?<![\d.])(({number_pattern})\s*MM)(?![A-Z0-9.])', re.IGNORECASE)),
-            (f"{value}THK", re.compile(rf'(?<![A-Z0-9])(THK\s*=?\s*({number_pattern}))(?!\d)', re.IGNORECASE)),
+            (f"{value}MM", re.compile(rf'{mm_left}(({number_pattern})\s*MM){mm_right}', re.IGNORECASE)),
+            (f"{value}THK", re.compile(rf'{thk_left}(THK\s*=?\s*({number_pattern})){thk_right}', re.IGNORECASE)),
         ]
 
     @staticmethod

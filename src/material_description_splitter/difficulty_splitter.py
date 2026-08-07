@@ -8,6 +8,7 @@ from typing import Iterable
 from .anchor_missing_detector import AnchorMissingDetector
 from .description_completeness_checker import DescriptionCompletenessChecker
 from .models import DifficultyResult
+from .parenthesized_content_detector import ParenthesizedContentDetector
 from .special_token_detector import SpecialTokenDetector
 from .standard_glue_detector import StandardGlueDetector
 from .type_glue_detector import TypeGlueDetector
@@ -22,6 +23,7 @@ class MaterialDifficultySplitter:
         self.standard_glue_detector = StandardGlueDetector()
         self.anchor_missing_detector = AnchorMissingDetector()
         self.description_completeness_checker = DescriptionCompletenessChecker()
+        self.parenthesized_content_detector = ParenthesizedContentDetector()
         self.special_token_detector = SpecialTokenDetector()
         self.uncommon_code_detector = UncommonCodeDetector()
 
@@ -38,9 +40,11 @@ class MaterialDifficultySplitter:
         completeness_result = self.description_completeness_checker.analyze(text, normalized_text=normalized_text)
         features = [
             self.type_glue_detector.analyze(text),
-            self.standard_glue_detector.analyze(text),
+            # 暂时不以规范与相邻字符粘连作为困难分流条件。
+            # self.standard_glue_detector.analyze(text),
             self.anchor_missing_detector.analyze(text),
             *completeness_result.features,
+            self.parenthesized_content_detector.analyze(text),
             self.special_token_detector.analyze(text),
         ]
         if enable_code_rules:

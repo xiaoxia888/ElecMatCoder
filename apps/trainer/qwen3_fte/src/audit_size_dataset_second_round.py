@@ -91,6 +91,10 @@ INHERITED_SCHEDULE_RE = re.compile(
     r"(?P<second>XXS|STD|XS|\d{1,3}S?)",
     re.IGNORECASE,
 )
+AUXILIARY_INCH_PREFIX_RE = re.compile(
+    r"(?:PRESSURE\s+TAPS?|取压(?:口|孔))\s*[:=]?\s*$",
+    re.IGNORECASE,
+)
 
 
 def canonical_number(value: Any) -> str:
@@ -110,6 +114,11 @@ def canonical_inch(value: Any) -> str:
     return text
 
 
+def is_auxiliary_inch(text: str, position: int) -> bool:
+    """Return whether an inch value describes an accessory rather than the product."""
+    return bool(AUXILIARY_INCH_PREFIX_RE.search(text[max(0, position - 40) : position]))
+
+
 def output_items(row: dict[str, Any], field: str) -> list[dict[str, str]]:
     output = row.get("output")
     if not isinstance(output, dict):
@@ -123,6 +132,8 @@ def extract_explicit_inches(text: str) -> list[tuple[int, str]]:
 
     mixed_spans: list[tuple[int, int]] = []
     for match in MIXED_INCH_RE.finditer(text):
+        if is_auxiliary_inch(text, match.start()):
+            continue
         value = f"{match.group('whole')}-{match.group('fraction')}"
         evidence.append((match.start(), value))
         mixed_spans.append(match.span())
@@ -130,10 +141,14 @@ def extract_explicit_inches(text: str) -> list[tuple[int, str]]:
     for match in DIRECT_INCH_RE.finditer(text):
         if any(start <= match.start() < end for start, end in mixed_spans):
             continue
+        if is_auxiliary_inch(text, match.start()):
+            continue
         evidence.append((match.start(), canonical_inch(match.group("value"))))
 
     for match in INCH_CHAIN_RE.finditer(text):
         if text[max(0, match.start() - 2) : match.start()].upper() == "DN":
+            continue
+        if is_auxiliary_inch(text, match.start()):
             continue
         for part_match in re.finditer(NUMBER_RE, match.group("values")):
             evidence.append(
@@ -141,6 +156,8 @@ def extract_explicit_inches(text: str) -> list[tuple[int, str]]:
             )
 
     for match in INCH_WORD_RE.finditer(text):
+        if is_auxiliary_inch(text, match.start()):
+            continue
         value = canonical_inch(match.group("value"))
         # "A105 1/2 in" and "...-20 1/2 in" mean 1/2 inch, not 105-1/2 or 20-1/2.
         if " " in str(match.group("value")):

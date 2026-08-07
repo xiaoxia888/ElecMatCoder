@@ -8,9 +8,10 @@ server:
   port: 8002
   reload: true
 
-# ==================== 最终编码正确概率 ====================
+# ==================== 历史人工校准正确率（已停用） ====================
 encoding_confidence:
-  enabled: true
+  # 历史人工标签校准模型已停用；平台主展示改为一、二阶段生成 token 模型分。
+  enabled: false
   model_path: "models/encoding-confidence/20260731-no-old-confidence/encoding_confidence_model.npz"
   model_version: "20260731-no-old-v1"
   mode: "enforce"             # 正式模式：低于审核阈值时标记为待审核

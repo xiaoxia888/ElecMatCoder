@@ -9,8 +9,9 @@ text:
 
 checks:
   structure:
-    enabled: true
+    enabled: false
     source: stage1_rules
+    # 暂时停用：尺寸、壁厚和磅级缺失不参与困难分流。
     # 当前结构完整性的最小要求：
     # 1. 必须命中 SIZE
     # 2. THICKNESS / PRESSURE 至少命中一个

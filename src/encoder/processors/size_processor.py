@@ -1284,7 +1284,9 @@ class SizeProcessor:
     def _extract_explicit_size_rules(self, normalized: str) -> Dict[str, Any]:
         normalized = re.sub(r'(?<=\d)\s*\.\s*(?=\d)', '.', normalized)
         normalized = re.sub(r'(?<!\d)(\d+)\.(\d+/\d+)(?=\s*")', r'\1-\2', normalized)
-        imperial_token = r'(\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?)'
+        # 管径混合分数的整数部分只支持 1、2、3，例如
+        # 1-1/2、2 1/2、3-1/2；简单分数 3/4、1/2 不受影响。
+        imperial_token = r'((?:[1-3](?:[-\s]\d+/\d+)|\d+/\d+|\d+(?:\.\d+)?))'
 
         dn_values: List[str] = []
         od_values: List[str] = []
@@ -1780,9 +1782,11 @@ class SizeProcessor:
 
         inch_suffix_pattern = r'(?:["”″]|\'\s*\'|\bIN(?:CH)?\b)'
 
-        imperial_value_pattern = r'\d+(?:\.\d+)?(?:[-\s]\d+/\d+|/\d+)?'
+        imperial_value_pattern = r'(?:[1-3](?:[-\s]\d+/\d+)|\d+/\d+|\d+(?:\.\d+)?)'
         inch_chain_pattern = re.compile(
-            r'(?<![A-Za-z0-9])'
+            # 不能从小数或规范号的尾数开始，否则 `B16.9 3/4"`
+            # 会被跨空格拼成合法的混合分数 `9 3/4"`。
+            r'(?<![A-Za-z0-9./-])'
             rf'(?P<chain>{imperial_value_pattern}\s*{inch_suffix_pattern}?'
             rf'(?:\s*{MULTIPLICATION_SEPARATOR_PATTERN}\s*'
             rf'{imperial_value_pattern}\s*{inch_suffix_pattern}?)*'

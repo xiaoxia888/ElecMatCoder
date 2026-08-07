@@ -150,8 +150,17 @@ class MaterialSurfaceMatcher:
 
     @staticmethod
     def _compile_alias_pattern(alias: str) -> re.Pattern[str]:
-        escaped = re.escape(alias.upper())
-        if any("\u4e00" <= ch <= "\u9fff" for ch in alias):
+        upper_alias = alias.upper()
+        escaped = re.escape(upper_alias)
+        compact_alias = re.sub(r"\s+", "", upper_alias)
+        if (
+            len(compact_alias) >= 3
+            and compact_alias.isalnum()
+            and any(ch.isalpha() for ch in compact_alias)
+        ):
+            # 较长的字母数字材质代号允许在粘连描述中直接命中，如 ASTMA105N 中的 A105。
+            pattern = rf"({escaped})"
+        elif any("\u4e00" <= ch <= "\u9fff" for ch in alias):
             pattern = rf"({escaped})"
         elif alias.isdigit() or alias.isalpha():
             pattern = rf"(?<![{BOUNDARY_CLASS}])({escaped})(?![{BOUNDARY_CLASS}])"

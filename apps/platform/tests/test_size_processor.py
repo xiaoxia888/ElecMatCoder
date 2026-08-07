@@ -82,6 +82,39 @@ class SizeProcessorTest(unittest.TestCase):
         self.assertEqual(result.dn, [])
         self.assertEqual(result.od, [])
 
+    def test_fractional_inch_pair_does_not_absorb_standard_decimal_tail(self) -> None:
+        result = self.processor.extract_by_rules(
+            'RED. TEE , CS A234-WPB , SMLS , BE , SCH80 , B16.9 3/4"X1/2"'
+        )
+
+        self.assertEqual(result.inch, ["3/4", "1/2"])
+        self.assertEqual(
+            result.ordered_items,
+            [
+                {"type": "INCH", "value": "3/4"},
+                {"type": "INCH", "value": "1/2"},
+            ],
+        )
+
+    def test_mixed_fraction_integer_part_is_limited_to_one_two_or_three(self) -> None:
+        for whole in ("1", "2", "3"):
+            with self.subTest(whole=whole):
+                result = self.processor.extract_by_rules(f'RED. TEE {whole} 1/2"X1/2"')
+
+                self.assertEqual(result.inch, [f"{whole}-1/2", "1/2"])
+
+    def test_out_of_range_mixed_fraction_does_not_absorb_integer_part(self) -> None:
+        result = self.processor.extract_by_rules('RED. TEE 9 3/4"X1/2"')
+
+        self.assertEqual(result.inch, ["3/4", "1/2"])
+        self.assertEqual(
+            result.ordered_items,
+            [
+                {"type": "INCH", "value": "3/4"},
+                {"type": "INCH", "value": "1/2"},
+            ],
+        )
+
     def test_nearest_od_fallback_can_search_upward(self) -> None:
         self.assertEqual(self.processor._od_to_dn(85), 80)
         self.assertEqual(self.processor._od_to_dn(70), 65)

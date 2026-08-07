@@ -190,14 +190,8 @@ field_verification:
 review_rules:
   enabled: true
 
-  # 两阶段字段分融合权重
-  #
-  # 当前公式：
-  #   C_field = C_extract ^ extract_weight * C_encode ^ encode_weight
-  #
-  # 含义：
-  # - extract_weight 越大，越依赖一阶段提取置信度
-  # - encode_weight 越大，越依赖二阶段编码置信度
+  # 兼容旧配置，当前模型置信分不再使用权重。
+  # 当前公式：C_field = C_extract * C_encode。
   extract_weight: 0.55
   encode_weight: 0.45
 
@@ -212,13 +206,9 @@ review_rules:
   # 硬规则命中后是否强制待审
   hard_rule_force_review: true
 
-  # 置信度温度缩放
-  #
-  # 用途：
-  # - 只影响评分展示与审查阈值判断
-  # - 不影响最终编码结果本身
+  # 模型置信分直接展示生成 token 概率，不做人工校准或温度缩放。
   calibration:
-    enabled: true
+    enabled: false
     temperature: 1.8
 
   # 壁厚分段单位混用
@@ -263,10 +253,7 @@ review_rules:
     size_warning: "尺寸编码结果分段超过2段，建议人工审查。"
     thickness_warning: "壁厚编码结果分段超过2段，建议人工审查。"
 
-  # 最终总置信度字段权重
-  #
-  # 用于整体 confidence 聚合时的字段权重。
-  # 权重越高，说明该字段对最终总置信度影响越大。
+  # 兼容旧配置。当前整条模型置信分取有效字段最低分，不再使用字段权重。
   confidence_weights:
     TYPE: 0.22
     SIZE: 0.20

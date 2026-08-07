@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Iterable
 
+from .adaptive_boundary import adaptive_guards
 from .models import SizeSecondPassItem, SizeSurfaceHit
 
 
@@ -644,21 +645,23 @@ class SizeSurfaceMatcher:
         value = left if is_left else right
         patterns.append((f"DN{value}", SizeSurfaceMatcher._compile_dn_pattern(value)))
         if is_left:
+            left_guard, right_guard = adaptive_guards(f"{left}xDN{right}")
             patterns.append(
                 (
                     f"{left}xDN{right}",
                     re.compile(
-                        rf'{TOKEN_HEAD}({re.escape(left)})\s*{X_SEP}\s*DN\s*:?\s*{re.escape(right)}{TOKEN_TAIL}',
+                        rf'{left_guard}({re.escape(left)})\s*{X_SEP}\s*DN\s*:?\s*{re.escape(right)}{right_guard}',
                         re.IGNORECASE,
                     ),
                 )
             )
         else:
+            left_guard, right_guard = adaptive_guards(f"DN{left}x{right}")
             patterns.append(
                 (
                     f"DN{left}x{right}",
                     re.compile(
-                        rf'{TOKEN_HEAD}DN\s*:?\s*{re.escape(left)}\s*{X_SEP}\s*({re.escape(right)}){TOKEN_TAIL}',
+                        rf'{left_guard}DN\s*:?\s*{re.escape(left)}\s*{X_SEP}\s*({re.escape(right)}){right_guard}',
                         re.IGNORECASE,
                     ),
                 )
@@ -681,10 +684,11 @@ class SizeSurfaceMatcher:
     def _build_single_inch_patterns(raw: str, value: str) -> list[tuple[str, re.Pattern[str]]]:
         patterns: list[tuple[str, re.Pattern[str]]] = []
         for variant in SizeSurfaceMatcher._inch_value_variants(value):
+            left_guard, right_guard = adaptive_guards(variant)
             patterns.append(
                 (
                     raw,
-                    re.compile(rf'{TOKEN_HEAD}({re.escape(variant)}\s*(?:[\"″]|\bIN(?:CH)?\b)){TOKEN_TAIL}', re.IGNORECASE),
+                    re.compile(rf'{left_guard}({re.escape(variant)}\s*(?:[\"″]|\bIN(?:CH)?\b)){right_guard}', re.IGNORECASE),
                 )
             )
         return patterns
@@ -696,41 +700,47 @@ class SizeSurfaceMatcher:
         left_alt = "|".join(re.escape(v) for v in left_variants)
         right_alt = "|".join(re.escape(v) for v in right_variants)
         alias = left if is_left else right
+        left_guard, right_guard = adaptive_guards(f"{left}x{right}")
         if is_left:
             pattern = re.compile(
-                rf'{TOKEN_HEAD}(({left_alt}))\s*(?:[\"″]|\bIN(?:CH)?\b)?\s*{X_SEP}\s*(?:{right_alt})\s*(?:[\"″]|\bIN(?:CH)?\b)?{TOKEN_TAIL}',
+                rf'{left_guard}(({left_alt}))\s*(?:[\"″]|\bIN(?:CH)?\b)?\s*{X_SEP}\s*(?:{right_alt})\s*(?:[\"″]|\bIN(?:CH)?\b)?{right_guard}',
                 re.IGNORECASE,
             )
         else:
             pattern = re.compile(
-                rf'{TOKEN_HEAD}(?:{left_alt})\s*(?:[\"″]|\bIN(?:CH)?\b)?\s*{X_SEP}\s*(({right_alt}))\s*(?:[\"″]|\bIN(?:CH)?\b)?{TOKEN_TAIL}',
+                rf'{left_guard}(?:{left_alt})\s*(?:[\"″]|\bIN(?:CH)?\b)?\s*{X_SEP}\s*(({right_alt}))\s*(?:[\"″]|\bIN(?:CH)?\b)?{right_guard}',
                 re.IGNORECASE,
             )
         return [(alias, pattern)]
 
     @staticmethod
     def _compile_dn_pattern(value: str) -> re.Pattern[str]:
-        return re.compile(rf'{TOKEN_HEAD}((?:DN)\s*:?\s*{re.escape(value)}){TOKEN_TAIL}', re.IGNORECASE)
+        left_guard, right_guard = adaptive_guards(f"DN{value}")
+        return re.compile(rf'{left_guard}((?:DN)\s*:?\s*{re.escape(value)}){right_guard}', re.IGNORECASE)
 
     @staticmethod
     def _compile_od_pattern(value: str) -> re.Pattern[str]:
-        return re.compile(rf'{TOKEN_HEAD}((?:OD\s*|[Φφ])\s*{re.escape(value)}){TOKEN_TAIL}', re.IGNORECASE)
+        left_guard, right_guard = adaptive_guards(f"OD{value}")
+        return re.compile(rf'{left_guard}((?:OD\s*|[Φφ])\s*{re.escape(value)}){right_guard}', re.IGNORECASE)
 
     @staticmethod
     def _compile_mm_pattern(value: str) -> re.Pattern[str]:
-        return re.compile(rf'{TOKEN_HEAD}({re.escape(value)}\s*MM){TOKEN_TAIL}', re.IGNORECASE)
+        left_guard, right_guard = adaptive_guards(f"{value}MM")
+        return re.compile(rf'{left_guard}({re.escape(value)}\s*MM){right_guard}', re.IGNORECASE)
 
     @staticmethod
     def _compile_single_inch_pattern(value: str) -> re.Pattern[str]:
         variants = SizeSurfaceMatcher._inch_value_variants(value)
         body = "|".join(re.escape(v) for v in variants)
-        return re.compile(rf'{TOKEN_HEAD}(({body})\s*(?:[\"″]|\bIN(?:CH)?\b)){TOKEN_TAIL}', re.IGNORECASE)
+        left_guard, right_guard = adaptive_guards(value)
+        return re.compile(rf'{left_guard}(({body})\s*(?:[\"″]|\bIN(?:CH)?\b)){right_guard}', re.IGNORECASE)
 
     @staticmethod
     def _compile_inch_composite_pattern(values: list[str]) -> re.Pattern[str]:
         pieces = [rf'{re.escape(value)}\s*[\"″]?' for value in values]
         body = X_SEP.join(pieces)
-        return re.compile(rf'{TOKEN_HEAD}({body}){TOKEN_TAIL}', re.IGNORECASE)
+        left_guard, right_guard = adaptive_guards("x".join(values))
+        return re.compile(rf'{left_guard}({body}){right_guard}', re.IGNORECASE)
 
     @staticmethod
     def _compile_bare_number_pattern(value: str) -> re.Pattern[str]:

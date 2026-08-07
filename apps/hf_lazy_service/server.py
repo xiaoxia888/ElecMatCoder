@@ -174,6 +174,56 @@ class PredictRequest(BaseModel):
     max_new_tokens: Optional[int] = None
     temperature: Optional[float] = None
     top_p: Optional[float] = None
+    include_logprobs: bool = Field(default=False, description="返回生成 token 的 logprob 与字符区间")
+
+
+def _build_token_logprobs(tokenizer: Any, generated: Any, scores: Any) -> list[dict[str, Any]]:
+    """Build character-aligned selected-token log probabilities."""
+    if generated is None or not scores:
+        return []
+    records: list[dict[str, Any]] = []
+    previous = ""
+    max_steps = min(len(generated), len(scores))
+    for index in range(max_steps):
+        token_id = int(generated[index].item())
+        decoded = tokenizer.decode(generated[: index + 1], skip_special_tokens=True)
+        if decoded.startswith(previous):
+            piece = decoded[len(previous) :]
+            start = len(previous)
+        else:
+            piece = tokenizer.decode([token_id], skip_special_tokens=True)
+            start = len(previous)
+            decoded = previous + piece
+        logprob = float(torch.log_softmax(scores[index][0], dim=-1)[token_id].item())
+        if piece:
+            records.append(
+                {
+                    "token": piece,
+                    "logprob": logprob,
+                    "start": start,
+                    "end": start + len(piece),
+                }
+            )
+        previous = decoded
+    return records
+
+
+def _strip_response_with_offsets(
+    raw: str,
+    records: list[dict[str, Any]],
+) -> tuple[str, list[dict[str, Any]]]:
+    stripped = raw.strip()
+    if stripped == raw:
+        return raw, records
+    left = len(raw) - len(raw.lstrip())
+    adjusted: list[dict[str, Any]] = []
+    for item in records:
+        start = max(0, int(item["start"]) - left)
+        end = min(len(stripped), int(item["end"]) - left)
+        if end <= start:
+            continue
+        adjusted.append({**item, "token": stripped[start:end], "start": start, "end": end})
+    return stripped, adjusted
 
 
 class LazyModelManager:
@@ -370,12 +420,22 @@ class LazyModelManager:
             if bad_words_ids:
                 generate_kwargs["bad_words_ids"] = bad_words_ids
 
+            if request.include_logprobs:
+                generate_kwargs["return_dict_in_generate"] = True
+                generate_kwargs["output_scores"] = True
             with torch.no_grad():
                 outputs = item.model.generate(**inputs, **generate_kwargs)
             elapsed = time.perf_counter() - started
 
-            new_tokens = outputs[0][inputs["input_ids"].shape[1] :]
-            raw = item.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+            sequences = outputs.sequences if request.include_logprobs else outputs
+            new_tokens = sequences[0][inputs["input_ids"].shape[1] :]
+            raw_unstripped = item.tokenizer.decode(new_tokens, skip_special_tokens=True)
+            token_logprobs = (
+                _build_token_logprobs(item.tokenizer, new_tokens, outputs.scores)
+                if request.include_logprobs
+                else []
+            )
+            raw, token_logprobs = _strip_response_with_offsets(raw_unstripped, token_logprobs)
             parsed = _parse_json_output(raw)
 
             return {
@@ -387,6 +447,7 @@ class LazyModelManager:
                 "raw_response": raw,
                 "parsed_json": parsed,
                 "json_parse_ok": parsed is not None,
+                "token_logprobs": token_logprobs,
                 "loaded_models": len(self.loaded),
             }
         finally:

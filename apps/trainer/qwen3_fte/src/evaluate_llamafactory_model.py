@@ -20,9 +20,11 @@ import pandas as pd
 
 用法示例：
   # 交互模式
-  python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
-      --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2500-材质规范
+python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
+    --task material_standard \
+    --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
+    --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-4358-材质规范 \
+    --prompt-file apps/trainer/qwen3_fte/prompt/材质规范微调提示词.txt
 
   # 编码模型交互模式
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -38,14 +40,16 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
 
 python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task type \
+      --prompt-file apps/trainer/qwen3_fte/prompt/种类微调提示词.txt \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-2400-种类
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-0807-种类
 
   # 新结构材质规范模型交互模式
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task material_standard \
       --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-4B-Instruct-2507 \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-8500-材质规范v3
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-8500-材质规范v3 \
+      --prompt-file /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/prompt/材质规范微调提示词.txt
 
   # 编码模型批量评测
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -127,11 +131,26 @@ MATERIAL_V3_SPECIAL_REQS = frozenset(
 CODE_FIELDS = ("TYPE", "SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "STANDARD")
 
 
-def resolve_instruction(task: str, override: str = "") -> tuple[str, Path | None]:
-    """按任务读取 system instruction，命令行显式覆盖始终优先。"""
+def resolve_instruction(
+    task: str,
+    override: str = "",
+    prompt_file: Path | None = None,
+) -> tuple[str, Path | None]:
+    """按任务读取 system instruction，显式指定的文本或文件始终优先。"""
     custom_instruction = str(override or "").strip()
+    if custom_instruction and prompt_file is not None:
+        raise ValueError("--instruction 和 --prompt-file 不能同时使用")
     if custom_instruction:
         return custom_instruction, None
+
+    if prompt_file is not None:
+        instruction_path = prompt_file.expanduser().resolve()
+        if not instruction_path.is_file():
+            raise FileNotFoundError(f"指定的提示词文件不存在: {instruction_path}")
+        instruction = instruction_path.read_text(encoding="utf-8").strip()
+        if not instruction:
+            raise ValueError(f"指定的提示词文件为空: {instruction_path}")
+        return instruction, instruction_path
 
     instruction_path = TASK_INSTRUCTION_PATHS.get(task)
     if instruction_path is not None:
@@ -1091,10 +1110,17 @@ def main() -> None:
         default="TYPE",
         help="code 交互模式下，直接输入原始值时自动使用的字段类型，默认 TYPE。",
     )
-    parser.add_argument(
+    instruction_group = parser.add_mutually_exclusive_group()
+    instruction_group.add_argument(
         "--instruction",
         default="",
         help="覆盖默认 system instruction。不传时按 task 使用默认 instruction；样本内 instruction 优先级更高。",
+    )
+    instruction_group.add_argument(
+        "--prompt-file",
+        type=Path,
+        default=None,
+        help="从指定的 UTF-8 文件读取 system instruction，不传时按 task 使用默认提示词。",
     )
     parser.add_argument(
         "--test-file", type=Path, default=None,
@@ -1152,7 +1178,11 @@ def main() -> None:
     args = parser.parse_args()
     if args.test_file and args.excel_file:
         parser.error("--test-file 和 --excel-file 不能同时使用")
-    instruction, instruction_path = resolve_instruction(args.task, args.instruction)
+    instruction, instruction_path = resolve_instruction(
+        args.task,
+        args.instruction,
+        args.prompt_file,
+    )
     if instruction_path:
         print(f"{args.task} 模型提示词: {instruction_path}")
     max_new_tokens = args.max_new_tokens

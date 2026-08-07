@@ -25,6 +25,7 @@ class PredictRequest(BaseModel):
     max_new_tokens: int | None = None
     temperature: float | None = None
     top_p: float | None = None
+    include_logprobs: bool = False
 
 
 @dataclass

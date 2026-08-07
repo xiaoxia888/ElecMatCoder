@@ -22,6 +22,7 @@ import requests
 import yaml
 
 from .llm_http_transport import call_hf_lazy_service_predict
+from ..confidence.model_token_confidence import build_field_token_confidences, score_token_logprobs
 from .prompts import (
     get_stage1_decisions_only_prompt,
     get_stage1_platform_predict_prompt,
@@ -244,8 +245,6 @@ class Qwen3Predictor:
         model_conf = extracted.get("_model_confidence")
         if model_conf is None and self.ollama_logprobs_enabled:
             raise RuntimeError("模型未返回 logprobs，无法计算置信度（严格模式）")
-        if model_conf is None:
-            model_conf = 1.0
 
         decisions = extracted.get("decisions")
         if not isinstance(decisions, dict):
@@ -253,10 +252,30 @@ class Qwen3Predictor:
         self._apply_type_value_whitelist(decisions)
         self._apply_material_special_req_supplement(text, decisions)
 
-        default_conf = float(model_conf)
+        default_conf = float(model_conf) if model_conf is not None else 0.0
         tokens = self._build_tokens(text, extracted, default_confidence=default_conf)
         entities = self._build_entities(decisions, default_confidence=default_conf)
-        extract_confidence = {field: default_conf for field in self._iter_decision_fields(decisions)}
+        decision_fields = list(self._iter_decision_fields(decisions))
+        field_scores = build_field_token_confidences(
+            str(extracted.get("_raw") or ""),
+            decisions,
+            extracted.get("_token_logprobs"),
+        )
+        extract_confidence: Dict[str, float] = {}
+        extract_confidence_v2: Dict[str, Dict[str, Any]] = {}
+        for field in decision_fields:
+            score = field_scores.get(field)
+            confidence = float(score["confidence"]) if score else model_conf
+            if confidence is not None:
+                extract_confidence[field] = float(confidence)
+            extract_confidence_v2[field] = {
+                "source": "model_token_logprobs" if confidence is not None else "model_token_logprobs_unavailable",
+                "confidence": float(confidence) if confidence is not None else None,
+                "reason": "generated_value_token_probability" if score else (
+                    "generated_token_probability" if model_conf is not None else "token_logprobs_unavailable"
+                ),
+                "evidence": copy.deepcopy(score or {}),
+            }
         type_class = self._infer_type_class(decisions)
 
         return {
@@ -266,6 +285,7 @@ class Qwen3Predictor:
             "type_class": type_class,
             "model_output": extracted,
             "extract_confidence": extract_confidence,
+            "extract_confidence_v2": extract_confidence_v2,
             "model_raw_response": extracted.get("_raw", ""),
         }
 
@@ -432,6 +452,16 @@ class Qwen3Predictor:
         result = self._call_model(self._resolve_stage2_system_prompt(), input_text)
         code = self._extract_stage2_code_from_result(result, field)
         model_conf = result.get("_model_confidence")
+        raw_response = str(result.get("_raw") or "")
+        code_start = raw_response.rfind(code) if code else -1
+        if code_start >= 0:
+            code_score = score_token_logprobs(
+                result.get("_token_logprobs"),
+                raw_text=raw_response,
+                spans=[(code_start, code_start + len(code))],
+            )
+            if code_score is not None:
+                model_conf = code_score["confidence"]
         confidence = float(model_conf) if model_conf is not None else None
         return code, confidence
 
@@ -523,7 +553,7 @@ class Qwen3Predictor:
         resp.raise_for_status()
         payload = resp.json()
         response = payload.get("message", {}).get("content", "")
-        model_confidence = self._compute_ollama_confidence(payload) if self.ollama_logprobs_enabled else 1.0
+        model_confidence = self._compute_ollama_confidence(payload) if self.ollama_logprobs_enabled else None
         if model_confidence is None and self.ollama_logprobs_enabled:
             raise RuntimeError("Ollama 未返回可用 logprobs，无法计算置信度（严格模式）")
         return self._parse_response(response, model_confidence=model_confidence)
@@ -542,12 +572,21 @@ class Qwen3Predictor:
         )
         payload = service_response.payload
         raw_response = str(payload.get("raw_response") or "")
+        scored = score_token_logprobs(
+            payload.get("token_logprobs"),
+            raw_text=raw_response,
+        )
+        model_confidence = float(scored["confidence"]) if scored else None
         parsed_json = payload.get("parsed_json")
         if isinstance(parsed_json, dict):
             result = copy.deepcopy(parsed_json)
             result["_raw"] = raw_response
+            result["_token_logprobs"] = copy.deepcopy(payload.get("token_logprobs") or [])
+            if model_confidence is not None:
+                result["_model_confidence"] = model_confidence
+                result["_model_confidence_evidence"] = scored
             return result
-        return self._parse_response(raw_response, model_confidence=None)
+        return self._parse_response(raw_response, model_confidence=model_confidence)
 
     def _compute_ollama_confidence(self, payload: Dict[str, Any]) -> Optional[float]:
         logprobs = payload.get("logprobs")

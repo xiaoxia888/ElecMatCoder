@@ -23,6 +23,10 @@ NAKED_MM_RE = re.compile(
     r"(?<![A-Za-z0-9.])\d+(?:\.\d+)?\s*mm(?![A-Za-z0-9])",
     re.IGNORECASE,
 )
+HYPHENATED_NUMERIC_CODE_RE = re.compile(
+    r"\d+(?:\.\d+)?(?:\s*[（(][^()（）\r\n]{1,12}[）)])?\s*-\s*\d+(?:\.\d+)?",
+    re.IGNORECASE,
+)
 _STANDARD_FAMILY_PATTERN = r"(?:GB|NB|SH|HG|DL|TB)(?:\s*/?\s*T)?|ASTM|ASME|API|EN|DIN|ISO|MSS"
 STANDARD_FAMILY_RE = re.compile(_STANDARD_FAMILY_PATTERN, re.IGNORECASE)
 STANDARD_PREFIX_TOKEN_RE = re.compile(
@@ -42,12 +46,22 @@ DIAMETER_SYMBOLS = ("φ", "Φ", "ø", "Ø", "⌀", "∅", "Ф", "ф")
 INCH_UNIT_RIGHT_RE = re.compile(r'(?i)^\s*(?:"|”|″|\'\'|INCH\b|IN\b)')
 INCH_UNIT_LEFT_RE = re.compile(r'(?i)(?:"|”|″|\'\'|INCH\b|IN\b)\s*$')
 MM_UNIT_RIGHT_RE = re.compile(r"(?i)^\s*(?:MM\b|毫米)")
-PRESSURE_UNIT_RIGHT_RE = re.compile(r"(?i)^\s*(?:MPA\b|BAR\b)")
+PRESSURE_UNIT_RIGHT_RE = re.compile(
+    r"(?i)^\s*(?:MPA\b|BAR\b|PSI\b|LBS?\b\.?|POUNDS?\b\.?|[#＃])"
+)
+PRESSURE_SYMBOL_LEFT_RE = re.compile(r"[#＃]\s*$")
+TEMPERATURE_UNIT_RIGHT_RE = re.compile(r"(?i)^\s*(?:℃|°\s*C\b|CELSIUS\b)")
+TEMPERATURE_ANCHOR_LEFT_RE = re.compile(
+    r"(?i)(?:设计温度|工作温度|操作温度|DESIGN\s+TEMP(?:ERATURE)?|TEMP(?:ERATURE)?)\s*[:：=]?\s*$"
+)
+SCHEDULE_PREFIX_LEFT_RE = re.compile(r"(?i)(?:^|[^A-Za-z0-9])S\s*-?\s*$")
+SCHEDULE_SUFFIX_RIGHT_RE = re.compile(r"(?i)^\s*S\b")
 ANCHOR_OR_DIAMETER_LEFT_RE = re.compile(
-    r'(?i)(?:DN|OD|NPS|PN|CL|CLASS)\s*\d+(?:\.\d+)?\s*[*xX×/]\s*$'
+    r'(?i)(?:(?:DN|OD|NPS|PN|CL|CLASS|THK|SCH)\s*\d+(?:\.\d+)?'
+    r'|(?<![A-Za-z0-9])S\s*\d+(?:\.\d+)?)\s*[*xX×/]\s*$'
 )
 ANCHOR_OR_DIAMETER_RIGHT_RE = re.compile(
-    r'(?i)^\s*[*xX×/]\s*(?:DN|OD|NPS|PN|CL|CLASS|THK|SCH)'
+    r'(?i)^\s*[*xX×/]\s*(?:DN|OD|NPS|PN|CL|CLASS|THK|SCH|S)'
 )
 RIGHT_INCH_COMBO_RE = re.compile(
     r'(?i)^\s*[*xX×/]\s*\d+(?:\.\d+)?\s*(?:"|”|″|\'\'|INCH\b|IN\b)'
@@ -77,9 +91,20 @@ class AnchorMissingDetector:
 
     def analyze(self, text: str) -> DifficultyFeature:
         hits: list[GlueHit] = []
-        covered_spans: list[tuple[int, int]] = []
+        # 型号中常见 25-10、25(B)-10。连字符两侧数字属于同一型号结构，
+        # 不能拆开后把其中一个数字判为缺少字段锚点。
+        covered_spans: list[tuple[int, int]] = [
+            (match.start(), match.end()) for match in HYPHENATED_NUMERIC_CODE_RE.finditer(text)
+        ]
 
         for match in NAKED_SPEC_RE.finditer(text):
+            if any(start <= match.start() and match.end() <= end for start, end in covered_spans):
+                continue
+            if self._is_dimension_thickness_pair(match.group(0)):
+                # 53x1.5 / 53/1.5 这类结构本身已经稳定表达“尺寸+壁厚”。
+                # 同时覆盖整段，避免后续把其中的整数或小数再次判成裸数字。
+                covered_spans.append((match.start(), match.end()))
+                continue
             if self._has_explicit_anchor(text, match.start(), match.end()):
                 continue
             standard_context = self._classify_standard_body_context(text, match.start())
@@ -272,6 +297,17 @@ class AnchorMissingDetector:
         return right.lstrip().startswith("%")
 
     @staticmethod
+    def _is_dimension_thickness_pair(value: str) -> bool:
+        """Recognize an integer size followed by an explicit decimal thickness."""
+        return bool(
+            re.fullmatch(
+                r"\s*\d+\s*[xX×*/]\s*\d+\.\d+\s*(?:mm)?\s*",
+                str(value or ""),
+                re.IGNORECASE,
+            )
+        )
+
+    @staticmethod
     def _has_length_context_on_right(text: str, end: int) -> bool:
         right = text[end : min(len(text), end + 16)]
         return bool(re.match(r"(?i)^\s*(?:length|len|long|长度)\b", right))
@@ -312,6 +348,10 @@ class AnchorMissingDetector:
             return True
         if left.rstrip().endswith(("L=", "S=", "R=")):
             return True
+        if SCHEDULE_PREFIX_LEFT_RE.search(left_raw):
+            return True
+        if SCHEDULE_SUFFIX_RIGHT_RE.match(right):
+            return True
         # 通用字母锚点：如 E=0.85、C=1.0、K=0.7。
         # 这里不区分具体语义，只要是局部“字母=数字”结构，就不应再当作裸数字。
         if re.search(r"(?i)(?:^|[^A-Za-z0-9])(?:[A-Za-z]{1,6})\s*=\s*$", left_raw):
@@ -325,6 +365,12 @@ class AnchorMissingDetector:
         # 压力单位即使与数字之间存在空格，也属于显式压力锚点。
         # 例如 1.0 bar / 1.0 MPa 不应再被当作“裸数字缺锚点”。
         if PRESSURE_UNIT_RIGHT_RE.match(right):
+            return True
+        if PRESSURE_SYMBOL_LEFT_RE.search(left_raw):
+            return True
+        if TEMPERATURE_UNIT_RIGHT_RE.match(right):
+            return True
+        if TEMPERATURE_ANCHOR_LEFT_RE.search(left_raw):
             return True
         # 组合尺寸里的锚点传递：DN350*150、DN80/40、OD48x2.8 等，
         # 第二个数字虽然本身没有再次写出锚点，但前一个数字已被同一组合里的

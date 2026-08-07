@@ -8,9 +8,7 @@ interface CodeResultCardProps {
 }
 
 export function CodeResultCard({ result, importedCategory = '' }: CodeResultCardProps) {
-  const correctness = result?.correctness_confidence
-  const hasCorrectnessScore = Boolean(correctness?.available && typeof correctness.score === 'number')
-  const displayedConfidence = hasCorrectnessScore ? correctness?.score : result?.confidence
+  const displayedConfidence = result?.confidence
   const percent = Math.max(0, Math.min(100, Number(displayedConfidence || 0) * 100))
   const category = getTypeCategory(result, importedCategory)
 
@@ -23,9 +21,9 @@ export function CodeResultCard({ result, importedCategory = '' }: CodeResultCard
           <div className="break-all font-mono text-[26px] font-bold tracking-tight text-ink">{result?.final_code || '—'}</div>
         </div>
 
-        {/* 编码正确概率 */}
+        {/* 模型置信分 */}
         <div className="border-l border-[#eef1f6] pl-6">
-          <h3 className="mb-3 text-[14px] text-muted">{hasCorrectnessScore ? '编码正确概率' : '总置信度'}</h3>
+          <h3 className="mb-3 text-[14px] text-muted">模型置信分</h3>
           <div className="mb-3 text-[26px] font-bold leading-none text-ink">
             {result ? formatPercent(displayedConfidence) : '—'}
           </div>
