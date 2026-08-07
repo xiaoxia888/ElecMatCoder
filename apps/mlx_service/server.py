@@ -12,6 +12,7 @@ import asyncio
 import gc
 import json
 import logging
+import math
 import re
 import time
 from dataclasses import dataclass
@@ -57,6 +58,23 @@ def _parse_json_output(raw: str) -> Optional[dict[str, Any]]:
             except json.JSONDecodeError:
                 return None
     return None
+
+
+def _extract_selected_logprob(logprobs: Any, token_id: int) -> Optional[float]:
+    """Read the generated token's scalar logprob from an MLX array."""
+    if logprobs is None or token_id < 0:
+        return None
+
+    try:
+        selected = logprobs[token_id]
+        item = getattr(selected, "item", None)
+        value = float(item() if callable(item) else selected)
+    except Exception:
+        return None
+
+    if not math.isfinite(value) or value > 1e-6:
+        return None
+    return min(value, 0.0)
 
 
 @dataclass
@@ -288,15 +306,7 @@ class MLXModelManager:
                 piece = str(getattr(response, "text", "") or "")
                 token_id = int(getattr(response, "token", -1))
                 logprobs = getattr(response, "logprobs", None)
-                selected_logprob = None
-                if logprobs is not None and token_id >= 0:
-                    try:
-                        selected_logprob = float(logprobs[token_id])
-                    except Exception:
-                        try:
-                            selected_logprob = float(logprobs)
-                        except Exception:
-                            selected_logprob = None
+                selected_logprob = _extract_selected_logprob(logprobs, token_id)
                 if piece:
                     parts.append(piece)
                     if selected_logprob is not None:

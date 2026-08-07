@@ -2,12 +2,33 @@ import json
 import math
 import unittest
 
+from apps.mlx_service.server import _extract_selected_logprob
 from src.confidence.model_token_confidence import build_field_token_confidences
 from src.encoder.pipe_encoder import EncodedFieldResult, PipeEncoderBase, PipeEncodingResult
 from src.llm_ner.stage1_orchestrator import Stage1FieldOrchestrator
 
 
 class ModelTokenConfidenceTest(unittest.TestCase):
+    def test_mlx_logprob_uses_scalar_item_instead_of_array_float(self):
+        class FakeScalar:
+            def __float__(self):
+                return 0.0
+
+            def item(self):
+                return -0.287682072
+
+        class FakeLogprobs:
+            def __getitem__(self, token_id):
+                self.requested_token_id = token_id
+                return FakeScalar()
+
+        logprobs = FakeLogprobs()
+
+        score = _extract_selected_logprob(logprobs, 42)
+
+        self.assertEqual(logprobs.requested_token_id, 42)
+        self.assertAlmostEqual(score, -0.287682072, places=9)
+
     def test_field_score_uses_values_not_json_keys(self):
         structured = {
             "TYPE": {"BODY": "盲板法兰", "CONN": [], "SEAL": ["RF"]},
