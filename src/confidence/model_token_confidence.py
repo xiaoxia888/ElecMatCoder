@@ -71,7 +71,7 @@ def score_token_logprobs(
     raw_text: str = "",
     spans: Optional[Sequence[Tuple[int, int]]] = None,
 ) -> Optional[Dict[str, Any]]:
-    """Return the geometric mean probability for content-bearing tokens."""
+    """Return the joint probability of the selected semantic tokens."""
     tokens = normalize_token_logprobs(records, raw_text=raw_text)
     selected: List[Dict[str, Any]] = []
     for item in tokens:
@@ -86,13 +86,46 @@ def score_token_logprobs(
         return None
 
     logprobs = [float(item["logprob"]) for item in selected]
+    sum_logprob = sum(logprobs)
     mean_logprob = sum(logprobs) / len(logprobs)
-    probability = _clamp_probability(math.exp(mean_logprob))
+    probability = _clamp_probability(math.exp(sum_logprob))
     return {
         "confidence": probability,
         "token_count": len(selected),
+        "sum_logprob": sum_logprob,
         "mean_logprob": mean_logprob,
+        "mean_probability": _clamp_probability(math.exp(mean_logprob)),
         "min_probability": min(_clamp_probability(math.exp(lp)) for lp in logprobs),
+    }
+
+
+def _combine_token_scores(
+    components: Sequence[Tuple[str, Dict[str, Any]]],
+) -> Optional[Dict[str, Any]]:
+    """Combine sequential model decisions without averaging away weak tokens."""
+    valid = [
+        (str(name), score)
+        for name, score in components
+        if isinstance(score, dict) and int(score.get("token_count") or 0) > 0
+    ]
+    if not valid:
+        return None
+
+    token_count = sum(int(score["token_count"]) for _, score in valid)
+    sum_logprob = sum(float(score["sum_logprob"]) for _, score in valid)
+    mean_logprob = sum_logprob / token_count
+    return {
+        "confidence": _clamp_probability(math.exp(sum_logprob)),
+        "token_count": token_count,
+        "sum_logprob": sum_logprob,
+        "mean_logprob": mean_logprob,
+        "mean_probability": _clamp_probability(math.exp(mean_logprob)),
+        "min_probability": min(float(score["min_probability"]) for _, score in valid),
+        "component_fields": [name for name, _ in valid],
+        "component_confidences": {
+            name: float(score["confidence"])
+            for name, score in valid
+        },
     }
 
 
@@ -209,6 +242,20 @@ def build_field_token_confidences(
         )
         if scored is not None:
             result[str(field)] = scored
+
+    # TYPE is not independent of CATEGORY: the model chooses the category first,
+    # then emits a type under that category. The type/code confidence must include
+    # both sequential decisions or a confidently repeated BODY can hide a weak or
+    # incorrect CATEGORY choice.
+    category_score = result.get("CATEGORY")
+    type_score = result.get("TYPE")
+    if category_score is not None and type_score is not None:
+        combined = _combine_token_scores((
+            ("CATEGORY", category_score),
+            ("TYPE", type_score),
+        ))
+        if combined is not None:
+            result["TYPE"] = combined
     return result
 
 

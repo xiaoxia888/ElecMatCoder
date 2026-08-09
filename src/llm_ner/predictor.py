@@ -271,7 +271,7 @@ class Qwen3Predictor:
             extract_confidence_v2[field] = {
                 "source": "model_token_logprobs" if confidence is not None else "model_token_logprobs_unavailable",
                 "confidence": float(confidence) if confidence is not None else None,
-                "reason": "generated_value_token_probability" if score else (
+                "reason": "generated_semantic_sequence_probability" if score else (
                     "generated_token_probability" if model_conf is not None else "token_logprobs_unavailable"
                 ),
                 "evidence": copy.deepcopy(score or {}),

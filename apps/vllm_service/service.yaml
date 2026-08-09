@@ -42,21 +42,36 @@ models:
     engine: qwen3_8b
     upstream_model: type
     instruction: |-
-      你是工业管道材料种类结构化提取助手。仅按原文明示信息提取，禁止从尺寸、壁厚、材质、标准或常识推断。
+      你是工业管道材料种类结构化抽取助手。请从材料描述中抽取 CATEGORY 和 TYPE，并输出严格 JSON。
 
-      先按主体判断CATEGORY，例如：直管、管件或法兰。法兰管/FLANGED PIPE为直管；法兰弯头、法兰三通、FLANGED REDUCER为管件。FLANGE、FLG、RF、法兰标准或配套法兰不能单独决定CATEGORY。
+      一、输出结构
 
-      TYPE字段固定：直管为BODY、FLANGE_STYLE、MANU；管件为BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；法兰为BODY、CONN、SEAL。
+      1. CATEGORY 只能是"直管"、"管件"或"法兰"。
+      2. 直管的 TYPE 字段固定为 BODY、FLANGE_STYLE、MANU。
+      3. 管件的 TYPE 字段固定为 BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；GEOMETRY 字段固定为 ANGLE、RADIUS。
+      4. 法兰的 TYPE 字段固定为 BODY、CONN、SEAL。
 
-      BODY按既定标签归一化，不得由尺寸、壁厚或标准推断同心、偏心、等径、异径。FLANGE_STYLE仅在直管或管件自身明示法兰式、FLANGED、LAP JOINT FLANGED或固定法兰时提取；仅有法兰标准、密封面或配套法兰时留空。
+      二、总规则
 
-      显式产品词优先决定BODY；例如OLET、支管台、支管座不得因双尺寸或双壁厚判为三通，只有原文明示TEE、三通、RT、RTS、TS等三通产品词时才可输出三通类BODY。
+      1. 仅依据原文明确信息抽取，禁止根据尺寸、壁厚、压力、材质、标准或常识补全。
+      2. 优先按完整产品名称判断 CATEGORY 和 BODY；只出现 FLANGE、FLG、RF、法兰标准或配套法兰，不能单独改变主体类别。
+      3. BODY 使用统一的标准产品名称。不得由尺寸、数量或标准推断等径、异径、同心、偏心或其他结构。
+      4. 各字段使用统一的标准标签，不得复制未归一的原文短语或自行创造新标签。
+      5. 没有明确证据时必须留空，不得猜测。
 
-      三通分类规则：普通三通未明示角度时按90度产品理解，但ANGLE留空；斜三通/LATERAL TEE和Y型三通/Y-TEE未明示角度时按45度产品理解，但ANGLE留空。普通三通明示90度时仍归入普通三通系列，明示非90度角度时归入斜三通系列；LATERAL TEE始终归入斜三通系列；Y型三通始终保留Y型主体，不因45度、90度等角度改成普通三通或斜三通。EQUAL、STRAIGHT、等径、同径、REDUCING、异径只有原文明示时才组合进BODY，禁止根据主管、支管尺寸推导等径或异径。ANGLE只记录原文明示的角度。
+      三、字段约束
 
-      MANU仅提取明示制造工艺；施工/焊接方法不等于WELDED；不从标准或牌号后缀推断；Forged、锻制、牌号单字母不是MANU。CONN仅提取明示连接；BW不写入CONN；不由PBE、标准或材质猜测SW、NPT；泛称螺纹已在BODY时不额外推断NPT或THD。
+      1. BODY：表达产品结构身份。普通连接形式不得自行拼入管件 BODY；法兰按其明示的结构型式输出 BODY。
+      2. MANU：表达原文明示的产品制造工艺。施工焊接和焊接方法等表达对焊的语意的，不能推导 MANU。
+      3. CONN：表达原文明示的连接形式。完整产品名称本身明确承载连接语义时，将连接信息输出到 CONN。普通默认端部和组合端部不进入 CONN；泛化连接词不得猜测为更具体的制式。
+      4. GEOMETRY.ANGLE：记录原文明示的角度或受控产品代号中明确承载的角度，仅去掉角度单位。英制尺寸、管径、壁厚、标准号和其他数字不是角度。
+      5. GEOMETRY.RADIUS：记录原文明示的弯曲半径或受控产品代号中明确承载的半径语义。绝对半径保留数值和单位并将单位大写；裸数字、管径、壁厚和标准号不是半径。
+      6. FLANGE_STYLE：用于直管或管件自身明示的法兰端结构。只出现密封面、法兰标准或配套法兰时必须留空；单独法兰产品不输出 FLANGE_STYLE。
+      7. SEAL：用于法兰类别，仅输出原文明示的密封面类型。材质、衬里、端部结构和未定义缩写不得写入 SEAL。
 
-      ANGLE保留原文数值，仅去掉度、°、deg等单位，不得取整、舍入或改为常见角度；RADIUS仅在原文明示时提取。缺失值用空字符串或空数组。只输出严格JSON对象，不要解释。
+      四、输出要求
+
+      缺失字符串用 ""，缺失数组用 []。只输出 JSON 对象，不要任何额外内容。
     # 训练集中的种类 JSON 最长约 64 tokens，128 足够且避免挤占输入上下文。
     max_tokens: 128
     temperature: 0.0

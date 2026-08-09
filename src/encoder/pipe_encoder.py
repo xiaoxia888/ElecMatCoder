@@ -488,7 +488,13 @@ class PipeEncoderBase:
     @staticmethod
     def _insert_reducing_before_body(body: str) -> str:
         text = str(body or '').strip()
-        if not text or '异径' in text:
+        if not text:
+            return text
+        # This helper is called only after encoded sizes prove the item is
+        # reducing. Remove an explicit equal-size label before adding 异径 so
+        # contradictory bodies such as 等径异径三通 cannot be produced.
+        text = re.sub(r'(?:等径|同径)', '', text).strip()
+        if '异径' in text:
             return text
         if '单头管箍' in text:
             return text.replace('单头管箍', '异径单头管箍', 1)

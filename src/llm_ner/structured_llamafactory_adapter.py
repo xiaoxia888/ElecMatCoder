@@ -10,6 +10,7 @@ LlamaFactory 一阶段结构化输出适配器。
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import re
@@ -483,14 +484,18 @@ class StructuredLlamaFactoryPredictor:
             result[str(field)] = {
                 "source": "model_token_logprobs" if score else "model_token_logprobs_unavailable",
                 "confidence": round(float(score["confidence"]), 6) if score else None,
-                "reason": "generated_value_token_probability" if score else (
+                "reason": "generated_semantic_sequence_probability" if score else (
                     "field_missing" if not present else "token_logprobs_unavailable"
                 ),
                 "evidence": {
                     "field_present": present,
                     "token_count": int(score["token_count"]) if score else 0,
+                    "sum_logprob": round(float(score["sum_logprob"]), 6) if score else None,
                     "mean_logprob": round(float(score["mean_logprob"]), 6) if score else None,
+                    "mean_probability": round(float(score["mean_probability"]), 6) if score else None,
                     "min_probability": round(float(score["min_probability"]), 6) if score else None,
+                    "component_fields": list(score.get("component_fields") or []) if score else [],
+                    "component_confidences": copy.deepcopy(score.get("component_confidences") or {}) if score else {},
                 },
             }
         return result
