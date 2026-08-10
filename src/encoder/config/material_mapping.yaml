@@ -90,6 +90,8 @@ value_mapping:
   - S22053
   - ASTM A815 WPS32205
   - F2205
+  - ASTM A240 S32205
+  - ASTM A240 32205
   2205II:
   - 2205 Gr.II
   - 2205(A182 F51) Gr.II
@@ -115,6 +117,7 @@ value_mapping:
   - '304'
   - ASTM A182 F304-W
   - S30408
+  - SS30408
   - SF304
   - ASTM A403 Gr.WP304(UNS S30400)
   - 06Cr19Ni10
@@ -329,6 +332,8 @@ value_mapping:
   - F321
   - S32168
   - AISI 321
+  - ASTM A240 321
+  - ASTM A240 Gr.321
   - ASTM A312 TP321
   - 06Cr18Ni11Ti
   - X6CrNiTi18-10(1.4541)
@@ -538,8 +543,21 @@ value_mapping:
   - ASTM A234 WPB+UNS N08825 Clad
   - ASTM B366 UNS N08825
   - ASTM B564 UNS N08825
+  - ASTM B564 EN 08825
+  - ASTM B564 N08825
   - ASTM B423 N08825
-   
+
+  'A387':
+  - ASTM A387 Gr.11
+  - ASTM A387
+
+# 结构化材质会先按 BODY/LINING/FLANGE 顺序使用 "/" 组合，
+# 再对完整组合编码执行下列精确覆盖。这里不做前缀或模糊替换，
+# 避免影响 304/GL、20/PTFE 等其他主体或衬里组合。
+composition_overrides:
+  '20/GL': 20GL
+  '20/GL/A105': 20GLA105
+
 special_req_suffix:
   CE:
   - CE

@@ -7,7 +7,7 @@
 2. excel2: 要求存在材料描述列和材料代码列
 
 规则:
-1. 按材料描述匹配材料代码
+1. 按材料描述匹配材料代码，匹配时忽略空白、大小写和等价标点差异
 2. 如果 excel1 某条描述在 excel2 命中多行，且这些行的材料代码不同:
    - 取 excel2 中出现的第一条代码作为返回值
    - 用单独列标记为编码冲突
@@ -27,23 +27,66 @@
   - 分流原因
 
 python scripts/根据材料描述匹配材料代码.py \
-    --excel1 /Users/guoxi/Documents/C1库运行/法兰/法兰总数据0724.xlsx \
+    --excel1 /Users/guoxi/Documents/C1库运行/法兰/法兰总数据0810.xlsx \
     --excel2 '/Users/guoxi/Downloads/编码结果 (53).csv'\
     --excel1-desc-col 材料描述 \
     --excel2-desc-col 原始描述 \
     --excel2-code-col 原始总编码 \
-    --output /Users/guoxi/Documents/C1库运行/法兰/法兰总数据0731-匹配后.xlsx
+    --output /Users/guoxi/Documents/C1库运行/法兰/法兰总数据0810-匹配后.xlsx
 
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
     
 import pandas as pd
+
+
+_EQUIVALENT_PUNCTUATION = str.maketrans(
+    {
+        "，": ",",
+        "、": ",",
+        "；": ";",
+        "：": ":",
+        "。": ".",
+        "（": "(",
+        "）": ")",
+        "【": "[",
+        "】": "]",
+        "［": "[",
+        "］": "]",
+        "｛": "{",
+        "｝": "}",
+        "／": "/",
+        "＼": "\\",
+        "＂": '"',
+        "“": '"',
+        "”": '"',
+        "″": '"',
+        "＇": "'",
+        "‘": "'",
+        "’": "'",
+        "′": "'",
+        "‐": "-",
+        "‑": "-",
+        "‒": "-",
+        "–": "-",
+        "—": "-",
+        "―": "-",
+        "−": "-",
+        "﹣": "-",
+        "－": "-",
+        "×": "X",
+        "Ｘ": "X",
+        "ｘ": "X",
+        "＊": "*",
+    }
+)
 
 
 @dataclass
@@ -58,7 +101,7 @@ class MatchSummary:
 
 
 def normalize_text(value: object) -> str:
-    """做基础归一化，避免换行、全角空格、重复空格影响精确匹配。"""
+    """清理输出文本的换行和重复空格，不改变内容大小写或标点。"""
     if value is None:
         return ""
     text = str(value)
@@ -66,6 +109,19 @@ def normalize_text(value: object) -> str:
         return ""
     text = text.replace("\u3000", " ").replace("\r", " ").replace("\n", " ").replace("\t", " ")
     return " ".join(text.strip().split())
+
+
+def normalize_description_key(value: object) -> str:
+    """生成材料描述的安全匹配键。
+
+    只忽略全部空白、字母大小写和明确等价的全角/Unicode 标点；
+    不删除普通标点，避免不同描述被过度合并。
+    """
+    text = normalize_text(value)
+    if not text:
+        return ""
+    text = text.translate(_EQUIVALENT_PUNCTUATION)
+    return re.sub(r"\s+", "", text).upper()
 
 
 def read_table(path: str, sheet_name: str | None = None) -> pd.DataFrame:
@@ -104,7 +160,7 @@ def build_desc_index(
     """保留 excel2 中同一描述对应记录的出现顺序，便于“取第一条”。"""
     index: dict[str, list[dict[str, str]]] = {}
     for _, row in df.iterrows():
-        desc = normalize_text(row.get(desc_col, ""))
+        desc = normalize_description_key(row.get(desc_col, ""))
         code = normalize_text(row.get(code_col, ""))
         if not desc:
             continue
@@ -182,10 +238,10 @@ def match_codes(
     fallback_match_count = 0
 
     for _, row in df_source.iterrows():
-        desc = normalize_text(row.get(source_desc_col, ""))
+        desc = normalize_description_key(row.get(source_desc_col, ""))
         matched_records = lookup_index.get(desc, [])
         if not matched_records and source_desc_fallback_col:
-            fallback_desc = normalize_text(row.get(source_desc_fallback_col, ""))
+            fallback_desc = normalize_description_key(row.get(source_desc_fallback_col, ""))
             if fallback_desc and fallback_desc != desc:
                 matched_records = lookup_index.get(fallback_desc, [])
                 if matched_records:

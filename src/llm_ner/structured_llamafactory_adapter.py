@@ -484,13 +484,14 @@ class StructuredLlamaFactoryPredictor:
             result[str(field)] = {
                 "source": "model_token_logprobs" if score else "model_token_logprobs_unavailable",
                 "confidence": round(float(score["confidence"]), 6) if score else None,
-                "reason": "generated_semantic_sequence_probability" if score else (
+                "reason": "length_normalized_generated_token_probability" if score else (
                     "field_missing" if not present else "token_logprobs_unavailable"
                 ),
                 "evidence": {
                     "field_present": present,
                     "token_count": int(score["token_count"]) if score else 0,
                     "sum_logprob": round(float(score["sum_logprob"]), 6) if score else None,
+                    "joint_probability": round(float(score["joint_probability"]), 6) if score else None,
                     "mean_logprob": round(float(score["mean_logprob"]), 6) if score else None,
                     "mean_probability": round(float(score["mean_probability"]), 6) if score else None,
                     "min_probability": round(float(score["min_probability"]), 6) if score else None,

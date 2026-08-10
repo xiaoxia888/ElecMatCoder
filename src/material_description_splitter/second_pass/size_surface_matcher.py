@@ -744,7 +744,9 @@ class SizeSurfaceMatcher:
 
     @staticmethod
     def _compile_bare_number_pattern(value: str) -> re.Pattern[str]:
-        return re.compile(rf'(?<!\d)({re.escape(value)})(?!\d)', re.IGNORECASE)
+        # An integer size must not consume the fractional tail of another
+        # value, e.g. DN 50 must skip the `50` in `5.50mm50X40`.
+        return re.compile(rf'(?<![\d.])({re.escape(value)})(?![\d.])', re.IGNORECASE)
 
     @staticmethod
     def _overlaps_consumed(start: int, end: int, consumed_spans: list[tuple[int, int]]) -> bool:

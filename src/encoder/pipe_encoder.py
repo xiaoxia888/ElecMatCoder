@@ -440,6 +440,10 @@ class PipeEncoderBase:
     def _process_material_item_structured(self, item: Dict[str, Any]) -> Optional[dict]:
         return None
 
+    def _apply_material_composition_override(self, combined_code: str) -> str:
+        """子类可通过材质映射器对完整组合编码执行精确覆盖。"""
+        return combined_code
+
     # ──────────────────── 公共方法 ────────────────────
 
     def _preprocess_tee_reducing(self, entities: Dict, original_text: str) -> Dict:
@@ -1376,11 +1380,13 @@ class PipeEncoderBase:
                 ).to_dict()
             )
 
+        combined_code = self._apply_material_composition_override(separator.join(unique_codes))
+
         return EncodedFieldResult(
             field_type='MATERIAL',
             stage2_input=normalized_stage2_input,
             encode_confidence_v2=self._aggregate_item_encode_confidence(item_results, fallback_source='material_mapping'),
-            code=separator.join(unique_codes),
+            code=combined_code,
             codes=unique_codes,
             similarity=min_similarity,
             is_exact_match=all_exact,

@@ -18,6 +18,10 @@ data/
 outputs/
 wheels/
 scripts/
+!scripts/
+scripts/*
+!scripts/按任务ID重算分流.py
+!scripts/分析编码准确率难度与置信度.py
 !apps/trainer/qwen3_fte/output/按8类拆分数据集/scripts/
 !apps/trainer/qwen3_fte/output/按8类拆分数据集/scripts/**
 models/

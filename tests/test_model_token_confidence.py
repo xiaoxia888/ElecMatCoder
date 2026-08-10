@@ -30,7 +30,7 @@ class ModelTokenConfidenceTest(unittest.TestCase):
         self.assertEqual(logprobs.requested_token_id, 42)
         self.assertAlmostEqual(score, -0.287682072, places=9)
 
-    def test_field_score_uses_joint_value_probability_not_json_keys(self):
+    def test_field_score_uses_length_normalized_values_not_json_keys(self):
         structured = {
             "TYPE": {"BODY": "盲板法兰", "CONN": [], "SEAL": ["RF"]},
             "MATERIAL": [{"PART": "BODY", "VALUE": "ASTM A105"}],
@@ -51,9 +51,10 @@ class ModelTokenConfidenceTest(unittest.TestCase):
 
         scores = build_field_token_confidences(raw, structured, records)
 
-        self.assertAlmostEqual(scores["TYPE"]["confidence"], 0.8 ** 6, places=6)
+        self.assertAlmostEqual(scores["TYPE"]["confidence"], 0.8, places=6)
         self.assertEqual(scores["TYPE"]["token_count"], 6)
         self.assertAlmostEqual(scores["TYPE"]["mean_probability"], 0.8, places=6)
+        self.assertAlmostEqual(scores["TYPE"]["joint_probability"], 0.8 ** 6, places=6)
 
     def test_type_confidence_includes_category_decision(self):
         structured = {
@@ -79,36 +80,40 @@ class ModelTokenConfidenceTest(unittest.TestCase):
 
         scores = build_field_token_confidences(raw, structured, records)
 
-        self.assertAlmostEqual(scores["CATEGORY"]["confidence"], 0.6 * 0.9, places=6)
-        self.assertAlmostEqual(scores["TYPE"]["confidence"], 0.6 * 0.9 * 0.8 * 0.7, places=6)
+        self.assertAlmostEqual(scores["CATEGORY"]["confidence"], (0.6 * 0.9) ** 0.5, places=6)
+        self.assertAlmostEqual(scores["TYPE"]["confidence"], (0.6 * 0.9 * 0.8 * 0.7) ** 0.25, places=6)
+        self.assertAlmostEqual(scores["TYPE"]["joint_probability"], 0.6 * 0.9 * 0.8 * 0.7, places=6)
         self.assertEqual(scores["TYPE"]["component_fields"], ["CATEGORY", "TYPE"])
         self.assertEqual(scores["TYPE"]["token_count"], 4)
 
     def test_adapter_serializes_combined_confidence_evidence(self):
         predictor = StructuredLlamaFactoryPredictor.__new__(StructuredLlamaFactoryPredictor)
+        normalized_confidence = 0.3024 ** 0.25
         structured = {
             "CATEGORY": "管件",
             "TYPE": {"BODY": "弯头", "CONN": []},
         }
         field_scores = {
             "TYPE": {
-                "confidence": 0.3024,
+                "confidence": normalized_confidence,
                 "token_count": 4,
                 "sum_logprob": math.log(0.3024),
+                "joint_probability": 0.3024,
                 "mean_logprob": math.log(0.3024) / 4,
-                "mean_probability": 0.7416,
+                "mean_probability": normalized_confidence,
                 "min_probability": 0.6,
                 "component_fields": ["CATEGORY", "TYPE"],
-                "component_confidences": {"CATEGORY": 0.54, "TYPE": 0.56},
+                "component_confidences": {"CATEGORY": 0.734847, "TYPE": 0.748331},
             },
         }
 
         confidence = predictor._build_extract_confidence_v2(structured, field_scores)
 
-        self.assertEqual(confidence["TYPE"]["confidence"], 0.3024)
+        self.assertEqual(confidence["TYPE"]["confidence"], round(normalized_confidence, 6))
+        self.assertEqual(confidence["TYPE"]["evidence"]["joint_probability"], 0.3024)
         self.assertEqual(
             confidence["TYPE"]["evidence"]["component_confidences"],
-            {"CATEGORY": 0.54, "TYPE": 0.56},
+            {"CATEGORY": 0.734847, "TYPE": 0.748331},
         )
 
     def test_deterministic_stage2_does_not_raise_stage1_score(self):

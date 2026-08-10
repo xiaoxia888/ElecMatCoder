@@ -244,6 +244,7 @@ type_manu_standard_supplement:
 # 磅级处理规则
 pressure_processing:
   class_values:
+    - "50"
     - "150"
     - "300"
     - "400"

@@ -211,6 +211,9 @@ class LlmPipeEncoder(PipeEncoderBase):
             }
         return None
 
+    def _apply_material_composition_override(self, combined_code: str) -> str:
+        return self.material_encoder.apply_composition_override(combined_code)
+
     def _encode_size_multi(
         self,
         values: List[Any],

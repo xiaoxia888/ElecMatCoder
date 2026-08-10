@@ -32,6 +32,9 @@ class MaterialEncoder:
         self.config = self._load_yaml(self.config_path)
         self.value_mapping = self.config.get("value_mapping", {}) or {}
         self.special_req_suffix = self.config.get("special_req_suffix", {}) or {}
+        self.composition_overrides = self._build_composition_overrides(
+            self.config.get("composition_overrides", {}) or {}
+        )
         self.reverse_value_mapping = self._build_reverse_value_mapping(self.value_mapping)
         self.reverse_special_req_suffix = self._build_reverse_special_req_mapping(self.special_req_suffix)
 
@@ -70,6 +73,23 @@ class MaterialEncoder:
                 if alias:
                     reverse[alias.upper()] = suffix
         return reverse
+
+    @staticmethod
+    def _build_composition_overrides(overrides: Dict[str, Any]) -> Dict[str, str]:
+        normalized: Dict[str, str] = {}
+        for source, target in overrides.items():
+            source_code = str(source).strip().upper()
+            target_code = str(target).strip()
+            if source_code and target_code:
+                normalized[source_code] = target_code
+        return normalized
+
+    def apply_composition_override(self, combined_code: str) -> str:
+        """对已完成默认拼接的材质编码执行完整键精确覆盖。"""
+        code = str(combined_code or "").strip()
+        if not code:
+            return ""
+        return self.composition_overrides.get(code.upper(), code)
 
     def encode(self, material_item: Dict[str, Any]) -> MaterialEncodingResult:
         value = str(material_item.get("VALUE") or "").strip()
