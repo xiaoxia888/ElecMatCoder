@@ -43,7 +43,19 @@ PROJECT_COLUMN_CANDIDATES = ("项目名称", "项目", "所属项目", "项目�
 DIFFICULTY_ORDER = ("困难", "中等", "简单", "未知")
 DIFFICULTY_MAP = {0: "困难", 1: "中等", 2: "简单"}
 
-CONFIDENCE_BINS = [-1e-12, 0.50, 0.70, 0.80, 0.90, 0.95, 0.98, 0.99, 1.0000001]
+CONFIDENCE_BINS = [
+    -1e-12,
+    0.50,
+    0.70,
+    0.80,
+    0.90,
+    0.95,
+    0.98,
+    0.99,
+    0.995,
+    0.999,
+    1.0000001,
+]
 CONFIDENCE_LABELS = [
     "0%~50%",
     "50%~70%",
@@ -52,7 +64,9 @@ CONFIDENCE_LABELS = [
     "90%~95%",
     "95%~98%",
     "98%~99%",
-    "99%~100%",
+    "99%~99.5%",
+    "99.5%~99.9%",
+    "99.9%~100%",
 ]
 
 
@@ -448,6 +462,505 @@ def build_project_difficulty_summary(valid: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def _project_level_metrics(group: pd.DataFrame, difficulty: str) -> dict[str, Any]:
+    level_group = group[group["分析_难度"].eq(difficulty)]
+    correct = int(level_group["分析_正确值"].eq(1).sum())
+    errors = int(level_group["分析_正确值"].eq(0).sum())
+    return {
+        "count": len(level_group),
+        "share": safe_ratio(len(level_group), len(group)),
+        "correct": correct,
+        "errors": errors,
+        "accuracy": safe_ratio(correct, len(level_group)),
+    }
+
+
+def _risk_accuracy_order(
+    metrics: dict[str, dict[str, Any]],
+    *,
+    minimum_level_samples: int,
+) -> tuple[str, str]:
+    available = [
+        difficulty
+        for difficulty in ("简单", "中等", "困难")
+        if metrics[difficulty]["count"] >= minimum_level_samples
+    ]
+    if len(available) < 2:
+        return "样本不足", "至少两个难度需达到最小样本数"
+
+    violations: list[str] = []
+    for easier, harder in zip(available, available[1:]):
+        easier_accuracy = metrics[easier]["accuracy"]
+        harder_accuracy = metrics[harder]["accuracy"]
+        if easier_accuracy < harder_accuracy:
+            violations.append(
+                f"{easier}准确率{easier_accuracy:.2%} < {harder}准确率{harder_accuracy:.2%}"
+            )
+    return ("异常", "；".join(violations)) if violations else ("正常", "")
+
+
+def build_project_health_summary(
+    valid: pd.DataFrame,
+    *,
+    minimum_project_samples: int,
+    minimum_level_samples: int,
+) -> pd.DataFrame:
+    """每个项目一行，展示三级占比、准确率及排序是否正常。"""
+    rows: list[dict[str, Any]] = []
+    for project, group in valid.groupby("分析_项目", sort=False, dropna=False):
+        metrics = {
+            difficulty: _project_level_metrics(group, difficulty)
+            for difficulty in ("简单", "中等", "困难")
+        }
+        share_order_normal = (
+            metrics["简单"]["count"]
+            > metrics["中等"]["count"]
+            > metrics["困难"]["count"]
+        )
+        risk_order_status, risk_order_detail = _risk_accuracy_order(
+            metrics,
+            minimum_level_samples=minimum_level_samples,
+        )
+        dominant_level = max(
+            ("简单", "中等", "困难"),
+            key=lambda difficulty: metrics[difficulty]["count"],
+        )
+        rows.append(
+            {
+                "项目": project,
+                "总样本数": len(group),
+                "总错误数": int(group["分析_正确值"].eq(0).sum()),
+                "整体准确率": float(group["分析_正确值"].mean()),
+                "主要难度": dominant_level,
+                "简单样本数": metrics["简单"]["count"],
+                "简单占比": metrics["简单"]["share"],
+                "简单错误数": metrics["简单"]["errors"],
+                "简单准确率": metrics["简单"]["accuracy"],
+                "中等样本数": metrics["中等"]["count"],
+                "中等占比": metrics["中等"]["share"],
+                "中等错误数": metrics["中等"]["errors"],
+                "中等准确率": metrics["中等"]["accuracy"],
+                "困难样本数": metrics["困难"]["count"],
+                "困难占比": metrics["困难"]["share"],
+                "困难错误数": metrics["困难"]["errors"],
+                "困难准确率": metrics["困难"]["accuracy"],
+                "占比顺序": "正常" if share_order_normal else "异常",
+                "占比顺序期望": "简单 > 中等 > 困难",
+                "准确率风险顺序": risk_order_status,
+                "准确率风险顺序说明": risk_order_detail,
+                "小样本提示": "是" if len(group) < minimum_project_samples else "",
+            }
+        )
+    return pd.DataFrame(rows).sort_values(
+        ["占比顺序", "准确率风险顺序", "总样本数"],
+        ascending=[True, True, False],
+    )
+
+
+def build_project_anomaly_summary(
+    project_health: pd.DataFrame,
+    *,
+    minimum_project_samples: int,
+    minimum_level_samples: int,
+    high_share_threshold: float,
+    hard_high_share_threshold: float,
+    simple_accuracy_target: float,
+    high_accuracy_threshold: float,
+) -> pd.DataFrame:
+    """输出可直接阅读的项目级异常，不使用分流原因做归因。"""
+    rows: list[dict[str, Any]] = []
+
+    def append_anomaly(
+        row: pd.Series,
+        anomaly_type: str,
+        anomaly_description: str,
+        focus_level: str,
+    ) -> None:
+        rows.append(
+            {
+                "项目": row["项目"],
+                "异常类型": anomaly_type,
+                "异常说明": anomaly_description,
+                "关注难度": focus_level,
+                "总样本数": row["总样本数"],
+                "整体准确率": row["整体准确率"],
+                "简单样本数": row["简单样本数"],
+                "简单占比": row["简单占比"],
+                "简单准确率": row["简单准确率"],
+                "中等样本数": row["中等样本数"],
+                "中等占比": row["中等占比"],
+                "中等准确率": row["中等准确率"],
+                "困难样本数": row["困难样本数"],
+                "困难占比": row["困难占比"],
+                "困难准确率": row["困难准确率"],
+            }
+        )
+
+    for _, row in project_health.iterrows():
+        if int(row["总样本数"]) < minimum_project_samples:
+            continue
+
+        if row["占比顺序"] == "异常":
+            append_anomaly(
+                row,
+                "三级占比顺序异常",
+                (
+                    f"简单{row['简单占比']:.2%}、中等{row['中等占比']:.2%}、"
+                    f"困难{row['困难占比']:.2%}，不满足简单 > 中等 > 困难"
+                ),
+                "整体",
+            )
+
+        if row["准确率风险顺序"] == "异常":
+            append_anomaly(
+                row,
+                "准确率风险顺序异常",
+                clean_text(row["准确率风险顺序说明"]),
+                "整体",
+            )
+
+        if (
+            row["简单样本数"] >= minimum_level_samples
+            and row["简单占比"] >= high_share_threshold
+            and row["简单准确率"] < simple_accuracy_target
+        ):
+            append_anomaly(
+                row,
+                "简单占比高但准确率低",
+                (
+                    f"简单占比{row['简单占比']:.2%}，准确率"
+                    f"{row['简单准确率']:.2%}，低于目标{simple_accuracy_target:.2%}"
+                ),
+                "简单",
+            )
+
+        if (
+            row["中等样本数"] >= minimum_level_samples
+            and row["中等占比"] >= high_share_threshold
+            and row["中等准确率"] >= high_accuracy_threshold
+        ):
+            append_anomaly(
+                row,
+                "中等占比高且准确率高",
+                (
+                    f"中等占比{row['中等占比']:.2%}，准确率"
+                    f"{row['中等准确率']:.2%}，可能有大量样本过度分入中等"
+                ),
+                "中等",
+            )
+
+        if (
+            row["困难样本数"] >= minimum_level_samples
+            and row["困难占比"] >= hard_high_share_threshold
+            and row["困难准确率"] >= high_accuracy_threshold
+        ):
+            append_anomaly(
+                row,
+                "困难占比高且准确率高",
+                (
+                    f"困难占比{row['困难占比']:.2%}，准确率"
+                    f"{row['困难准确率']:.2%}，需检查是否过度分入困难"
+                ),
+                "困难",
+            )
+
+    columns = [
+        "项目",
+        "异常类型",
+        "异常说明",
+        "关注难度",
+        "总样本数",
+        "整体准确率",
+        "简单样本数",
+        "简单占比",
+        "简单准确率",
+        "中等样本数",
+        "中等占比",
+        "中等准确率",
+        "困难样本数",
+        "困难占比",
+        "困难准确率",
+    ]
+    if not rows:
+        return pd.DataFrame(columns=columns)
+    return pd.DataFrame(rows, columns=columns).sort_values(
+        ["项目", "异常类型"],
+        ascending=[True, True],
+    )
+
+
+def build_difficulty_confidence_summary(valid: pd.DataFrame) -> pd.DataFrame:
+    """整体维度：分流难度×置信区间×正确情况。"""
+    total = len(valid)
+    total_errors = int(valid["分析_正确值"].eq(0).sum())
+    rows: list[dict[str, Any]] = []
+    for difficulty in DIFFICULTY_ORDER:
+        difficulty_group = valid[valid["分析_难度"].eq(difficulty)]
+        if difficulty_group.empty:
+            continue
+        for confidence_bin in [*CONFIDENCE_LABELS, "置信分缺失"]:
+            group = difficulty_group[
+                difficulty_group["分析_置信分区间"].eq(confidence_bin)
+            ]
+            if group.empty:
+                continue
+            correct = int(group["分析_正确值"].eq(1).sum())
+            errors = int(group["分析_正确值"].eq(0).sum())
+            rows.append(
+                {
+                    "难度": difficulty,
+                    "置信分区间": confidence_bin,
+                    "样本数": len(group),
+                    "占全部样本比例": safe_ratio(len(group), total),
+                    "占该难度样本比例": safe_ratio(len(group), len(difficulty_group)),
+                    "正确数": correct,
+                    "错误数": errors,
+                    "实际准确率": safe_ratio(correct, len(group)),
+                    "平均置信分": group["分析_模型置信分"].mean(),
+                    "校准差值（置信分-准确率）": (
+                        group["分析_模型置信分"].mean()
+                        - safe_ratio(correct, len(group))
+                    ),
+                    "占全部错误比例": safe_ratio(errors, total_errors),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def build_difficulty_high_confidence_summary(
+    valid: pd.DataFrame,
+    *,
+    high_confidence_threshold: float,
+) -> pd.DataFrame:
+    """整体难度漏斗：总样本 -> 错误 -> 高置信样本 -> 高置信错误。"""
+    total = len(valid)
+    total_errors = int(valid["分析_正确值"].eq(0).sum())
+    rows: list[dict[str, Any]] = []
+    for difficulty in DIFFICULTY_ORDER:
+        group = valid[valid["分析_难度"].eq(difficulty)]
+        if group.empty:
+            continue
+        errors = int(group["分析_正确值"].eq(0).sum())
+        high_confidence = group[
+            group["分析_模型置信分"].ge(high_confidence_threshold)
+        ]
+        high_confidence_errors = int(
+            high_confidence["分析_正确值"].eq(0).sum()
+        )
+        rows.append(
+            {
+                "难度": difficulty,
+                "总样本数": len(group),
+                "占全部样本比例": safe_ratio(len(group), total),
+                "错误数": errors,
+                "该难度错误率": safe_ratio(errors, len(group)),
+                "该难度错误占全部错误比例": safe_ratio(errors, total_errors),
+                f"高置信样本数(≥{high_confidence_threshold:.0%})": len(high_confidence),
+                "高置信样本占该难度比例": safe_ratio(len(high_confidence), len(group)),
+                "高置信错误数": high_confidence_errors,
+                "高置信样本错误率": safe_ratio(
+                    high_confidence_errors, len(high_confidence)
+                ),
+                "高置信错误占该难度错误比例": safe_ratio(
+                    high_confidence_errors, errors
+                ),
+                "高置信错误占全部错误比例": safe_ratio(
+                    high_confidence_errors, total_errors
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _condition_result(
+    frame: pd.DataFrame,
+    mask: pd.Series,
+    *,
+    condition: str,
+) -> dict[str, Any]:
+    selected = frame[mask]
+    total_errors = int(frame["分析_正确值"].eq(0).sum())
+    selected_errors = int(selected["分析_正确值"].eq(0).sum())
+    selected_correct = int(selected["分析_正确值"].eq(1).sum())
+    return {
+        "条件组合": condition,
+        "样本数": len(selected),
+        "占全部样本比例": safe_ratio(len(selected), len(frame)),
+        "正确数": selected_correct,
+        "错误数": selected_errors,
+        "准确率": safe_ratio(selected_correct, len(selected)),
+        "错误率": safe_ratio(selected_errors, len(selected)),
+        "占全部错误比例": safe_ratio(selected_errors, total_errors),
+    }
+
+
+def build_condition_comparison_summary(
+    valid: pd.DataFrame,
+    *,
+    high_confidence_threshold: float,
+) -> pd.DataFrame:
+    """比较基线、简单、高置信及二者交集的实际正误表现。"""
+    simple = valid["分析_难度"].eq("简单")
+    high_confidence = valid["分析_模型置信分"].ge(high_confidence_threshold)
+    conditions = [
+        ("全部数据（基线）", pd.Series(True, index=valid.index)),
+        ("仅简单", simple),
+        (f"仅高置信(≥{high_confidence_threshold:.0%})", high_confidence),
+        (f"简单且高置信(≥{high_confidence_threshold:.0%})", simple & high_confidence),
+    ]
+    return pd.DataFrame(
+        [_condition_result(valid, mask, condition=name) for name, mask in conditions]
+    )
+
+
+def build_project_condition_comparison_summary(
+    valid: pd.DataFrame,
+    *,
+    high_confidence_threshold: float,
+) -> pd.DataFrame:
+    """每个项目一行，并列比较简单、高置信及二者交集。"""
+    rows: list[dict[str, Any]] = []
+    for project, group in valid.groupby("分析_项目", sort=False, dropna=False):
+        simple = group["分析_难度"].eq("简单")
+        high_confidence = group["分析_模型置信分"].ge(
+            high_confidence_threshold
+        )
+        baseline_result = _condition_result(
+            group,
+            pd.Series(True, index=group.index),
+            condition="全部数据（基线）",
+        )
+        simple_result = _condition_result(group, simple, condition="仅简单")
+        confidence_result = _condition_result(
+            group,
+            high_confidence,
+            condition=f"仅高置信(≥{high_confidence_threshold:.0%})",
+        )
+        intersection_result = _condition_result(
+            group,
+            simple & high_confidence,
+            condition=f"简单且高置信(≥{high_confidence_threshold:.0%})",
+        )
+        rows.append(
+            {
+                "项目": project,
+                "总样本数": baseline_result["样本数"],
+                "总错误数": baseline_result["错误数"],
+                "整体准确率": baseline_result["准确率"],
+                "整体错误率": baseline_result["错误率"],
+                "仅简单_样本数": simple_result["样本数"],
+                "仅简单_样本占比": simple_result["占全部样本比例"],
+                "仅简单_错误数": simple_result["错误数"],
+                "仅简单_准确率": simple_result["准确率"],
+                "仅简单_错误率": simple_result["错误率"],
+                "仅高置信_样本数": confidence_result["样本数"],
+                "仅高置信_样本占比": confidence_result["占全部样本比例"],
+                "仅高置信_错误数": confidence_result["错误数"],
+                "仅高置信_准确率": confidence_result["准确率"],
+                "仅高置信_错误率": confidence_result["错误率"],
+                "交集_样本数": intersection_result["样本数"],
+                "交集_样本占比": intersection_result["占全部样本比例"],
+                "交集_错误数": intersection_result["错误数"],
+                "交集_准确率": intersection_result["准确率"],
+                "交集_错误率": intersection_result["错误率"],
+            }
+        )
+    return pd.DataFrame(rows).sort_values(
+        ["交集_错误数", "总错误数", "总样本数"],
+        ascending=[False, False, False],
+    )
+
+
+def build_project_difficulty_confidence_summary(valid: pd.DataFrame) -> pd.DataFrame:
+    """项目维度：分流难度×置信区间×正确情况。"""
+    rows: list[dict[str, Any]] = []
+    project_sizes = valid["分析_项目"].value_counts(dropna=False).to_dict()
+    grouped = valid.groupby(
+        ["分析_项目", "分析_难度", "分析_置信分区间"],
+        sort=False,
+        dropna=False,
+    )
+    for (project, difficulty, confidence_bin), group in grouped:
+        correct = int(group["分析_正确值"].eq(1).sum())
+        errors = int(group["分析_正确值"].eq(0).sum())
+        accuracy = safe_ratio(correct, len(group))
+        average_confidence = group["分析_模型置信分"].mean()
+        rows.append(
+            {
+                "项目": project,
+                "难度": difficulty,
+                "置信分区间": confidence_bin,
+                "样本数": len(group),
+                "占本项目样本比例": safe_ratio(len(group), project_sizes.get(project, 0)),
+                "正确数": correct,
+                "错误数": errors,
+                "实际准确率": accuracy,
+                "平均置信分": average_confidence,
+                "校准差值（置信分-准确率）": average_confidence - accuracy,
+                "风险提示": (
+                    "高置信低准确率"
+                    if pd.notna(average_confidence)
+                    and average_confidence >= 0.95
+                    and accuracy < 0.90
+                    else ""
+                ),
+            }
+        )
+    return pd.DataFrame(rows).sort_values(
+        ["错误数", "样本数"],
+        ascending=[False, False],
+    )
+
+
+def build_project_difficulty_high_confidence_summary(
+    valid: pd.DataFrame,
+    *,
+    high_confidence_threshold: float,
+) -> pd.DataFrame:
+    """项目难度漏斗：按项目和难度统计高置信错误。"""
+    project_errors = (
+        valid["分析_正确值"].eq(0).groupby(valid["分析_项目"]).sum().to_dict()
+    )
+    rows: list[dict[str, Any]] = []
+    for (project, difficulty), group in valid.groupby(
+        ["分析_项目", "分析_难度"],
+        sort=False,
+        dropna=False,
+    ):
+        errors = int(group["分析_正确值"].eq(0).sum())
+        high_confidence = group[
+            group["分析_模型置信分"].ge(high_confidence_threshold)
+        ]
+        high_confidence_errors = int(
+            high_confidence["分析_正确值"].eq(0).sum()
+        )
+        rows.append(
+            {
+                "项目": project,
+                "难度": difficulty,
+                "总样本数": len(group),
+                "错误数": errors,
+                "该项目该难度错误率": safe_ratio(errors, len(group)),
+                f"高置信样本数(≥{high_confidence_threshold:.0%})": len(high_confidence),
+                "高置信样本占该难度比例": safe_ratio(len(high_confidence), len(group)),
+                "高置信错误数": high_confidence_errors,
+                "高置信样本错误率": safe_ratio(
+                    high_confidence_errors, len(high_confidence)
+                ),
+                "高置信错误占该难度错误比例": safe_ratio(
+                    high_confidence_errors, errors
+                ),
+                "高置信错误占本项目全部错误比例": safe_ratio(
+                    high_confidence_errors, int(project_errors.get(project, 0))
+                ),
+            }
+        )
+    return pd.DataFrame(rows).sort_values(
+        ["高置信错误数", "错误数", "总样本数"],
+        ascending=[False, False, False],
+    )
+
+
 def explode_reasons(valid: pd.DataFrame) -> pd.DataFrame:
     exploded_rows = []
     for _, row in valid.iterrows():
@@ -570,6 +1083,19 @@ def build_findings(
     findings.append(
         ("高置信错误", f"置信分不低于 {high_confidence_threshold:.0%} 但编码错误的样本有 {len(high_conf_wrong):,} 条。")
     )
+    if not high_conf_wrong.empty:
+        difficulty_counts = high_conf_wrong["分析_难度"].value_counts()
+        distribution = "、".join(
+            f"{difficulty}{int(difficulty_counts.get(difficulty, 0)):,}条"
+            for difficulty in ("困难", "中等", "简单")
+        )
+        findings.append(
+            (
+                "难度×置信分×正误",
+                f"高置信错误在各难度中分布为：{distribution}；"
+                "不能仅依赖置信分决定自动通过。",
+            )
+        )
 
     ece = calibration_metrics.get("ece", math.nan)
     auc = calibration_metrics.get("auc", math.nan)
@@ -855,6 +1381,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--high-confidence-threshold", type=float, default=0.95, help="高置信错误阈值，默认 0.95")
     parser.add_argument("--low-confidence-threshold", type=float, default=0.60, help="低置信正确阈值，默认 0.60")
     parser.add_argument("--minimum-project-samples", type=int, default=30, help="项目小样本提示阈值，默认 30")
+    parser.add_argument("--minimum-level-samples", type=int, default=10, help="判断项目内某难度准确率时的最小样本数，默认 10")
+    parser.add_argument("--project-high-share-threshold", type=float, default=0.50, help="简单/中等高占比阈值，默认 0.50")
+    parser.add_argument("--project-hard-high-share-threshold", type=float, default=0.30, help="困难高占比阈值，默认 0.30")
+    parser.add_argument("--project-simple-accuracy-target", type=float, default=0.995, help="项目简单样本目标准确率，默认 0.995")
+    parser.add_argument("--project-high-accuracy-threshold", type=float, default=0.99, help="判断中等/困难样本高准确率的阈值，默认 0.99")
     return parser.parse_args()
 
 
@@ -863,9 +1394,17 @@ def main() -> None:
     for name, value in (
         ("--high-confidence-threshold", args.high_confidence_threshold),
         ("--low-confidence-threshold", args.low_confidence_threshold),
+        ("--project-high-share-threshold", args.project_high_share_threshold),
+        ("--project-hard-high-share-threshold", args.project_hard_high_share_threshold),
+        ("--project-simple-accuracy-target", args.project_simple_accuracy_target),
+        ("--project-high-accuracy-threshold", args.project_high_accuracy_threshold),
     ):
         if not 0 <= value <= 1:
             raise ValueError(f"{name} 必须在 0~1 之间")
+    if args.minimum_project_samples < 1:
+        raise ValueError("--minimum-project-samples 必须大于 0")
+    if args.minimum_level_samples < 1:
+        raise ValueError("--minimum-level-samples 必须大于 0")
 
     source = read_table(args.input, args.sheet)
     project_col = resolve_project_column(source, args.project_col)
@@ -905,6 +1444,30 @@ def main() -> None:
         minimum_project_samples=args.minimum_project_samples,
     )
     project_difficulty = build_project_difficulty_summary(valid)
+    project_health = build_project_health_summary(
+        valid,
+        minimum_project_samples=args.minimum_project_samples,
+        minimum_level_samples=args.minimum_level_samples,
+    )
+    project_anomalies = build_project_anomaly_summary(
+        project_health,
+        minimum_project_samples=args.minimum_project_samples,
+        minimum_level_samples=args.minimum_level_samples,
+        high_share_threshold=args.project_high_share_threshold,
+        hard_high_share_threshold=args.project_hard_high_share_threshold,
+        simple_accuracy_target=args.project_simple_accuracy_target,
+        high_accuracy_threshold=args.project_high_accuracy_threshold,
+    )
+    condition_comparison = build_condition_comparison_summary(
+        valid,
+        high_confidence_threshold=args.high_confidence_threshold,
+    )
+    difficulty_confidence = build_difficulty_confidence_summary(valid)
+    project_condition_comparison = build_project_condition_comparison_summary(
+        valid,
+        high_confidence_threshold=args.high_confidence_threshold,
+    )
+    project_difficulty_confidence = build_project_difficulty_confidence_summary(valid)
     reason_summary = explode_reasons(valid)
     overview = build_overview(
         data,
@@ -978,10 +1541,11 @@ def main() -> None:
     reading_guide = pd.DataFrame(
         [
             (1, "02_总体与难度", "先看整体准确率，再看困难/中等/简单的准确率是否递增。"),
-            (2, "03_项目分析", "找出错误数多、准确率低或高置信错误多的项目。"),
-            (3, "04_置信度分析", "判断置信分能否区分正误，并选择自动通过阈值。"),
-            (4, "05_重点样本", "优先审核高置信错误和被分为简单但编码错误的样本。"),
-            (5, "06_全部明细", "需要回到某条原始数据时使用，可按正误、难度、置信分筛选。"),
+            (2, "03_项目异常", "直接查看简单占比高但准确率低、困难占比高且准确率高等项目异常。"),
+            (3, "04_置信度分析", "判断置信分能否区分正确与错误样本。"),
+            (4, "05_三维交叉分析", "比较仅简单、仅高置信、简单且高置信三组条件对准确率的影响。"),
+            (5, "06_重点样本", "优先审核高置信错误和被分为简单但编码错误的样本。"),
+            (6, "07_全部明细", "需要回到某条原始数据时使用，可按正误、难度、置信分筛选。"),
         ],
         columns=["阅读顺序", "工作表", "用途"],
     )
@@ -998,6 +1562,8 @@ def main() -> None:
             ("AUC", "置信分区分正确与错误的能力；接近 0.5 表示几乎无区分能力。"),
             ("分流原因", "一条数据含多个原因时会拆分统计，因此原因次数之和可能大于样本数。"),
             ("项目小样本", f"项目样本数小于 {args.minimum_project_samples} 时会标记，不建议直接横向排名。"),
+            ("项目占比顺序", "默认期望简单 > 中等 > 困难；该项只是项目结构异常提示，不会强制凑比例。"),
+            ("项目风险顺序", f"仅当单个难度不少于 {args.minimum_level_samples} 条时比较；期望简单准确率 ≥ 中等 ≥ 困难。"),
         ],
         columns=["项目", "说明"],
     )
@@ -1013,26 +1579,50 @@ def main() -> None:
             ("按难度统计", "重点比较困难/中等/简单的准确率；理想情况下应随难度降低而上升。", difficulty_report),
             ("按分流原因统计", "错误数多或错误率高的原因，是优先调整的分流规则。", reason_summary),
         ],
-        "03_项目分析": [
-            ("按项目汇总", "已按错误数从高到低排序，优先关注错误多且准确率低的项目。", project_report),
-            ("项目与难度交叉", "用于判断某个项目的问题是集中在困难、中等还是简单样本。", project_difficulty),
+        "03_项目异常": [
+            ("项目异常清单", "每条只说明占比或实际准确率异常，不对分流原因做归因。", project_anomalies),
+            ("全部项目三级分布", "每个项目一行，用于核对三级占比、准确率及两种排序结果。", project_health),
+            ("项目基础汇总", "保留原有项目统计，已按错误数从高到低排序。", project_report),
+            ("项目与难度交叉", "需要查看项目内某个难度的错误数时使用。", project_difficulty),
         ],
         "04_置信度分析": [
             ("正确与错误样本对比", "如果正确样本的平均置信分没有明显高于错误样本，说明置信分区分能力较弱。", correctness_summary),
             ("按置信分区间", "比较每个区间的平均置信分与实际准确率，两者越接近越可信。", calibration),
-            ("自动通过阈值模拟", "选定阈值后，覆盖率是可自动通过的比例；同时需关注高于阈值的错误数。", threshold_summary),
+            ("置信阈值分组对比", "比较不同置信阈值以上样本的规模、准确率和错误数。", threshold_summary),
         ],
-        "05_重点样本": [
+        "05_三维交叉分析": [
+            (
+                "整体条件对比",
+                "比较全部数据、仅简单、仅高置信、简单且高置信四组的样本数、错误数、准确率和错误率，不涉及人工审核决策。",
+                condition_comparison,
+            ),
+            (
+                "项目条件对比",
+                "每个项目一行，并列比较仅简单、仅高置信和二者交集的样本规模与正误表现。",
+                project_condition_comparison,
+            ),
+            (
+                "补充明细：难度×置信分区间×正误",
+                "需要查看具体难度和置信分区间时使用；主结论以前两张条件对比表为准。",
+                difficulty_confidence,
+            ),
+            (
+                "项目补充明细：难度×置信分区间×正误",
+                "用于进一步定位项目内部的具体难度和置信分区间。",
+                project_difficulty_confidence,
+            ),
+        ],
+        "06_重点样本": [
             ("高置信错误", f"置信分≥{args.high_confidence_threshold:.0%}但编码错误，这类样本风险最高，建议优先审核。", high_conf_wrong_report),
             ("简单但编码错误", "分流判定为简单但实际编码错误，用于查找分流规则漏洞。", simple_wrong_report),
             ("低置信但编码正确", f"置信分≤{args.low_confidence_threshold:.0%}但编码正确，可用于判断置信分是否过度保守。", low_conf_correct_report),
         ],
-        "06_全部明细": [
+        "07_全部明细": [
             ("全部分析明细", "蓝色列为本脚本新增的分析结果；可通过表头筛选正误、难度和置信分。", all_detail_report),
         ],
     }
     if not invalid_report.empty:
-        sheets["07_无效数据"] = [
+        sheets["08_无效数据"] = [
             ("缺失或无效数据", "这些行存在正确答案、难度或置信分缺失，部分指标不会纳入统计。", invalid_report),
         ]
     output_path = output_path_for(args.input, args.output)
@@ -1044,6 +1634,8 @@ def main() -> None:
     print(f"错误数: {int(valid['分析_正确值'].eq(0).sum())}")
     print(f"整体准确率: {valid['分析_正确值'].mean():.2%}")
     print(f"高置信错误数: {len(high_conf_wrong)}")
+    print(f"异常项目数: {project_anomalies['项目'].nunique()}")
+    print(f"项目级异常记录数: {len(project_anomalies)}")
     print(f"输出文件: {output_path}")
 
 
