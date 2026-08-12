@@ -4,7 +4,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
+
+import yaml
 
 from ..difficulty_levels import DIFF_EASY, DIFF_HARD, DIFF_SECOND_EASY, normalize_difficulty_level
 from .material_second_pass_splitter import MaterialSecondPassSplitter
@@ -15,6 +18,31 @@ from .thickness_second_pass_splitter import ThicknessSecondPassSplitter
 from .type_second_pass_splitter import TypeSecondPassSplitter
 
 
+@dataclass(frozen=True)
+class BinaryRoutingConfig:
+    confidence_enabled: bool = True
+    confidence_min_score: float = 0.90
+    invalid_confidence_is_hard: bool = True
+
+
+def load_binary_routing_config() -> BinaryRoutingConfig:
+    config_path = Path(__file__).resolve().parents[1] / "config" / "binary_routing.yaml"
+    try:
+        raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError):
+        raw = {}
+    confidence = raw.get("confidence") if isinstance(raw.get("confidence"), dict) else {}
+    try:
+        min_score = float(confidence.get("min_score", 0.90))
+    except (TypeError, ValueError):
+        min_score = 0.90
+    return BinaryRoutingConfig(
+        confidence_enabled=bool(confidence.get("enabled", True)),
+        confidence_min_score=max(0.0, min(1.0, min_score)),
+        invalid_confidence_is_hard=bool(confidence.get("invalid_is_hard", True)),
+    )
+
+
 @dataclass
 class PlatformSecondPassRunner:
     size_splitter: SizeSecondPassSplitter = field(default_factory=SizeSecondPassSplitter)
@@ -23,6 +51,7 @@ class PlatformSecondPassRunner:
     material_splitter: MaterialSecondPassSplitter = field(default_factory=MaterialSecondPassSplitter)
     type_splitter: TypeSecondPassSplitter = field(default_factory=TypeSecondPassSplitter)
     standard_splitter: StandardSecondPassSplitter = field(default_factory=StandardSecondPassSplitter)
+    routing_config: BinaryRoutingConfig = field(default_factory=load_binary_routing_config)
 
     def analyze_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
         text = self._clean(payload.get("text") or payload.get("original_text"))
@@ -46,6 +75,11 @@ class PlatformSecondPassRunner:
             material_code=extracted["MATERIAL_CODE"],
             type_code=extracted["TYPE_CODE"],
             standard_items=extracted["STANDARD_ITEMS"],
+            success=payload.get("success"),
+            final_code=payload.get("final_code"),
+            validate_output="success" in payload or "final_code" in payload,
+            confidence=payload.get("confidence"),
+            confidence_provided="confidence" in payload,
         )
 
     def analyze_payload_summary(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -71,6 +105,11 @@ class PlatformSecondPassRunner:
             material_code=extracted["MATERIAL_CODE"],
             type_code=extracted["TYPE_CODE"],
             standard_items=extracted["STANDARD_ITEMS"],
+            success=payload.get("success"),
+            final_code=payload.get("final_code"),
+            validate_output="success" in payload or "final_code" in payload,
+            confidence=payload.get("confidence"),
+            confidence_provided="confidence" in payload,
         )
         return self._summarize_result(
             detailed,
@@ -93,6 +132,11 @@ class PlatformSecondPassRunner:
         material_code: str = "",
         type_code: str = "",
         standard_items: list[dict[str, str]] | None = None,
+        success: bool | None = None,
+        final_code: str | None = None,
+        validate_output: bool = False,
+        confidence: Any = None,
+        confidence_provided: bool = False,
     ) -> dict[str, Any]:
         clean_text = self._clean(text)
         clean_difficulty = normalize_difficulty_level(stage1_difficulty)
@@ -157,15 +201,42 @@ class PlatformSecondPassRunner:
                 consumed_spans=material_consumed_spans,
             ).to_dict()
 
+        core_result_count = len(results)
+        if core_result_count == 0:
+            results["RESULT_SET"] = {
+                "passed": False,
+                "reason": "没有可回查的编码字段",
+            }
+
+        if validate_output:
+            output_passed = success is not False and bool(self._clean(final_code))
+            results["OUTPUT"] = {
+                "passed": output_passed,
+                "reason": "" if output_passed else "编码执行失败或最终编码为空",
+            }
+
+        if self.routing_config.confidence_enabled and confidence_provided:
+            score = self._parse_confidence(confidence)
+            if score is None:
+                passed = not self.routing_config.invalid_confidence_is_hard
+                reason = "模型置信分缺失或格式无效" if not passed else ""
+            else:
+                passed = score >= self.routing_config.confidence_min_score
+                reason = (
+                    ""
+                    if passed
+                    else f"模型置信分 {score * 100:.2f}% 低于阈值 {self.routing_config.confidence_min_score * 100:.2f}%"
+                )
+            results["CONFIDENCE"] = {
+                "passed": passed,
+                "reason": reason,
+                "score": score,
+                "threshold": self.routing_config.confidence_min_score,
+            }
+
         final_level = self._build_final_level(
             clean_difficulty,
             results,
-            size_value=size_value,
-            thickness_value=thickness_value,
-            pressure_value=pressure_value,
-            material_code=material_code,
-            type_code=type_code,
-            standard_items=normalized_standard_items,
         )
         return {
             "text": clean_text,
@@ -252,6 +323,26 @@ class PlatformSecondPassRunner:
         return False
 
     @staticmethod
+    def _parse_confidence(value: Any) -> float | None:
+        if value is None or isinstance(value, bool):
+            return None
+        text = str(value).strip()
+        if not text:
+            return None
+        is_percent = text.endswith("%")
+        if is_percent:
+            text = text[:-1].strip()
+        try:
+            score = float(text)
+        except (TypeError, ValueError):
+            return None
+        if is_percent or score > 1.0:
+            score /= 100.0
+        if score < 0.0 or score > 1.0:
+            return None
+        return score
+
+    @staticmethod
     def _field_provided(
         field_name: str,
         size_value: Any,
@@ -276,60 +367,10 @@ class PlatformSecondPassRunner:
         return False
 
     @classmethod
-    def _second_easy_field_presence(
-        cls,
-        *,
-        size_value: Any,
-        thickness_value: Any,
-        pressure_value: Any,
-        material_code: str,
-        type_code: str,
-        standard_items: list[dict[str, str]] | None,
-    ) -> dict[str, bool]:
-        return {
-            "SIZE": not cls._is_empty_value(size_value),
-            "THICKNESS": not cls._is_empty_value(thickness_value),
-            "PRESSURE": not cls._is_empty_value(pressure_value),
-            "MATERIAL": bool(cls._clean(material_code)),
-            "TYPE": bool(cls._clean(type_code)),
-            "STANDARD": bool(standard_items),
-        }
-
-    @classmethod
-    def _is_second_easy_eligible(
-        cls,
-        *,
-        size_value: Any,
-        thickness_value: Any,
-        pressure_value: Any,
-        material_code: str,
-        type_code: str,
-        standard_items: list[dict[str, str]] | None,
-    ) -> bool:
-        presence = cls._second_easy_field_presence(
-            size_value=size_value,
-            thickness_value=thickness_value,
-            pressure_value=pressure_value,
-            material_code=material_code,
-            type_code=type_code,
-            standard_items=standard_items,
-        )
-        base_required = presence["TYPE"] and presence["SIZE"] and presence["MATERIAL"] and presence["STANDARD"]
-        thickness_or_pressure = presence["THICKNESS"] or presence["PRESSURE"]
-        return base_required and thickness_or_pressure
-
-    @classmethod
     def _build_final_level(
         cls,
         stage1_difficulty: int | None,
         results: dict[str, Any],
-        *,
-        size_value: Any,
-        thickness_value: Any,
-        pressure_value: Any,
-        material_code: str,
-        type_code: str,
-        standard_items: list[dict[str, str]] | None,
     ) -> int:
         if stage1_difficulty is not None and stage1_difficulty != DIFF_EASY:
             return DIFF_HARD
@@ -339,20 +380,11 @@ class PlatformSecondPassRunner:
             return DIFF_HARD
         provided_results = [payload for payload in results.values() if isinstance(payload, dict)]
         if not provided_results:
-            return DIFF_EASY if stage1_difficulty == DIFF_EASY else DIFF_HARD
-        if not cls._is_second_easy_eligible(
-            size_value=size_value,
-            thickness_value=thickness_value,
-            pressure_value=pressure_value,
-            material_code=material_code,
-            type_code=type_code,
-            standard_items=standard_items,
-        ):
-            return DIFF_EASY
+            return DIFF_HARD
         all_passed = all(bool(payload.get("passed")) for payload in provided_results)
         if stage1_difficulty == DIFF_EASY and all_passed:
             return DIFF_SECOND_EASY
-        return DIFF_EASY
+        return DIFF_HARD
 
     @staticmethod
     def _make_check(field: str, reason: str) -> dict[str, str]:
@@ -372,36 +404,11 @@ class PlatformSecondPassRunner:
             "PRESSURE": "磅级",
             "MATERIAL": "材质",
             "STANDARD": "规范",
-            "THICKNESS_OR_PRESSURE": "壁厚或磅级",
+            "RESULT_SET": "回查字段",
+            "OUTPUT": "编码输出",
+            "CONFIDENCE": "模型置信分",
         }
         return mapping.get(str(field_name or "").strip(), str(field_name or "").strip())
-
-    @classmethod
-    def _build_missing_required_checks(
-        cls,
-        *,
-        size_value: Any,
-        thickness_value: Any,
-        pressure_value: Any,
-        material_code: str,
-        type_code: str,
-        standard_items: list[dict[str, str]] | None,
-    ) -> list[str]:
-        presence = cls._second_easy_field_presence(
-            size_value=size_value,
-            thickness_value=thickness_value,
-            pressure_value=pressure_value,
-            material_code=material_code,
-            type_code=type_code,
-            standard_items=standard_items,
-        )
-        missing: list[str] = []
-        for field_name in ("TYPE", "SIZE", "MATERIAL", "STANDARD"):
-            if not presence[field_name]:
-                missing.append(field_name)
-        if not (presence["THICKNESS"] or presence["PRESSURE"]):
-            missing.append("THICKNESS_OR_PRESSURE")
-        return missing
 
     @classmethod
     def _summarize_result(
@@ -431,16 +438,6 @@ class PlatformSecondPassRunner:
             if reason:
                 failed_checks.append(cls._make_check(str(field), reason))
 
-        missing_required_checks = cls._build_missing_required_checks(
-            size_value=size_value,
-            thickness_value=thickness_value,
-            pressure_value=pressure_value,
-            material_code=material_code,
-            type_code=type_code,
-            standard_items=standard_items,
-        )
-        missing_required_labels = [cls._field_label(field_name) for field_name in missing_required_checks]
-
         if failed_checks:
             reason_text = " | ".join(
                 f"{cls._field_label(check['field'])}: {check['reason']}"
@@ -448,13 +445,9 @@ class PlatformSecondPassRunner:
                 if check["reason"]
             )
         elif final_level == DIFF_SECOND_EASY:
-            reason_text = "二次分流全部通过"
-        elif missing_required_checks:
-            reason_text = f"未满足自动通过条件: 缺少 {'、'.join(missing_required_labels)}"
-        elif passed_checks:
-            reason_text = "二次分流已回查，维持中等"
+            reason_text = "所有已提取字段回查通过"
         else:
-            reason_text = "未进入二次分流"
+            reason_text = "分流检查未通过"
 
         return {
             "stage1_level": stage1_level,
@@ -465,5 +458,5 @@ class PlatformSecondPassRunner:
             "reason_text": reason_text,
             "failed_checks": failed_checks,
             "passed_checks": passed_checks,
-            "missing_required_checks": missing_required_checks,
+            "missing_required_checks": [],
         }

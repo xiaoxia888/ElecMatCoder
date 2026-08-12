@@ -27,9 +27,10 @@ from src.material_description_splitter.platform_integration import build_base_di
 from src.material_description_splitter.second_pass import PlatformSecondPassRunner
 
 
-OUTPUT_DIFFICULTY_HEADER = "分流最终难度（0=困难，1=中等，2=简单）"
+OUTPUT_DIFFICULTY_HEADER = "分流最终难度（0=困难，2=简单）"
 LEGACY_DIFFICULTY_HEADERS = (
     OUTPUT_DIFFICULTY_HEADER,
+    "分流最终难度（0=困难，1=中等，2=简单）",
     "分流最终难度（0=困难，1=简单，2=二次简单）",
 )
 OUTPUT_REASON_HEADER = "分流原因"
@@ -43,6 +44,8 @@ PRESSURE_RESULT_COL = "PRESSURE_原始结果"
 MATERIAL_CODE_COL = "MATERIAL_原始编码"
 STANDARD_RESULT_COL = "STANDARD_原始结果"
 STANDARD_CODE_COL = "STANDARD_原始编码"
+MODEL_CONFIDENCE_COLS = ("模型置信分", "excel2_模型置信分")
+FINAL_CODE_COLS = ("原始总编码", "excel2_原始总编码")
 
 EMPTY_MARKERS = {"", "—", "-", "nan", "none", "null"}
 STANDARD_SPLIT_RE = re.compile(r"\s*[;；]\s*")
@@ -54,6 +57,22 @@ def clean_text(value: Any) -> str:
         return ""
     text = str(value).strip()
     return "" if text.lower() in EMPTY_MARKERS else text
+
+
+def parse_confidence(value: Any) -> float | None:
+    text = clean_text(value)
+    if not text:
+        return None
+    is_percent = text.endswith("%")
+    if is_percent:
+        text = text[:-1].strip()
+    try:
+        score = float(text)
+    except (TypeError, ValueError):
+        return None
+    if is_percent or score > 1:
+        score /= 100
+    return score if 0 <= score <= 1 else None
 
 
 def get_existing_column(df: pd.DataFrame, candidates: tuple[str, ...] | list[str]) -> str | None:
@@ -100,12 +119,13 @@ def parse_standard_codes(display_text: Any, code_text: Any) -> list[str]:
 
 def build_route_reason(*, difficulty_split: dict[str, Any], second_pass: dict[str, Any]) -> str:
     final_level = second_pass.get("final_level")
-    if final_level == 0:
+    stage1_level = second_pass.get("stage1_difficulty")
+    if final_level == 0 and stage1_level == 0:
         return clean_text(difficulty_split.get("reason_text")) or "未提供一阶段分流原因"
 
     results = second_pass.get("results") if isinstance(second_pass.get("results"), dict) else {}
     failed_parts: list[str] = []
-    for field in ("SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "TYPE", "STANDARD"):
+    for field in ("SIZE", "THICKNESS", "PRESSURE", "MATERIAL", "TYPE", "STANDARD", "RESULT_SET", "OUTPUT", "CONFIDENCE"):
         payload = results.get(field)
         if not isinstance(payload, dict):
             continue
@@ -119,7 +139,7 @@ def build_route_reason(*, difficulty_split: dict[str, Any], second_pass: dict[st
 
     if final_level == 2:
         return "无需二次分流原因"
-    if final_level == 1 or second_pass.get("final_level") is not None:
+    if second_pass.get("final_level") is not None:
         return "未提供二次分流原因"
     return clean_text(difficulty_split.get("reason_text")) or "未提供原因说明"
 
@@ -156,6 +176,8 @@ def recompute_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     result_df = df.copy()
     base_rows = build_rows_for_base_difficulty(result_df)
     finalized_difficulties = finalize_batch_difficulty(base_rows)
+    confidence_col = get_existing_column(result_df, MODEL_CONFIDENCE_COLS)
+    final_code_col = get_existing_column(result_df, FINAL_CODE_COLS)
 
     new_levels: list[Any] = []
     new_reasons: list[str] = []
@@ -163,6 +185,8 @@ def recompute_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     for idx, (_, row) in enumerate(result_df.iterrows()):
         difficulty_split = finalized_difficulties[idx] if idx < len(finalized_difficulties) else {}
         stage1_level = difficulty_split.get("difficulty")
+        confidence = parse_confidence(row.get(confidence_col)) if confidence_col else None
+        final_code = clean_text(row.get(final_code_col)) if final_code_col else None
         second_pass = runner.analyze(
             text=clean_text(row.get(TEXT_COL)),
             stage1_difficulty=stage1_level,
@@ -172,6 +196,11 @@ def recompute_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             material_code=clean_text(row.get(MATERIAL_CODE_COL)),
             type_code=clean_text(row.get(TYPE_CODE_COL)),
             standard_items=parse_standard_items(row.get(STANDARD_RESULT_COL), row.get(STANDARD_CODE_COL)),
+            success=bool(final_code) if final_code_col else None,
+            final_code=final_code,
+            validate_output=bool(final_code_col),
+            confidence=confidence,
+            confidence_provided=bool(confidence_col),
         )
 
         new_levels.append(second_pass.get("final_level"))

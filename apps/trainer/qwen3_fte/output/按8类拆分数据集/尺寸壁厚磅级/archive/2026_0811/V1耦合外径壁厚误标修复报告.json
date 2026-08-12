@@ -1,0 +1,62 @@
+{
+  "rows": 71757,
+  "changed_rows": 1,
+  "change_items": 1,
+  "changes_by_category": {
+    "耦合外径壁厚中的壁厚误标为OD": 1
+  },
+  "conflicting_inputs_before": 0,
+  "conflicting_inputs_after": 0,
+  "changes": [
+    {
+      "source_index": 35097,
+      "category": "耦合外径壁厚中的壁厚误标为OD",
+      "input": "GB/T 8163;SH/T 3408 Red.Tee 273.1x9.27-219.1x8.18 BW20 10X8\"",
+      "before": [
+        {
+          "type": "OD",
+          "value": "273.1"
+        },
+        {
+          "type": "OD",
+          "value": "9.27"
+        },
+        {
+          "type": "OD",
+          "value": "219.1"
+        },
+        {
+          "type": "OD",
+          "value": "8.18"
+        },
+        {
+          "type": "INCH",
+          "value": "10"
+        },
+        {
+          "type": "INCH",
+          "value": "8"
+        }
+      ],
+      "after": [
+        {
+          "type": "OD",
+          "value": "273.1"
+        },
+        {
+          "type": "OD",
+          "value": "219.1"
+        },
+        {
+          "type": "INCH",
+          "value": "10"
+        },
+        {
+          "type": "INCH",
+          "value": "8"
+        }
+      ]
+    }
+  ],
+  "unresolved_conflicts": []
+}

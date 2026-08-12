@@ -110,6 +110,122 @@ class RepairSizeDatasetAnnotationConflictsTest(unittest.TestCase):
         self.assertEqual(repaired[0]["output"]["PRESSURE"], "CL150")
         self.assertEqual(repaired[1]["output"]["PRESSURE"], "PN10")
 
+    def test_preserves_explicit_mpa_without_converting_to_pn(self) -> None:
+        rows = [
+            _row("钢衬聚四氟乙烯三通 RF 1.6MPa DN300×300", pressure="PN16"),
+            _row("FLANGE PN16 20+PTFE -0.1MPa DN80", pressure="PN16"),
+            _row("PIPE ≥10MPa DN15"),
+        ]
+
+        repaired, report = repair_dataset(rows)
+
+        self.assertEqual(repaired[0]["output"]["PRESSURE"], "1.6MPA")
+        self.assertEqual(repaired[1]["output"]["PRESSURE"], "PN16")
+        self.assertEqual(repaired[2]["output"]["PRESSURE"], "")
+        self.assertEqual(report["changes_by_category"]["MPa产品压力误换算为PN"], 1)
+
+    def test_repairs_only_explicitly_reversed_size_and_thickness_pairs(self) -> None:
+        rows = [
+            _row(
+                "偏心异径管;SMLS;BW;φ32Xφ25;3mmX2.5mm",
+                size_items=[{"type": "OD", "value": "32"}, {"type": "OD", "value": "25"}],
+                thickness_items=[{"type": "MM", "value": "2.5"}, {"type": "MM", "value": "3"}],
+            ),
+            _row(
+                "异径三通 S-40 X S-40 DN80x50",
+                size_items=[{"type": "DN", "value": "80"}, {"type": "DN", "value": "50"}],
+                thickness_items=[
+                    {"type": "SCHEDULE", "value": "SCH40"},
+                    {"type": "SCHEDULE", "value": "SCH40"},
+                ],
+            ),
+            _row(
+                'Tee RED 3"*DN65 SCH10S*SCH10S DN80x65',
+                size_items=[{"type": "DN", "value": "65"}, {"type": "INCH", "value": "3"}],
+                thickness_items=[
+                    {"type": "SCHEDULE", "value": "SCH10S"},
+                    {"type": "SCHEDULE", "value": "SCH10S"},
+                ],
+            ),
+        ]
+
+        repaired, report = repair_dataset(rows)
+
+        self.assertEqual(
+            repaired[0]["output"]["THICKNESS_ITEMS"],
+            [{"type": "MM", "value": "3"}, {"type": "MM", "value": "2.5"}],
+        )
+        self.assertEqual(
+            repaired[1]["output"]["SIZE_ITEMS"],
+            [{"type": "DN", "value": "80"}, {"type": "DN", "value": "50"}],
+        )
+        self.assertEqual(
+            repaired[2]["output"]["SIZE_ITEMS"],
+            [{"type": "INCH", "value": "3"}, {"type": "DN", "value": "65"}],
+        )
+        self.assertEqual(report["changes_by_category"]["明示壁厚对与THICKNESS_ITEMS顺序相反"], 1)
+        self.assertEqual(report["changes_by_category"]["明示尺寸对与SIZE_ITEMS顺序相反"], 1)
+
+    def test_repairs_schedule_pair_value_only_from_unique_explicit_pair(self) -> None:
+        rows = [
+            _row(
+                "偏心异径管 φ168.3Xφ114.3 SCH10SXSCH10",
+                size_items=[
+                    {"type": "OD", "value": "168.3"},
+                    {"type": "OD", "value": "114.3"},
+                ],
+                thickness_items=[
+                    {"type": "SCHEDULE", "value": "SCH10S"},
+                    {"type": "SCHEDULE", "value": "SCH10S"},
+                ],
+            )
+        ]
+
+        repaired, report = repair_dataset(rows)
+
+        self.assertEqual(
+            repaired[0]["output"]["THICKNESS_ITEMS"],
+            [
+                {"type": "SCHEDULE", "value": "SCH10S"},
+                {"type": "SCHEDULE", "value": "SCH10"},
+            ],
+        )
+        self.assertEqual(
+            report["changes_by_category"]["明示SCHEDULE壁厚对与旧标签不一致"],
+            1,
+        )
+
+    def test_removes_wall_values_mislabeled_as_od_in_coupled_specs(self) -> None:
+        rows = [
+            _row(
+                'Red.Tee 273.1x9.27-219.1x8.18 BW20 10X8"',
+                size_items=[
+                    {"type": "OD", "value": "273.1"},
+                    {"type": "OD", "value": "9.27"},
+                    {"type": "OD", "value": "219.1"},
+                    {"type": "OD", "value": "8.18"},
+                ],
+                thickness_items=[
+                    {"type": "MM", "value": "9.27"},
+                    {"type": "MM", "value": "8.18"},
+                ],
+            )
+        ]
+
+        repaired, report = repair_dataset(rows)
+
+        self.assertEqual(
+            repaired[0]["output"]["SIZE_ITEMS"],
+            [
+                {"type": "OD", "value": "273.1"},
+                {"type": "OD", "value": "219.1"},
+            ],
+        )
+        self.assertEqual(
+            report["changes_by_category"]["耦合外径壁厚中的壁厚误标为OD"],
+            1,
+        )
+
 
 class SizeDatasetSecondRoundAuditTest(unittest.TestCase):
     def test_inch_parser_handles_chains_fractions_and_dn_boundary(self) -> None:

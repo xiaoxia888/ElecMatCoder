@@ -1,0 +1,339 @@
+{
+  "rows": 71757,
+  "changed_rows": 13,
+  "change_items": 13,
+  "changes_by_category": {
+    "明示SCHEDULE壁厚对与旧标签不一致": 8,
+    "明示壁厚对与THICKNESS_ITEMS顺序相反": 5
+  },
+  "conflicting_inputs_before": 0,
+  "conflicting_inputs_after": 0,
+  "changes": [
+    {
+      "source_index": 4842,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管 SMLS BW GB/T12459-17II THK=5. 0mmX4. 5mm CF415 GB/T13401 DN150xl25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 4844,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管 SMLS BW GB/T12459-17II THK=5. 0mmX4. 5mm 15CrMoG, GB5310 DN100x50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 4845,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管 SMLS BW GB/T12459-17II THK=5. 0mmX4. 5mm CF415 GB/T13401 DN150xl00",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 4846,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管 SMLS BW GB/T12459-17II THK=5. 0mmX4. 5mm CF41.5 GB/T13401 DN150x65",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11164,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管 SMLS BW GB/T12459-17II THK=5. 0mmX4. 5mm CF415 GB/T13401 DN150x80",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11693,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ168.3Xφ114.3;SCH10SXSCH10",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11694,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ168.3Xφ114.3;SCH10SXSCH10 DN150X100",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11705,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ355.6Xφ219.1;SCH10SXSCH10",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11708,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ219.1Xφ168.3;SCH10SXSCH10",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11709,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ219.1Xφ168.3;SCH10SXSCH10 DN200X150",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11711,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ168.3Xφ139.7;SCH10SXSCH10",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11712,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ168.3Xφ139.7;SCH10SXSCH10 DN150X125",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    },
+    {
+      "source_index": 11722,
+      "category": "明示SCHEDULE壁厚对与旧标签不一致",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(Ia);GB/T13401;φ219.1Xφ114.3;SCH10SXSCH10",
+      "before": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        }
+      ],
+      "after": [
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10S"
+        },
+        {
+          "type": "SCHEDULE",
+          "value": "SCH10"
+        }
+      ]
+    }
+  ],
+  "unresolved_conflicts": []
+}

@@ -6,10 +6,25 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from apps.trainer.qwen3_fte.src.prepare_size_dataset_v2_conversion import (
+    normalize_items,
+    normalize_schedule_token,
+    normalized_mapping_text,
+    size_pair_mappings,
+    thickness_pair_mappings,
+    topology_from_text,
+)
 
 
 INSTALLATION_DN_RE = re.compile(
@@ -21,6 +36,19 @@ CLASS_PRESSURE_RE = re.compile(
     re.IGNORECASE,
 )
 PN_PRESSURE_RE = re.compile(r"(?<![A-Z])PN\s*[.:=-]?\s*(\d+)(?![.\d])", re.IGNORECASE)
+MPA_PRESSURE_RE = re.compile(r"(?<![\d.])(\d+(?:\.\d+)?)\s*MPA\b", re.IGNORECASE)
+EXPLICIT_SCHEDULE_PAIR_RE = re.compile(
+    r"(?<![A-Z0-9])(?P<left>SCH(?:EDULE)?\s*\.?\s*-?\s*\d+\s*S?)\s*"
+    r"[X×*]\s*(?P<right>SCH(?:EDULE)?\s*\.?\s*-?\s*\d+\s*S?)(?![A-Z0-9])",
+    re.IGNORECASE,
+)
+COUPLED_OD_WALL_PAIR_RE = re.compile(
+    r"(?<![A-Z0-9.])(?P<size_a>\d+(?:\.\d+)?)\s*[X×*]\s*"
+    r"(?P<wall_a>\d+(?:\.\d+)?)\s*-\s*"
+    r"(?P<size_b>\d+(?:\.\d+)?)\s*[X×*]\s*"
+    r"(?P<wall_b>\d+(?:\.\d+)?)(?![A-Z0-9.])",
+    re.IGNORECASE,
+)
 
 
 def _canonical_number(value: str) -> str:
@@ -54,6 +82,53 @@ def _conflicts(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return result
 
 
+PairMappingBuilder = Callable[
+    [str, list[dict[str, str]], str, str],
+    list[dict[str, Any]],
+]
+
+
+def _reverse_explicit_pair_if_needed(
+    input_text: str,
+    output: dict[str, Any],
+    *,
+    field: str,
+    left_role: str,
+    right_role: str,
+    mapping_builder: PairMappingBuilder,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]] | None:
+    """Reverse a two-item label only when the original text proves it is reversed."""
+    items = normalize_items(output, field)
+    if len(items) != 2:
+        return None
+
+    mappings = mapping_builder(input_text, items, left_role, right_role)
+    role_sources: dict[str, set[int]] = defaultdict(set)
+    for mapping in mappings:
+        role_sources[str(mapping.get("ROLE") or "")].add(int(mapping["source_index"]))
+
+    if role_sources.get(left_role) != {1} or role_sources.get(right_role) != {0}:
+        return None
+
+    before = deepcopy(output[field])
+    output[field] = [deepcopy(before[1]), deepcopy(before[0])]
+    return before, deepcopy(output[field])
+
+
+def _explicit_schedule_pair(input_text: str) -> tuple[str, str] | None:
+    pairs = {
+        (
+            normalize_schedule_token(match.group("left")),
+            normalize_schedule_token(match.group("right")),
+        )
+        for match in EXPLICIT_SCHEDULE_PAIR_RE.finditer(
+            normalized_mapping_text(input_text)
+        )
+    }
+    pairs = {pair for pair in pairs if pair[0] and pair[1]}
+    return next(iter(pairs)) if len(pairs) == 1 else None
+
+
 def repair_dataset(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     repaired = deepcopy(rows)
     changes: list[dict[str, Any]] = []
@@ -64,6 +139,135 @@ def repair_dataset(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], di
         output = row.get("output")
         if not isinstance(output, dict):
             continue
+
+        topology, _ = topology_from_text(input_text)
+        pair_rules: list[tuple[str, str, str, PairMappingBuilder, str]] = []
+        if topology == "BRANCH":
+            pair_rules = [
+                ("SIZE_ITEMS", "MAIN", "BRANCH", size_pair_mappings, "明示尺寸对与SIZE_ITEMS顺序相反"),
+                (
+                    "THICKNESS_ITEMS",
+                    "MAIN",
+                    "BRANCH",
+                    thickness_pair_mappings,
+                    "明示壁厚对与THICKNESS_ITEMS顺序相反",
+                ),
+            ]
+        elif topology == "REDUCER":
+            pair_rules = [
+                ("SIZE_ITEMS", "END_A", "END_B", size_pair_mappings, "明示尺寸对与SIZE_ITEMS顺序相反"),
+                (
+                    "THICKNESS_ITEMS",
+                    "END_A",
+                    "END_B",
+                    thickness_pair_mappings,
+                    "明示壁厚对与THICKNESS_ITEMS顺序相反",
+                ),
+            ]
+
+        for field, left_role, right_role, mapping_builder, category in pair_rules:
+            reversed_pair = _reverse_explicit_pair_if_needed(
+                input_text,
+                output,
+                field=field,
+                left_role=left_role,
+                right_role=right_role,
+                mapping_builder=mapping_builder,
+            )
+            if reversed_pair is None:
+                continue
+            before, after = reversed_pair
+            changes.append(
+                {
+                    "source_index": index,
+                    "category": category,
+                    "input": input_text,
+                    "before": before,
+                    "after": after,
+                }
+            )
+
+        explicit_schedule_pair = _explicit_schedule_pair(input_text)
+        thickness_items = output.get("THICKNESS_ITEMS")
+        if (
+            explicit_schedule_pair is not None
+            and isinstance(thickness_items, list)
+            and len(thickness_items) == 2
+            and all(
+                isinstance(item, dict) and item.get("type") == "SCHEDULE"
+                for item in thickness_items
+            )
+        ):
+            expected = [
+                {"type": "SCHEDULE", "value": explicit_schedule_pair[0]},
+                {"type": "SCHEDULE", "value": explicit_schedule_pair[1]},
+            ]
+            if thickness_items != expected:
+                before = deepcopy(thickness_items)
+                output["THICKNESS_ITEMS"] = expected
+                changes.append(
+                    {
+                        "source_index": index,
+                        "category": "明示SCHEDULE壁厚对与旧标签不一致",
+                        "input": input_text,
+                        "before": before,
+                        "after": deepcopy(expected),
+                    }
+                )
+
+        coupled_specs = list(
+            COUPLED_OD_WALL_PAIR_RE.finditer(normalized_mapping_text(input_text))
+        )
+        size_items = output.get("SIZE_ITEMS")
+        thickness_items = output.get("THICKNESS_ITEMS")
+        if (
+            len(coupled_specs) == 1
+            and isinstance(size_items, list)
+            and isinstance(thickness_items, list)
+            and len(thickness_items) == 2
+            and all(
+                isinstance(item, dict) and item.get("type") == "MM"
+                for item in thickness_items
+            )
+        ):
+            match = coupled_specs[0]
+            expected_size = [
+                {"type": "OD", "value": _canonical_number(match.group("size_a"))},
+                {"type": "OD", "value": _canonical_number(match.group("size_b"))},
+            ]
+            expected_wall = [
+                {"type": "MM", "value": _canonical_number(match.group("wall_a"))},
+                {"type": "MM", "value": _canonical_number(match.group("wall_b"))},
+            ]
+            interleaved = [
+                expected_size[0],
+                {"type": "OD", "value": expected_wall[0]["value"]},
+                expected_size[1],
+                {"type": "OD", "value": expected_wall[1]["value"]},
+            ]
+            od_positions = [
+                position
+                for position, item in enumerate(size_items)
+                if isinstance(item, dict) and item.get("type") == "OD"
+            ]
+            od_items = [size_items[position] for position in od_positions]
+            if od_items == interleaved and thickness_items == expected_wall:
+                before = deepcopy(size_items)
+                mistaken_positions = {od_positions[1], od_positions[3]}
+                output["SIZE_ITEMS"] = [
+                    item
+                    for position, item in enumerate(size_items)
+                    if position not in mistaken_positions
+                ]
+                changes.append(
+                    {
+                        "source_index": index,
+                        "category": "耦合外径壁厚中的壁厚误标为OD",
+                        "input": input_text,
+                        "before": before,
+                        "after": deepcopy(output["SIZE_ITEMS"]),
+                    }
+                )
 
         installation_match = INSTALLATION_DN_RE.search(input_text)
         size_items = output.get("SIZE_ITEMS")
@@ -111,6 +315,26 @@ def repair_dataset(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], di
                     "category": "明确整数PN压力漏标",
                     "input": input_text,
                     "before": "",
+                    "after": pressure,
+                }
+            )
+
+        mpa_matches = MPA_PRESSURE_RE.findall(input_text)
+        current_pressure = str(output.get("PRESSURE") or "").strip()
+        if (
+            len(mpa_matches) == 1
+            and current_pressure.upper().startswith("PN")
+            and not PN_PRESSURE_RE.search(input_text)
+            and not CLASS_PRESSURE_RE.search(input_text)
+        ):
+            pressure = f"{mpa_matches[0]}MPA"
+            output["PRESSURE"] = pressure
+            changes.append(
+                {
+                    "source_index": index,
+                    "category": "MPa产品压力误换算为PN",
+                    "input": input_text,
+                    "before": current_pressure,
                     "after": pressure,
                 }
             )

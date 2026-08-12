@@ -3,7 +3,7 @@ import { downloadBlob, formatPercent } from '@/lib/utils'
 import type { EncodingResult, FieldPayload, ImportedRow } from '@/types/encoding'
 import { formatFieldCode, formatFieldValue, getDifficultyLevel, getRouteReason, getTypeCategory } from '@/lib/formatters'
 
-const DIFFICULTY_HEADER = '分流最终难度（0=困难，1=中等，2=简单）'
+const DIFFICULTY_HEADER = '分流最终难度（0=困难，2=简单）'
 
 // 导出时占位符 — 视为空值
 function blankDash(value: string): string {

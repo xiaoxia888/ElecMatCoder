@@ -1,0 +1,963 @@
+{
+  "source": "apps/trainer/qwen3_fte/output/按8类拆分数据集/尺寸壁厚磅级/V2转换审核/02_V2已审核通过数据.json",
+  "strategy": {
+    "description_skeleton_grouped": true,
+    "validation_actual_value_must_remain_in_train": true,
+    "optimized_dimensions": [
+      "输出结构",
+      "描述表达形式",
+      "尺寸壁厚磅级实际值"
+    ],
+    "target_val_ratio": 0.1,
+    "common_feature_min_count": 20,
+    "base_seed": 20260815,
+    "attempts": 240,
+    "selected_attempt": 204,
+    "selected_attempt_seed": 41520802,
+    "objective": 4.127907
+  },
+  "counts": {
+    "total_rows": 54776,
+    "train_rows": 49298,
+    "val_rows": 5478,
+    "actual_val_ratio_percent": 10.0007,
+    "total_skeleton_groups": 10560,
+    "train_skeleton_groups": 9396,
+    "val_skeleton_groups": 1164,
+    "skeleton_overlap": 0,
+    "normalized_input_overlap": 0
+  },
+  "quality": {
+    "ratio_error_percentage_points": 0.0007,
+    "structure": {
+      "common_feature_count": 96,
+      "common_feature_missing_in_val": 1,
+      "splittable_common_feature_missing_in_val": 0,
+      "inseparable_common_feature_count": 1,
+      "inseparable_common_features": [
+        {
+          "feature": "BODY/SINGLE[S:DN,OD;T:MM] | L:Y;P:Y",
+          "total_count": 30,
+          "train_count": 30,
+          "val_count": 0,
+          "val_share_percent": 0.0,
+          "deviation_percentage_points": 10.0,
+          "skeleton_group_count": 1,
+          "splittable": false
+        }
+      ],
+      "weighted_mean_deviation_percentage_points": 0.367,
+      "max_deviation_percentage_points": 11.429,
+      "top_deviations": [
+        {
+          "feature": "BODY/MAIN[S:INCH,DN;T:-] > BODY/BRANCH[S:INCH,DN;T:SCHEDULE] | L:N;P:N",
+          "total_count": 28,
+          "train_count": 22,
+          "val_count": 6,
+          "val_share_percent": 21.429,
+          "deviation_percentage_points": 11.429,
+          "skeleton_group_count": 2,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:DN,OD;T:MM] | L:Y;P:Y",
+          "total_count": 30,
+          "train_count": 30,
+          "val_count": 0,
+          "val_share_percent": 0.0,
+          "deviation_percentage_points": 10.0,
+          "skeleton_group_count": 1,
+          "splittable": false
+        },
+        {
+          "feature": "BODY/MAIN[S:OD,DN;T:SCHEDULE] | L:N;P:N",
+          "total_count": 85,
+          "train_count": 69,
+          "val_count": 16,
+          "val_share_percent": 18.824,
+          "deviation_percentage_points": 8.824,
+          "skeleton_group_count": 15,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:INCH;T:MM] | L:N;P:N",
+          "total_count": 59,
+          "train_count": 57,
+          "val_count": 2,
+          "val_share_percent": 3.39,
+          "deviation_percentage_points": 6.61,
+          "skeleton_group_count": 14,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN,INCH;T:SCHEDULE] > BODY/BRANCH[S:-;T:SCHEDULE] | L:N;P:N",
+          "total_count": 27,
+          "train_count": 23,
+          "val_count": 4,
+          "val_share_percent": 14.815,
+          "deviation_percentage_points": 4.815,
+          "skeleton_group_count": 5,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN,INCH;T:-] > BODY/BRANCH[S:DN,INCH;T:-] | L:N;P:Y",
+          "total_count": 28,
+          "train_count": 24,
+          "val_count": 4,
+          "val_share_percent": 14.286,
+          "deviation_percentage_points": 4.286,
+          "skeleton_group_count": 8,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:INCH,DN;T:MM] > BODY/BRANCH[S:INCH,DN;T:MM] | L:N;P:N",
+          "total_count": 21,
+          "train_count": 18,
+          "val_count": 3,
+          "val_share_percent": 14.286,
+          "deviation_percentage_points": 4.286,
+          "skeleton_group_count": 3,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/BRANCH[S:DN;T:-] | L:N;P:Y",
+          "total_count": 36,
+          "train_count": 31,
+          "val_count": 5,
+          "val_share_percent": 13.889,
+          "deviation_percentage_points": 3.889,
+          "skeleton_group_count": 14,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:INCH;T:SCHEDULE] > BODY/BRANCH[S:-;T:SCHEDULE] | L:N;P:N",
+          "total_count": 22,
+          "train_count": 19,
+          "val_count": 3,
+          "val_share_percent": 13.636,
+          "deviation_percentage_points": 3.636,
+          "skeleton_group_count": 10,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:DN,INCH;T:MM] | L:N;P:Y",
+          "total_count": 68,
+          "train_count": 59,
+          "val_count": 9,
+          "val_share_percent": 13.235,
+          "deviation_percentage_points": 3.235,
+          "skeleton_group_count": 15,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:OD,DN;T:MM] | L:N;P:N",
+          "total_count": 159,
+          "train_count": 138,
+          "val_count": 21,
+          "val_share_percent": 13.208,
+          "deviation_percentage_points": 3.208,
+          "skeleton_group_count": 27,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN,INCH;T:SCHEDULE] > BODY/BRANCH[S:DN,INCH;T:SCHEDULE] | L:N;P:N",
+          "total_count": 114,
+          "train_count": 99,
+          "val_count": 15,
+          "val_share_percent": 13.158,
+          "deviation_percentage_points": 3.158,
+          "skeleton_group_count": 27,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:INCH,DN;T:SCHEDULE] > BODY/BRANCH[S:INCH,DN;T:SCHEDULE] | L:N;P:Y",
+          "total_count": 38,
+          "train_count": 33,
+          "val_count": 5,
+          "val_share_percent": 13.158,
+          "deviation_percentage_points": 3.158,
+          "skeleton_group_count": 7,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN;T:-] > BODY/BRANCH[S:DN;T:MM] | L:N;P:N",
+          "total_count": 107,
+          "train_count": 93,
+          "val_count": 14,
+          "val_share_percent": 13.084,
+          "deviation_percentage_points": 3.084,
+          "skeleton_group_count": 19,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:INCH,DN;T:SCHEDULE] | L:N;P:Y",
+          "total_count": 131,
+          "train_count": 114,
+          "val_count": 17,
+          "val_share_percent": 12.977,
+          "deviation_percentage_points": 2.977,
+          "skeleton_group_count": 20,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/END_A[S:DN,OD;T:MM] > BODY/END_B[S:DN,OD;T:MM] | L:N;P:N",
+          "total_count": 116,
+          "train_count": 101,
+          "val_count": 15,
+          "val_share_percent": 12.931,
+          "deviation_percentage_points": 2.931,
+          "skeleton_group_count": 16,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/END_A[S:OD,DN;T:SCHEDULE] > BODY/END_B[S:OD,DN;T:SCHEDULE] | L:N;P:N",
+          "total_count": 213,
+          "train_count": 187,
+          "val_count": 26,
+          "val_share_percent": 12.207,
+          "deviation_percentage_points": 2.207,
+          "skeleton_group_count": 25,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN;T:MM] > BODY/BRANCH[S:DN;T:MM] | L:N;P:Y",
+          "total_count": 25,
+          "train_count": 23,
+          "val_count": 2,
+          "val_share_percent": 8.0,
+          "deviation_percentage_points": 2.0,
+          "skeleton_group_count": 10,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:OD;T:SCHEDULE] | L:N;P:Y",
+          "total_count": 74,
+          "train_count": 68,
+          "val_count": 6,
+          "val_share_percent": 8.108,
+          "deviation_percentage_points": 1.892,
+          "skeleton_group_count": 7,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:OD,DN;T:MM] | L:N;P:Y",
+          "total_count": 86,
+          "train_count": 79,
+          "val_count": 7,
+          "val_share_percent": 8.14,
+          "deviation_percentage_points": 1.86,
+          "skeleton_group_count": 6,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:OD;T:MM] > BODY/BRANCH[S:OD;T:MM] | L:N;P:N",
+          "total_count": 272,
+          "train_count": 240,
+          "val_count": 32,
+          "val_share_percent": 11.765,
+          "deviation_percentage_points": 1.765,
+          "skeleton_group_count": 33,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:INCH,DN;T:MM] | L:N;P:N",
+          "total_count": 77,
+          "train_count": 68,
+          "val_count": 9,
+          "val_share_percent": 11.688,
+          "deviation_percentage_points": 1.688,
+          "skeleton_group_count": 9,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:DN,INCH;T:MM] | L:N;P:N",
+          "total_count": 60,
+          "train_count": 53,
+          "val_count": 7,
+          "val_share_percent": 11.667,
+          "deviation_percentage_points": 1.667,
+          "skeleton_group_count": 21,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/END_A[S:DN;T:SCHEDULE] > BODY/END_B[S:DN;T:SCHEDULE] | L:N;P:Y",
+          "total_count": 24,
+          "train_count": 22,
+          "val_count": 2,
+          "val_share_percent": 8.333,
+          "deviation_percentage_points": 1.667,
+          "skeleton_group_count": 8,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:INCH;T:MM] | L:N;P:N",
+          "total_count": 336,
+          "train_count": 297,
+          "val_count": 39,
+          "val_share_percent": 11.607,
+          "deviation_percentage_points": 1.607,
+          "skeleton_group_count": 50,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN,INCH;T:SCHEDULE] > BODY/BRANCH[S:INCH;T:SCHEDULE] | L:N;P:N",
+          "total_count": 70,
+          "train_count": 62,
+          "val_count": 8,
+          "val_share_percent": 11.429,
+          "deviation_percentage_points": 1.429,
+          "skeleton_group_count": 19,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/END_A[S:DN;T:MM] > BODY/END_B[S:DN;T:SCHEDULE] | L:N;P:N",
+          "total_count": 46,
+          "train_count": 42,
+          "val_count": 4,
+          "val_share_percent": 8.696,
+          "deviation_percentage_points": 1.304,
+          "skeleton_group_count": 26,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:OD;T:MM] | L:Y;P:N",
+          "total_count": 62,
+          "train_count": 55,
+          "val_count": 7,
+          "val_share_percent": 11.29,
+          "deviation_percentage_points": 1.29,
+          "skeleton_group_count": 7,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/SINGLE[S:DN,INCH;T:SCHEDULE] | L:N;P:Y",
+          "total_count": 319,
+          "train_count": 283,
+          "val_count": 36,
+          "val_share_percent": 11.285,
+          "deviation_percentage_points": 1.285,
+          "skeleton_group_count": 36,
+          "splittable": true
+        },
+        {
+          "feature": "BODY/MAIN[S:DN,OD;T:MM] > BODY/BRANCH[S:DN,OD;T:MM] | L:N;P:N",
+          "total_count": 81,
+          "train_count": 72,
+          "val_count": 9,
+          "val_share_percent": 11.111,
+          "deviation_percentage_points": 1.111,
+          "skeleton_group_count": 8,
+          "splittable": true
+        }
+      ]
+    },
+    "expression": {
+      "common_feature_count": 22,
+      "common_feature_missing_in_val": 0,
+      "splittable_common_feature_missing_in_val": 0,
+      "inseparable_common_feature_count": 0,
+      "inseparable_common_features": [],
+      "weighted_mean_deviation_percentage_points": 0.169,
+      "max_deviation_percentage_points": 12.093,
+      "top_deviations": [
+        {
+          "feature": "LAYOUT:SPACED",
+          "total_count": 86,
+          "train_count": 67,
+          "val_count": 19,
+          "val_share_percent": 22.093,
+          "deviation_percentage_points": 12.093,
+          "skeleton_group_count": 19,
+          "splittable": true
+        },
+        {
+          "feature": "STRUCT:LINING",
+          "total_count": 33,
+          "train_count": 32,
+          "val_count": 1,
+          "val_share_percent": 3.03,
+          "deviation_percentage_points": 6.97,
+          "skeleton_group_count": 10,
+          "splittable": true
+        },
+        {
+          "feature": "LAYOUT:MULTILINE",
+          "total_count": 308,
+          "train_count": 263,
+          "val_count": 45,
+          "val_share_percent": 14.61,
+          "deviation_percentage_points": 4.61,
+          "skeleton_group_count": 100,
+          "splittable": true
+        },
+        {
+          "feature": "FORM:SLASH_PAIR",
+          "total_count": 1377,
+          "train_count": 1183,
+          "val_count": 194,
+          "val_share_percent": 14.089,
+          "deviation_percentage_points": 4.089,
+          "skeleton_group_count": 422,
+          "splittable": true
+        },
+        {
+          "feature": "THK:STD_XS",
+          "total_count": 3024,
+          "train_count": 2653,
+          "val_count": 371,
+          "val_share_percent": 12.269,
+          "deviation_percentage_points": 2.269,
+          "skeleton_group_count": 881,
+          "splittable": true
+        },
+        {
+          "feature": "LENGTH:ANCHOR",
+          "total_count": 102,
+          "train_count": 93,
+          "val_count": 9,
+          "val_share_percent": 8.824,
+          "deviation_percentage_points": 1.176,
+          "skeleton_group_count": 27,
+          "splittable": true
+        },
+        {
+          "feature": "THK:MM",
+          "total_count": 9744,
+          "train_count": 8872,
+          "val_count": 872,
+          "val_share_percent": 8.949,
+          "deviation_percentage_points": 1.051,
+          "skeleton_group_count": 1787,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:NPS",
+          "total_count": 1218,
+          "train_count": 1109,
+          "val_count": 109,
+          "val_share_percent": 8.949,
+          "deviation_percentage_points": 1.051,
+          "skeleton_group_count": 210,
+          "splittable": true
+        },
+        {
+          "feature": "PRESSURE:PN",
+          "total_count": 3768,
+          "train_count": 3425,
+          "val_count": 343,
+          "val_share_percent": 9.103,
+          "deviation_percentage_points": 0.897,
+          "skeleton_group_count": 644,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:INCH",
+          "total_count": 4603,
+          "train_count": 4108,
+          "val_count": 495,
+          "val_share_percent": 10.754,
+          "deviation_percentage_points": 0.754,
+          "skeleton_group_count": 1020,
+          "splittable": true
+        },
+        {
+          "feature": "PRESSURE:CLASS",
+          "total_count": 11034,
+          "train_count": 9890,
+          "val_count": 1144,
+          "val_share_percent": 10.368,
+          "deviation_percentage_points": 0.368,
+          "skeleton_group_count": 2182,
+          "splittable": true
+        },
+        {
+          "feature": "STRUCT:BRANCH",
+          "total_count": 11775,
+          "train_count": 10638,
+          "val_count": 1137,
+          "val_share_percent": 9.656,
+          "deviation_percentage_points": 0.344,
+          "skeleton_group_count": 2418,
+          "splittable": true
+        },
+        {
+          "feature": "LANG:EN",
+          "total_count": 16679,
+          "train_count": 14986,
+          "val_count": 1693,
+          "val_share_percent": 10.15,
+          "deviation_percentage_points": 0.15,
+          "skeleton_group_count": 3025,
+          "splittable": true
+        },
+        {
+          "feature": "FORM:X_PAIR",
+          "total_count": 22463,
+          "train_count": 20234,
+          "val_count": 2229,
+          "val_share_percent": 9.923,
+          "deviation_percentage_points": 0.077,
+          "skeleton_group_count": 3995,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:DN",
+          "total_count": 44138,
+          "train_count": 39692,
+          "val_count": 4446,
+          "val_share_percent": 10.073,
+          "deviation_percentage_points": 0.073,
+          "skeleton_group_count": 8454,
+          "splittable": true
+        },
+        {
+          "feature": "LANG:MIXED",
+          "total_count": 38097,
+          "train_count": 34312,
+          "val_count": 3785,
+          "val_share_percent": 9.935,
+          "deviation_percentage_points": 0.065,
+          "skeleton_group_count": 7535,
+          "splittable": true
+        },
+        {
+          "feature": "THK:ANCHOR",
+          "total_count": 1845,
+          "train_count": 1661,
+          "val_count": 184,
+          "val_share_percent": 9.973,
+          "deviation_percentage_points": 0.027,
+          "skeleton_group_count": 640,
+          "splittable": true
+        },
+        {
+          "feature": "LAYOUT:SINGLELINE",
+          "total_count": 54468,
+          "train_count": 49035,
+          "val_count": 5433,
+          "val_share_percent": 9.975,
+          "deviation_percentage_points": 0.025,
+          "skeleton_group_count": 10486,
+          "splittable": true
+        },
+        {
+          "feature": "LAYOUT:COMPACT",
+          "total_count": 54690,
+          "train_count": 49231,
+          "val_count": 5459,
+          "val_share_percent": 9.982,
+          "deviation_percentage_points": 0.018,
+          "skeleton_group_count": 10541,
+          "splittable": true
+        },
+        {
+          "feature": "STRUCT:REDUCING",
+          "total_count": 10571,
+          "train_count": 9515,
+          "val_count": 1056,
+          "val_share_percent": 9.99,
+          "deviation_percentage_points": 0.01,
+          "skeleton_group_count": 2059,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD_SYMBOL",
+          "total_count": 6484,
+          "train_count": 5836,
+          "val_count": 648,
+          "val_share_percent": 9.994,
+          "deviation_percentage_points": 0.006,
+          "skeleton_group_count": 738,
+          "splittable": true
+        },
+        {
+          "feature": "THK:SCH",
+          "total_count": 26504,
+          "train_count": 23855,
+          "val_count": 2649,
+          "val_share_percent": 9.995,
+          "deviation_percentage_points": 0.005,
+          "skeleton_group_count": 4650,
+          "splittable": true
+        }
+      ]
+    },
+    "actual_value": {
+      "common_feature_count": 226,
+      "common_feature_missing_in_val": 0,
+      "splittable_common_feature_missing_in_val": 0,
+      "inseparable_common_feature_count": 0,
+      "inseparable_common_features": [],
+      "weighted_mean_deviation_percentage_points": 1.15,
+      "max_deviation_percentage_points": 18.859,
+      "top_deviations": [
+        {
+          "feature": "THICKNESS:SCHEDULE:SCH5S",
+          "total_count": 149,
+          "train_count": 106,
+          "val_count": 43,
+          "val_share_percent": 28.859,
+          "deviation_percentage_points": 18.859,
+          "skeleton_group_count": 36,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:SCHEDULE:SCH140",
+          "total_count": 27,
+          "train_count": 20,
+          "val_count": 7,
+          "val_share_percent": 25.926,
+          "deviation_percentage_points": 15.926,
+          "skeleton_group_count": 13,
+          "splittable": true
+        },
+        {
+          "feature": "PRESSURE:PN16/PN10",
+          "total_count": 71,
+          "train_count": 53,
+          "val_count": 18,
+          "val_share_percent": 25.352,
+          "deviation_percentage_points": 15.352,
+          "skeleton_group_count": 17,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:139.7",
+          "total_count": 75,
+          "train_count": 57,
+          "val_count": 18,
+          "val_share_percent": 24.0,
+          "deviation_percentage_points": 14.0,
+          "skeleton_group_count": 52,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:8.38",
+          "total_count": 59,
+          "train_count": 46,
+          "val_count": 13,
+          "val_share_percent": 22.034,
+          "deviation_percentage_points": 12.034,
+          "skeleton_group_count": 43,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:820",
+          "total_count": 24,
+          "train_count": 19,
+          "val_count": 5,
+          "val_share_percent": 20.833,
+          "deviation_percentage_points": 10.833,
+          "skeleton_group_count": 22,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:DN:850",
+          "total_count": 29,
+          "train_count": 23,
+          "val_count": 6,
+          "val_share_percent": 20.69,
+          "deviation_percentage_points": 10.69,
+          "skeleton_group_count": 26,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:50",
+          "total_count": 20,
+          "train_count": 16,
+          "val_count": 4,
+          "val_share_percent": 20.0,
+          "deviation_percentage_points": 10.0,
+          "skeleton_group_count": 10,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:630",
+          "total_count": 37,
+          "train_count": 30,
+          "val_count": 7,
+          "val_share_percent": 18.919,
+          "deviation_percentage_points": 8.919,
+          "skeleton_group_count": 33,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:1.5",
+          "total_count": 72,
+          "train_count": 71,
+          "val_count": 1,
+          "val_share_percent": 1.389,
+          "deviation_percentage_points": 8.611,
+          "skeleton_group_count": 24,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:3.2",
+          "total_count": 208,
+          "train_count": 205,
+          "val_count": 3,
+          "val_share_percent": 1.442,
+          "deviation_percentage_points": 8.558,
+          "skeleton_group_count": 90,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:31",
+          "total_count": 27,
+          "train_count": 22,
+          "val_count": 5,
+          "val_share_percent": 18.519,
+          "deviation_percentage_points": 8.519,
+          "skeleton_group_count": 12,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:914",
+          "total_count": 27,
+          "train_count": 22,
+          "val_count": 5,
+          "val_share_percent": 18.519,
+          "deviation_percentage_points": 8.519,
+          "skeleton_group_count": 27,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:1016",
+          "total_count": 38,
+          "train_count": 31,
+          "val_count": 7,
+          "val_share_percent": 18.421,
+          "deviation_percentage_points": 8.421,
+          "skeleton_group_count": 32,
+          "splittable": true
+        },
+        {
+          "feature": "PRESSURE:2.5MPA",
+          "total_count": 61,
+          "train_count": 60,
+          "val_count": 1,
+          "val_share_percent": 1.639,
+          "deviation_percentage_points": 8.361,
+          "skeleton_group_count": 12,
+          "splittable": true
+        },
+        {
+          "feature": "PRESSURE:CL2000",
+          "total_count": 59,
+          "train_count": 58,
+          "val_count": 1,
+          "val_share_percent": 1.695,
+          "deviation_percentage_points": 8.305,
+          "skeleton_group_count": 25,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:2.9",
+          "total_count": 156,
+          "train_count": 153,
+          "val_count": 3,
+          "val_share_percent": 1.923,
+          "deviation_percentage_points": 8.077,
+          "skeleton_group_count": 74,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:15",
+          "total_count": 42,
+          "train_count": 41,
+          "val_count": 1,
+          "val_share_percent": 2.381,
+          "deviation_percentage_points": 7.619,
+          "skeleton_group_count": 22,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:141.3",
+          "total_count": 39,
+          "train_count": 38,
+          "val_count": 1,
+          "val_share_percent": 2.564,
+          "deviation_percentage_points": 7.436,
+          "skeleton_group_count": 31,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:SCHEDULE:SCH5",
+          "total_count": 23,
+          "train_count": 19,
+          "val_count": 4,
+          "val_share_percent": 17.391,
+          "deviation_percentage_points": 7.391,
+          "skeleton_group_count": 13,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:4.55",
+          "total_count": 52,
+          "train_count": 43,
+          "val_count": 9,
+          "val_share_percent": 17.308,
+          "deviation_percentage_points": 7.308,
+          "skeleton_group_count": 40,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:DN:2000",
+          "total_count": 35,
+          "train_count": 29,
+          "val_count": 6,
+          "val_share_percent": 17.143,
+          "deviation_percentage_points": 7.143,
+          "skeleton_group_count": 27,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:7.1",
+          "total_count": 67,
+          "train_count": 65,
+          "val_count": 2,
+          "val_share_percent": 2.985,
+          "deviation_percentage_points": 7.015,
+          "skeleton_group_count": 48,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:DN:1800",
+          "total_count": 53,
+          "train_count": 44,
+          "val_count": 9,
+          "val_share_percent": 16.981,
+          "deviation_percentage_points": 6.981,
+          "skeleton_group_count": 40,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:42.2",
+          "total_count": 33,
+          "train_count": 32,
+          "val_count": 1,
+          "val_share_percent": 3.03,
+          "deviation_percentage_points": 6.97,
+          "skeleton_group_count": 23,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:DN:550",
+          "total_count": 29,
+          "train_count": 28,
+          "val_count": 1,
+          "val_share_percent": 3.448,
+          "deviation_percentage_points": 6.552,
+          "skeleton_group_count": 23,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:OD:34",
+          "total_count": 29,
+          "train_count": 28,
+          "val_count": 1,
+          "val_share_percent": 3.448,
+          "deviation_percentage_points": 6.552,
+          "skeleton_group_count": 16,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:SCHEDULE:STD",
+          "total_count": 2558,
+          "train_count": 2141,
+          "val_count": 417,
+          "val_share_percent": 16.302,
+          "deviation_percentage_points": 6.302,
+          "skeleton_group_count": 610,
+          "splittable": true
+        },
+        {
+          "feature": "SIZE:DN:8",
+          "total_count": 26,
+          "train_count": 25,
+          "val_count": 1,
+          "val_share_percent": 3.846,
+          "deviation_percentage_points": 6.154,
+          "skeleton_group_count": 24,
+          "splittable": true
+        },
+        {
+          "feature": "THICKNESS:MM:8.8",
+          "total_count": 26,
+          "train_count": 25,
+          "val_count": 1,
+          "val_share_percent": 3.846,
+          "deviation_percentage_points": 6.154,
+          "skeleton_group_count": 17,
+          "splittable": true
+        }
+      ]
+    }
+  },
+  "actual_value_field_summary": [
+    {
+      "field": "LENGTH",
+      "total_occurrences": 145,
+      "train_occurrences": 134,
+      "val_occurrences": 11,
+      "unique_values": 23
+    },
+    {
+      "field": "PRESSURE",
+      "total_occurrences": 16671,
+      "train_occurrences": 15008,
+      "val_occurrences": 1663,
+      "unique_values": 30
+    },
+    {
+      "field": "SIZE",
+      "total_occurrences": 82275,
+      "train_occurrences": 73929,
+      "val_occurrences": 8346,
+      "unique_values": 220
+    },
+    {
+      "field": "THICKNESS",
+      "total_occurrences": 58852,
+      "train_occurrences": 52939,
+      "val_occurrences": 5913,
+      "unique_values": 153
+    }
+  ],
+  "validation_values_missing_from_train": [],
+  "acceptance_checks": [
+    {
+      "check": "验证集比例与目标相差不超过0.25个百分点",
+      "passed": true
+    },
+    {
+      "check": "描述表达骨架无跨集合泄漏",
+      "passed": true
+    },
+    {
+      "check": "归一化原文无跨集合重复",
+      "passed": true
+    },
+    {
+      "check": "验证集实际值均在训练集保留样本",
+      "passed": true
+    },
+    {
+      "check": "可分的常见输出结构在验证集无缺失",
+      "passed": true
+    },
+    {
+      "check": "可分的常见表达标签在验证集无缺失",
+      "passed": true
+    },
+    {
+      "check": "可分的常见实际值在验证集无缺失",
+      "passed": true
+    },
+    {
+      "check": "三类特征加权平均偏差均不超过1.5个百分点",
+      "passed": true
+    }
+  ],
+  "accepted": true
+}

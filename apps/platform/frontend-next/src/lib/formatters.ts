@@ -2,7 +2,6 @@ import type { EncodingResult, FieldPayload, JsonValue } from '@/types/encoding'
 
 const DIFFICULTY_LABELS: Record<number, string> = {
   0: '困难',
-  1: '中等',
   2: '简单',
 }
 
@@ -15,7 +14,10 @@ export function getDifficultyLevel(result?: EncodingResult): number | null {
   if (rawLevel == null) return null
 
   const level = Number(rawLevel)
-  return level === 0 || level === 1 || level === 2 ? level : null
+  // 1 是历史数据和一阶段内部“通过”状态，不再作为最终中等等级展示。
+  if (level === 2) return 2
+  if (level === 0 || level === 1) return 0
+  return null
 }
 
 function isObject(value: JsonValue): value is Record<string, JsonValue> {
@@ -205,7 +207,6 @@ export function getDifficultyLabel(result?: EncodingResult) {
 export function getDifficultyVariant(result?: EncodingResult) {
   const level = getDifficultyLevel(result)
   if (level === 0) return 'danger' as const
-  if (level === 1) return 'caution' as const
   if (level === 2) return 'success' as const
   return 'neutral' as const
 }
@@ -241,7 +242,7 @@ export function getRouteReason(result?: EncodingResult) {
     if (reasonParts.length > 0) return reasonParts.join(' | ')
   }
 
-  if (finalLevel === 1 || result?.second_pass?.final_level != null) {
+  if (result?.second_pass?.final_level != null) {
     return '未提供二次分流原因'
   }
 

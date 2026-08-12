@@ -6,7 +6,7 @@ from __future__ import annotations
 import copy
 from typing import Any, Iterable
 
-from .difficulty_levels import DIFF_EASY, DIFF_HARD, DIFF_SECOND_EASY, normalize_difficulty_level
+from .difficulty_levels import DIFF_EASY, DIFF_HARD, normalize_difficulty_level
 from .platform_integration import build_base_difficulty
 from .project_frequency_detector import ProjectFrequencyDetector
 from .second_pass import PlatformSecondPassRunner
@@ -172,6 +172,9 @@ def build_stage2_routing(result_dict: dict[str, Any]) -> dict[str, Any]:
         "text": _resolve_routing_text(result_dict),
         "stage1_difficulty": ((result_dict.get("difficulty_split") or {}) if isinstance(result_dict.get("difficulty_split"), dict) else {}).get("level"),
         "fields": result_dict.get("fields", {}) if isinstance(result_dict.get("fields"), dict) else {},
+        "success": result_dict.get("success"),
+        "final_code": result_dict.get("final_code"),
+        "confidence": result_dict.get("confidence"),
     }
     return _second_pass_runner.analyze_payload_summary(payload)
 
@@ -261,7 +264,8 @@ def apply_project_frequency(results: list[dict[str, Any]], project_names: list[s
         if project_reason:
             reason_text = f"{reason_text} | {project_reason}" if reason_text else project_reason
 
-        routing["final_level"] = DIFF_EASY if current_level == DIFF_SECOND_EASY else current_level
+        # 项目内低频代表当前项目表达的长尾风险，最终二分类中直接进入困难。
+        routing["final_level"] = DIFF_HARD
         routing["decision_stage"] = "project_frequency"
         routing["need_review"] = True
         routing["reason_text"] = reason_text

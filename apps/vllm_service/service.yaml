@@ -84,7 +84,7 @@ models:
   size-thick-pressure:
     engine: qwen3_4b
     upstream_model: size-thick-pressure
-    instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，描述中同时存在SCHEDULE和MM类型壁厚，需要按照描述原文顺序同时提取出，不要解释，不要输出 JSON 以外的内容。"
+    instruction: "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，不要输出 JSON 以外的内容。"
     max_tokens: 256
     temperature: 0.0
     top_p: 1.0

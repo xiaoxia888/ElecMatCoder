@@ -1,0 +1,7 @@
+# 最终分流只输出 0=困难、2=简单；1 仅保留为一阶段内部“通过”状态。
+confidence:
+  enabled: true
+  # 平台展示的模型置信分是所有有效编码字段模型分的最小值。
+  min_score: 0.90
+  # 平台明确提供 confidence 字段但无法解析时，按风险样本处理。
+  invalid_is_hard: true

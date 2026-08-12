@@ -1,0 +1,1514 @@
+{
+  "rows": 71757,
+  "changed_rows": 60,
+  "change_items": 60,
+  "changes_by_category": {
+    "明示壁厚对与THICKNESS_ITEMS顺序相反": 59,
+    "明示尺寸对与SIZE_ITEMS顺序相反": 1
+  },
+  "conflicting_inputs_before": 0,
+  "conflicting_inputs_after": 0,
+  "changes": [
+    {
+      "source_index": 1459,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径短节;PBE;NB/T 47010 06Cr19Ni10;SH/T 3419;-;5.00mm×4.50mm DN40X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1475,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径短节;PBE;NB/T 47008 20;SH/T 3419;-;5.00mm×4.50mm DN40X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1508,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T 13401 GB/T12459 SeriesII;-;5.00mm×4.50mm DN80X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1509,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T 13401 GB/T12459 SeriesII;-;5.00mm×4.50mm DN80XDN50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1545,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T 13401 GB/T12459 SeriesII;-;5.00mm×4.50mm DN80X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1546,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T 13401 GB/T12459 SeriesII;-;5.00mm×4.50mm DN80XDN50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1558,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T13401 GB/T 12459 Series II;-;5.00mm×4.50mm DN80X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 1559,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T13401 GB/T 12459 Series II;-;5.00mm×4.50mm DN80XDN50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 2100,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径短节;PBE;NB/T 47010 022Cr17Ni12Mo2;SH/T 3419;-;5.00mm×4.50mm DN40X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 2127,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径短节;PBE;NB/T 47010 022Cr17Ni12Mo2;SH/T 3419;-;5.00mm×4.50mm DN40X32",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 2159,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径短节;PBE;NB/T 47010 06Cr19Ni10;SH/T 3419;-;5.00mm×4.50mm DN40X20",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 2957,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;GB/T 8163 20;GB/T 13401 GB/T 12459 Series II;-;5.00mm×4.50mm DN125X100",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 2960,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;GB/T 8163 20;GB/T 13401 GB/T 12459 Series II;-;5.00mm×4.50mm DN125X100",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 4882,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T 13401 GB/T12459 SeriesII;-;5.00mm×4.50mm DN80XDN65",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 6551,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管, SF304GB/T13401, BE, GB/T 12459Series II, WELDED , DN300x DN150, 5.0mm x 3.5 mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "3.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "3.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10700,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ57;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10701,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ57;5mmX4.5mm DN80X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10705,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ57;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10706,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ57;5mmX4.5mm DN80X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10709,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ45;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10710,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ45;5mmX4.5mm DN80X40",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10724,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ159Xφ76;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10725,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ159Xφ76;5mmX4.5mm DN150X65",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10726,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ57;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10727,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ57;5mmX4.5mm DN80X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10728,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ38;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10729,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ38;5mmX4.5mm DN80X32",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10820,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ108Xφ57;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10821,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ108Xφ57;5mmX4.5mm DN100X50",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10822,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ108Xφ76;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10823,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ108Xφ76;5mmX4.5mm DN100X65",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10824,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ108Xφ45;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10825,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ108Xφ45;5mmX4.5mm DN100X40",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10847,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ45;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10848,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ89Xφ45;5mmX4.5mm DN80X40",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10905,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ57Xφ32;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10906,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ57Xφ32;5mmX4.5mm DN50X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 10907,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ57Xφ32;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11128,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415;GB/T12459(II);GB/T13401;φ133Xφ89;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11129,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415;GB/T12459(II);GB/T13401;φ133Xφ89;5mmX4.5mm DN125X80",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11155,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415;GB/T12459(II);GB/T13401;φ133Xφ89;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11156,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415;GB/T12459(II);GB/T13401;φ133Xφ89;5mmX4.5mm DN125X80",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11162,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415;GB/T12459(II);GB/T13401;φ159Xφ89;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11163,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;CF415;GB/T12459(II);GB/T13401;φ159Xφ89;5mmX4.5mm DN150X80",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11261,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;SF304;GB/T12459(II);GB/T13401;φ377Xφ325;5mmX4.5mm DN350X300",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11285,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;SF304;GB/T12459(II);GB/T13401;φ377Xφ325;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11286,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;SF304;GB/T12459(II);GB/T13401;φ377Xφ325;5mmX4.5mm;DN350x300",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11287,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "异径三通;SMLS;BW;SF304;GB/T12459(II);GB/T13401;φ377Xφ325;5mmX4.5mm DN350X300",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11629,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ57Xφ32;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11630,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ57Xφ32;5mmX4.5mm DN50X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11644,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ76Xφ32;5mmX4.5mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 11645,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径管;SMLS;BW;CF415K;GB/T12459(II);GB/T13401;φ76Xφ32;5mmX4.5mm DN65X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 25224,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "Reducing Tee , EN10253-4 , Type B, BE, EN10216-5-X5CrNi18-10, SMLS DN150×DN100 5.0 mm×4.5 mm",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 26690,
+      "category": "明示尺寸对与SIZE_ITEMS顺序相反",
+      "input": "Tee RED 3\"*DN65 SCH40S*SCH40S Tee RED,3\"*DN65,SCH40S*SCH40S BW,A403 WP304/304L-S,ASME B16.9",
+      "before": [
+        {
+          "type": "DN",
+          "value": "65"
+        },
+        {
+          "type": "INCH",
+          "value": "3"
+        }
+      ],
+      "after": [
+        {
+          "type": "INCH",
+          "value": "3"
+        },
+        {
+          "type": "DN",
+          "value": "65"
+        }
+      ]
+    },
+    {
+      "source_index": 30730,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管;SMLS;BW;GB/T 14976 06Cr19Ni10;GB/T 13401 GB/T12459 SeriesII;-;5.00mm×4.50mm DN50x40",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 31296,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管, GB/T 13401-SF316L, BE, GB/T 12459, Series I, WELDED , DN400 x DN250, 5.0 mm x 4.5 mm ,_GB/T_13401-SF316L",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 31297,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径管,GB/T13401-SF316L,BE,GB/T12459,SeriesI,WELDED,DN400xDN250,5.0mmx4.5mm,_GB/T_13401-SF316L;16x10\"",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 31487,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "偏心异径短节;PBE;NB/T 47008 20;SH/T 3419;-;5.00mm×4.50mm DN32X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 31489,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径短节;PBE;NB/T 47008 20;SH/T 3419;-;5.00mm×4.50mm DN40X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    },
+    {
+      "source_index": 31492,
+      "category": "明示壁厚对与THICKNESS_ITEMS顺序相反",
+      "input": "同心异径短节;PBE;NB/T 47008 20;SH/T 3419;-;5.00mm×4.50mm DN32X25",
+      "before": [
+        {
+          "type": "MM",
+          "value": "4.5"
+        },
+        {
+          "type": "MM",
+          "value": "5"
+        }
+      ],
+      "after": [
+        {
+          "type": "MM",
+          "value": "5"
+        },
+        {
+          "type": "MM",
+          "value": "4.5"
+        }
+      ]
+    }
+  ],
+  "unresolved_conflicts": []
+}

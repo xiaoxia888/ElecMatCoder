@@ -35,7 +35,7 @@ from openpyxl.utils import get_column_letter
 
 DEFAULT_TRUTH_COL = "本项目材料代码"
 DEFAULT_PRED_COL = "excel2_原始总编码"
-DEFAULT_DIFFICULTY_COL = "excel2_分流最终难度（0=困难，1=中等，2=简单）"
+DEFAULT_DIFFICULTY_COL = "excel2_分流最终难度（0=困难，2=简单）"
 DEFAULT_REASON_COL = "excel2_分流原因"
 DEFAULT_CONFIDENCE_COL = "excel2_模型置信分"
 PROJECT_COLUMN_CANDIDATES = ("项目名称", "项目", "所属项目", "项目名")

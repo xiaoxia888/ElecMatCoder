@@ -10,6 +10,12 @@ from typing import Any
 
 import pandas as pd
 
+# 允许通过 `python apps/.../evaluate_llamafactory_model.py` 直接运行时，
+# 导入项目根目录下的 src 平台编码模块。
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 """
 评测 LoRA 微调模型的结构化抽取效果。
 
@@ -208,8 +214,10 @@ def generate(
     *,
     instruction: str,
     max_new_tokens: int = 512, temperature: float = 0.0, top_p: float = 1.0,
+    stop_after_json: bool = False,
 ) -> str:
     import torch
+    from transformers import StoppingCriteria, StoppingCriteriaList
 
     # 保持与 LlamaFactory qwen3_nothink 训练模板一致。
     # 这里不能直接用 tokenizer 自带 chat_template，也不再向 prompt 注入 /no_think，
@@ -227,39 +235,108 @@ def generate(
         if token_ids:
             bad_words_ids.append(token_ids)
 
+    stopping_criteria = None
+    if stop_after_json:
+        prompt_length = inputs["input_ids"].shape[1]
+
+        class StopAfterCompleteJson(StoppingCriteria):
+            def __call__(self, input_ids, scores, **kwargs):
+                completed = []
+                for row in input_ids:
+                    generated = tokenizer.decode(
+                        row[prompt_length:],
+                        skip_special_tokens=True,
+                    )
+                    completed.append(_complete_json_object_end(generated) is not None)
+                return torch.tensor(completed, dtype=torch.bool, device=input_ids.device)
+
+        stopping_criteria = StoppingCriteriaList([StopAfterCompleteJson()])
+
+    generation_kwargs: dict[str, Any] = {
+        "max_new_tokens": max_new_tokens,
+        "do_sample": temperature > 0,
+        "pad_token_id": tokenizer.eos_token_id,
+        "bad_words_ids": bad_words_ids or None,
+        "stopping_criteria": stopping_criteria,
+    }
+    if temperature > 0:
+        generation_kwargs.update(temperature=temperature, top_p=top_p)
+    else:
+        # 覆盖底座 generation_config 中仅采样时有效的参数，避免贪心生成告警。
+        generation_kwargs.update(temperature=None, top_p=None, top_k=None)
+
     with torch.no_grad():
         outputs = model.generate(
             **inputs,
-            max_new_tokens=max_new_tokens,
-            temperature=temperature,
-            do_sample=temperature > 0,
-            top_p=top_p,
-            pad_token_id=tokenizer.eos_token_id,
-            bad_words_ids=bad_words_ids or None,
+            **generation_kwargs,
         )
 
     new_tokens = outputs[0][inputs["input_ids"].shape[1]:]
     return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
 
+def _complete_json_object_end(raw: str) -> int | None:
+    """返回首个完整顶层 JSON 对象的结束位置，忽略字符串内的花括号。"""
+    start = raw.find("{")
+    if start < 0:
+        return None
+
+    depth = 0
+    in_string = False
+    escaped = False
+    for index in range(start, len(raw)):
+        char = raw[index]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+
+        if char == '"':
+            in_string = True
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return index + 1
+    return None
+
+
 def parse_json_output(raw: str) -> dict | None:
-    """尝试从模型输出中提取 JSON 对象。"""
+    """提取唯一 JSON 对象；仅容忍模型将同一对象完整重复输出。"""
     raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.DOTALL).strip()
     if raw.startswith("```"):
         raw = re.sub(r"^```\w*\n?", "", raw)
         raw = re.sub(r"\n?```$", "", raw)
         raw = raw.strip()
 
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", raw, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group())
-            except json.JSONDecodeError:
-                pass
-    return None
+    start = raw.find("{")
+    if start < 0:
+        return None
+
+    decoder = json.JSONDecoder()
+    objects: list[dict] = []
+    position = start
+    while position < len(raw):
+        while position < len(raw) and raw[position].isspace():
+            position += 1
+        if position >= len(raw):
+            break
+        try:
+            value, position = decoder.raw_decode(raw, position)
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(value, dict):
+            return None
+        objects.append(value)
+
+    if not objects or any(value != objects[0] for value in objects[1:]):
+        return None
+    return objects[0]
 
 
 def clean_text_output(raw: str) -> str:
@@ -560,6 +637,7 @@ def interactive_mode(
             max_new_tokens=max_new_tokens,
             temperature=temperature,
             top_p=top_p,
+            stop_after_json=task in JSON_TASKS,
         )
         elapsed = time.time() - t0
 
@@ -755,6 +833,7 @@ def batch_mode(
             max_new_tokens=max_new_tokens,
             temperature=temperature,
             top_p=top_p,
+            stop_after_json=task in JSON_TASKS,
         )
         elapsed = time.time() - t0
 
@@ -865,6 +944,7 @@ def predict_mode(
             max_new_tokens=max_new_tokens,
             temperature=temperature,
             top_p=top_p,
+            stop_after_json=task in JSON_TASKS,
         )
         elapsed = time.time() - t0
 
@@ -952,6 +1032,117 @@ def _type_excel_columns(predicted: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _structural_items(predicted: dict[str, Any]) -> list[dict[str, Any]]:
+    items = predicted.get("ITEMS")
+    if not isinstance(items, list):
+        return []
+    result = [item for item in items if isinstance(item, dict)]
+    roles = {str(item.get("ROLE") or "").strip().upper() for item in result}
+    role_order: dict[str, int] = {}
+    if {"MAIN", "BRANCH"}.issubset(roles):
+        role_order = {"MAIN": 0, "BRANCH": 1}
+    elif {"END_A", "END_B"}.issubset(roles):
+        role_order = {"END_A": 0, "END_B": 1}
+    if not role_order:
+        return result
+
+    indexed = list(enumerate(result))
+    indexed.sort(
+        key=lambda pair: (
+            role_order.get(str(pair[1].get("ROLE") or "").strip().upper(), 2),
+            pair[0],
+        )
+    )
+    return [item for _, item in indexed]
+
+
+def _structural_raw_items(
+    items: list[dict[str, Any]],
+    field: str,
+) -> str:
+    """按 ITEMS/字段内原始顺序生成便于人工核对的字段文本。"""
+    parts: list[str] = []
+    for item in items:
+        values = item.get(field)
+        if not isinstance(values, list):
+            continue
+        for value in values:
+            if not isinstance(value, dict):
+                continue
+            subtype = str(value.get("type") or "").strip().upper()
+            raw_value = value.get("value")
+            if not subtype or raw_value in (None, ""):
+                continue
+            parts.append(f"{subtype}：{raw_value}")
+    return " ".join(parts)
+
+
+def _append_size_length(size_code: str, length_code: str) -> str:
+    if not length_code:
+        return size_code
+    if not size_code:
+        return length_code
+    return f"{size_code}{length_code}"
+
+
+def _structural_excel_columns(
+    predicted: dict[str, Any],
+    *,
+    original_text: str,
+    size_processor: Any,
+    thickness_processor: Any,
+    pressure_processor: Any,
+) -> dict[str, Any]:
+    """使用平台处理器展开并编码尺寸、壁厚和磅级。"""
+    items = _structural_items(predicted)
+
+    # 每个 ITEM 是一个物理位置，必须逐项编码后再按模型输出顺序拼接，
+    # 这样 MAIN/BRANCH、END_A/END_B 等相同数值也不会被跨位置去重。
+    size_item_codes: list[str] = []
+    thickness_values: list[dict[str, Any]] = []
+    for item in items:
+        sizes = item.get("SIZE")
+        if isinstance(sizes, list) and sizes:
+            size_code = size_processor.process(
+                {"_ITEMS": sizes},
+                original_text=original_text,
+            )
+            if size_code:
+                size_item_codes.append(size_code)
+
+        thicknesses = item.get("THICKNESS")
+        if isinstance(thicknesses, list) and thicknesses:
+            thickness_values.append({"_ITEMS": thicknesses})
+
+    size_code = "x".join(size_item_codes)
+    raw_length = predicted.get("LENGTH")
+    length_code = ""
+    if raw_length not in (None, ""):
+        length_code = size_processor.process(
+            {"_ITEMS": [{"type": "LENGTH", "value": raw_length}]},
+            original_text=original_text,
+        )
+    size_code = _append_size_length(size_code, length_code)
+
+    thickness_code = thickness_processor.process(
+        thickness_values,
+        original_text=original_text,
+    )
+    raw_pressure = predicted.get("PRESSURE")
+    pressure_text = "" if raw_pressure in (None, "") else str(raw_pressure).strip()
+    pressure_code = pressure_processor.process(pressure_text)
+
+    return {
+        "STRUCTURAL_尺寸原始值": _structural_raw_items(items, "SIZE"),
+        "STRUCTURAL_尺寸编码": size_code,
+        "STRUCTURAL_壁厚原始值": _structural_raw_items(items, "THICKNESS"),
+        "STRUCTURAL_壁厚编码": thickness_code,
+        "STRUCTURAL_磅级原始值": pressure_text,
+        "STRUCTURAL_磅级编码": pressure_code,
+        "STRUCTURAL_长度原始值": "" if raw_length in (None, "") else str(raw_length),
+    }
+
+
 def excel_predict_mode(
     model,
     tokenizer,
@@ -984,22 +1175,51 @@ def excel_predict_mode(
     else:
         data = data.copy()
 
-    result_columns = [
-        "TYPE_模型结果",
-        "TYPE_CATEGORY",
-        "TYPE_BODY",
-        "TYPE_ANGLE",
-        "TYPE_RADIUS",
-        "TYPE_FLANGE_STYLE",
-        "TYPE_MANU",
-        "TYPE_CONN",
-        "TYPE_SEAL",
-        "模型原始输出",
-        "模型解析状态",
-        "模型耗时_秒",
-    ]
+    if task == "structural":
+        task_result_column = "STRUCTURAL_模型结果"
+        result_columns = [
+            task_result_column,
+            "STRUCTURAL_尺寸原始值",
+            "STRUCTURAL_尺寸编码",
+            "STRUCTURAL_壁厚原始值",
+            "STRUCTURAL_壁厚编码",
+            "STRUCTURAL_磅级原始值",
+            "STRUCTURAL_磅级编码",
+            "STRUCTURAL_长度原始值",
+            "模型原始输出",
+            "模型解析状态",
+            "模型耗时_秒",
+        ]
+    else:
+        task_result_column = "TYPE_模型结果"
+        result_columns = [
+            task_result_column,
+            "TYPE_CATEGORY",
+            "TYPE_BODY",
+            "TYPE_ANGLE",
+            "TYPE_RADIUS",
+            "TYPE_FLANGE_STYLE",
+            "TYPE_MANU",
+            "TYPE_CONN",
+            "TYPE_SEAL",
+            "模型原始输出",
+            "模型解析状态",
+            "模型耗时_秒",
+        ]
     for column in result_columns:
         data[column] = ""
+
+    size_processor = None
+    thickness_processor = None
+    pressure_processor = None
+    if task == "structural":
+        from src.encoder.processors.pressure_processor import PressureProcessor
+        from src.encoder.processors.size_processor import SizeProcessor
+        from src.encoder.processors.thickness_processor import ThicknessProcessor
+
+        size_processor = SizeProcessor()
+        thickness_processor = ThicknessProcessor(enable_rule_layered=False)
+        pressure_processor = PressureProcessor()
 
     print(
         f"Excel 预测: {len(data)} 行 | 工作表: {sheet_name!r} | "
@@ -1028,6 +1248,7 @@ def excel_predict_mode(
                 max_new_tokens=max_new_tokens,
                 temperature=temperature,
                 top_p=top_p,
+                stop_after_json=task in JSON_TASKS,
             )
             elapsed = time.time() - t0
             data.at[row_index, "模型原始输出"] = raw_output
@@ -1046,15 +1267,25 @@ def excel_predict_mode(
                     else:
                         status = "OK"
                         ok_count += 1
-                    data.at[row_index, "TYPE_模型结果"] = json.dumps(
+                    data.at[row_index, task_result_column] = json.dumps(
                         predicted, ensure_ascii=False, separators=(",", ":")
                     )
                     if task == "type":
                         for column, value in _type_excel_columns(predicted).items():
                             data.at[row_index, column] = value
+                    elif task == "structural":
+                        structural_columns = _structural_excel_columns(
+                            predicted,
+                            original_text=input_text,
+                            size_processor=size_processor,
+                            thickness_processor=thickness_processor,
+                            pressure_processor=pressure_processor,
+                        )
+                        for column, value in structural_columns.items():
+                            data.at[row_index, column] = value
             else:
                 predicted_text = clean_text_output(raw_output)
-                data.at[row_index, "TYPE_模型结果"] = predicted_text
+                data.at[row_index, task_result_column] = predicted_text
                 status = "OK"
                 ok_count += 1
 
