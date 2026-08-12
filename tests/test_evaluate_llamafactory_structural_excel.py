@@ -107,6 +107,40 @@ class StructuralExcelColumnsTest(unittest.TestCase):
         self.assertEqual(columns["STRUCTURAL_尺寸编码"], "50L3000")
         self.assertEqual(columns["STRUCTURAL_磅级编码"], "PN16")
 
+    def test_equal_end_values_are_emitted_once(self) -> None:
+        predicted = {
+            "ITEMS": [
+                {
+                    "SCOPE": "BODY",
+                    "ROLE": "MAIN",
+                    "SIZE": [{"type": "DN", "value": "50"}],
+                    "THICKNESS": [{"type": "SCHEDULE", "value": "SCH40"}],
+                },
+                {
+                    "SCOPE": "BODY",
+                    "ROLE": "BRANCH",
+                    "SIZE": [{"type": "DN", "value": "50"}],
+                    "THICKNESS": [{"type": "SCHEDULE", "value": "SCH40"}],
+                },
+            ],
+            "LENGTH": "120MM",
+            "PRESSURE": "",
+        }
+
+        columns = _structural_excel_columns(
+            predicted,
+            original_text="",
+            **self.processors,
+        )
+
+        self.assertEqual(columns["STRUCTURAL_尺寸原始值"], "DN：50")
+        self.assertEqual(columns["STRUCTURAL_尺寸编码"], "50L120")
+        self.assertEqual(
+            columns["STRUCTURAL_壁厚原始值"],
+            "SCHEDULE：SCH40",
+        )
+        self.assertEqual(columns["STRUCTURAL_壁厚编码"], "S40")
+
 
 if __name__ == "__main__":
     unittest.main()

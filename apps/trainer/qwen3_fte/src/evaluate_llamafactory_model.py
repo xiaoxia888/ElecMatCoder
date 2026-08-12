@@ -1062,6 +1062,7 @@ def _structural_raw_items(
 ) -> str:
     """按 ITEMS/字段内原始顺序生成便于人工核对的字段文本。"""
     parts: list[str] = []
+    seen: set[tuple[str, str]] = set()
     for item in items:
         values = item.get(field)
         if not isinstance(values, list):
@@ -1073,7 +1074,12 @@ def _structural_raw_items(
             raw_value = value.get("value")
             if not subtype or raw_value in (None, ""):
                 continue
-            parts.append(f"{subtype}：{raw_value}")
+            normalized_value = str(raw_value).strip()
+            identity = (subtype, normalized_value.upper())
+            if identity in seen:
+                continue
+            seen.add(identity)
+            parts.append(f"{subtype}：{normalized_value}")
     return " ".join(parts)
 
 
@@ -1114,7 +1120,11 @@ def _structural_excel_columns(
         if isinstance(thicknesses, list) and thicknesses:
             thickness_values.append({"_ITEMS": thicknesses})
 
-    size_code = "x".join(size_item_codes)
+    unique_size_codes: list[str] = []
+    for code in size_item_codes:
+        if code not in unique_size_codes:
+            unique_size_codes.append(code)
+    size_code = "x".join(unique_size_codes)
     raw_length = predicted.get("LENGTH")
     length_code = ""
     if raw_length not in (None, ""):
