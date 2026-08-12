@@ -53,7 +53,7 @@ models:
   # 各模型的 instruction 在部署层统一维护。正式平台调用只传 model/text，
   # 不再覆盖这里的提示词。
   type:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type0725-mlx-q8
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-type0807-mlx-q8
     instruction: |-
       你是工业管道材料种类结构化抽取助手。请从材料描述中抽取 CATEGORY 和 TYPE，并输出严格 JSON。
 
@@ -86,21 +86,13 @@ models:
 
       缺失字符串用 ""，缺失数组用 []。只输出 JSON 对象，不要任何额外内容。
 
-    max_tokens: 512
+    max_tokens: 256
     temperature: 0.0
     top_p: 1.0
     trust_remote_code: true
 
   material-standard:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-4b-material-standard-0717-mlx
-    instruction: "你是一个工业管道材料结构化信息提取助手。请从材料描述中提取结构化信息，并以 JSON 格式返回。"
-    max_tokens: 512
-    temperature: 0.0
-    top_p: 1.0
-    trust_remote_code: true
-
-  material-standard-v2:
-    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-mate0731-mlx-q8
+    model_path: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/models/qwen3-8b-materialStandard0807-mlx-q8
     instruction: |-
       你是工业管道材质与规范结构化抽取助手。请从材料描述中抽取 MATERIAL 和 STANDARD，并输出严格 JSON。
 
@@ -131,7 +123,7 @@ models:
       2. 尺寸、壁厚、压力、连接形式、制造工艺、施工方法和试验参数不得作为材质输出。
       3. 只输出一个严格 JSON 对象，不要解释，不要输出 JSON 之外的内容。
 
-    max_tokens: 512
+    max_tokens: 256
     temperature: 0.0
     top_p: 1.0
     trust_remote_code: true
