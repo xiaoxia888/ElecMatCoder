@@ -11,10 +11,10 @@ from .structured_llamafactory_adapter import build_structured_predictor_from_con
 logger = logging.getLogger(__name__)
 
 DEFAULT_STRUCTURAL_FIELD_INSTRUCTION = (
-    "你是工业管道材料描述结构化抽取助手。请从材料描述中抽取尺寸、长度、壁厚和磅级信息，"
-    "并输出严格 JSON。输出字段只能包含 SIZE_ITEMS、LENGTH、THICKNESS_ITEMS、PRESSURE。"
-    "LENGTH 统一转换为毫米单位，SIZE_ITEMS 和 THICKNESS_ITEMS 按原文顺序输出，不要解释，"
-    "不要输出 JSON 以外的内容。"
+    "你是工业管道材料尺寸结构化抽取助手。请从材料描述中抽取 ITEMS、LENGTH 和 PRESSURE，"
+    "并输出严格 JSON。ITEMS 中每项固定包含 SCOPE、ROLE、SIZE、THICKNESS；"
+    "SCOPE 只能是 BODY、INNER、OUTER、LINING，ROLE 只能是 SINGLE、MAIN、BRANCH、END_A、END_B。"
+    "SIZE.type 只能是 DN、OD、INCH，THICKNESS.type 只能是 MM、SCHEDULE。不要解释。"
 )
 
 
@@ -60,7 +60,11 @@ class StructuralFieldModelExtractor:
             predict_result = self.predictor.predict(str(text or ""))
             model_output = predict_result.get("model_output") if isinstance(predict_result, dict) else {}
             normalized = self._normalize(model_output if isinstance(model_output, dict) else {})
-            result.update(normalized)
+            # V2 与旧结构互斥，禁止在 V2 结果旁保留空的旧结构字段。
+            if normalized.get("_schema_version") == "v2":
+                result = normalized
+            else:
+                result.update(normalized)
             result["_raw"] = str((predict_result or {}).get("model_raw_response", "") or "")
             result["_extract_confidence_v2"] = self._map_model_confidences(predict_result or {})
         except Exception as exc:  # pragma: no cover - 运行时兜底
@@ -76,14 +80,15 @@ class StructuralFieldModelExtractor:
                 errors["pressure"] = str(exc)
             result["_raw"] = ""
 
-        if not run_size_length:
+        is_v2 = result.get("_schema_version") == "v2"
+        if not run_size_length and not is_v2:
             result["SIZE"] = {"_ITEMS": []}
             result["SIZE_ITEMS"] = []
             result["LENGTH"] = ""
-        if not run_thickness:
+        if not run_thickness and not is_v2:
             result["THICKNESS"] = {"_ITEMS": []}
             result["THICKNESS_ITEMS"] = []
-        if not run_pressure:
+        if not run_pressure and not is_v2:
             result["PRESSURE"] = ""
 
         result["_status"] = status
@@ -112,8 +117,8 @@ class StructuralFieldModelExtractor:
             }
 
         mapped = {
-            "SIZE": aggregate("SIZE_ITEMS", "LENGTH"),
-            "THICKNESS": aggregate("THICKNESS_ITEMS"),
+            "SIZE": aggregate("ITEMS", "LENGTH", "SIZE_ITEMS"),
+            "THICKNESS": aggregate("ITEMS", "THICKNESS_ITEMS"),
             "PRESSURE": aggregate("PRESSURE"),
         }
         return {field: value for field, value in mapped.items() if value is not None}

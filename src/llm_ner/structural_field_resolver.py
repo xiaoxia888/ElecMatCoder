@@ -9,6 +9,12 @@ from src.encoder.processors.rule_extraction import (
     build_structured_rule_entities,
     extract_size_and_thickness_by_rules,
 )
+from src.domain.structural_v2 import (
+    has_v2_pressure,
+    has_v2_size,
+    has_v2_thickness,
+    is_structural_v2,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +73,14 @@ def _summarize_prompt_diagnostics(value: Any, *, max_len: int = 800) -> Any:
 
 
 def _summarize_structural_result(value: Dict[str, Any]) -> Dict[str, Any]:
+    if is_structural_v2(value):
+        return {
+            "schema_version": "v2",
+            "ITEMS": value.get("ITEMS") or [],
+            "LENGTH": value.get("LENGTH") or "",
+            "PRESSURE": value.get("PRESSURE") or "",
+            "sources": value.get("_sources") or {},
+        }
     return {
         "SIZE_ITEMS": value.get("SIZE_ITEMS") or [],
         "LENGTH": value.get("LENGTH") or "",
@@ -267,9 +281,13 @@ class StructuralFieldResolver:
         if not isinstance(result, dict):
             return None
         has_value = (
-            not _is_size_empty_for_rule_fallback(result.get("SIZE"))
-            or not _is_thickness_empty_for_rule_fallback(result.get("THICKNESS"))
-            or not _is_pressure_empty_for_rule_fallback(result.get("PRESSURE"))
+            has_v2_size(result) or has_v2_thickness(result) or has_v2_pressure(result)
+            if is_structural_v2(result)
+            else (
+                not _is_size_empty_for_rule_fallback(result.get("SIZE"))
+                or not _is_thickness_empty_for_rule_fallback(result.get("THICKNESS"))
+                or not _is_pressure_empty_for_rule_fallback(result.get("PRESSURE"))
+            )
         )
         if not has_value:
             logger.warning(
@@ -281,9 +299,13 @@ class StructuralFieldResolver:
             )
             return None
         result["_sources"] = {
-            "SIZE": "complex_prompt_extraction",
-            "THICKNESS": "complex_prompt_extraction",
-            "PRESSURE": "complex_prompt_extraction",
+            field: "complex_prompt_extraction"
+            for field, present in (
+                ("SIZE", has_v2_size(result) if is_structural_v2(result) else not _is_size_empty_for_rule_fallback(result.get("SIZE"))),
+                ("THICKNESS", has_v2_thickness(result) if is_structural_v2(result) else not _is_thickness_empty_for_rule_fallback(result.get("THICKNESS"))),
+                ("PRESSURE", has_v2_pressure(result) if is_structural_v2(result) else not _is_pressure_empty_for_rule_fallback(result.get("PRESSURE"))),
+            )
+            if present
         }
         result["_complex_structural_trigger"] = trigger_info
         return result
@@ -346,6 +368,23 @@ class StructuralFieldResolver:
                 )
                 if not isinstance(partial_result, dict):
                     continue
+
+                if is_structural_v2(partial_result):
+                    partial_result = copy.deepcopy(partial_result)
+                    partial_result["_sources"] = {
+                        field: group_source
+                        for field, present in (
+                            ("SIZE", has_v2_size(partial_result)),
+                            ("THICKNESS", has_v2_thickness(partial_result)),
+                            ("PRESSURE", has_v2_pressure(partial_result)),
+                        )
+                        if present
+                    }
+                    logger.debug(
+                        "[结构字段路径] 使用V2模型结果，不转换为旧结构: %s",
+                        _summarize_structural_result(partial_result),
+                    )
+                    return partial_result
 
                 raw_chunk = str(partial_result.get("_raw", "") or "")
                 if raw_chunk:
@@ -430,6 +469,23 @@ class StructuralFieldResolver:
             )
             if not isinstance(partial_result, dict):
                 continue
+
+            if is_structural_v2(partial_result):
+                partial_result = copy.deepcopy(partial_result)
+                partial_result["_sources"] = {
+                    field: group_source
+                    for field, present in (
+                        ("SIZE", has_v2_size(partial_result)),
+                        ("THICKNESS", has_v2_thickness(partial_result)),
+                        ("PRESSURE", has_v2_pressure(partial_result)),
+                    )
+                    if present
+                }
+                logger.debug(
+                    "[结构字段路径] 模型返回V2，V2整体优先于旧规则结果: %s",
+                    _summarize_structural_result(partial_result),
+                )
+                return partial_result
 
             raw_chunk = str(partial_result.get("_raw", "") or "")
             if raw_chunk:

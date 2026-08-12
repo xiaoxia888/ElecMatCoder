@@ -17,6 +17,17 @@
 - gateway 配置
 - 模型路径和推理参数
 
+每个模型通过`prompt_file`读取独立UTF-8提示词文件：
+
+```yaml
+models:
+  type:
+    model_path: /path/to/model
+    prompt_file: /path/to/种类微调提示词.txt
+```
+
+相对路径按`service.yaml`所在目录解析。路径为空、文件不存在或内容为空时服务拒绝启动。
+
 ## 启动
 
 统一使用这一条命令：

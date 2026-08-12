@@ -614,10 +614,15 @@ class Qwen3Predictor:
     def _call_transformers(self, system_prompt: Optional[str], user_content: str) -> dict:
         import torch
 
-        input_text = (
-            f"<|im_start|>system\n{system_prompt or STAGE2_SYSTEM_PROMPT}<|im_end|>\n"
-            f"<|im_start|>user\n{user_content}<|im_end|>\n"
-            f"<|im_start|>assistant\n"
+        messages = [
+            {"role": "system", "content": system_prompt or STAGE2_SYSTEM_PROMPT},
+            {"role": "user", "content": user_content},
+        ]
+        input_text = self.tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=False,
         )
         inputs = self.tokenizer(input_text, return_tensors="pt").to(self.device)
         generation_config = copy.deepcopy(self.model.generation_config)

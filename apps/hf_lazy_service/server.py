@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 _TOKENIZER_FILES = (
     "tokenizer.json",
     "tokenizer_config.json",
+    "chat_template.jinja",
     "special_tokens_map.json",
     "vocab.json",
     "merges.txt",
@@ -50,11 +51,16 @@ DEFAULT_INSTRUCTION = (
 )
 
 
-def _build_raw_chatml_prompt(instruction: str, input_text: str) -> str:
-    return (
-        f"<|im_start|>system\n{instruction}<|im_end|>\n"
-        f"<|im_start|>user\n{input_text}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
+def _build_chat_prompt(tokenizer: Any, instruction: str, input_text: str) -> str:
+    messages = [
+        {"role": "system", "content": instruction},
+        {"role": "user", "content": input_text},
+    ]
+    return tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
+        enable_thinking=False,
     )
 
 
@@ -398,7 +404,7 @@ class LazyModelManager:
         temperature = spec.temperature if request.temperature is None else request.temperature
         top_p = spec.top_p if request.top_p is None else request.top_p
 
-        prompt = _build_raw_chatml_prompt(instruction, request.text)
+        prompt = _build_chat_prompt(item.tokenizer, instruction, request.text)
         inputs = item.tokenizer(prompt, return_tensors="pt").to(item.model.device)
 
         generate_kwargs = {
@@ -412,14 +418,6 @@ class LazyModelManager:
 
         try:
             started = time.perf_counter()
-            bad_words_ids = []
-            for marker in ("<think>", "</think>"):
-                token_ids = item.tokenizer.encode(marker, add_special_tokens=False)
-                if token_ids:
-                    bad_words_ids.append(token_ids)
-            if bad_words_ids:
-                generate_kwargs["bad_words_ids"] = bad_words_ids
-
             if request.include_logprobs:
                 generate_kwargs["return_dict_in_generate"] = True
                 generate_kwargs["output_scores"] = True

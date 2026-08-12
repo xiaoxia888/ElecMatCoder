@@ -9,6 +9,10 @@ class StructuralFieldOutputNormalizer:
 
     SIZE_KEYS = ("DN", "OD", "INCH", "LENGTH")
     THICKNESS_KEYS = ("MM", "SCHEDULE", "BWG", "INCH")
+    V2_SIZE_KEYS = {"DN", "OD", "INCH"}
+    V2_THICKNESS_KEYS = {"MM", "SCHEDULE"}
+    V2_SCOPE_KEYS = {"BODY", "INNER", "OUTER", "LINING"}
+    V2_ROLE_KEYS = {"SINGLE", "MAIN", "BRANCH", "END_A", "END_B"}
     ROLE_KEYS = {"BASE", "LINING", "INNER", "OUTER"}
     ITEM_TYPES = {
         "SIZE_ITEMS": set(SIZE_KEYS),
@@ -28,6 +32,11 @@ class StructuralFieldOutputNormalizer:
 
     @classmethod
     def normalize(cls, parsed: Dict[str, Any]) -> Dict[str, Any]:
+        # V2 与 V1 互斥。只要模型按 V2 协议返回 ITEMS 数组，就完整保留
+        # V2，不再派生 SIZE_ITEMS / THICKNESS_ITEMS 等旧结构字段。
+        if "ITEMS" in parsed and isinstance(parsed.get("ITEMS"), list):
+            return cls.normalize_v2(parsed)
+
         result = cls.empty_result()
         structure_kind = cls.normalize_structure_kind(parsed.get("STRUCTURE_KIND"))
         complex_meta: Dict[str, Any] = {}
@@ -83,6 +92,45 @@ class StructuralFieldOutputNormalizer:
         if complex_meta:
             result["_complex_structure"] = complex_meta
         return result
+
+    @classmethod
+    def normalize_v2(cls, parsed: Dict[str, Any]) -> Dict[str, Any]:
+        items: List[Dict[str, Any]] = []
+        for raw_item in parsed.get("ITEMS") or []:
+            if not isinstance(raw_item, dict):
+                continue
+            scope = str(raw_item.get("SCOPE") or "").strip().upper()
+            role = str(raw_item.get("ROLE") or "").strip().upper()
+            if scope not in cls.V2_SCOPE_KEYS or role not in cls.V2_ROLE_KEYS:
+                continue
+
+            size_items = cls.normalize_items(
+                raw_item.get("SIZE"),
+                cls.V2_SIZE_KEYS,
+            )
+            thickness_items = cls.normalize_items(
+                raw_item.get("THICKNESS"),
+                cls.V2_THICKNESS_KEYS,
+            )
+            if not size_items and not thickness_items:
+                continue
+            items.append(
+                {
+                    "SCOPE": scope,
+                    "ROLE": role,
+                    "SIZE": size_items,
+                    "THICKNESS": thickness_items,
+                }
+            )
+
+        length = cls.normalize_item_value("LENGTH", parsed.get("LENGTH", ""))
+        pressure = parsed.get("PRESSURE")
+        return {
+            "_schema_version": "v2",
+            "ITEMS": items,
+            "LENGTH": length,
+            "PRESSURE": "" if pressure in (None, [], {}) else str(pressure).strip(),
+        }
 
     @staticmethod
     def normalize_structure_kind(value: Any) -> str:

@@ -192,11 +192,10 @@ ner:
           max_new_tokens: 512
           temperature: 0.0
       structural_rules:
-        enabled: true # 是否开启尺寸 / 壁厚 / 磅级规则器。规则器始终先跑，模型只补缺失字段。
+        enabled: false # 是否开启尺寸 / 壁厚 / 磅级规则器。规则器始终先跑，模型只补缺失字段。
       complex_structural_prompt:
-        # 夹套 / 衬层 / 复合层结构的尺寸、壁厚、磅级提示词路径。
-        # 只要命中下面配置的关键词，或命中代码内置的复杂结构形态规则，就优先走该路径。
-        enabled: true
+        # 保留历史复杂结构提示词配置，V2 模型批量运行期间关闭。
+        enabled: false
         backend: "openai_compatible"
         provider: "deepseek"
         base_url: "https://api.deepseek.com"

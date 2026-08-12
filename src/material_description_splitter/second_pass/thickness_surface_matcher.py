@@ -41,6 +41,17 @@ class ThicknessSurfaceMatcher:
             return [item for item in value if isinstance(item, dict)]
         if not isinstance(value, dict):
             return []
+        structural_items = value.get("ITEMS")
+        if isinstance(structural_items, list):
+            result: list[dict[str, object]] = []
+            for position in structural_items:
+                if not isinstance(position, dict):
+                    continue
+                result.extend(
+                    item for item in (position.get("THICKNESS") or [])
+                    if isinstance(item, dict)
+                )
+            return result
         items = value.get("_ITEMS")
         if not isinstance(items, list) or not items:
             items = value.get("ordered_items")
@@ -207,6 +218,20 @@ class ThicknessSurfaceMatcher:
     @staticmethod
     def _normalize_values(value: object) -> list[str]:
         if isinstance(value, dict):
+            structural_items = value.get("ITEMS")
+            if isinstance(structural_items, list):
+                result: list[str] = []
+                for position in structural_items:
+                    if not isinstance(position, dict):
+                        continue
+                    for item in position.get("THICKNESS") or []:
+                        if not isinstance(item, dict):
+                            continue
+                        item_type = str(item.get("type") or "").strip().upper()
+                        item_value = str(item.get("value") or "").strip()
+                        if item_type and item_value:
+                            result.append(f"{item_type}: {item_value}")
+                return result
             items = value.get("_ITEMS")
             if not isinstance(items, list) or not items:
                 items = value.get("ordered_items")

@@ -124,6 +124,7 @@ class VLLMGateway:
                     "name": route.name,
                     "engine": route.engine,
                     "upstream_model": route.upstream_model,
+                    "prompt_file": route.prompt_file,
                     "max_tokens": route.max_tokens,
                 }
                 for route in self.config.models.values()

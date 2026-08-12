@@ -36,6 +36,14 @@ from ..domain.size import SizeValue
 from ..domain.standard import StandardItem
 from ..domain.thickness import ThicknessValue
 from ..domain.type import TypeGeometry, TypeValue
+from ..domain.structural_v2 import (
+    STRUCTURAL_V2_FIELD,
+    has_v2_pressure,
+    has_v2_size,
+    has_v2_thickness,
+    is_structural_v2,
+    ordered_v2_items,
+)
 from .semantic_matcher import get_semantic_matcher
 from .processors import get_standard_processor
 from .processors import get_thickness_processor
@@ -469,8 +477,16 @@ class PipeEncoderBase:
         if '变径' in text_lower or '异径' in text_lower:
             return entities
         
-        size_value = entities.get('SIZE', '')
-        if self._is_reducing_size_by_encoded(size_value):
+        structural_v2 = entities.get(STRUCTURAL_V2_FIELD)
+        if is_structural_v2(structural_v2):
+            size_code = self._encode_structural_v2_size(
+                structural_v2,
+                original_text=original_text,
+            ).code
+            is_reducing = self._is_reducing_encoded_size_code(size_code)
+        else:
+            is_reducing = self._is_reducing_size_by_encoded(entities.get('SIZE', ''))
+        if is_reducing:
             if isinstance(type_value, dict):
                 body = str(type_value.get('BODY') or '').strip()
                 replaced = self._insert_reducing_before_body(body)
@@ -488,6 +504,158 @@ class PipeEncoderBase:
             logger.info(f"[异径补充] 检测到尺寸不等，TYPE: {type_value} -> {entities['TYPE']}")
         
         return entities
+
+    @staticmethod
+    def _is_reducing_encoded_size_code(encoded: str) -> bool:
+        parts = [part for part in re.split(r'[X×*/]+', str(encoded or '').upper()) if part]
+        if len(parts) < 2:
+            return False
+        values = []
+        for part in parts:
+            match = re.search(r'(\d+(?:\.\d+)?)', part)
+            if match:
+                values.append(float(match.group(1)))
+        return len(values) >= 2 and len(set(values)) > 1
+
+    @staticmethod
+    def _dedupe_position_codes(codes: List[str]) -> List[str]:
+        unique: List[str] = []
+        for code in codes:
+            normalized = str(code or '').strip().upper()
+            if normalized and normalized not in unique:
+                unique.append(normalized)
+        return unique
+
+    @staticmethod
+    def _v2_item_mm_context(item: Dict[str, Any]) -> List[str]:
+        values: List[str] = []
+        for thickness in item.get('THICKNESS') or []:
+            if not isinstance(thickness, dict):
+                continue
+            if str(thickness.get('type') or '').strip().upper() != 'MM':
+                continue
+            value = str(thickness.get('value') or '').strip()
+            if value:
+                values.append(value)
+        return values
+
+    @staticmethod
+    def _select_v2_thickness_items(items: Any) -> List[Dict[str, Any]]:
+        """Select one coding value per V2 position while retaining all raw candidates."""
+        candidates = [item for item in (items or []) if isinstance(item, dict)]
+        if not candidates:
+            return []
+
+        def priority(item: Dict[str, Any]) -> int:
+            item_type = str(item.get('type') or '').strip().upper()
+            value = str(item.get('value') or '').strip().upper().replace(' ', '')
+            if item_type == 'MM':
+                return 0
+            if item_type in {'SCHEDULE', 'SCH', 'STD', 'XS', 'XXS'}:
+                if re.fullmatch(r'(?:SCH|S-?)?\d+(?:S)?', value):
+                    return 1
+                if value in {'STD', 'XS', 'XXS'} or item_type in {'STD', 'XS', 'XXS'}:
+                    return 2
+            return 3
+
+        selected_index = min(range(len(candidates)), key=lambda index: (priority(candidates[index]), index))
+        return [copy.deepcopy(candidates[selected_index])]
+
+    def _encode_structural_v2_size(
+        self,
+        structural: Dict[str, Any],
+        *,
+        original_text: str = "",
+        standard_codes: Optional[List[str]] = None,
+    ) -> EncodedFieldResult:
+        position_codes: List[str] = []
+        for item in ordered_v2_items(structural):
+            size_items = copy.deepcopy(item.get('SIZE') or [])
+            if not size_items:
+                continue
+            position_value: Dict[str, Any] = {'_ITEMS': size_items}
+            mm_context = self._v2_item_mm_context(item)
+            if mm_context:
+                position_value['_THICKNESS_MM_CONTEXT'] = mm_context
+            code = self.size_processor.process(
+                position_value,
+                original_text=original_text,
+                standard_codes=standard_codes,
+            )
+            if code:
+                position_codes.append(code)
+
+        unique_codes = self._dedupe_position_codes(position_codes)
+        code = 'x'.join(unique_codes)
+        length = str(structural.get('LENGTH') or '').strip()
+        if length:
+            length_code = self.size_processor.extract_length_prefix(
+                {'_ITEMS': [{'type': 'LENGTH', 'value': length}]},
+                original_text=original_text,
+            )
+            if length_code:
+                code = f'{code}{length_code}' if code else length_code
+
+        return EncodedFieldResult(
+            field_type='SIZE',
+            stage1_raw=self._clone_response_value(structural),
+            stage2_input=self._clone_response_value(structural),
+            encode_confidence_v2=self._build_processor_encode_confidence(
+                source='structural_v2_size_processor',
+                confidence=1.0 if code else 0.0,
+                reason='structural_v2_size_resolved' if code else 'structural_v2_size_empty',
+                evidence={
+                    'position_count': len(position_codes),
+                    'deduplicated_position_count': len(unique_codes),
+                    'length_present': bool(length),
+                },
+            ),
+            code=code,
+            codes=[code] if code else [],
+            similarity=1.0 if code else 0.0,
+            is_exact_match=True,
+            need_review=False,
+        )
+
+    def _encode_structural_v2_thickness(
+        self,
+        structural: Dict[str, Any],
+        *,
+        original_text: str = "",
+    ) -> EncodedFieldResult:
+        position_codes: List[str] = []
+        for item in ordered_v2_items(structural):
+            thickness_items = self._select_v2_thickness_items(item.get('THICKNESS'))
+            if not thickness_items:
+                continue
+            code = self.thickness_processor.process(
+                {'_ITEMS': thickness_items},
+                original_text=original_text,
+            )
+            if code:
+                position_codes.append(code)
+
+        unique_codes = self._dedupe_position_codes(position_codes)
+        code = 'X'.join(unique_codes)
+        return EncodedFieldResult(
+            field_type='THICKNESS',
+            stage1_raw=self._clone_response_value(structural),
+            stage2_input=self._clone_response_value(structural),
+            encode_confidence_v2=self._build_processor_encode_confidence(
+                source='structural_v2_thickness_processor',
+                confidence=1.0 if code else 0.0,
+                reason='structural_v2_thickness_resolved' if code else 'structural_v2_thickness_empty',
+                evidence={
+                    'position_count': len(position_codes),
+                    'deduplicated_position_count': len(unique_codes),
+                },
+            ),
+            code=code,
+            codes=[code] if code else [],
+            similarity=1.0 if code else 0.0,
+            is_exact_match=True,
+            need_review=False,
+        )
 
     @staticmethod
     def _insert_reducing_before_body(body: str) -> str:
@@ -1835,6 +2003,117 @@ class PipeEncoderBase:
             final_code,
         )
 
+    def _apply_structural_v2_thickness_mm_conversion(
+        self,
+        result: PipeEncodingResult,
+        structural: Dict[str, Any],
+    ) -> None:
+        """Apply the thickness table per V2 position without losing ROLE/SCOPE."""
+        if not self.thickness_mm_conversion_enabled and not self.thickness_mm_dedup_enabled:
+            return
+
+        thk_field = result.fields.get('THICKNESS')
+        std_field = result.fields.get('STANDARD')
+        if not thk_field or not thk_field.code or not std_field:
+            return
+
+        standards = std_field.stage1_raw or std_field.detail_items or ''
+        position_codes: List[str] = []
+        note_lines: List[str] = []
+        changed = False
+
+        for item in ordered_v2_items(structural):
+            thickness_items = self._select_v2_thickness_items(item.get('THICKNESS'))
+            if not thickness_items:
+                continue
+
+            original_code = self.thickness_processor.process(
+                {'_ITEMS': thickness_items},
+                original_text=result.original_text,
+            )
+            if not original_code:
+                continue
+
+            size_items = copy.deepcopy(item.get('SIZE') or [])
+            if not size_items:
+                position_codes.append(original_code)
+                continue
+            size_value: Dict[str, Any] = {'_ITEMS': size_items}
+            mm_context = self._v2_item_mm_context(item)
+            if mm_context:
+                size_value['_THICKNESS_MM_CONTEXT'] = mm_context
+            dn_code = self.size_processor.process(size_value, original_text=result.original_text)
+            if not dn_code:
+                position_codes.append(original_code)
+                continue
+
+            thickness_input = {'_ITEMS': thickness_items}
+            parsed_items = self._build_thickness_items_for_conversion(
+                thickness_input,
+                original_text=result.original_text,
+            )
+            explicit_mm = [
+                str(entry.get('normalized') or '').strip().upper()
+                for entry in parsed_items
+                if self._is_mm_code(entry.get('normalized'))
+            ]
+            has_explicit_mm = bool(explicit_mm)
+            details = self.thickness_table_processor.convert_to_mm_details(
+                standards,
+                dn_code,
+                thickness_input,
+                original_text=result.original_text,
+            )
+            if not details:
+                position_codes.append(original_code)
+                continue
+
+            parts: List[str] = []
+            for detail in details:
+                source = str(detail.get('source') or '').strip().upper()
+                converted = str(detail.get('converted') or '').strip().upper()
+                source_type = str(detail.get('source_type') or '').strip().upper()
+                if not converted:
+                    if source:
+                        parts.append(source)
+                    continue
+                formatted = self._format_mm_code(converted) if re.fullmatch(r'\d+(?:\.\d+)?', converted) else converted
+                if self.thickness_table_processor.is_schedule_like(source):
+                    if has_explicit_mm and self.thickness_mm_dedup_enabled:
+                        if any(
+                            self.thickness_table_processor.mm_values_equivalent(formatted, mm)
+                            for mm in explicit_mm
+                        ):
+                            changed = True
+                            note = self._build_thickness_conversion_note(
+                                source,
+                                str(detail.get('dn') or dn_code),
+                                formatted,
+                                applied=True,
+                            )
+                            if note:
+                                note_lines.append(note)
+                            continue
+                    elif self.thickness_mm_conversion_enabled:
+                        parts.append(formatted)
+                        changed = changed or formatted != source
+                        continue
+                parts.append(source if source else formatted if source_type else '')
+
+            normalized_parts = self._dedupe_position_codes(parts)
+            position_codes.append('X'.join(normalized_parts) if normalized_parts else original_code)
+
+        final_parts = self._dedupe_position_codes(position_codes)
+        final_code = 'X'.join(final_parts)
+        if final_code and (changed or final_code != thk_field.code):
+            thk_field.code = final_code
+            thk_field.codes = [final_code]
+        for note in list(thk_field.notes or []) + note_lines:
+            if note and note not in thk_field.notes:
+                thk_field.notes.append(note)
+        if note_lines:
+            result.thickness_conversion_notes = list(dict.fromkeys(note_lines))
+
     @staticmethod
     def _format_standard_source_for_note(standards: Any) -> str:
         def _format_item(item: Any) -> str:
@@ -3094,8 +3373,76 @@ class PipeEncoderBase:
             processing_order.remove('STANDARD')
             processing_order.insert(processing_order.index('SIZE'), 'STANDARD')
 
+        structural_v2 = entities.get(STRUCTURAL_V2_FIELD)
+        use_structural_v2 = is_structural_v2(structural_v2)
+
         for field_type in processing_order:
             if type_combined_processed and field_type in self.TYPE_COMBINED_FIELDS:
+                continue
+
+            if use_structural_v2 and field_type in {'SIZE', 'THICKNESS', 'PRESSURE'}:
+                present = {
+                    'SIZE': has_v2_size,
+                    'THICKNESS': has_v2_thickness,
+                    'PRESSURE': has_v2_pressure,
+                }[field_type](structural_v2)
+                if not present:
+                    continue
+
+                if field_type == 'SIZE':
+                    standard_codes: List[str] = []
+                    standard_field = result.fields.get('STANDARD')
+                    for detail_item in getattr(standard_field, 'detail_items', []) or []:
+                        base_code = str(detail_item.get('base_code') or '').strip().upper()
+                        if base_code and base_code not in standard_codes:
+                            standard_codes.append(base_code)
+                    if not standard_codes and standard_field:
+                        for standard_code in getattr(standard_field, 'codes', []) or []:
+                            code_parts = self.standard_processor._split_code_and_grade(str(standard_code))
+                            base_code = str(code_parts.get('base') or '').strip().upper()
+                            if base_code and base_code not in standard_codes:
+                                standard_codes.append(base_code)
+                    field_result = self._encode_structural_v2_size(
+                        structural_v2,
+                        original_text=original_text,
+                        standard_codes=standard_codes,
+                    )
+                elif field_type == 'THICKNESS':
+                    field_result = self._encode_structural_v2_thickness(
+                        structural_v2,
+                        original_text=original_text,
+                    )
+                else:
+                    field_result = self._process_field_multi(
+                        'PRESSURE',
+                        [str(structural_v2.get('PRESSURE') or '').strip()],
+                        original_text=original_text,
+                    )
+                    field_result.stage1_raw = self._clone_response_value(structural_v2)
+                    field_result.stage2_input = self._clone_response_value(structural_v2)
+
+                field_extract_conf = self._get_field_extract_confidence(
+                    field_type,
+                    extract_confidence,
+                    extract_confidence_v2,
+                )
+                field_result.similarity = self._blend_extract_and_encode_conf(
+                    field_extract_conf,
+                    field_result.similarity,
+                )
+                field_result.similarity = self._temperature_scale_confidence(field_result.similarity)
+                self._set_field_confidence_triplet(
+                    field_result,
+                    field_extract_conf,
+                    self._get_field_stage2_confidence(field_result),
+                )
+                result.fields[field_type] = field_result
+                if field_result.need_review and field_type not in result.review_fields:
+                    result.review_fields.append(field_type)
+                if not field_result.code and field_type not in result.missing_fields:
+                    result.missing_fields.append(field_type)
+                if field_result.similarity < result.min_similarity:
+                    result.min_similarity = field_result.similarity
                 continue
 
             raw_value = entities.get(field_type, None)
@@ -3357,7 +3704,7 @@ class PipeEncoderBase:
 
     def encode(
         self,
-        entities: Dict[str, str],
+        entities: Dict[str, Any],
         original_text: str = "",
         extract_confidence: Optional[Dict[str, Any]] = None,
         extract_confidence_v2: Optional[Dict[str, Any]] = None,
@@ -3390,6 +3737,7 @@ class PipeEncoderBase:
         self._normalize_type_radius_in_entities(entities)
         
         regex_value_code_map = {}
+        use_structural_v2 = is_structural_v2(entities.get(STRUCTURAL_V2_FIELD))
         
         self._fix_size_thickness_split(entities)
         self._augment_entities_from_text(
@@ -3398,6 +3746,12 @@ class PipeEncoderBase:
             regex_value_code_map,
             material_category=material_category,
         )
+        if use_structural_v2:
+            # V2 is authoritative. Regex supplementation must not recreate the
+            # mutually exclusive V1 structural fields.
+            for legacy_field in ('SIZE', 'THICKNESS', 'PRESSURE'):
+                entities.pop(legacy_field, None)
+                regex_value_code_map.pop(legacy_field, None)
         self._normalize_standard_body_grade_suffix(entities)
         self._supplement_type_manu_from_standard(entities, material_category)
         entities['_STANDARD_MODIFIER_MAP'] = self._build_standard_modifier_map(entities, original_text)
@@ -3453,7 +3807,13 @@ class PipeEncoderBase:
             material_category=result.material_category,
         )
 
-        self._apply_thickness_mm_conversion(result)
+        if use_structural_v2:
+            self._apply_structural_v2_thickness_mm_conversion(
+                result,
+                entities.get(STRUCTURAL_V2_FIELD),
+            )
+        else:
+            self._apply_thickness_mm_conversion(result)
 
         self._apply_field_verification_penalty(result, field_verified)
         self._apply_review_rules(result)

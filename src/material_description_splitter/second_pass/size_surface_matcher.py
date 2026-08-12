@@ -42,6 +42,20 @@ class SizeSurfaceMatcher:
             return [item for item in value if isinstance(item, dict)]
         if not isinstance(value, dict):
             return []
+        structural_items = value.get("ITEMS")
+        if isinstance(structural_items, list):
+            result: list[dict[str, object]] = []
+            for position in structural_items:
+                if not isinstance(position, dict):
+                    continue
+                result.extend(
+                    item for item in (position.get("SIZE") or [])
+                    if isinstance(item, dict)
+                )
+            length = str(value.get("LENGTH") or "").strip()
+            if length:
+                result.append({"type": "LENGTH", "value": length})
+            return result
         items = value.get("_ITEMS")
         if not isinstance(items, list) or not items:
             items = value.get("ordered_items")
@@ -50,7 +64,7 @@ class SizeSurfaceMatcher:
     def parse_size_items(self, size_result: object, size_code: str = "") -> list[ParsedSizeItem]:
         structured_items = self._extract_structured_items(size_result)
         if structured_items:
-            return self._dedupe_items(structured_items)
+            return self._dedupe_items_preserve_order(structured_items)
 
         texts = self._expand_texts(self._normalize_size_result(size_result))
         if not texts:
@@ -449,6 +463,23 @@ class SizeSurfaceMatcher:
     @staticmethod
     def _normalize_size_result(size_result: object) -> list[str]:
         if isinstance(size_result, dict):
+            structural_items = size_result.get("ITEMS")
+            if isinstance(structural_items, list):
+                result: list[str] = []
+                for position in structural_items:
+                    if not isinstance(position, dict):
+                        continue
+                    for item in position.get("SIZE") or []:
+                        if not isinstance(item, dict):
+                            continue
+                        item_type = str(item.get("type") or "").strip().upper()
+                        item_value = str(item.get("value") or "").strip()
+                        if item_type and item_value:
+                            result.append(f"{item_type}: {item_value}")
+                length = str(size_result.get("LENGTH") or "").strip()
+                if length:
+                    result.append(f"LENGTH: {length}")
+                return result
             result = []
             for key in ("DN", "OD", "INCH", "LENGTH"):
                 values = size_result.get(key)
@@ -777,6 +808,18 @@ class SizeSurfaceMatcher:
                 existing.raw = item.raw
         result = list(dedup.values())
         result.sort(key=lambda item: (-len(item.raw), item.field, item.raw.upper()))
+        return result
+
+    @staticmethod
+    def _dedupe_items_preserve_order(items: list[ParsedSizeItem]) -> list[ParsedSizeItem]:
+        result: list[ParsedSizeItem] = []
+        seen: set[tuple[str, str, tuple[str, ...]]] = set()
+        for item in items:
+            key = (item.field, item.value or item.raw.upper(), tuple(item.values))
+            if key in seen:
+                continue
+            seen.add(key)
+            result.append(item)
         return result
 
     @staticmethod

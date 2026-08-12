@@ -73,6 +73,53 @@ function asObj(value: JsonValue | undefined): Record<string, JsonValue> {
   return isObject(value as JsonValue) ? (value as Record<string, JsonValue>) : {}
 }
 
+function formatStructuralAtom(item: JsonValue): string {
+  if (!isObject(item)) return s(item)
+  const type = (s(item.type) || s(item.TYPE)).toUpperCase()
+  const value = s(item.value) || s(item.VALUE)
+  if (!value) return ''
+  if (type === 'SCHEDULE') return value
+  if (type === 'MM') return `${value}MM`
+  if (type === 'INCH') return `INCH${value}`
+  return `${type}${value}`
+}
+
+function formatStructuralItemLabel(item: Record<string, JsonValue>): string {
+  const scope = s(item.SCOPE).toUpperCase()
+  const role = s(item.ROLE).toUpperCase()
+  if (scope && scope !== 'BODY') return [scope, role].filter(Boolean).join(' ')
+  return role
+}
+
+function formatStructuralV2Lines(fieldType: string, value: JsonValue | undefined): string[] {
+  if (!isObject(value as JsonValue)) return []
+  const payload = value as Record<string, JsonValue>
+
+  if (fieldType === 'PRESSURE') {
+    const pressure = s(payload.PRESSURE)
+    return pressure ? [pressure] : []
+  }
+
+  if (fieldType !== 'SIZE' && fieldType !== 'THICKNESS') return []
+  const items = Array.isArray(payload.ITEMS) ? payload.ITEMS : []
+  const lines = items
+    .map((item) => {
+      if (!isObject(item)) return ''
+      const values = Array.isArray(item[fieldType]) ? (item[fieldType] as JsonValue[]) : []
+      const content = values.map(formatStructuralAtom).filter(Boolean).join(' | ')
+      if (!content) return ''
+      const label = formatStructuralItemLabel(item)
+      return label ? `${label}: ${content}` : content
+    })
+    .filter(Boolean)
+
+  if (fieldType === 'SIZE') {
+    const length = s(payload.LENGTH)
+    if (length) lines.push(`LENGTH: ${length}`)
+  }
+  return lines
+}
+
 export function getTypeCategory(result?: EncodingResult | null, importedCategory = ''): string {
   return (
     String(importedCategory || '').trim() ||
@@ -127,6 +174,8 @@ function formatStandardItem(item: JsonValue): string {
 function formatPressureValue(value: JsonValue | undefined): string {
   // 直接是字符串/标量（如 "PN16"）时原样返回
   if (!isObject(value as JsonValue)) return s(value)
+  const structuralLines = formatStructuralV2Lines('PRESSURE', value)
+  if (structuralLines.length > 0) return structuralLines.join(' ; ')
   const items = Array.isArray(asObj(value).items) ? (asObj(value).items as JsonValue[]) : []
   return items
     .map((item) => {
@@ -140,6 +189,8 @@ function formatPressureValue(value: JsonValue | undefined): string {
 
 function formatSizeThk(fieldType: string, value: JsonValue | undefined): string {
   if (!isObject(value as JsonValue)) return s(value)
+  const structuralLines = formatStructuralV2Lines(fieldType, value)
+  if (structuralLines.length > 0) return structuralLines.join(' ; ')
   const o = value as Record<string, JsonValue>
   const orderedItems = o.ordered_items
   if (Array.isArray(orderedItems)) {
@@ -183,6 +234,10 @@ export function formatFieldLines(fieldType: string, value: JsonValue | undefined
     const fmt = fieldType === 'STANDARD' ? formatStandardItem : formatMaterialItem
     const lines = items.map(fmt).filter(Boolean)
     return lines.length > 0 ? lines : ['—']
+  }
+  if (fieldType === 'SIZE' || fieldType === 'THICKNESS' || fieldType === 'PRESSURE') {
+    const structuralLines = formatStructuralV2Lines(fieldType, value)
+    if (structuralLines.length > 0) return structuralLines
   }
   return [formatFieldValue(fieldType, value)]
 }

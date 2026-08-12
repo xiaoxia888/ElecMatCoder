@@ -10,6 +10,15 @@ from typing import Any, Callable, Dict, Optional
 
 import yaml
 
+from src.domain.structural_v2 import (
+    STRUCTURAL_V2_FIELD,
+    canonical_structural_v2,
+    has_v2_pressure,
+    has_v2_size,
+    has_v2_thickness,
+    is_structural_v2,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -440,45 +449,80 @@ class Stage1FieldOrchestrator:
         structural_sources: Dict[str, str] = {}
         structural_model_confidences: Dict[str, Any] = {}
         if isinstance(structural_result, dict):
-            structural_visible = {
-                k: copy.deepcopy(v)
-                for k, v in structural_result.items()
-                if not str(k).startswith("_")
-            }
-            structural_sources = {
-                str(k): str(v)
-                for k, v in (structural_result.get("_sources") or {}).items()
-                if k in {"SIZE", "THICKNESS", "PRESSURE"}
-            }
-            structural_model_confidences = copy.deepcopy(
-                structural_result.get("_extract_confidence_v2", {}) or {}
-            )
-            for field in ("SIZE", "THICKNESS", "PRESSURE"):
-                field_value = copy.deepcopy(structural_result.get(field))
-                if field in {"SIZE", "THICKNESS"} and isinstance(field_value, dict):
-                    items_key = f"{field}_ITEMS"
-                    items_value = structural_result.get(items_key)
-                    if isinstance(items_value, list) and items_value:
-                        field_value["_ITEMS"] = copy.deepcopy(items_value)
-                if isinstance(structural_visible, dict):
-                    structural_visible[field] = copy.deepcopy(field_value)
-                if not _is_empty_structural_value(field, field_value):
-                    decisions[field] = field_value
-                provided_confidence = structural_model_confidences.get(field)
-                if isinstance(provided_confidence, dict):
-                    extract_confidence_v2[field] = provided_confidence
-                else:
-                    extract_confidence_v2[field] = self._build_structural_field_confidence_v2(
-                        text=text,
-                        field=field,
-                        field_value=field_value,
-                        source=structural_sources.get(field, "prompt_extraction"),
-                        prompt_status="",
-                        prompt_error="",
-                    )
-                structural_confidence = extract_confidence_v2[field].get("confidence")
-                if structural_confidence is not None and not _is_empty_structural_value(field, field_value):
-                    extract_confidence[field] = float(structural_confidence)
+            if is_structural_v2(structural_result):
+                structural_visible = canonical_structural_v2(structural_result)
+                decisions[STRUCTURAL_V2_FIELD] = copy.deepcopy(structural_visible)
+                structural_sources = {
+                    str(k): str(v)
+                    for k, v in (structural_result.get("_sources") or {}).items()
+                    if k in {"SIZE", "THICKNESS", "PRESSURE"}
+                }
+                structural_model_confidences = copy.deepcopy(
+                    structural_result.get("_extract_confidence_v2", {}) or {}
+                )
+                field_presence = {
+                    "SIZE": has_v2_size(structural_result),
+                    "THICKNESS": has_v2_thickness(structural_result),
+                    "PRESSURE": has_v2_pressure(structural_result),
+                }
+                for field, present in field_presence.items():
+                    provided_confidence = structural_model_confidences.get(field)
+                    if isinstance(provided_confidence, dict):
+                        extract_confidence_v2[field] = provided_confidence
+                    else:
+                        field_value = structural_result if field != "PRESSURE" else structural_result.get("PRESSURE")
+                        extract_confidence_v2[field] = self._build_structural_field_confidence_v2(
+                            text=text,
+                            field=field,
+                            field_value=field_value,
+                            source=structural_sources.get(field, "finetuned_structural_model"),
+                            prompt_status="",
+                            prompt_error="",
+                        )
+                    confidence = extract_confidence_v2[field].get("confidence")
+                    if present and confidence is not None:
+                        extract_confidence[field] = float(confidence)
+                logger.debug("[结构字段最终] 使用V2结构，不生成旧结构字段: %s", structural_visible)
+            else:
+                structural_visible = {
+                    k: copy.deepcopy(v)
+                    for k, v in structural_result.items()
+                    if not str(k).startswith("_")
+                }
+                structural_sources = {
+                    str(k): str(v)
+                    for k, v in (structural_result.get("_sources") or {}).items()
+                    if k in {"SIZE", "THICKNESS", "PRESSURE"}
+                }
+                structural_model_confidences = copy.deepcopy(
+                    structural_result.get("_extract_confidence_v2", {}) or {}
+                )
+                for field in ("SIZE", "THICKNESS", "PRESSURE"):
+                    field_value = copy.deepcopy(structural_result.get(field))
+                    if field in {"SIZE", "THICKNESS"} and isinstance(field_value, dict):
+                        items_key = f"{field}_ITEMS"
+                        items_value = structural_result.get(items_key)
+                        if isinstance(items_value, list) and items_value:
+                            field_value["_ITEMS"] = copy.deepcopy(items_value)
+                    if isinstance(structural_visible, dict):
+                        structural_visible[field] = copy.deepcopy(field_value)
+                    if not _is_empty_structural_value(field, field_value):
+                        decisions[field] = field_value
+                    provided_confidence = structural_model_confidences.get(field)
+                    if isinstance(provided_confidence, dict):
+                        extract_confidence_v2[field] = provided_confidence
+                    else:
+                        extract_confidence_v2[field] = self._build_structural_field_confidence_v2(
+                            text=text,
+                            field=field,
+                            field_value=field_value,
+                            source=structural_sources.get(field, "prompt_extraction"),
+                            prompt_status="",
+                            prompt_error="",
+                        )
+                    structural_confidence = extract_confidence_v2[field].get("confidence")
+                    if structural_confidence is not None and not _is_empty_structural_value(field, field_value):
+                        extract_confidence[field] = float(structural_confidence)
             logger.debug(
                 "[结构字段最终] sources=%s, SIZE=%s, THICKNESS=%s, PRESSURE=%s, complex_trigger=%s",
                 structural_sources,

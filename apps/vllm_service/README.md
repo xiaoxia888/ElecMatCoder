@@ -79,6 +79,17 @@ engines:
       coder: /home/waas/lora/coder
 ```
 
+每个对外模型还必须配置独立提示词文件：
+
+```yaml
+models:
+  type:
+    prompt_file: /data/MaterialsCode/prompts/种类微调提示词.txt
+```
+
+`prompt_file`支持绝对路径；相对路径按`service.yaml`所在目录解析。服务启动时读取
+UTF-8文本，路径为空、文件不存在或内容为空都会直接报错。
+
 先校验配置并查看实际启动命令：
 
 ```bash

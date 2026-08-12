@@ -27,17 +27,16 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger(__name__)
 DEFAULT_SERVICE_CONFIG = Path(__file__).resolve().with_name("service.yaml")
 
-DEFAULT_INSTRUCTION = (
-    "你是一个工业管道材料结构化信息提取助手。"
-    "请从材料描述中提取结构化信息，并以 JSON 格式返回。"
-)
-
-
-def _build_raw_chatml_prompt(instruction: str, input_text: str) -> str:
-    return (
-        f"<|im_start|>system\n{instruction}<|im_end|>\n"
-        f"<|im_start|>user\n{input_text}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
+def _build_chat_prompt(tokenizer: Any, instruction: str, input_text: str) -> str:
+    messages = [
+        {"role": "system", "content": instruction},
+        {"role": "user", "content": input_text},
+    ]
+    return tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
+        enable_thinking=False,
     )
 
 
@@ -81,6 +80,7 @@ def _extract_selected_logprob(logprobs: Any, token_id: int) -> Optional[float]:
 class ModelSpec:
     name: str
     model_path: str
+    prompt_file: str
     instruction: str
     max_tokens: int
     temperature: float
@@ -136,6 +136,7 @@ class MLXModelManager:
             {
                 "name": spec.name,
                 "model_path": spec.model_path,
+                "prompt_file": spec.prompt_file,
                 "max_tokens": spec.max_tokens,
                 "temperature": spec.temperature,
                 "top_p": spec.top_p,
@@ -274,20 +275,13 @@ class MLXModelManager:
     ) -> dict[str, Any]:
         import mlx.core as mx
         from mlx_lm.generate import generate, stream_generate
-        from mlx_lm.sample_utils import make_logits_processors, make_sampler
+        from mlx_lm.sample_utils import make_sampler
 
-        prompt = _build_raw_chatml_prompt(instruction, text)
-        think_token_ids = {}
-        for marker in ("<think>", "</think>"):
-            token_ids = item.tokenizer.encode(marker, add_special_tokens=False)
-            if len(token_ids) == 1:
-                think_token_ids[token_ids[0]] = -1e9
+        prompt = _build_chat_prompt(item.tokenizer, instruction, text)
 
         # MLX models commonly emit fp16/bf16 logits. Computing logsumexp in that
         # dtype can round a highly likely token's logprob to exactly zero.
         logits_processors = [lambda _tokens, logits: logits.astype(mx.float32)]
-        if think_token_ids:
-            logits_processors.extend(make_logits_processors(logit_bias=think_token_ids))
         started = time.perf_counter()
         generation_kwargs = {
             "prompt": prompt,
@@ -340,6 +334,15 @@ class MLXModelManager:
             token_logprobs = adjusted
         elapsed = time.perf_counter() - started
         parsed = _parse_json_output(raw)
+        if parsed is None:
+            logger.warning(
+                "[MLX Service] JSON解析失败: model=%s, prompt_file=%s, "
+                "raw_len=%s, raw_preview=%r",
+                item.spec.name,
+                item.spec.prompt_file,
+                len(raw),
+                raw[:500],
+            )
         return {
             "model": item.spec.name,
             "elapsed_seconds": round(elapsed, 4),
@@ -386,6 +389,24 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
+def _load_model_prompt(config_path: Path, model_name: str, value: Any) -> tuple[str, str]:
+    raw_path = str(value or "").strip()
+    if not raw_path:
+        raise ValueError(f"model {model_name} 缺少 prompt_file，请填写提示词文件路径")
+
+    prompt_path = Path(raw_path).expanduser()
+    if not prompt_path.is_absolute():
+        prompt_path = config_path.parent / prompt_path
+    prompt_path = prompt_path.resolve()
+    if not prompt_path.is_file():
+        raise FileNotFoundError(f"model {model_name} 的提示词文件不存在: {prompt_path}")
+
+    instruction = prompt_path.read_text(encoding="utf-8").strip()
+    if not instruction:
+        raise ValueError(f"model {model_name} 的提示词文件为空: {prompt_path}")
+    return str(prompt_path), instruction
+
+
 def load_service_config(path: Path) -> ServiceSpec:
     data = _load_yaml(path)
     raw_service = data.get("service") or data
@@ -404,10 +425,12 @@ def load_registry(path: Path, only_models: list[str] | None = None) -> dict[str,
     for name, row in raw_models.items():
         if wanted and name not in wanted:
             continue
+        prompt_file, instruction = _load_model_prompt(path, name, row.get("prompt_file"))
         specs[name] = ModelSpec(
             name=name,
             model_path=str(Path(str(row["model_path"])).expanduser()),
-            instruction=str(row.get("instruction", DEFAULT_INSTRUCTION)),
+            prompt_file=prompt_file,
+            instruction=instruction,
             max_tokens=int(row.get("max_tokens", 512)),
             temperature=float(row.get("temperature", 0.0)),
             top_p=float(row.get("top_p", 1.0)),

@@ -102,6 +102,7 @@ class ModelRoute:
     name: str
     engine: str
     upstream_model: str
+    prompt_file: str
     instruction: str
     max_tokens: int = 512
     temperature: float = 0.0
@@ -124,6 +125,24 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError(f"配置文件必须是 YAML 对象: {path}")
     return data
+
+
+def _load_model_prompt(config_path: Path, model_name: str, value: Any) -> tuple[str, str]:
+    raw_path = _expand(value)
+    if not raw_path:
+        raise ValueError(f"model {model_name} 缺少 prompt_file，请填写提示词文件路径")
+
+    prompt_path = Path(raw_path)
+    if not prompt_path.is_absolute():
+        prompt_path = config_path.parent / prompt_path
+    prompt_path = prompt_path.resolve()
+    if not prompt_path.is_file():
+        raise FileNotFoundError(f"model {model_name} 的提示词文件不存在: {prompt_path}")
+
+    instruction = prompt_path.read_text(encoding="utf-8").strip()
+    if not instruction:
+        raise ValueError(f"model {model_name} 的提示词文件为空: {prompt_path}")
+    return str(prompt_path), instruction
 
 
 def _resolve_profile_path(config_path: Path, profile: str | Path) -> Path:
@@ -308,11 +327,13 @@ def load_config(path: Path, profile: str | Path | None = None) -> DeploymentConf
             raise ValueError(
                 f"model {name} 的 upstream_model={upstream_model} 未在 engine {engine_name} 注册"
             )
+        prompt_file, instruction = _load_model_prompt(path, str(name), row.get("prompt_file"))
         models[str(name)] = ModelRoute(
             name=str(name),
             engine=engine_name,
             upstream_model=upstream_model,
-            instruction=str(row.get("instruction") or ""),
+            prompt_file=prompt_file,
+            instruction=instruction,
             max_tokens=int(row.get("max_tokens", 512)),
             temperature=float(row.get("temperature", 0.0)),
             top_p=float(row.get("top_p", 1.0)),

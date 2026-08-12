@@ -157,7 +157,16 @@ def _build_raw_chatml_prompt(input_text: str, instruction: str) -> str:
 
 
 def _build_chat_prompt(tokenizer: Any, input_text: str, instruction: str) -> str:
-    return _build_raw_chatml_prompt(input_text, instruction)
+    messages = [
+        {"role": "system", "content": instruction},
+        {"role": "user", "content": input_text},
+    ]
+    return tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
+        enable_thinking=False,
+    )
 
 
 class StructuredLlamaFactoryPredictor:
@@ -289,7 +298,10 @@ class StructuredLlamaFactoryPredictor:
         parsed = self._parse_json_output(raw)
         if parsed is None:
             logger.warning(
-                "[结构化适配器] JSON解析失败, raw_len=%s, raw_preview=%r",
+                "[结构化适配器] JSON解析失败, model=%s, backend=%s, "
+                "raw_len=%s, raw_preview=%r",
+                self.model_name or str(self.model_path or ""),
+                self.backend,
                 len(str(raw or "")),
                 str(raw or "")[:500],
             )
@@ -344,14 +356,6 @@ class StructuredLlamaFactoryPredictor:
         if self.temperature > 0:
             generate_kwargs["temperature"] = self.temperature
             generate_kwargs["top_p"] = 0.9
-
-        bad_words_ids = []
-        for marker in ("<think>", "</think>"):
-            token_ids = self.tokenizer.encode(marker, add_special_tokens=False)
-            if token_ids:
-                bad_words_ids.append(token_ids)
-        if bad_words_ids:
-            generate_kwargs["bad_words_ids"] = bad_words_ids
 
         with torch.no_grad():
             outputs = self.model.generate(

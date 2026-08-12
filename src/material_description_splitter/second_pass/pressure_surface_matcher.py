@@ -190,6 +190,9 @@ class PressureSurfaceMatcher:
 
     @staticmethod
     def _normalize_values(value: object) -> list[str]:
+        if isinstance(value, dict) and isinstance(value.get("ITEMS"), list):
+            pressure = str(value.get("PRESSURE") or "").strip()
+            return PressureSurfaceMatcher._split_compound_text(pressure)
         if isinstance(value, (list, tuple)):
             result: list[str] = []
             for item in value:

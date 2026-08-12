@@ -5,6 +5,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
+from src.domain.structural_v2 import STRUCTURAL_V2_FIELD, is_structural_v2
+
 logger = logging.getLogger(__name__)
 
 
@@ -150,10 +152,13 @@ class Stage1DecisionNormalizer:
 
             structural_output = model_output.get("_STRUCTURAL_PROMPT")
             if isinstance(structural_output, dict):
-                for field in ("SIZE", "THICKNESS", "PRESSURE"):
-                    field_value = structural_output.get(field)
-                    if not _is_empty_structural_prompt_field(field, field_value):
-                        raw_values[field] = copy.deepcopy(field_value)
+                if is_structural_v2(structural_output):
+                    raw_values[STRUCTURAL_V2_FIELD] = copy.deepcopy(structural_output)
+                else:
+                    for field in ("SIZE", "THICKNESS", "PRESSURE"):
+                        field_value = structural_output.get(field)
+                        if not _is_empty_structural_prompt_field(field, field_value):
+                            raw_values[field] = copy.deepcopy(field_value)
 
         for field, value in decisions.items():
             if field.startswith("_"):

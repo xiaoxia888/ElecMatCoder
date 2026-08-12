@@ -28,11 +28,11 @@ models:
   size:
     engine: base4b
     upstream_model: size
-    instruction: extract size
+    prompt_file: prompts/size.txt
   material:
     engine: base4b
     upstream_model: material
-    instruction: extract material
+    prompt_file: prompts/material.txt
 """
 
 PROFILE = """
@@ -64,6 +64,10 @@ class ConfigTest(unittest.TestCase):
                 profile_content.replace('cuda_visible_devices: "1"', 'cuda_visible_devices: "0"'),
                 encoding="utf-8",
             )
+            prompt_dir = path.parent / "prompts"
+            prompt_dir.mkdir()
+            (prompt_dir / "size.txt").write_text("extract size\n", encoding="utf-8")
+            (prompt_dir / "material.txt").write_text("extract material\n", encoding="utf-8")
             return load_config(path, profile=profile)
 
     def test_loads_multi_lora_routes(self):
@@ -71,6 +75,8 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(config.profile_name, "test")
         self.assertEqual(set(config.models), {"size", "material"})
         self.assertEqual(config.models["size"].engine, "base4b")
+        self.assertEqual(config.models["size"].instruction, "extract size")
+        self.assertTrue(config.models["size"].prompt_file.endswith("prompts/size.txt"))
         self.assertEqual(config.engines["base4b"].max_loras, 2)
 
     def test_builds_vllm_multi_lora_command(self):
@@ -113,6 +119,16 @@ class ConfigTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "必须配置顶层profile"):
             self._load(CONFIG.replace("profile: test\n", ""))
 
+    def test_requires_prompt_file(self):
+        bad = CONFIG.replace("    prompt_file: prompts/size.txt\n", "    prompt_file: \"\"\n")
+        with self.assertRaisesRegex(ValueError, "缺少 prompt_file"):
+            self._load(bad)
+
+    def test_rejects_missing_prompt_file(self):
+        bad = CONFIG.replace("prompts/size.txt", "prompts/missing.txt")
+        with self.assertRaisesRegex(FileNotFoundError, "提示词文件不存在"):
+            self._load(bad)
+
     def test_profile_cannot_override_business_configuration(self):
         with self.assertRaisesRegex(ValueError, "不允许配置这些顶层字段"):
             self._load(profile_content=PROFILE + "models: {}\n")
@@ -134,8 +150,19 @@ class ConfigTest(unittest.TestCase):
             self._load(profile_content=PROFILE.replace("    max_num_seqs: 16\n", ""))
 
     def test_builtin_profiles_isolate_blackwell_workaround(self):
-        config_5090 = load_config(DEFAULT_CONFIG_PATH, profile="dual-5090")
-        config_4090 = load_config(DEFAULT_CONFIG_PATH, profile="dual-4090")
+        with tempfile.TemporaryDirectory() as directory:
+            prompt = Path(directory) / "prompt.txt"
+            prompt.write_text("test prompt", encoding="utf-8")
+            service = Path(directory) / "service.yaml"
+            service.write_text(
+                DEFAULT_CONFIG_PATH.read_text(encoding="utf-8").replace(
+                    'prompt_file: ""', f'prompt_file: "{prompt}"'
+                ),
+                encoding="utf-8",
+            )
+            profile_dir = DEFAULT_CONFIG_PATH.parent / "profiles"
+            config_5090 = load_config(service, profile=profile_dir / "dual-5090.yaml")
+            config_4090 = load_config(service, profile=profile_dir / "dual-4090.yaml")
         for engine in config_5090.engines.values():
             self.assertEqual(engine.environment["VLLM_USE_FLASHINFER_SAMPLER"], "0")
         for engine in config_4090.engines.values():
