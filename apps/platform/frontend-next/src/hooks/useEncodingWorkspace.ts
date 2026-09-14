@@ -242,7 +242,7 @@ export function useEncodingWorkspace() {
     }
   }
 
-  function applyViewedJobSnapshot(job: BatchJobSummary) {
+  function applyViewedJobSnapshot(job: BatchJobSummary, replaceResults = true) {
     clearPendingResults()
     const items = Array.isArray(job.items) ? job.items : []
     setDataList(
@@ -256,23 +256,35 @@ export function useEncodingWorkspace() {
         .sort((a, b) => a.index - b.index),
     )
 
-    const nextResults: Record<number, EncodingResult> = {}
-    Object.entries(job.results || {}).forEach(([index, result]) => {
-      const numeric = Number(index)
-      if (Number.isFinite(numeric) && result) nextResults[numeric] = result
-    })
-    setResults(nextResults)
+    if (job.results || replaceResults) {
+      const nextResults: Record<number, EncodingResult> = {}
+      Object.entries(job.results || {}).forEach(([index, result]) => {
+        const numeric = Number(index)
+        if (Number.isFinite(numeric) && result) nextResults[numeric] = result
+      })
+      setResults(nextResults)
+    }
+  }
+
+  async function loadItemResult(jobId: string, itemIndex: number) {
+    const detail = await api.getBatchJobItem(jobId, itemIndex)
+    if (activeTaskIdRef.current === jobId && detail.result) {
+      setResults((prev) => ({ ...prev, [itemIndex]: detail.result! }))
+    }
   }
 
   async function hydrateTaskFromServer(jobId: string, preferredIndex?: number) {
     const res = await api.getBatchJob(jobId)
     if (!res.job || activeTaskIdRef.current !== jobId) return
-    applyViewedJobSnapshot(res.job)
+    // 任务结束后的刷新只更新描述和元数据，保留 SSE 已收到的结果缓存。
+    applyViewedJobSnapshot(res.job, false)
     setCurrentIndex((prev) => {
-      const total = res.job.items?.length ?? 0
-      if (total <= 0) return -1
+      const items = res.job.items || []
+      if (items.length <= 0) return -1
       const nextIndex = typeof preferredIndex === 'number' ? preferredIndex : prev
-      return Number.isFinite(nextIndex) && nextIndex >= 0 && nextIndex < total ? nextIndex : 0
+      return items.some((item, idx) => Number(item.index ?? idx) === nextIndex)
+        ? nextIndex
+        : Number(items[0]?.index ?? 0)
     })
   }
 
@@ -331,11 +343,21 @@ export function useEncodingWorkspace() {
     if (id === activeTaskId && (dataList.length > 0 || Object.keys(results).length > 0)) return
     setIsTaskLoading(true)
     setActiveTaskId(id)
+    activeTaskIdRef.current = id
+    setDataList([])
+    setResults({})
+    setCurrentIndex(-1)
     try {
       const res = await api.getBatchJob(id)
       if (!res.job || activeTaskIdRef.current !== id) return
       applyViewedJobSnapshot(res.job)
-      setCurrentIndex((res.job.items?.length ?? 0) > 0 ? 0 : -1)
+      const firstIndex = (res.job.items?.length ?? 0) > 0
+        ? Number(res.job.items?.[0]?.index ?? 0)
+        : -1
+      setCurrentIndex(firstIndex)
+      if (firstIndex >= 0) {
+        await loadItemResult(id, firstIndex)
+      }
       if (isBatchJobRunning(res.job.status)) {
         applyRunningJobSnapshot(res.job)
         if (activeJob?.job_id !== id || !eventSourceRef.current) {
@@ -443,8 +465,8 @@ export function useEncodingWorkspace() {
         setLocalTaskName('')
         setLocalCurrentIndex(-1)
         setActiveTaskId(job.job.job_id)
+        activeTaskIdRef.current = job.job.job_id
         applyRunningJobSnapshot(job.job)
-        applyViewedJobSnapshot(job.job)
         subscribeBatchJob(job.job.job_id)
         refreshJobs()
         setNotice(`批量任务已创建，任务号 ${job.job.job_id.slice(0, 8)}。`)
@@ -484,10 +506,7 @@ export function useEncodingWorkspace() {
     // 服务端任务：点击描述时按需查询该条结果（F12 可独立查看该条请求/响应），并写回缓存
     if (activeTaskId && activeTaskId !== 'local' && !resultsRef.current[index]) {
       try {
-        const detail = await api.getBatchJobItem(activeTaskId, index)
-        if (detail.result) {
-          setResults((prev) => ({ ...prev, [index]: detail.result! }))
-        }
+        await loadItemResult(activeTaskId, index)
       } catch {
         // 单条查询失败不影响切换
       }

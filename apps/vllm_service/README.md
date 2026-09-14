@@ -24,18 +24,39 @@
 
 ## 安装
 
-新建独立Linux环境，依据CUDA驱动安装PyTorch后执行：
+推荐使用仓库内的统一 Conda 环境。它面向 3090、4090、5090 和 A100，Python、vLLM 及服务依赖均已固定：
+
+初始化文件使用 `nodefaults`，不会读取用户全局 `.condarc` 中额外配置的 `defaults`、`pkgs/free` 或 `pytorch` 频道，避免重复下载仓库索引。
 
 ```bash
-
-conda create -n vllm python=3.11
-
-pip install -r apps/vllm_service/requirements-linux.txt
-
-uv pip install -r apps/vllm_service/requirements-linux.txt
+conda env create -f apps/vllm_service/environment-linux.yml
+conda activate elecmat-vllm
+python -m pip check
 ```
 
-V100使用`float16`。A100、4090、5090可根据模型支持选择`float16`或`bfloat16`。
+已有同名环境时，使用下面的命令按文件更新：
+
+```bash
+conda env update -n elecmat-vllm \
+  -f apps/vllm_service/environment-linux.yml \
+  --prune
+```
+
+环境文件不单独安装 `torch`。预编译 vLLM wheel 会带入与自身匹配的 PyTorch 和 CUDA 运行时；服务器只需提供兼容的 NVIDIA 驱动，无需让本机 `nvcc` 与 wheel 完全一致。
+
+部分云平台会优先加载系统旧版 `libstdc++.so.6`。启动器会自动将当前 Python/Conda 环境的 `lib` 目录放到子进程的 `LD_LIBRARY_PATH` 首位，避免导入 sqlite/ICU 时出现 `CXXABI_* not found`。若直接绕过本项目启动器运行 vLLM，则仍需手动设置：`export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"`。
+
+初始化后可执行以下检查：
+
+```bash
+python -c 'import torch, vllm; print("vLLM:", vllm.__version__); print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("GPU:", torch.cuda.get_device_name(0))'
+python -m pytest apps/vllm_service/tests -q
+python -m apps.vllm_service.launch \
+  --config apps/vllm_service/service.eval.qwen35-9b.yaml \
+  --dry-run
+```
+
+A100、4090、5090可根据模型支持选择`float16`或`bfloat16`。注意：当前 vLLM 官方 GPU wheel 要求 NVIDIA GPU 计算能力不低于 7.5，因此仓库中的 V100（计算能力 7.0）配置不能直接使用此统一环境，需要另行维护旧版环境或源码构建方案。
 
 ## 配置
 
@@ -46,6 +67,8 @@ apps/vllm_service/service.yaml
 apps/vllm_service/profiles/*.yaml
 ```
 
+模型 Excel 评测器使用独立的 `service.eval.*.yaml` 和 `profiles/single-3090.yaml`。这些配置由 `apps/model_excel_evaluator` 自动启动与停止，不要同时手动占用统一网关的 `8200` 端口。
+
 `service.yaml`中的`profile`为必填项，启动时会自动加载同目录`profiles`下的配置：
 
 ```yaml
@@ -55,12 +78,15 @@ profile: dual-5090
 已有Profile：
 
 - `dual-3090`：双RTX 3090 24GB。
-- `dual-4090`：双RTX 4090 24GB。
+- `dual-4090`：双RTX 4090 24GB，关闭需要本地 C++ JIT 工具链的 FlashInfer sampler。
 - `dual-5090`：双RTX 5090 32GB，关闭当前不兼容的FlashInfer sampler。
 - `dual-v100-32gb`：双V100 32GB，强制使用`float16`。
 - `single-a100-80gb`：单A100 80GB，两个engine共享GPU 0。
+- `single-3090`：单RTX 3090 24GB，供自动 Excel 评测配置使用。
 
 Profile只能覆盖GPU、精度、显存、并发和兼容环境变量，不能覆盖模型路径、LoRA、提示词、端口或模型路由。双V100 16GB不能直接套用32GB配置，需要量化模型和独立Profile。
+
+同一硬件 Profile 可以预置多个 service 配置可能使用的 engine；当前 `models` 路由没有启用的 engine 预置项会被忽略。当前路由实际使用的每个 engine 则必须在 Profile 中配置完整硬件参数。
 
 至少替换以下路径：
 

@@ -47,8 +47,8 @@ python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
 python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
       --task type \
       --prompt-file apps/trainer/qwen3_fte/prompt/种类微调提示词.txt \
-      --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3-8B \
-      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-0807-种类
+      --base-model /Users/guoxi/.cache/huggingface/hub/Qwen3.5-9B\
+      --lora /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/apps/trainer/qwen3_fte/model/checkpoint-3000-种类-qwen35_9B
 
   # 新结构材质规范模型交互模式
   python apps/trainer/qwen3_fte/src/evaluate_llamafactory_model.py \
@@ -177,11 +177,39 @@ def resolve_instruction(
 def load_model(base_model: str, lora_path: str | None = None):
     import torch
     from peft import PeftModel
+    import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
+    config_path = Path(base_model).expanduser() / "config.json"
+    model_type = ""
+    if config_path.is_file():
+        try:
+            model_type = str(json.loads(config_path.read_text(encoding="utf-8")).get("model_type") or "")
+        except (OSError, json.JSONDecodeError):
+            pass
+
     print(f"加载底座模型: {base_model}")
+    if model_type == "qwen3_5":
+        try:
+            from transformers import AutoModelForMultimodalLM
+            from transformers.models.auto.configuration_auto import CONFIG_MAPPING_NAMES
+        except ImportError as exc:
+            raise RuntimeError(
+                "当前 Transformers 不支持 Qwen3.5，请升级到项目锁定版本: "
+                "python -m pip install --upgrade 'transformers==5.3.0'"
+            ) from exc
+        if "qwen3_5" not in CONFIG_MAPPING_NAMES:
+            raise RuntimeError(
+                f"当前 Transformers {transformers.__version__} 未注册 qwen3_5 架构。"
+                "请执行: python -m pip install --upgrade 'transformers==5.3.0'"
+            )
+        # Qwen3.5-4B 是包含 text_config 和 vision_config 的完整复合检查点。
+        model_class = AutoModelForMultimodalLM
+    else:
+        model_class = AutoModelForCausalLM
+
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
+    model = model_class.from_pretrained(
         base_model,
         dtype=torch.bfloat16,
         device_map="auto",

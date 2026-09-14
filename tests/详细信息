@@ -1,0 +1,759 @@
+(llama-qwen35) root@waas:/home/waas/LlamaFactory# llamafactory-cli train \
+    --stage sft \
+    --do_train true \
+    --do_eval true \
+    --model_name_or_path /home/waas/base-models/Qwen3.5-4B/ \
+    --preprocessing_num_workers 8 \
+    --overwrite_cache true \
+    --finetuning_type lora \
+    --template qwen3_5_nothink \
+    --enable_thinking false \
+    --preserve_thinking false \
+    --flash_attn sdpa \
+    --dataset_dir data \
+    --dataset 种类_train \
+    --eval_dataset 种类_val \
+    --cutoff_len 1024 \
+    --learning_rate 2e-5 \
+    --num_train_epochs 2.0 \
+    --per_device_train_batch_size 1 \
+    --per_device_eval_batch_size 1 \
+    --gradient_accumulation_steps 16 \
+    --disable_gradient_checkpointing true \
+    --lr_scheduler_type cosine \
+    --warmup_steps 91 \
+    --weight_decay 0.01 \
+    --max_grad_norm 1.0 \
+    --logging_steps 20 \
+    --eval_strategy steps \
+    --eval_steps 200 \
+    --save_strategy steps \
+    --save_steps 200 \
+    --save_total_limit 3 \
+    --packing false \
+    --train_on_prompt false \
+    --report_to none \
+    --output_dir saves/Qwen3.5-4B/lora/种类-0813-stable \
+    --bf16 true \
+    --plot_loss true \
+    --trust_remote_code true \
+    --ddp_timeout 180000000 \
+    --include_num_input_tokens_seen true \
+    --data_seed 2026ter false \l_loss \ \
+[INFO|2026-08-13 23:19:56] llamafactory.hparams.parser:523 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
+[INFO|configuration_utils.py:769] 2026-08-13 23:19:56,748 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/config.json
+[INFO|configuration_utils.py:847] 2026-08-13 23:19:56,763 >> Model config Qwen3_5Config {
+  "architectures": [
+    "Qwen3_5ForConditionalGeneration"
+  ],
+  "image_token_id": 248056,
+  "model_type": "qwen3_5",
+  "text_config": {
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "attn_output_gate": true,
+    "bos_token_id": null,
+    "dtype": "bfloat16",
+    "eos_token_id": 248044,
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_act": "silu",
+    "hidden_size": 2560,
+    "initializer_range": 0.02,
+    "intermediate_size": 9216,
+    "layer_types": [
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention"
+    ],
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    "linear_value_head_dim": 128,
+    "mamba_ssm_dtype": "float32",
+    "max_position_embeddings": 262144,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_5_text",
+    "mtp_num_hidden_layers": 1,
+    "mtp_use_dedicated_embeddings": false,
+    "num_attention_heads": 16,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 4,
+    "pad_token_id": null,
+    "partial_rotary_factor": 0.25,
+    "rms_norm_eps": 1e-06,
+    "rope_parameters": {
+      "mrope_interleaved": true,
+      "mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "partial_rotary_factor": 0.25,
+      "rope_theta": 10000000,
+      "rope_type": "default"
+    },
+    "tie_word_embeddings": true,
+    "use_cache": true,
+    "vocab_size": 248320
+  },
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "video_token_id": 248057,
+  "vision_config": {
+    "deepstack_visual_indexes": [],
+    "depth": 24,
+    "hidden_act": "gelu_pytorch_tanh",
+    "hidden_size": 1024,
+    "in_channels": 3,
+    "initializer_range": 0.02,
+    "intermediate_size": 4096,
+    "model_type": "qwen3_5_vision",
+    "num_heads": 16,
+    "num_position_embeddings": 2304,
+    "out_hidden_size": 2560,
+    "patch_size": 16,
+    "spatial_merge_size": 2,
+    "temporal_patch_size": 2
+  },
+  "vision_end_token_id": 248054,
+  "vision_start_token_id": 248053
+}
+
+[INFO|image_processing_base.py:342] 2026-08-13 23:19:57,424 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/preprocessor_config.json
+[INFO|processing_utils.py:1122] 2026-08-13 23:19:57,428 >> loading configuration file None
+[INFO|image_processing_base.py:342] 2026-08-13 23:19:57,429 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/preprocessor_config.json
+[WARNING|logging.py:340] 2026-08-13 23:19:57,429 >> The `use_fast` parameter is deprecated and will be removed in a future version. Use `backend="torchvision"` instead of `use_fast=True`, or `backend="pil"` instead of `use_fast=False`.
+[INFO|image_processing_base.py:342] 2026-08-13 23:19:57,438 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/preprocessor_config.json
+[INFO|image_processing_base.py:385] 2026-08-13 23:19:57,438 >> Image processor Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "merge_size": 2,
+  "patch_size": 16,
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 16777216,
+    "shortest_edge": 65536
+  },
+  "temporal_patch_size": 2
+}
+
+[INFO|configuration_utils.py:769] 2026-08-13 23:19:57,438 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/config.json
+[INFO|configuration_utils.py:847] 2026-08-13 23:19:57,447 >> Model config Qwen3_5Config {
+  "architectures": [
+    "Qwen3_5ForConditionalGeneration"
+  ],
+  "image_token_id": 248056,
+  "model_type": "qwen3_5",
+  "text_config": {
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "attn_output_gate": true,
+    "bos_token_id": null,
+    "dtype": "bfloat16",
+    "eos_token_id": 248044,
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_act": "silu",
+    "hidden_size": 2560,
+    "initializer_range": 0.02,
+    "intermediate_size": 9216,
+    "layer_types": [
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention"
+    ],
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    "linear_value_head_dim": 128,
+    "mamba_ssm_dtype": "float32",
+    "max_position_embeddings": 262144,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_5_text",
+    "mtp_num_hidden_layers": 1,
+    "mtp_use_dedicated_embeddings": false,
+    "num_attention_heads": 16,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 4,
+    "pad_token_id": null,
+    "partial_rotary_factor": 0.25,
+    "rms_norm_eps": 1e-06,
+    "rope_parameters": {
+      "mrope_interleaved": true,
+      "mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "partial_rotary_factor": 0.25,
+      "rope_theta": 10000000,
+      "rope_type": "default"
+    },
+    "tie_word_embeddings": true,
+    "use_cache": true,
+    "vocab_size": 248320
+  },
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "video_token_id": 248057,
+  "vision_config": {
+    "deepstack_visual_indexes": [],
+    "depth": 24,
+    "hidden_act": "gelu_pytorch_tanh",
+    "hidden_size": 1024,
+    "in_channels": 3,
+    "initializer_range": 0.02,
+    "intermediate_size": 4096,
+    "model_type": "qwen3_5_vision",
+    "num_heads": 16,
+    "num_position_embeddings": 2304,
+    "out_hidden_size": 2560,
+    "patch_size": 16,
+    "spatial_merge_size": 2,
+    "temporal_patch_size": 2
+  },
+  "vision_end_token_id": 248054,
+  "vision_start_token_id": 248053
+}
+
+[INFO|video_processing_utils.py:684] 2026-08-13 23:19:58,085 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/video_preprocessor_config.json
+[INFO|video_processing_utils.py:684] 2026-08-13 23:19:58,086 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/video_preprocessor_config.json
+[INFO|video_processing_utils.py:727] 2026-08-13 23:19:58,086 >> Video processor Qwen3VLVideoProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "do_sample_frames": true,
+  "fps": 2,
+  "image_mean": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "image_std": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "max_frames": 768,
+  "merge_size": 2,
+  "min_frames": 4,
+  "patch_size": 16,
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "return_metadata": false,
+  "size": {
+    "longest_edge": 25165824,
+    "shortest_edge": 4096
+  },
+  "temporal_patch_size": 2,
+  "video_processor_type": "Qwen3VLVideoProcessor"
+}
+
+[INFO|processing_utils.py:1199] 2026-08-13 23:19:58,087 >> Processor Qwen3VLProcessor:
+- image_processor: Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "merge_size": 2,
+  "patch_size": 16,
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 16777216,
+    "shortest_edge": 65536
+  },
+  "temporal_patch_size": 2
+}
+
+- tokenizer: Qwen2Tokenizer(name_or_path='/home/waas/base-models/Qwen3.5-4B/', vocab_size=248044, model_max_length=262144, padding_side='right', truncation_side='right', special_tokens={'eos_token': '<|im_end|>', 'pad_token': '<|endoftext|>', 'audio_bos_token': '<|audio_start|>', 'audio_eos_token': '<|audio_end|>', 'audio_token': '<|audio_pad|>', 'image_token': '<|image_pad|>', 'video_token': '<|video_pad|>', 'vision_bos_token': '<|vision_start|>', 'vision_eos_token': '<|vision_end|>'}, added_tokens_decoder={
+        248044: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248045: AddedToken("<|im_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248046: AddedToken("<|im_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248047: AddedToken("<|object_ref_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248048: AddedToken("<|object_ref_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248049: AddedToken("<|box_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248050: AddedToken("<|box_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248051: AddedToken("<|quad_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248052: AddedToken("<|quad_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248053: AddedToken("<|vision_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248054: AddedToken("<|vision_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248055: AddedToken("<|vision_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248056: AddedToken("<|image_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248057: AddedToken("<|video_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248058: AddedToken("<tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248059: AddedToken("</tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248060: AddedToken("<|fim_prefix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248061: AddedToken("<|fim_middle|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248062: AddedToken("<|fim_suffix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248063: AddedToken("<|fim_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248064: AddedToken("<|repo_name|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248065: AddedToken("<|file_sep|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248066: AddedToken("<tool_response>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248067: AddedToken("</tool_response>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248068: AddedToken("<think>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248069: AddedToken("</think>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+        248070: AddedToken("<|audio_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248071: AddedToken("<|audio_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248072: AddedToken("<tts_pad>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248073: AddedToken("<tts_text_bos>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248074: AddedToken("<tts_text_eod>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248075: AddedToken("<tts_text_bos_single>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        248076: AddedToken("<|audio_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+})
+- video_processor: Qwen3VLVideoProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "do_sample_frames": true,
+  "fps": 2,
+  "image_mean": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "image_std": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "max_frames": 768,
+  "merge_size": 2,
+  "min_frames": 4,
+  "patch_size": 16,
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "return_metadata": false,
+  "size": {
+    "longest_edge": 25165824,
+    "shortest_edge": 4096
+  },
+  "temporal_patch_size": 2,
+  "video_processor_type": "Qwen3VLVideoProcessor"
+}
+
+
+{
+  "image_processor": {
+    "do_convert_rgb": true,
+    "do_normalize": true,
+    "do_rescale": true,
+    "do_resize": true,
+    "image_mean": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "image_processor_type": "Qwen2VLImageProcessor",
+    "image_std": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "merge_size": 2,
+    "patch_size": 16,
+    "resample": 3,
+    "rescale_factor": 0.00392156862745098,
+    "size": {
+      "longest_edge": 16777216,
+      "shortest_edge": 65536
+    },
+    "temporal_patch_size": 2
+  },
+  "processor_class": "Qwen3VLProcessor",
+  "video_processor": {
+    "do_convert_rgb": true,
+    "do_normalize": true,
+    "do_rescale": true,
+    "do_resize": true,
+    "do_sample_frames": true,
+    "fps": 2,
+    "image_mean": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "image_std": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "max_frames": 768,
+    "merge_size": 2,
+    "min_frames": 4,
+    "patch_size": 16,
+    "resample": 3,
+    "rescale_factor": 0.00392156862745098,
+    "return_metadata": false,
+    "size": {
+      "longest_edge": 25165824,
+      "shortest_edge": 4096
+    },
+    "temporal_patch_size": 2,
+    "video_processor_type": "Qwen3VLVideoProcessor"
+  }
+}
+
+[INFO|2026-08-13 23:19:58] llamafactory.data.loader:144 >> Loading dataset /home/waas/data/种类_train.json...
+Converting format of dataset (num_proc=8): 48290 examples [00:00, 44204.47 examples/s]                               
+[INFO|2026-08-13 23:19:59] llamafactory.data.loader:144 >> Loading dataset /home/waas/data/种类_val.json...
+Converting format of dataset (num_proc=8): 4062 examples [00:00, 4955.80 examples/s]                                 
+Running tokenizer on dataset (num_proc=8): 48290 examples [00:28, 861.03 examples/s]                                 
+training example:
+input_ids:
+[248045, 846, 198, 99250, 97439, 108612, 97320, 100897, 127326, 114404, 110257, 1710, 96220, 96200, 97320, 99172, 95789, 114404, 83077, 220, 95793, 12097, 3709, 96172, 100627, 98294, 4566, 1710, 271, 95744, 5205, 100627, 97152, 271, 16, 13, 83077, 220, 121687, 1, 96192, 95989, 1, 5205, 1, 126884, 1, 96348, 1, 105812, 1, 1710, 198, 17, 13, 220, 96192, 113184, 12097, 220, 114165, 99159, 95814, 66263, 5205, 5934, 11172, 40396, 5205, 21618, 52, 1710, 198, 18, 13, 220, 95989, 121711, 12097, 220, 114165, 99159, 95814, 66263, 5205, 10460, 83072, 5205, 5934, 11172, 40396, 5205, 21618, 52, 5205, 71066, 24178, 10460, 83072, 220, 114165, 99159, 95814, 2032, 63346, 5205, 49, 43093, 1710, 198, 19, 13, 220, 105812, 95726, 12097, 220, 114165, 99159, 95814, 66263, 5205, 71066, 5205, 896, 939, 1710, 271, 96053, 5205, 96184, 99193, 271, 16, 13, 220, 96725, 99979, 96138, 97823, 96445, 96280, 114404, 3709, 103823, 97149, 100682, 5205, 144404, 5205, 98641, 5205, 104026, 5205, 97427, 96348, 109515, 96770, 95901, 1710, 198, 17, 13, 220, 99575, 96656, 99492, 121796, 100593, 83077, 220, 95793, 66263, 24178, 96227, 97150, 12406, 11172, 5205, 5934, 38, 5205, 17087, 5205, 105812, 97427, 96348, 100040, 105812, 3709, 96849, 104286, 99453, 98934, 108741, 1710, 198, 18, 13, 66263, 220, 96402, 98298, 110135, 121796, 1710, 97499, 96336, 100682, 5205, 99474, 96348, 97427, 121786, 96024, 97749, 5205, 96665, 97749, 5205, 112755, 5205, 143858, 109953, 97152, 1710, 198, 19, 13, 220, 96139, 114165, 96402, 98298, 110135, 101659, 3709, 97499, 99197, 96449, 97107, 118676, 98960, 123774, 96348, 98912, 98301, 95882, 101659, 1710, 198, 20, 13, 220, 96487, 98290, 100720, 130580, 96661, 96292, 3709, 97499, 112213, 1710, 271, 95986, 5205, 114165, 109625, 271, 16, 13, 66263, 4960, 98032, 137048, 98024, 1710, 98006, 98655, 98132, 97499, 98912, 98337, 96032, 126884, 66263, 24178, 105812, 141573, 131936, 111630, 134334, 100627, 66263, 1710, 198, 17, 13, 24915, 52, 4960, 98032, 96138, 97823, 96241, 108582, 140824, 1710, 97438, 109036, 95793, 109036, 96845, 96024, 134279, 99725, 95726, 96302, 100880, 3709, 96849, 141260, 24915, 52, 1710, 198, 18, 13, 3308, 45, 4960, 98032, 96138, 97823, 96241, 130757, 98132, 1710, 99492, 121796, 100601, 98290, 102398, 98655, 127752, 95865, 3709, 96123, 98655, 96280, 100627, 95839, 3308, 45, 1710, 98006, 101908, 96768, 118268, 101673, 96768, 95938, 95753, 98406, 3308, 45, 24178, 97761, 95909, 98655, 96919, 97499, 112213, 95814, 96017, 109542, 96026, 96102, 1710, 198, 19, 13, 28880, 83072, 849, 5948, 841, 4960, 98151, 96138, 97823, 96241, 110300, 96348, 96178, 96327, 96538, 124208, 95789, 98290, 102398, 110300, 3709, 96725, 115963, 98910, 96851, 1710, 96592, 96026, 100682, 5205, 95989, 97749, 5205, 144404, 5205, 97427, 96389, 108799, 99129, 96718, 98910, 1710, 198, 20, 13, 28880, 83072, 1945, 43093, 4960, 98151, 96138, 97823, 96241, 95726, 111706, 114790, 96348, 96178, 96327, 96538, 124208, 95789, 98290, 102398, 95726, 114790, 127752, 1710, 99547, 114790, 101780, 110745, 146187, 109417, 96851, 136853, 24178, 101324, 99129, 5205, 95989, 97749, 5205, 144404, 95793, 97427, 96389, 96718, 114790, 1710, 198, 21, 13, 12406, 11172, 40396, 4960, 98618, 96192, 95989, 96348, 126884, 98647, 131936, 95726, 105812, 96768, 97152, 1710, 96227, 97150, 102029, 95912, 5205, 105812, 97427, 96348, 100040, 105812, 130580, 96661, 96292, 24178, 104286, 105812, 96538, 95753, 100627, 12406, 11172, 40396, 1710, 198, 22, 13, 84560, 4960, 98618, 105812, 108741, 3709, 96725, 100627, 96138, 97823, 96241, 95726, 102029, 95912, 98418, 1710, 104026, 5205, 99853, 96067, 5205, 96768, 95938, 115982, 96449, 99546, 124928, 97499, 116019, 84560, 1710, 271, 96301, 5205, 100627, 96719, 271, 112209, 110089, 95826, 1535, 3709, 112209, 109599, 95826, 2958, 1710, 96227, 100627, 4566, 220, 99462, 3709, 97124, 97019, 111060, 96621, 1710, 198, 96317, 98570, 95895, 99725, 105812, 11, 6148, 4680, 18, 20, 15, 21907, 17, 3040, 13, 16, 11, 17087, 11, 3040, 18, 15, 15, 11, 1846, 7227, 33, 16, 21, 13, 19, 22, 76227, 33, 26386, 45, 24, 15, 15, 11, 16, 17, 13, 15, 3693, 248046, 198, 248045, 74455, 198, 4754, 89826, 3147, 105812, 2129, 9222, 21624, 40438, 3147, 96317, 98570, 95895, 99725, 105812, 2129, 71066, 8631, 27573, 896, 939, 35580, 17087, 1293, 3307, 248046, 198]
+inputs:
+<|im_start|>user
+你是工业管道材料种类结构化抽取助手。请从材料描述中抽取 CATEGORY 和 TYPE，并输出严格 JSON。
+
+一、输出结构
+
+1. CATEGORY 只能是"直管"、"管件"或"法兰"。
+2. 直管的 TYPE 字段固定为 BODY、FLANGE_STYLE、MANU。
+3. 管件的 TYPE 字段固定为 BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；GEOMETRY 字段固定为 ANGLE、RADIUS。
+4. 法兰的 TYPE 字段固定为 BODY、CONN、SEAL。
+
+二、总规则
+
+1. 仅依据原文明确信息抽取，禁止根据尺寸、壁厚、压力、材质、标准或常识补全。
+2. 优先按完整产品名称判断 CATEGORY 和 BODY；只出现 FLANGE、FLG、RF、法兰标准或配套法兰，不能单独改变主体类别。
+3. BODY 使用统一的标准产品名称。不得由尺寸、数量或标准推断等径、异径、同心、偏心或其他结构。
+4. 各字段使用统一的标准标签，不得复制未归一的原文短语或自行创造新标签。
+5. 没有明确证据时必须留空，不得猜测。
+
+三、字段约束
+
+1. BODY：表达产品结构身份。普通连接形式不得自行拼入管件 BODY；法兰按其明示的结构型式输出 BODY。
+2. MANU：表达原文明示的产品制造工艺。施工焊接和焊接方法等表达对焊的语意的，不能推导 MANU。
+3. CONN：表达原文明示的连接形式。完整产品名称本身明确承载连接语义时，将连接信息输出到 CONN。普通默认端部和组合端部不进入 CONN；泛化连接词不得猜测为更具体的制式。
+4. GEOMETRY.ANGLE：记录原文明示的角度或受控产品代号中明确承载的角度，仅去掉角度单位。英制尺寸、管径、壁厚、标准号和其他数字不是角度。
+5. GEOMETRY.RADIUS：记录原文明示的弯曲半径或受控产品代号中明确承载的半径语义。绝对半径保留数值和单位并将单位大写；裸数字、管径、壁厚和标准号不是半径。
+6. FLANGE_STYLE：用于直管或管件自身明示的法兰端结构。只出现密封面、法兰标准或配套法兰时必须留空；单独法兰产品不输出 FLANGE_STYLE。
+7. SEAL：用于法兰类别，仅输出原文明示的密封面类型。材质、衬里、端部结构和未定义缩写不得写入 SEAL。
+
+四、输出要求
+
+缺失字符串用 ""，缺失数组用 []。只输出 JSON 对象，不要任何额外内容。
+带颈对焊法兰,ASTMA350LF2CL.1,RF,CL300,ASMEB16.47SrB,DN900,12.0mm<|im_end|>
+<|im_start|>assistant
+{"CATEGORY":"法兰","TYPE":{"BODY":"带颈对焊法兰","CONN":[],"SEAL":["RF"]}}<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 4754, 89826, 3147, 105812, 2129, 9222, 21624, 40438, 3147, 96317, 98570, 95895, 99725, 105812, 2129, 71066, 8631, 27573, 896, 939, 35580, 17087, 1293, 3307, 248046, 198]
+labels:
+{"CATEGORY":"法兰","TYPE":{"BODY":"带颈对焊法兰","CONN":[],"SEAL":["RF"]}}<|im_end|>
+
+Running tokenizer on dataset (num_proc=8): 4062 examples [00:24, 82.41 examples/s]                                   
+eval example:
+input_ids:
+[248045, 846, 198, 99250, 97439, 108612, 97320, 100897, 127326, 114404, 110257, 1710, 96220, 96200, 97320, 99172, 95789, 114404, 83077, 220, 95793, 12097, 3709, 96172, 100627, 98294, 4566, 1710, 271, 95744, 5205, 100627, 97152, 271, 16, 13, 83077, 220, 121687, 1, 96192, 95989, 1, 5205, 1, 126884, 1, 96348, 1, 105812, 1, 1710, 198, 17, 13, 220, 96192, 113184, 12097, 220, 114165, 99159, 95814, 66263, 5205, 5934, 11172, 40396, 5205, 21618, 52, 1710, 198, 18, 13, 220, 95989, 121711, 12097, 220, 114165, 99159, 95814, 66263, 5205, 10460, 83072, 5205, 5934, 11172, 40396, 5205, 21618, 52, 5205, 71066, 24178, 10460, 83072, 220, 114165, 99159, 95814, 2032, 63346, 5205, 49, 43093, 1710, 198, 19, 13, 220, 105812, 95726, 12097, 220, 114165, 99159, 95814, 66263, 5205, 71066, 5205, 896, 939, 1710, 271, 96053, 5205, 96184, 99193, 271, 16, 13, 220, 96725, 99979, 96138, 97823, 96445, 96280, 114404, 3709, 103823, 97149, 100682, 5205, 144404, 5205, 98641, 5205, 104026, 5205, 97427, 96348, 109515, 96770, 95901, 1710, 198, 17, 13, 220, 99575, 96656, 99492, 121796, 100593, 83077, 220, 95793, 66263, 24178, 96227, 97150, 12406, 11172, 5205, 5934, 38, 5205, 17087, 5205, 105812, 97427, 96348, 100040, 105812, 3709, 96849, 104286, 99453, 98934, 108741, 1710, 198, 18, 13, 66263, 220, 96402, 98298, 110135, 121796, 1710, 97499, 96336, 100682, 5205, 99474, 96348, 97427, 121786, 96024, 97749, 5205, 96665, 97749, 5205, 112755, 5205, 143858, 109953, 97152, 1710, 198, 19, 13, 220, 96139, 114165, 96402, 98298, 110135, 101659, 3709, 97499, 99197, 96449, 97107, 118676, 98960, 123774, 96348, 98912, 98301, 95882, 101659, 1710, 198, 20, 13, 220, 96487, 98290, 100720, 130580, 96661, 96292, 3709, 97499, 112213, 1710, 271, 95986, 5205, 114165, 109625, 271, 16, 13, 66263, 4960, 98032, 137048, 98024, 1710, 98006, 98655, 98132, 97499, 98912, 98337, 96032, 126884, 66263, 24178, 105812, 141573, 131936, 111630, 134334, 100627, 66263, 1710, 198, 17, 13, 24915, 52, 4960, 98032, 96138, 97823, 96241, 108582, 140824, 1710, 97438, 109036, 95793, 109036, 96845, 96024, 134279, 99725, 95726, 96302, 100880, 3709, 96849, 141260, 24915, 52, 1710, 198, 18, 13, 3308, 45, 4960, 98032, 96138, 97823, 96241, 130757, 98132, 1710, 99492, 121796, 100601, 98290, 102398, 98655, 127752, 95865, 3709, 96123, 98655, 96280, 100627, 95839, 3308, 45, 1710, 98006, 101908, 96768, 118268, 101673, 96768, 95938, 95753, 98406, 3308, 45, 24178, 97761, 95909, 98655, 96919, 97499, 112213, 95814, 96017, 109542, 96026, 96102, 1710, 198, 19, 13, 28880, 83072, 849, 5948, 841, 4960, 98151, 96138, 97823, 96241, 110300, 96348, 96178, 96327, 96538, 124208, 95789, 98290, 102398, 110300, 3709, 96725, 115963, 98910, 96851, 1710, 96592, 96026, 100682, 5205, 95989, 97749, 5205, 144404, 5205, 97427, 96389, 108799, 99129, 96718, 98910, 1710, 198, 20, 13, 28880, 83072, 1945, 43093, 4960, 98151, 96138, 97823, 96241, 95726, 111706, 114790, 96348, 96178, 96327, 96538, 124208, 95789, 98290, 102398, 95726, 114790, 127752, 1710, 99547, 114790, 101780, 110745, 146187, 109417, 96851, 136853, 24178, 101324, 99129, 5205, 95989, 97749, 5205, 144404, 95793, 97427, 96389, 96718, 114790, 1710, 198, 21, 13, 12406, 11172, 40396, 4960, 98618, 96192, 95989, 96348, 126884, 98647, 131936, 95726, 105812, 96768, 97152, 1710, 96227, 97150, 102029, 95912, 5205, 105812, 97427, 96348, 100040, 105812, 130580, 96661, 96292, 24178, 104286, 105812, 96538, 95753, 100627, 12406, 11172, 40396, 1710, 198, 22, 13, 84560, 4960, 98618, 105812, 108741, 3709, 96725, 100627, 96138, 97823, 96241, 95726, 102029, 95912, 98418, 1710, 104026, 5205, 99853, 96067, 5205, 96768, 95938, 115982, 96449, 99546, 124928, 97499, 116019, 84560, 1710, 271, 96301, 5205, 100627, 96719, 271, 112209, 110089, 95826, 1535, 3709, 112209, 109599, 95826, 2958, 1710, 96227, 100627, 4566, 220, 99462, 3709, 97124, 97019, 111060, 96621, 1710, 198, 96317, 98570, 95895, 99725, 105812, 21359, 33, 16240, 19, 22, 15, 16, 15, 6027, 18, 15, 19, 15, 23, 11, 17087, 11, 3040, 16, 20, 15, 42100, 38, 16240, 17, 15, 21, 16, 20, 26386, 45, 16, 20, 20523, 12, 19, 15, 50, 248046, 198, 248045, 74455, 198, 4754, 89826, 3147, 105812, 2129, 9222, 21624, 40438, 3147, 96317, 98570, 95895, 99725, 105812, 2129, 71066, 8631, 27573, 896, 939, 35580, 17087, 1293, 3307, 248046, 198]
+inputs:
+<|im_start|>user
+你是工业管道材料种类结构化抽取助手。请从材料描述中抽取 CATEGORY 和 TYPE，并输出严格 JSON。
+
+一、输出结构
+
+1. CATEGORY 只能是"直管"、"管件"或"法兰"。
+2. 直管的 TYPE 字段固定为 BODY、FLANGE_STYLE、MANU。
+3. 管件的 TYPE 字段固定为 BODY、GEOMETRY、FLANGE_STYLE、MANU、CONN；GEOMETRY 字段固定为 ANGLE、RADIUS。
+4. 法兰的 TYPE 字段固定为 BODY、CONN、SEAL。
+
+二、总规则
+
+1. 仅依据原文明确信息抽取，禁止根据尺寸、壁厚、压力、材质、标准或常识补全。
+2. 优先按完整产品名称判断 CATEGORY 和 BODY；只出现 FLANGE、FLG、RF、法兰标准或配套法兰，不能单独改变主体类别。
+3. BODY 使用统一的标准产品名称。不得由尺寸、数量或标准推断等径、异径、同心、偏心或其他结构。
+4. 各字段使用统一的标准标签，不得复制未归一的原文短语或自行创造新标签。
+5. 没有明确证据时必须留空，不得猜测。
+
+三、字段约束
+
+1. BODY：表达产品结构身份。普通连接形式不得自行拼入管件 BODY；法兰按其明示的结构型式输出 BODY。
+2. MANU：表达原文明示的产品制造工艺。施工焊接和焊接方法等表达对焊的语意的，不能推导 MANU。
+3. CONN：表达原文明示的连接形式。完整产品名称本身明确承载连接语义时，将连接信息输出到 CONN。普通默认端部和组合端部不进入 CONN；泛化连接词不得猜测为更具体的制式。
+4. GEOMETRY.ANGLE：记录原文明示的角度或受控产品代号中明确承载的角度，仅去掉角度单位。英制尺寸、管径、壁厚、标准号和其他数字不是角度。
+5. GEOMETRY.RADIUS：记录原文明示的弯曲半径或受控产品代号中明确承载的半径语义。绝对半径保留数值和单位并将单位大写；裸数字、管径、壁厚和标准号不是半径。
+6. FLANGE_STYLE：用于直管或管件自身明示的法兰端结构。只出现密封面、法兰标准或配套法兰时必须留空；单独法兰产品不输出 FLANGE_STYLE。
+7. SEAL：用于法兰类别，仅输出原文明示的密封面类型。材质、衬里、端部结构和未定义缩写不得写入 SEAL。
+
+四、输出要求
+
+缺失字符串用 ""，缺失数组用 []。只输出 JSON 对象，不要任何额外内容。
+带颈对焊法兰,NB/T47010-S30408,RF,CL150,HG/T20615,DN15,S-40S<|im_end|>
+<|im_start|>assistant
+{"CATEGORY":"法兰","TYPE":{"BODY":"带颈对焊法兰","CONN":[],"SEAL":["RF"]}}<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 4754, 89826, 3147, 105812, 2129, 9222, 21624, 40438, 3147, 96317, 98570, 95895, 99725, 105812, 2129, 71066, 8631, 27573, 896, 939, 35580, 17087, 1293, 3307, 248046, 198]
+labels:
+{"CATEGORY":"法兰","TYPE":{"BODY":"带颈对焊法兰","CONN":[],"SEAL":["RF"]}}<|im_end|>
+
+[INFO|configuration_utils.py:769] 2026-08-13 23:20:58,650 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/config.json
+[INFO|configuration_utils.py:847] 2026-08-13 23:20:58,659 >> Model config Qwen3_5Config {
+  "architectures": [
+    "Qwen3_5ForConditionalGeneration"
+  ],
+  "image_token_id": 248056,
+  "model_type": "qwen3_5",
+  "text_config": {
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "attn_output_gate": true,
+    "bos_token_id": null,
+    "dtype": "bfloat16",
+    "eos_token_id": 248044,
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_act": "silu",
+    "hidden_size": 2560,
+    "initializer_range": 0.02,
+    "intermediate_size": 9216,
+    "layer_types": [
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention"
+    ],
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    "linear_value_head_dim": 128,
+    "mamba_ssm_dtype": "float32",
+    "max_position_embeddings": 262144,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_5_text",
+    "mtp_num_hidden_layers": 1,
+    "mtp_use_dedicated_embeddings": false,
+    "num_attention_heads": 16,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 4,
+    "pad_token_id": null,
+    "partial_rotary_factor": 0.25,
+    "rms_norm_eps": 1e-06,
+    "rope_parameters": {
+      "mrope_interleaved": true,
+      "mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "partial_rotary_factor": 0.25,
+      "rope_theta": 10000000,
+      "rope_type": "default"
+    },
+    "tie_word_embeddings": true,
+    "use_cache": true,
+    "vocab_size": 248320
+  },
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "video_token_id": 248057,
+  "vision_config": {
+    "deepstack_visual_indexes": [],
+    "depth": 24,
+    "hidden_act": "gelu_pytorch_tanh",
+    "hidden_size": 1024,
+    "in_channels": 3,
+    "initializer_range": 0.02,
+    "intermediate_size": 4096,
+    "model_type": "qwen3_5_vision",
+    "num_heads": 16,
+    "num_position_embeddings": 2304,
+    "out_hidden_size": 2560,
+    "patch_size": 16,
+    "spatial_merge_size": 2,
+    "temporal_patch_size": 2
+  },
+  "vision_end_token_id": 248054,
+  "vision_start_token_id": 248053
+}
+
+[INFO|2026-08-13 23:20:58] llamafactory.model.model_utils.kv_cache:144 >> KV cache is disabled during training.
+[INFO|modeling_utils.py:748] 2026-08-13 23:21:01,116 >> loading weights file /home/waas/base-models/Qwen3.5-4B/model.safetensors.index.json
+[INFO|modeling_utils.py:834] 2026-08-13 23:21:01,117 >> Since the `dtype` attribute can't be found in model's config object, will use dtype=torch.bfloat16 as derived from model's weights
+[INFO|configuration_utils.py:1027] 2026-08-13 23:21:01,119 >> Generate config GenerationConfig {
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": false
+}
+
+Loading weights: 100%|████████████████████████████████████████████████████████████| 723/723 [00:05<00:00, 139.81it/s]
+[INFO|utils.py:411] 2026-08-13 23:21:07,457 >> Generation config file not found, using a generation config created from the model config.
+[INFO|configuration_utils.py:978] 2026-08-13 23:21:07,457 >> loading configuration file /home/waas/base-models/Qwen3.5-4B/config.json
+[INFO|configuration_utils.py:1027] 2026-08-13 23:21:07,457 >> Generate config GenerationConfig {}
+
+[WARNING|dynamic_module_utils.py:75] 2026-08-13 23:21:07,458 >> The module name  (originally ) is not a valid Python identifier. Please rename the original module to avoid import issues.
+[INFO|dynamic_module_utils.py:406] 2026-08-13 23:21:07,458 >> Could not locate the custom_generate/generate.py inside /home/waas/base-models/Qwen3.5-4B/.
+[INFO|2026-08-13 23:21:07] llamafactory.model.model_utils.attention:144 >> Using torch SDPA for faster training and inference.
+[INFO|2026-08-13 23:21:07] llamafactory.model.adapter:144 >> Upcasting trainable params to float32.
+[INFO|2026-08-13 23:21:07] llamafactory.model.adapter:144 >> Fine-tuning method: LoRA
+[INFO|2026-08-13 23:21:07] llamafactory.model.model_utils.misc:144 >> Found linear modules: in_proj_qkv,up_proj,out_proj,v_proj,in_proj_b,o_proj,in_proj_a,down_proj,q_proj,in_proj_z,gate_proj,k_proj
+[INFO|2026-08-13 23:21:07] llamafactory.model.model_utils.visual:144 >> Set vision model not trainable: ['visual.pos_embed', 'visual.patch_embed', 'visual.blocks'].
+[INFO|2026-08-13 23:21:07] llamafactory.model.model_utils.visual:144 >> Set multi model projector not trainable: ['model.visual.merger'].
+[INFO|2026-08-13 23:21:08] llamafactory.model.loader:144 >> trainable params: 64,929,792 || all params: 4,604,195,328 || trainable%: 1.4102
+[WARNING|trainer_utils.py:1238] 2026-08-13 23:21:08,337 >> The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'eos_token_id': 248046, 'pad_token_id': 248044}.
+[INFO|trainer.py:1469] 2026-08-13 23:21:08,705 >> ***** Running training *****
+[INFO|trainer.py:1470] 2026-08-13 23:21:08,705 >>   Num examples = 24,145
+[INFO|trainer.py:1471] 2026-08-13 23:21:08,705 >>   Num Epochs = 2
+[INFO|trainer.py:1472] 2026-08-13 23:21:08,705 >>   Num update steps per epoch = 1,510
+[INFO|trainer.py:1473] 2026-08-13 23:21:08,705 >>   Instantaneous batch size per device = 1
+[INFO|trainer.py:1476] 2026-08-13 23:21:08,705 >>   Total train batch size (w. parallel, distributed & accumulation) = 16
+[INFO|trainer.py:1477] 2026-08-13 23:21:08,705 >>   Gradient Accumulation steps = 16
+[INFO|trainer.py:1478] 2026-08-13 23:21:08,705 >>   Total optimization steps = 3,020
+[INFO|trainer.py:1479] 2026-08-13 23:21:08,709 >>   Number of trainable parameters = 64,929,792
+{'loss': '2.684e+15', 'grad_norm': 'nan', 'learning_rate': '4.176e-06', 'epoch': '0.01325', 'num_input_tokens_seen': 233584, 'train_runtime': '110', 'train_tokens_per_second': '2124'}
+{'loss': '0', 'grad_norm': 'nan', 'learning_rate': '8.571e-06', 'epoch': '0.02651', 'num_input_tokens_seen': 467248, 'train_runtime': '217.4', 'train_tokens_per_second': '2149'}
+  1%|█▏                                                                          | 45/3020 [04:04<4:27:37,  5.40s/it]Traceback (most recent call last):
+  File "/root/miniconda3/envs/llama-qwen35/bin/llamafactory-cli", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/waas/LlamaFactory/src/llamafactory/cli.py", line 24, in main
+    launcher.launch()
+  File "/home/waas/LlamaFactory/src/llamafactory/launcher.py", line 157, in launch
+    run_exp()
+  File "/home/waas/LlamaFactory/src/llamafactory/train/tuner.py", line 149, in run_exp
+    _training_function(config={"args": args, "callbacks": callbacks})
+  File "/home/waas/LlamaFactory/src/llamafactory/train/tuner.py", line 117, in _training_function
+    run_sft(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
+  File "/home/waas/LlamaFactory/src/llamafactory/train/sft/workflow.py", line 121, in run_sft
+    train_result = trainer.train(resume_from_checkpoint=training_args.resume_from_checkpoint)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/transformers/trainer.py", line 1427, in train
+    return inner_training_loop(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/transformers/trainer.py", line 1509, in _inner_training_loop
+    self._run_epoch(
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/transformers/trainer.py", line 1737, in _run_epoch
+    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/transformers/trainer.py", line 1937, in training_step
+    self.accelerator.backward(loss, **kwargs)
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/accelerate/accelerator.py", line 2740, in backward
+    loss.backward(**kwargs)
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/torch/_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/torch/autograd/__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "/root/miniconda3/envs/llama-qwen35/lib/python3.11/site-packages/torch/autograd/graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling `cublasGemmEx( handle, opa, opb, m, n, k, &falpha, a, CUDA_R_16BF, lda, b, CUDA_R_16BF, ldb, &fbeta, c, std::is_same_v<C_Dtype, float> ? CUDA_R_32F : CUDA_R_16BF, ldc, compute_type, CUBLAS_GEMM_DEFAULT_TENSOR_OP)`
+  1%|█▏                                                                          | 45/3020 [04:05<4:30:25,  5.45s/it]
+(llama-qwen35) root@waas:/home/waas/LlamaFactory#

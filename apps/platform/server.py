@@ -16,6 +16,7 @@ import sys
 import logging
 import yaml
 import time
+import tempfile
 import uuid
 from collections import deque
 from typing import List, Optional, Dict, Any
@@ -27,8 +28,10 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.background import BackgroundTask
+from starlette.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel, Field
 import json
 import asyncio
@@ -59,8 +62,10 @@ from src.integrations import get_h3yun_client
 # 批量任务持久化存储（SQLite，落盘到 data/batch/batch_jobs.db）
 try:
     from batch_store import BatchJobStore  # 以脚本/uvicorn 方式从 apps/platform 启动
+    from batch_export import iter_csv, iter_stage1_json, write_xlsx
 except ImportError:  # pragma: no cover - 以包方式导入时的兜底
     from apps.platform.batch_store import BatchJobStore
+    from apps.platform.batch_export import iter_csv, iter_stage1_json, write_xlsx
 
 # 配置日志
 class _CompactLogFormatter(logging.Formatter):
@@ -108,6 +113,10 @@ app = FastAPI(
     description="提供材料标注和编码功能",
     version="2.0.0"
 )
+
+# 压缩任务描述等大 JSON 响应。8 万条任务即使不携带完整结果，描述列表
+# 仍可能有数十 MB；浏览器 fetch 会自动解压，不影响前端接口。
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 # CORS配置
 app.add_middleware(
@@ -834,7 +843,9 @@ async def _batch_job_create(request: "PipeBatchEncodeRequest") -> Dict[str, Any]
         _batch_job_queue.append(job_id)
         if _batch_job_scheduler_task is None or _batch_job_scheduler_task.done():
             _batch_job_scheduler_task = asyncio.create_task(_batch_job_scheduler())
-    return _batch_job_public(job, include_items=True)
+    # 前端已经持有刚导入的数据；这里只返回任务摘要，避免数万条输入在
+    # 创建响应中被原样复制并再次传输。
+    return _batch_job_public(job)
 
 
 def _resolve_qwen3_stage1_config(qwen3_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -1758,11 +1769,53 @@ async def pipe_batch_encode_get_job(job_id: str):
     job = await _batch_job_get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="任务不存在或已过期")
-    results = await asyncio.to_thread(_batch_store.get_results, job_id)
+    # 完整编码结果可能达到数百 MB。打开任务时只返回描述列表；用户查看
+    # 某条数据时，再通过 items/{item_index} 接口按需读取该条完整结果。
     return {
         "success": True,
-        "job": _batch_job_public(job, include_items=True, results=results),
+        "job": _batch_job_public(job, include_items=True),
     }
+
+
+@app.get("/api/pipe/encode/batch/jobs/{job_id}/export")
+async def pipe_batch_encode_export_job(
+    job_id: str,
+    format: str = Query("stage1", pattern="^(stage1|csv|xlsx)$"),
+):
+    """直接从 SQLite 导出完整任务，不依赖浏览器当前加载了多少条结果。"""
+    job = await _batch_job_get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="任务不存在或已过期")
+    items = list(job.get("items_meta", []))
+    result_rows = lambda: _batch_store.iter_results(job_id)
+
+    if format == "stage1":
+        return StreamingResponse(
+            iter_stage1_json(items, result_rows()),
+            media_type="application/json; charset=utf-8",
+            headers={"Content-Disposition": "attachment; filename=stage1_dataset.json"},
+        )
+    if format == "csv":
+        return StreamingResponse(
+            iter_csv(items, result_rows()),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": "attachment; filename=encoding_results.csv"},
+        )
+
+    handle = tempfile.NamedTemporaryFile(prefix="encoding-results-", suffix=".xlsx", delete=False)
+    output_path = Path(handle.name)
+    handle.close()
+    try:
+        await asyncio.to_thread(write_xlsx, output_path, items, result_rows())
+    except Exception:
+        output_path.unlink(missing_ok=True)
+        raise
+    return FileResponse(
+        output_path,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        filename="encoding_results.xlsx",
+        background=BackgroundTask(output_path.unlink, missing_ok=True),
+    )
 
 
 @app.get("/api/pipe/encode/batch/jobs/{job_id}/items/{item_index}")

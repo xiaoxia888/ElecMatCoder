@@ -1,4 +1,5 @@
 from src.material_description_splitter.second_pass.pressure_surface_matcher import PressureSurfaceMatcher
+from src.material_description_splitter.second_pass.pressure_second_pass_splitter import PressureSecondPassSplitter
 from src.material_description_splitter.second_pass.platform_second_pass_runner import PlatformSecondPassRunner
 from src.material_description_splitter.second_pass.size_surface_matcher import SizeSurfaceMatcher
 from src.material_description_splitter.second_pass.thickness_second_pass_splitter import ThicknessSecondPassSplitter
@@ -29,6 +30,26 @@ def test_pressure_uses_adaptive_boundaries() -> None:
     assert matcher.find_first_anchored_hit("5CL150RF", item) is not None
     assert matcher.find_first_anchored_hit("ACL150", item) is None
     assert matcher.find_first_anchored_hit("CL1500", item) is None
+
+
+def test_pressure_accepts_explicit_metric_and_imperial_surfaces() -> None:
+    splitter = PressureSecondPassSplitter()
+
+    assert splitter.analyze("法兰 1.6MPa", "1.6MPA").passed
+    assert splitter.analyze("法兰 6 Bar", "6BAR").passed
+    assert splitter.analyze("法兰 150#", "150#").passed
+    assert splitter.analyze("法兰 150 #", "150 #").passed
+    assert splitter.analyze("法兰 150 Lbs", "150LBS").passed
+
+
+def test_normalized_pn_accepts_equivalent_mpa_and_bar_evidence() -> None:
+    splitter = PressureSecondPassSplitter()
+
+    assert splitter.analyze("法兰 1.6MPa", "PN16").passed
+    assert splitter.analyze("法兰 16 Bar", "PN16").passed
+    assert splitter.analyze("法兰 1.0MPa", "PN10").passed
+    assert splitter.analyze("法兰 10.0 Bar", "PN10").passed
+    assert not splitter.analyze("法兰 1.5MPa", "PN16").passed
 
 
 def test_size_bare_value_does_not_consume_thickness_decimal_tail() -> None:

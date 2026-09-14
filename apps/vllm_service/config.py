@@ -172,7 +172,25 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     return merged
 
 
-def _validate_profile(data: dict[str, Any], base: dict[str, Any], path: Path) -> None:
+def _configured_model_engines(base: dict[str, Any]) -> set[str]:
+    active_engines: set[str] = set()
+    for name, row in (base.get("models") or {}).items():
+        if not isinstance(row, dict):
+            raise ValueError(f"model {name} 配置必须是对象")
+        engine_name = str(row.get("engine") or "").strip()
+        if not engine_name:
+            raise ValueError(f"model {name} 缺少 engine")
+        active_engines.add(engine_name)
+    return active_engines
+
+
+def _validate_profile(
+    data: dict[str, Any],
+    base: dict[str, Any],
+    path: Path,
+    *,
+    active_engines: set[str],
+) -> None:
     unknown_top_level = set(data) - PROFILE_ALLOWED_TOP_LEVEL
     if unknown_top_level:
         raise ValueError(
@@ -191,13 +209,14 @@ def _validate_profile(data: dict[str, Any], base: dict[str, Any], path: Path) ->
     raw_engines = data.get("engines") or {}
     if not isinstance(raw_engines, dict):
         raise ValueError(f"Profile engines 必须是对象: {path}")
-    base_engines = base.get("engines") or {}
-    unknown_engines = set(raw_engines) - set(base_engines)
-    if unknown_engines:
-        raise ValueError(f"硬件Profile引用了未知engine: {sorted(unknown_engines)} ({path})")
-    missing_engines = set(base_engines) - set(raw_engines)
+    # 硬件 Profile 可以为多个 service 配置预置 engine 参数。当前 service
+    # 未声明或未路由到的预置项会在加载阶段被忽略，不应被当作配置错误。
+    missing_engines = active_engines - set(raw_engines)
     if missing_engines:
-        raise ValueError(f"硬件Profile缺少engine配置: {sorted(missing_engines)} ({path})")
+        raise ValueError(
+            f"硬件Profile缺少当前模型路由使用的engine配置: "
+            f"{sorted(missing_engines)} ({path})"
+        )
     for name, row in raw_engines.items():
         if not isinstance(row, dict):
             raise ValueError(f"Profile engine {name} 必须是对象: {path}")
@@ -225,7 +244,13 @@ def load_config(path: Path, profile: str | Path | None = None) -> DeploymentConf
     if not profile_path.is_file():
         raise FileNotFoundError(f"硬件Profile不存在: {profile_path}")
     profile_data = _load_yaml(profile_path)
-    _validate_profile(profile_data, base_data, profile_path)
+    active_engine_names = _configured_model_engines(base_data)
+    _validate_profile(
+        profile_data,
+        base_data,
+        profile_path,
+        active_engines=active_engine_names,
+    )
     data = _deep_merge(base_data, profile_data)
 
     raw_gateway = data.get("gateway") or {}
@@ -239,6 +264,8 @@ def load_config(path: Path, profile: str | Path | None = None) -> DeploymentConf
 
     engines: dict[str, EngineSpec] = {}
     for name, row in (data.get("engines") or {}).items():
+        if name not in active_engine_names:
+            continue
         if not isinstance(row, dict):
             raise ValueError(f"engine {name} 配置必须是对象")
         raw_environment = row.get("environment") or {}

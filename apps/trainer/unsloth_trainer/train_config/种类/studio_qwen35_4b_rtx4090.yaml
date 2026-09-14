@@ -1,0 +1,46 @@
+# Unsloth Studio: 种类 / Qwen3.5-4B / RTX 4090 / BF16 LoRA
+# 实际数据：train=24145，val=2031；Qwen3.5 tokenizer 实测最长完整样本=785 tokens。
+# 有效 batch=16。当前 Studio 若存在尾批次问题，将训练集补齐 15 条到 24160。
+# Studio 页面选择：Qwen3.5-4B、LoRA、Alpaca、种类_train.json、种类_val.json。
+
+training:
+  max_seq_length: 1024
+  num_epochs: 2
+  learning_rate: 0.00002  # 2e-5，适合结构化抽取 LoRA
+  embedding_learning_rate: null
+  batch_size: 2  # 24GB 4090
+  gradient_accumulation_steps: 8  # 有效 batch=16
+  warmup_steps: 91  # 3020 总优化步数的约 3%
+  max_steps: 0
+  save_steps: 200
+  eval_steps: 200
+  weight_decay: 0.01
+  random_seed: 2026
+  packing: false
+  train_on_completions: true
+  gradient_checkpointing: unsloth
+  optim: adamw_8bit
+  lr_scheduler_type: cosine
+
+lora:
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  use_rslora: false
+  use_loftq: false
+  use_dora: false
+
+logging:
+  enable_wandb: false
+  wandb_project: category-extraction
+  enable_tensorboard: false
+  tensorboard_dir: runs/category/rtx4090
+  log_frequency: 20

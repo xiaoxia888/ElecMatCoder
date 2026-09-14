@@ -17,6 +17,40 @@
     }
   },
   {
+    "input": "PIPE; BE; SMLS; B622-(N10276); SCH10 4\" ASME B36.10",
+    "output": {
+      "MATERIAL": [
+        {
+          "PART": "BODY",
+          "VALUE": "ASTM B622 N10276",
+          "SPECIAL_REQ": []
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB3610"
+        }
+      ]
+    }
+  },
+  {
+    "input": "BLIND FLANGE ASTM B462 N10276 CL600 RF BLD ASME B16.5 DN80",
+    "output": {
+      "MATERIAL": [
+        {
+          "PART": "BODY",
+          "VALUE": "ASTM B462 N10276",
+          "SPECIAL_REQ": []
+        }
+      ],
+      "STANDARD": [
+        {
+          "BODY": "AB165"
+        }
+      ]
+    }
+  },
+  {
     "input": "无缝对焊偏心大小头 SMLS,GB/T8163,R(E)-DN50×25xSCH80xSCH80 20#",
     "output": {
       "MATERIAL": [

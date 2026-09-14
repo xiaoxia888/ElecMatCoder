@@ -5,11 +5,37 @@ import type { EncodingResult, ImportedRow } from '@/types/encoding'
 interface ExportCardProps {
   dataList: ImportedRow[]
   results: Record<number, EncodingResult>
+  activeTaskId: string | null
 }
 
-export function ExportCard({ dataList, results }: ExportCardProps) {
+export function ExportCard({ dataList, results, activeTaskId }: ExportCardProps) {
   const hasData = dataList.length > 0
   const hasResults = Object.keys(results).length > 0
+  const serverTaskId = activeTaskId && activeTaskId !== 'local' ? activeTaskId : ''
+
+  function exportServerTask(format: 'csv' | 'xlsx' | 'stage1') {
+    const anchor = document.createElement('a')
+    anchor.href = `/api/pipe/encode/batch/jobs/${encodeURIComponent(serverTaskId)}/export?format=${format}`
+    anchor.download = ''
+    document.body.appendChild(anchor)
+    anchor.click()
+    anchor.remove()
+  }
+
+  function exportCsv() {
+    if (serverTaskId) exportServerTask('csv')
+    else exportResultsToCsv(dataList, results)
+  }
+
+  function exportExcel() {
+    if (serverTaskId) exportServerTask('xlsx')
+    else exportResultsToExcel(dataList, results)
+  }
+
+  function exportStage1() {
+    if (serverTaskId) exportServerTask('stage1')
+    else exportStage1Dataset(dataList, results)
+  }
 
   const btn =
     'flex w-full items-center justify-center gap-2 rounded-lg border border-line py-2.5 text-[14px] font-medium text-ink transition hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50'
@@ -19,15 +45,15 @@ export function ExportCard({ dataList, results }: ExportCardProps) {
       <h2 className="text-[15px] font-bold text-ink">数据导出</h2>
       <p className="mb-3 mt-1 text-[12px] text-muted">导出当前任务编码结果及相关数据</p>
       <div className="space-y-2">
-        <button type="button" className={btn} onClick={() => exportResultsToCsv(dataList, results)} disabled={!hasData}>
+        <button type="button" className={btn} onClick={exportCsv} disabled={!hasData}>
           <FileText className="h-4 w-4 text-muted" />
           导出 CSV
         </button>
-        <button type="button" className={btn} onClick={() => exportResultsToExcel(dataList, results)} disabled={!hasData}>
+        <button type="button" className={btn} onClick={exportExcel} disabled={!hasData}>
           <FileSpreadsheet className="h-4 w-4 text-success" />
           导出 Excel
         </button>
-        <button type="button" className={btn} onClick={() => exportStage1Dataset(dataList, results)} disabled={!hasResults}>
+        <button type="button" className={btn} onClick={exportStage1} disabled={!serverTaskId && !hasResults}>
           <Database className="h-4 w-4 text-accent" />
           导出一阶段数据集
         </button>

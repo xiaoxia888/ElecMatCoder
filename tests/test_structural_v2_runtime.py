@@ -147,6 +147,50 @@ class StructuralV2RuntimeTest(unittest.TestCase):
 
         self.assertEqual(self.encoder._encode_structural_v2_thickness(structural).code, "S40XS80")
 
+    def test_same_position_keeps_distinct_values_of_selected_type(self) -> None:
+        structural = {
+            "_schema_version": "v2",
+            "ITEMS": [
+                {
+                    "SCOPE": "BODY",
+                    "ROLE": "SINGLE",
+                    "SIZE": [
+                        {"type": "OD", "value": "88.9"},
+                        {"type": "DN", "value": "80"},
+                    ],
+                    "THICKNESS": [
+                        {"type": "MM", "value": "5.6"},
+                        {"type": "MM", "value": "5.0"},
+                    ],
+                }
+            ],
+            "LENGTH": "",
+            "PRESSURE": "",
+        }
+
+        self.assertEqual(self.encoder._encode_structural_v2_thickness(structural).code, "5.6MMX5MM")
+
+    def test_same_position_deduplicates_equivalent_selected_values(self) -> None:
+        structural = {
+            "_schema_version": "v2",
+            "ITEMS": [
+                {
+                    "SCOPE": "BODY",
+                    "ROLE": "SINGLE",
+                    "SIZE": [{"type": "DN", "value": "80"}],
+                    "THICKNESS": [
+                        {"type": "MM", "value": "5.0"},
+                        {"type": "MM", "value": "5"},
+                        {"type": "SCHEDULE", "value": "SCH40"},
+                    ],
+                }
+            ],
+            "LENGTH": "",
+            "PRESSURE": "",
+        }
+
+        self.assertEqual(self.encoder._encode_structural_v2_thickness(structural).code, "5MM")
+
     def test_second_pass_matchers_read_v2_without_v1_conversion(self) -> None:
         structural = {
             "ITEMS": [

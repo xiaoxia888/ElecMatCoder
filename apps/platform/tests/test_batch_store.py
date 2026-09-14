@@ -127,6 +127,23 @@ class BatchJobStoreTest(unittest.TestCase):
         self.assertIsNotNone(job)
         self.assertEqual(job["items_meta"][0]["category"], "直管")
 
+    def test_job_list_only_reads_lightweight_summaries(self) -> None:
+        jobs = self.store.list_recent_jobs()
+
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0]["job_id"], "job-1")
+        self.assertEqual(jobs[0]["total"], 2)
+        self.assertNotIn("items_meta", jobs[0])
+
+    def test_iter_results_streams_rows_in_order(self) -> None:
+        self.store.save_result("job-1", 1, 11, {"final_code": "P200"})
+        self.store.save_result("job-1", 0, 10, {"final_code": "P100"})
+
+        rows = list(self.store.iter_results("job-1", batch_size=1))
+
+        self.assertEqual([row[0] for row in rows], [0, 1])
+        self.assertEqual([row[2]["final_code"] for row in rows], ["P100", "P200"])
+
 
 if __name__ == "__main__":
     unittest.main()

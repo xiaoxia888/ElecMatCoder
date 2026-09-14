@@ -38,6 +38,8 @@ common_materials:
     - WP304
     - F304
     - TP304
+  "Q345R":
+    - Q345R
   "316L":
     - S31603
     - F316L

@@ -50,6 +50,7 @@ common_types:
       - WN FLANGE
       - FLANGE WN
       - WN Flg
+      - flg WN
     block_if_matches:
       - FSO
       - FS
@@ -63,6 +64,8 @@ common_types:
       - SO FLANGE
       - FLANGE SO
       - SO法兰
+      - SO Flg
+      - FLG SO
     body:
       - 带颈平焊法兰
       - 平焊法兰
@@ -582,6 +585,7 @@ common_types:
       - WELDING NECK FLANGE
       - WN FLANGE
       - FLANGE WN
+      - WN Flg
       - WN Flg
       - WN
     seal:

@@ -50,8 +50,8 @@ STANDARD_原始结果 STANDARD_原始编码 STANDARD_修正结果 STANDARD_修�
     --h3-engine-code '你的EngineCode' \
     --h3-engine-secret '你的EngineSecret'
 
-python apps/trainer/qwen3_fte/src/convert_code_review_excel.py \
-    '/Users/guoxi/Downloads/编码结果 (57).csv' \
+python scripts/将材料描述上传到氚云.py \
+    '/Users/guoxi/Downloads/编码结果 (73).csv' \
     --upload-h3 \
     --chunk-size 500 \
     --no-shuffle \

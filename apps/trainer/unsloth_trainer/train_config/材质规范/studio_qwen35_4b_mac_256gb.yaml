@@ -1,0 +1,50 @@
+# Unsloth Studio: 材质规范 / Qwen3.5-4B / Apple Silicon 256GB / MLX LoRA
+# 必须使用原生 arm64 Unsloth Studio，并确认训练页面显示 MLX 后端。
+# 在 Studio 页面另外选择以下项目，本文件只负责训练、LoRA 和日志参数：
+#   Model: Qwen3.5-4B 的 Safetensors/MLX 可加载基座（不要选择 GGUF）
+#   Method: LoRA
+#   Train dataset: 材质规范_train.json
+#   Eval dataset: 材质规范_val.json
+#   Dataset format: Alpaca（instruction/input/output）
+
+training:
+  max_seq_length: 1024
+  num_epochs: 2
+  learning_rate: 0.00002  # 等于 2e-5；与 4090 配置保持一致，便于比较训练结果
+  embedding_learning_rate: null
+  batch_size: 8  # 256GB 统一内存可使用更大的单步批次
+  gradient_accumulation_steps: 2  # 有效批次为 8 × 2 = 16，与 4090 配置一致
+  warmup_steps: 91  # 适用于约 3020 个优化步骤；数据量变化较大时应调整为总步骤的约 3%
+  max_steps: 0  # 设为 0 表示按 num_epochs 完成训练
+  save_steps: 200
+  eval_steps: 200
+  weight_decay: 0.01
+  random_seed: 2026
+  packing: false  # 结构化抽取样本不做序列拼接
+  train_on_completions: true  # 仅训练 assistant 的目标 JSON，不训练用户提示词
+  gradient_checkpointing: false  # 256GB 统一内存无需重计算，关闭后通常更快
+  optim: adamw_8bit  # Unsloth MLX 会将该名称映射到受支持的 AdamW 实现
+  lr_scheduler_type: cosine
+
+lora:
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  use_rslora: false
+  use_loftq: false
+  use_dora: false  # 当前 MLX 训练不使用 DoRA
+
+logging:
+  enable_wandb: false
+  wandb_project: material-specification
+  enable_tensorboard: false
+  tensorboard_dir: runs/material-specification/mac-256gb
+  log_frequency: 20

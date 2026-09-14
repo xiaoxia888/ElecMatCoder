@@ -1,0 +1,23 @@
+# 任务覆盖配置：种类抽取 / Qwen3.5-9B / RTX 5090 32GB / BF16 LoRA。
+# 未出现的设置自动继承 ../../config.yaml。
+
+model:
+  name_or_path: "/home/waas/base-models/Qwen3.5-9B"
+  max_seq_length: 1024
+
+data:
+  # 当前服务器上由 Unsloth Studio 上传并持久化的数据文件。
+  train_file: "/root/.unsloth/studio/assets/datasets/uploads/3494824dfc9d42d9a04083d5c6dff675_种类_train.json"
+  validation_file: "/root/.unsloth/studio/assets/datasets/uploads/bfdaad0ae9944218aefdb61c4fd0dfce_种类_val.json"
+
+training:
+  output_dir: "/home/waas/outputs/unsloth_qwen35_9b/category_rtx5090"
+  num_train_epochs: 2.0
+  # 冒烟测试时临时改成 20，完整训练使用 -1。
+  max_steps: -1
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.00002
+  eval_steps: 200
+  save_steps: 200
+  resume_from_checkpoint: "auto"

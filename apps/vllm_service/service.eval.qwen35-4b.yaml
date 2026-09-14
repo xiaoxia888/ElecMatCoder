@@ -1,0 +1,31 @@
+profile: single-3090
+
+gateway:
+  host: 0.0.0.0
+  port: 8200
+  request_timeout_seconds: 600
+  startup_timeout_seconds: 1200
+  health_check_interval_seconds: 2
+
+engines:
+  eval_engine:
+    host: 127.0.0.1
+    port: 8301
+    model_path: /home/waas/base-models/Qwen3.5-4B
+    served_model_name: qwen35-4b-eval-base
+    trust_remote_code: true
+    max_loras: 1
+    max_cpu_loras: 1
+    max_lora_rank: 32
+    lora_modules:
+      type: /home/waas/lora/checkpoint-2000-种类-qwen35_4B
+
+models:
+  type:
+    engine: eval_engine
+    upstream_model: type
+    prompt_file: prompts/种类微调提示词.txt
+    max_tokens: 128
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs: {enable_thinking: false}

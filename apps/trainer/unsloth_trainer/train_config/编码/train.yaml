@@ -1,0 +1,20 @@
+# 字段编码模型：日常只需要确认下面 5 项。
+finetuning_method: "lora"  # lora=16-bit；qlora=4-bit省显存；full=全参数
+base_model: "/openbayes/input/input0/Qwen3.5-4B"
+train_dataset: "apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/coder_stage2_from_mappings/coder_stage2_train.json"
+validation_dataset: "apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/coder_stage2_from_mappings/coder_stage2_val.json"
+output_dir: "/openbayes/input/input2/unsloth_models/encoding"
+
+# 本任务专属的训练参数。
+model:
+  max_seq_length: 256
+training:
+  num_train_epochs: 3.0
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 2
+  learning_rate: 0.00002
+  eval_steps: 50
+  save_steps: 50
+  save_total_limit: 3
+  load_best_model_at_end: true

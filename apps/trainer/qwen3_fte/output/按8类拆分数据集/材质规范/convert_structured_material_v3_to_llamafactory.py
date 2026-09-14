@@ -12,7 +12,7 @@ python apps/trainer/qwen3_fte/output/按8类拆分数据集/材质规范/convert
     --train-input apps/trainer/qwen3_fte/output/按8类拆分数据集/材质规范/结构化原始牌号/材质规范_结构化原始牌号_train.json \
     --val-input apps/trainer/qwen3_fte/output/按8类拆分数据集/材质规范/结构化原始牌号/材质规范_结构化原始牌号_val.json \
     --prompt apps/trainer/qwen3_fte/prompt/材质规范微调提示词.txt \
-    --output-dir apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/材质规范/0806
+    --output-dir apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/材质规范/0814
 """
 
 from __future__ import annotations

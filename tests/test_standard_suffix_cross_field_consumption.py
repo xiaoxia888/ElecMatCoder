@@ -41,3 +41,33 @@ def test_separate_standard_suffix_is_still_reported() -> None:
     assert result["results"]["MATERIAL"]["passed"]
     assert not result["results"]["STANDARD"]["passed"]
     assert "存在疑似未编码后缀" in result["results"]["STANDARD"]["reason"]
+
+
+def test_uncommon_material_grade_suffix_is_not_reused_as_standard_suffix() -> None:
+    result = PlatformSecondPassRunner().analyze(
+        text="HG/T20592 法兰 SO100(B)-16 RF S30408,II, NB/T47010",
+        stage1_difficulty=DIFF_EASY,
+        material_code="304II",
+        standard_items=[
+            {"code": "HGT20592", "category": "制造"},
+            {"code": "NBT47010", "category": "制造"},
+        ],
+    )
+
+    assert not result["results"]["MATERIAL"]["passed"]
+    assert result["results"]["STANDARD"]["passed"]
+
+
+def test_uncommon_material_consumption_keeps_separate_standard_suffix() -> None:
+    result = PlatformSecondPassRunner().analyze(
+        text="HG/T20592 法兰 SO100(B)-16 RF S30408,II, NB/T47010 HG/T20592 II",
+        stage1_difficulty=DIFF_EASY,
+        material_code="304II",
+        standard_items=[
+            {"code": "HGT20592", "category": "制造"},
+            {"code": "NBT47010", "category": "制造"},
+        ],
+    )
+
+    assert not result["results"]["STANDARD"]["passed"]
+    assert "存在疑似未编码后缀" in result["results"]["STANDARD"]["reason"]

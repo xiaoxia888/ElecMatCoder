@@ -1,0 +1,1177 @@
+{
+  "用途": "独立V2专项增强对比集：合成增强进入训练集，真实项目错误进入验证集",
+  "现有V2样本数": 54776,
+  "候选生成数": 796,
+  "合成增强候选数": 698,
+  "真实项目错误候选数": 98,
+  "真实项目错误解析统计": {
+    "未纳入_标签或归属不够确定": 1068,
+    "已纳入_材质数字与尺寸边界": 21,
+    "空描述或重复描述": 132,
+    "已纳入_长度与壁厚等级边界": 2,
+    "已纳入_标准字符误识别为壁厚": 1,
+    "已纳入_同位置多壁厚": 4,
+    "已纳入_支管座尾部毫米壁厚": 8,
+    "已纳入_长度与英制尺寸边界": 2,
+    "已纳入_异径三通双端漏提": 5,
+    "已纳入_长描述单规格管件": 11,
+    "已纳入_长描述三通": 11,
+    "已纳入_长描述异径管": 1,
+    "已纳入_RFPN粘连压力": 2,
+    "已纳入_OCR第二端尺寸": 20,
+    "已纳入_OCR主管尺寸": 1,
+    "已纳入_法兰管长度与压力": 9
+  },
+  "实际生成数": 760,
+  "跳过统计": {
+    "专项集内部重复": 11,
+    "与现有V2描述重叠": 25
+  },
+  "训练集": {
+    "样本数": 698,
+    "来源": {
+      "synthetic_contrast": 698
+    },
+    "对比组数": 151,
+    "类别": {
+      "压力等级语义正负对比": 120,
+      "同位置多壁厚与双端壁厚": 102,
+      "壁厚等级与相似字符负例": 102,
+      "尺寸数字边界与非目标数字": 90,
+      "异径第二端与拓扑归属": 205,
+      "长度与英制尺寸边界": 16,
+      "长描述关键字段抗干扰": 63
+    },
+    "ROLE": {
+      "BRANCH": 243,
+      "END_A": 79,
+      "END_B": 79,
+      "MAIN": 243,
+      "SINGLE": 376
+    },
+    "SCOPE": {
+      "BODY": 1020
+    },
+    "尺寸类型": {
+      "DN": 887,
+      "INCH": 46,
+      "OD": 177
+    },
+    "壁厚类型": {
+      "MM": 812,
+      "SCHEDULE": 133
+    },
+    "含长度样本": 31,
+    "含压力样本": 138
+  },
+  "验证集": {
+    "样本数": 62,
+    "来源": {
+      "actual_project_error": 62
+    },
+    "对比组数": 62,
+    "类别": {
+      "真实项目错误-同位置多壁厚": 4,
+      "真实项目错误-异径三通双端漏提": 5,
+      "真实项目错误-支管座尾部毫米壁厚": 8,
+      "真实项目错误-材质数字与尺寸边界": 8,
+      "真实项目错误-标准字符误识别为壁厚": 1,
+      "真实项目错误-法兰管长度与压力": 9,
+      "真实项目错误-长度与壁厚等级边界": 2,
+      "真实项目错误-长度与英制尺寸边界": 2,
+      "真实项目错误-长描述三通": 11,
+      "真实项目错误-长描述单规格管件": 11,
+      "真实项目错误-长描述异径管": 1
+    },
+    "ROLE": {
+      "BRANCH": 24,
+      "END_A": 1,
+      "END_B": 1,
+      "MAIN": 24,
+      "SINGLE": 37
+    },
+    "SCOPE": {
+      "BODY": 87
+    },
+    "尺寸类型": {
+      "DN": 42,
+      "INCH": 2,
+      "OD": 47
+    },
+    "壁厚类型": {
+      "MM": 58,
+      "SCHEDULE": 13
+    },
+    "含长度样本": 13,
+    "含压力样本": 32
+  },
+  "校验": {
+    "与现有V2描述重叠": 0,
+    "训练验证描述重叠": 0,
+    "训练验证对比组重叠": 0,
+    "训练集仅含合成增强": true,
+    "验证集仅含真实项目错误": true,
+    "样本输出仅含input_output": true
+  },
+  "暂不处理": [
+    "OD或INCH到DN的换算标签策略",
+    "压力一阶段答案与最终C/CL编码格式差异",
+    "二阶段编码与平台后处理错误",
+    "设计压力6Bar等非等级压力表达（标签口径待确认）"
+  ],
+  "现有主数据潜在冲突提示_未自动修改": {
+    "紧凑双尺寸但未形成双位置标签": 341,
+    "疑似OCR第二端表达": 63
+  },
+  "各类别代表样本": {
+    "真实项目错误-材质数字与尺寸边界": [
+      {
+        "input": "1.材质:90°弯头 R=1.5DN 20#，GB/T12459-2017II系列2.规格:Ø45×5.03.连接方式:焊接",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "45"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "1.材质:90°弯头 R=1.5DN 20#，GB/T12459-2017II系列\n2.规格:Ø377×8.0\n3.连接方式:焊接",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "377"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "8"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-长度与壁厚等级边界": [
+      {
+        "input": "单丝头\\DN20 S160 L50 NPT 14383 20# 9948-H2S",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "SCH160"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "50MM",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "单丝头 单丝头\\DN20 S160 L50 NPT 14383 20# 9948-H2S",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "SCH160"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "50MM",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-标准字符误识别为壁厚": [
+      {
+        "input": "90°弯头 弯头90°DN700×10 1.5D S3408 Q245R100%RT",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "700"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "10"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-同位置多壁厚": [
+      {
+        "input": "45 Deg Elbow, P235GH(1.0345), SMLS, TYPE5, BW, 88.9x5.6/5.0, DIN 2605-1 DN80",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "88.9"
+                },
+                {
+                  "type": "DN",
+                  "value": "80"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "5.6"
+                },
+                {
+                  "type": "MM",
+                  "value": "5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "90 Deg Elbow, P235GH(1.0345), SMLS, TYPE5, BW, 88.9x5.6/5.0, DIN 2605-1 DN80",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "88.9"
+                },
+                {
+                  "type": "DN",
+                  "value": "80"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "5.6"
+                },
+                {
+                  "type": "MM",
+                  "value": "5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-支管座尾部毫米壁厚": [
+      {
+        "input": "对焊支管座 OLET-90,A182-F304,MSS SP-97,BW,DN<oletmainsize>x20-3 DN800X20",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "800"
+                }
+              ],
+              "THICKNESS": []
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "对焊支管座 OLET-90,A182-F304,MSS SP-97,BW,DN<oletmainsize>x100-3 DN1000X100",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "1000"
+                }
+              ],
+              "THICKNESS": []
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "100"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-长度与英制尺寸边界": [
+      {
+        "input": "NIPPLE; BBE; EFW; A312-TP304/304L; 100mm; SCH40S 1\" ASME B16.9",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "INCH",
+                  "value": "1"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "SCH40S"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "100MM",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "NIPPLE; PBE; SMLS; A106-B; 100mm; SCH80 1\" ASME B16.9",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "INCH",
+                  "value": "1"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "SCH80"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "100MM",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-异径三通双端漏提": [
+      {
+        "input": "TR, BE, GB/T12459II, GB/T13401, 3X2.5mm, 06Cr19Ni10, SMLS, GB/T14976 DN32X20",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "32"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "TR, BE, GB/T12459II, GB/T13401, 4X3.5mm, 06Cr19Ni10, SMLS, GB/T14976 DN150X100",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "150"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "4"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "100"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3.5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "真实项目错误-长描述单规格管件": [
+      {
+        "input": "1.名称:90º无缝弯头 R=1.5DN 2.材质:20# SMLS 3.规格:D60.3×3.91 4.压力等级:Class 300 5.连接方式:钨极惰性气体保护电弧焊 6.执行标准:GB/T 12459-2017、GB/T 13401-2017 7.安装方式:综合考虑所有施工运输和吊装费用 8.除锈防腐:除锈等级为 Sa2.5级；外表面涂刷环氧富锌底漆1道，涂层最小干膜厚度1×50μm；环氧云铁中间漆1道，涂层最小干膜厚度 1×100μm；脂肪族聚氨酯面漆2道，涂层最小干膜厚度2×40μm；涂层干膜总厚度≥230μm 9.含完成本清单工作内容所需的所有费用",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "60.3"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3.91"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL300"
+        }
+      },
+      {
+        "input": "1.名称:90º无缝弯头 R=1.5DN 2.材质:20# SMLS 3.规格:D168.3×7.11 4.压力等级:Class 300 5.连接方式:钨极惰性气体保护电弧焊 6.执行标准:GB/T 12459-2017、GB/T 13401-2017 7.安装方式:综合考虑所有施工运输和吊装费用 8.除锈防腐:除锈等级为 Sa2.5级；外表面涂刷环氧富锌底漆1道，涂层最小干膜厚度1×50μm；环氧云铁中间漆1道，涂层最小干膜厚度 1×100μm；脂肪族聚氨酯面漆2道，涂层最小干膜厚度2×40μm；涂层干膜总厚度≥230μm 9.含完成本清单工作内容所需的所有费用",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "168.3"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "7.11"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL300"
+        }
+      }
+    ],
+    "真实项目错误-长描述三通": [
+      {
+        "input": "1.名称:等径三通 2.材质:20# SMLS 3.规格:D60.3×60.3×3.91 4.压力等级: Class300 5.连接方式:钨极惰性气体保护电弧焊 6.执行标准:GB/T 12459-2017、GB/T 13401-2017 7.安装方式:综合考虑所有施工运输和吊装费用 8.除锈防腐:除锈等级为 Sa2.5级；外表面涂刷环氧富锌底漆1道，涂层最小干膜厚度1×50μm；环氧云铁中间漆1道，涂层最小干膜厚度 1×100μm；脂肪族聚氨酯面漆2道，涂层最小干膜厚度2×40μm；涂层干膜总厚度≥230μm 9.含完成本清单工作内容所需的所有费用",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "60.3"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3.91"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "60.3"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL300"
+        }
+      },
+      {
+        "input": "1.名称:等径三通 2.材质:20# SMLS 3.规格:D273.1×114.3×8.74 4.压力等级: Class300 5.连接方式:钨极惰性气体保护电弧焊 6.执行标准:GB/T 12459-2017、GB/T 13401-2017 7.安装方式:综合考虑所有施工运输和吊装费用 8.除锈防腐:除锈等级为 Sa2.5级；外表面涂刷环氧富锌底漆1道，涂层最小干膜厚度1×50μm；环氧云铁中间漆1道，涂层最小干膜厚度 1×100μm；脂肪族聚氨酯面漆2道，涂层最小干膜厚度2×40μm；涂层干膜总厚度≥230μm 9.含完成本清单工作内容所需的所有费用",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "273.1"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "8.74"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "114.3"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL300"
+        }
+      }
+    ],
+    "真实项目错误-长描述异径管": [
+      {
+        "input": "1.名称:底平偏心异径管 2.材质:20# SMLS 3.规格:D273.1×219.1×8.74 4.压力等级: Class300 5.连接方式:钨极惰性气体保护电弧焊 6.执行标准:GB/T 12459-2017、GB/T 13401-2017 7.安装方式:综合考虑所有施工运输和吊装费用 8.除锈防腐:除锈等级为 Sa2.5级；外表面涂刷环氧富锌底漆1道，涂层最小干膜厚度1×50μm；环氧云铁中间漆1道，涂层最小干膜厚度 1×100μm；脂肪族聚氨酯面漆2道，涂层最小干膜厚度2×40μm；涂层干膜总厚度≥230μm 9.含完成本清单工作内容所需的所有费用",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "END_A",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "273.1"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "8.74"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "END_B",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "219.1"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL300"
+        }
+      }
+    ],
+    "真实项目错误-法兰管长度与压力": [
+      {
+        "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 1421.5mm",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "50"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "SCH40"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "1421.5MM",
+          "PRESSURE": "CL150"
+        }
+      },
+      {
+        "input": "法兰管, PTFE lined GB/T 8163-20, RF, CL 150, SH/T 3406,HG/T 20538 ,DN50, S-40 342mm",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "50"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "SCH40"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "342MM",
+          "PRESSURE": "CL150"
+        }
+      }
+    ],
+    "异径第二端与拓扑归属": [
+      {
+        "input": "TR, BE, GB/T12459II, GB/T13401, 3X2.5mm, 20, SMLS, DN32X20",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "32"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "TR, BE, GB/T12459II, GB/T13401, 3X2.5mm, 20, SMLS, GB/T14976 DN32X20",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "32"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "尺寸数字边界与非目标数字": [
+      {
+        "input": "90°弯头 R=1.5DN:φ21.3X2.77,20#,GB/T8163 SH/T3408",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "21.3"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.77"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "45 Deg Elbow R=1.5D, A234 WPB, SMLS, BW, 21.3x2.77, ASME B16.9",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "21.3"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.77"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "长度与英制尺寸边界": [
+      {
+        "input": "NIPPLE, ASTM A106 Gr.B, SMLS, PE, XS, 50MM;1/2 in",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "INCH",
+                  "value": "1/2"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "XS"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "50MM",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "单丝头 1/2\" SCH XS L=50mm 20# NB/T47008",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "INCH",
+                  "value": "1/2"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "SCHEDULE",
+                  "value": "XS"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "50MM",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "同位置多壁厚与双端壁厚": [
+      {
+        "input": "45 Deg Elbow, P235GH, SMLS, TYPE5, BW, 21.3x2.77/2.27, DIN2605-1 DN15",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "21.3"
+                },
+                {
+                  "type": "DN",
+                  "value": "15"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.77"
+                },
+                {
+                  "type": "MM",
+                  "value": "2.27"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "弯头 TYPE5 DN15 φ21.3×2.77/2.27mm BW EN10253",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "OD",
+                  "value": "21.3"
+                },
+                {
+                  "type": "DN",
+                  "value": "15"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.77"
+                },
+                {
+                  "type": "MM",
+                  "value": "2.27"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "壁厚等级与相似字符负例": [
+      {
+        "input": "弯头 DN15 S22053 SH/T3408 GB/T12459 SMLS BW",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "15"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      },
+      {
+        "input": "弯头 DN15 S22053 S3408 GB/T12459 SMLS BW",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "15"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": ""
+        }
+      }
+    ],
+    "压力等级语义正负对比": [
+      {
+        "input": "BLIND FLANGE DN15 RF Class 150 ASME B16.5",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "15"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL150"
+        }
+      },
+      {
+        "input": "BLIND FLANGE DN15 RF 150 Lbs ASME B16.5",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "SINGLE",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "15"
+                }
+              ],
+              "THICKNESS": []
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "CL150"
+        }
+      }
+    ],
+    "长描述关键字段抗干扰": [
+      {
+        "input": "1.名称:异径三通 2.材质:20# SMLS BW 3.规格:DN32X20 THK=3X2.5mm PN16 4.执行标准:GB/T12459-2017、GB/T13401-2017 5.焊接方法:氩电联焊 6.除锈防腐:Sa2.5级，环氧富锌底漆1道，涂层最小干膜厚度1×50μm，面漆2道，设计温度150℃，100%RT，安装运输及吊装费用综合考虑",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "32"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "PN16"
+        }
+      },
+      {
+        "input": "设计温度150℃；检测比例100%；制造标准GB/T13401；PN16；REDUCING TEE SMLS BW DN32X20 3X2.5mm；外表面涂层50μm；材质20；项目说明及安装方式综合考虑",
+        "output": {
+          "ITEMS": [
+            {
+              "SCOPE": "BODY",
+              "ROLE": "MAIN",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "32"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "SCOPE": "BODY",
+              "ROLE": "BRANCH",
+              "SIZE": [
+                {
+                  "type": "DN",
+                  "value": "20"
+                }
+              ],
+              "THICKNESS": [
+                {
+                  "type": "MM",
+                  "value": "2.5"
+                }
+              ]
+            }
+          ],
+          "LENGTH": "",
+          "PRESSURE": "PN16"
+        }
+      }
+    ]
+  }
+}

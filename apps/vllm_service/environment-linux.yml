@@ -1,0 +1,43 @@
+# ElecMatCoder vLLM 推理服务统一环境。
+# 适用：Linux x86_64 + NVIDIA Turing 及以上 GPU（计算能力 >= 7.5）。
+# 创建：conda env create -f apps/vllm_service/environment-linux.yml
+# 启用：conda activate elecmat-vllm
+
+name: elecmat-vllm
+
+channels:
+  - conda-forge
+  # 不读取用户 .condarc 中额外配置的 defaults/pkgs/free/pytorch 等频道，
+  # 避免重复下载多份 repodata 和混装二进制包。
+  - nodefaults
+
+dependencies:
+  # vLLM 官方支持 Python 3.10～3.13；3.12 兼顾新模型和依赖稳定性。
+  - python=3.12
+  - pip>=24.3
+  - setuptools>=75
+  - wheel>=0.45
+  - packaging>=24
+  # 避免部分云平台优先加载系统旧版 libstdc++.so.6，导致 ICU/sqlite3
+  # 报 CXXABI_x.y.z not found。
+  - libgcc-ng>=14
+  - libstdcxx-ng>=14
+
+  - pip:
+      # 让 vLLM 管理与其匹配的 torch、transformers 和 CUDA 运行时依赖，
+      # 不要在此另外固定 torch 版本，否则容易出现二进制不兼容。
+      - vllm==0.26.0
+
+      # 网关和健康检查。
+      - fastapi>=0.115,<1
+      - uvicorn[standard]>=0.30,<1
+      - httpx>=0.27,<1
+      - pydantic>=2.9,<3
+
+      # benchmark.py、配置文件及 Excel 结果导出。
+      - requests>=2.32,<3
+      - PyYAML>=6.0,<7
+      - openpyxl>=3.1,<4
+
+      # 本地单元测试。
+      - pytest>=8,<9

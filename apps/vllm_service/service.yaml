@@ -4,46 +4,63 @@ profile: dual-4090
 
 gateway:
   host: 0.0.0.0
-  port: 8200
+  port: 6006
   request_timeout_seconds: 600
   startup_timeout_seconds: 1200
   health_check_interval_seconds: 3
 
 engines:
-  qwen3_8b:
-    host: 127.0.0.1
-    port: 8301
-    model_path: /cloud/cloud-s3fs/base-models/Qwen3-8B
-    served_model_name: qwen3-8b-base
-    trust_remote_code: true
-    max_loras: 2
-    max_cpu_loras: 2
-    max_lora_rank: 16
-    lora_modules:
-      type: /cloud/cloud-s3fs/lora/checkpoint-0807-种类
-      size-thick-pressure: /cloud/cloud-s3fs/lora/checkpoint-3000-尺寸
+  # qwen3_8b:
+  #   host: 127.0.0.1
+  #   port: 8301
+  #   model_path: /cloud/cloud-s3fs/base-models/Qwen3-8B
+  #   served_model_name: qwen3-8b-base
+  #   trust_remote_code: true
+  #   max_loras: 2
+  #   max_cpu_loras: 2
+  #   max_lora_rank: 16
+  #   lora_modules:
+  #     type: /cloud/cloud-s3fs/lora/checkpoint-0807-种类
+  #     size-thick-pressure: /cloud/cloud-s3fs/lora/checkpoint-3000-尺寸
 
-  qwen3_4b:
+  # qwen3_4b:
+  #   host: 127.0.0.1
+  #   port: 8302
+  #   model_path: /cloud/cloud-s3fs/base-models/Qwen3-4B-Instruct-2507
+  #   served_model_name: qwen3-4b-base
+  #   trust_remote_code: true
+  #   # 一阶段尺寸和材质需要同时进入批次；3为编码LoRA也预留容量。
+  #   max_loras: 2
+  #   max_cpu_loras: 2
+  #   max_lora_rank: 16
+  #   lora_modules:
+  #     material-standard: /cloud/cloud-s3fs/lora/checkpoint-0807-材质规范
+  #     coder: /cloud/cloud-s3fs/lora/checkpoint-1200-编码
+
+  # 将models下四个路由的engine改为qwen35_9b，即可只启动该底座。
+  # 路径需要替换为服务器上的实际Qwen3.5-9B和LoRA目录。
+  qwen35_9b:
     host: 127.0.0.1
-    port: 8302
-    model_path: /cloud/cloud-s3fs/base-models/Qwen3-4B-Instruct-2507
-    served_model_name: qwen3-4b-base
+    port: 8303
+    model_path: /root/autodl-fs/llm/base-models/Qwen3.5-9B
+    served_model_name: qwen3.5-9b-base
     trust_remote_code: true
-    # 一阶段尺寸和材质需要同时进入批次；3为编码LoRA也预留容量。
-    max_loras: 2
-    max_cpu_loras: 2
-    max_lora_rank: 16
+    # 一阶段三个LoRA允许进入同一批次，四个LoRA均可动态加载。
+    max_loras: 3
+    max_cpu_loras: 4
+    max_lora_rank: 32
     lora_modules:
-      material-standard: /cloud/cloud-s3fs/lora/checkpoint-0807-材质规范
-      coder: /cloud/cloud-s3fs/lora/checkpoint-1200-编码
+      type: /root/autodl-fs/llm/checkpoints/checkpoint-3000-种类-qwen35_9B
+      material-standard: /root/autodl-fs/llm/checkpoints/checkpoint-4358-材质规范-qwen35_9B
+      size-thick-pressure: /root/autodl-fs/llm/checkpoints/checkpoint-3000-size-qwen35_9B
 
 models:
   # 提示词从独立 UTF-8 文件读取。相对路径按本 service.yaml 所在目录解析。
   # 启动服务前必须为每个模型填写 prompt_file。
   type:
-    engine: qwen3_8b
+    engine: qwen35_9b
     upstream_model: type
-    prompt_file: ""
+    prompt_file: "/root/autodl-fs/apps/vllm_service/prompts/种类微调提示词.txt"
     # 训练集中的种类 JSON 最长约 64 tokens，128 足够且避免挤占输入上下文。
     max_tokens: 128
     temperature: 0.0
@@ -52,9 +69,9 @@ models:
       enable_thinking: false
 
   size-thick-pressure:
-    engine: qwen3_8b
+    engine: qwen35_9b
     upstream_model: size-thick-pressure
-    prompt_file: ""
+    prompt_file: "/root/autodl-fs/apps/vllm_service/prompts/尺寸壁厚磅级提示词.txt"
     max_tokens: 256
     temperature: 0.0
     top_p: 1.0
@@ -62,9 +79,9 @@ models:
       enable_thinking: false
 
   material-standard:
-    engine: qwen3_4b
+    engine: qwen35_9b
     upstream_model: material-standard
-    prompt_file: ""
+    prompt_file: "/root/autodl-fs/apps/vllm_service/prompts/材质规范微调提示词.txt"
     # v3 多部件材质 JSON 通常远低于 256 tokens；避免与 1024 上下文上限相加后溢出。
     max_tokens: 256
     temperature: 0.0
@@ -72,12 +89,12 @@ models:
     chat_template_kwargs:
       enable_thinking: false
 
-  coder:
-    engine: qwen3_4b
-    upstream_model: coder
-    prompt_file: ""
-    max_tokens: 128
-    temperature: 0.0
-    top_p: 1.0
-    chat_template_kwargs:
-      enable_thinking: false
+  # coder:
+  #   engine: qwen3_4b
+  #   upstream_model: coder
+  #   prompt_file: ""
+  #   max_tokens: 128
+  #   temperature: 0.0
+  #   top_p: 1.0
+  #   chat_template_kwargs:
+  #     enable_thinking: false

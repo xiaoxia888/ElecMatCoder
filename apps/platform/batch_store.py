@@ -15,9 +15,14 @@ import sqlite3
 import threading
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 _ACTIVE_STATUSES = {"queued", "running", "cancelling"}
+
+_JOB_SUMMARY_COLUMNS = """
+    job_id,status,total,processed,success_count,review_count,threshold,
+    max_concurrent,error,created_at,started_at,finished_at,duration_seconds,updated_at
+"""
 
 
 class BatchJobStore:
@@ -260,20 +265,40 @@ class BatchJobStore:
                 continue
         return out
 
+    def iter_results(self, job_id: str, batch_size: int = 500) -> Iterator[Tuple[int, int, Dict[str, Any]]]:
+        """使用独立只读连接分批遍历结果，供大任务导出，避免一次性占满内存。"""
+        connection = sqlite3.connect(str(self._db_path))
+        connection.row_factory = sqlite3.Row
+        try:
+            cursor = connection.execute(
+                "SELECT order_index, client_index, result FROM results "
+                "WHERE job_id=? ORDER BY order_index",
+                (job_id,),
+            )
+            while True:
+                rows = cursor.fetchmany(max(1, int(batch_size)))
+                if not rows:
+                    break
+                for row in rows:
+                    try:
+                        result = json.loads(row["result"])
+                    except (TypeError, ValueError):
+                        continue
+                    yield int(row["order_index"]), int(row["client_index"]), result
+        finally:
+            connection.close()
+
     def list_recent_jobs(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """读取任务摘要，不把可能包含数万条记录的 items_meta 搬进内存。"""
         with self._lock:
             rows = self._conn.execute(
-                "SELECT * FROM jobs ORDER BY created_at DESC LIMIT ?",
+                f"SELECT {_JOB_SUMMARY_COLUMNS} FROM jobs ORDER BY created_at DESC LIMIT ?",
                 (int(limit),),
             ).fetchall()
-        return [self._row_to_job(row) for row in rows]
+        return [self._row_to_job(row, include_items=False) for row in rows]
 
-    def _row_to_job(self, row: sqlite3.Row) -> Dict[str, Any]:
-        try:
-            items_meta = json.loads(row["items_meta"] or "[]")
-        except (TypeError, ValueError):
-            items_meta = []
-        return {
+    def _row_to_job(self, row: sqlite3.Row, *, include_items: bool = True) -> Dict[str, Any]:
+        job = {
             "job_id": row["job_id"],
             "status": row["status"],
             "total": row["total"],
@@ -283,13 +308,18 @@ class BatchJobStore:
             "threshold": row["threshold"],
             "max_concurrent": row["max_concurrent"],
             "error": row["error"],
-            "items_meta": items_meta,
             "created_at": row["created_at"],
             "started_at": row["started_at"],
             "finished_at": row["finished_at"],
             "duration_seconds": row["duration_seconds"],
             "updated_at": row["updated_at"],
         }
+        if include_items:
+            try:
+                job["items_meta"] = json.loads(row["items_meta"] or "[]")
+            except (TypeError, ValueError):
+                job["items_meta"] = []
+        return job
 
     # ---------- 清理 ----------
     def cleanup(self) -> None:

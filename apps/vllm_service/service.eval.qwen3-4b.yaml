@@ -1,0 +1,41 @@
+profile: single-3090
+
+gateway:
+  host: 0.0.0.0
+  port: 8200
+  request_timeout_seconds: 600
+  startup_timeout_seconds: 1200
+  health_check_interval_seconds: 2
+
+engines:
+  eval_engine:
+    host: 127.0.0.1
+    port: 8301
+    model_path: /home/waas/base-models/Qwen3-4B-Instruct-2507
+    served_model_name: qwen3-4b-eval-base
+    trust_remote_code: true
+    max_loras: 2
+    max_cpu_loras: 2
+    max_lora_rank: 32
+    lora_modules:
+      material-standard: /home/waas/lora/checkpoint-0807-材质规范
+      coder: /home/waas/lora/checkpoint-1200-编码
+
+models:
+  material-standard:
+    engine: eval_engine
+    upstream_model: material-standard
+    prompt_file: prompts/材质规范微调提示词.txt
+    max_tokens: 256
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs: {enable_thinking: false}
+
+  coder:
+    engine: eval_engine
+    upstream_model: coder
+    prompt_file: prompts/coder.txt
+    max_tokens: 128
+    temperature: 0.0
+    top_p: 1.0
+    chat_template_kwargs: {enable_thinking: false}

@@ -1,0 +1,96 @@
+# Unsloth Core 公共配置。
+# 此文件只保存跨模型、跨任务稳定的设置；训练时使用 train_config 下的任务配置覆盖常调参数。
+
+runtime:
+  # 只使用 Unsloth Core，关闭 Studio 附加逻辑及训练期间自动更新。
+  studio_disabled: true
+  # 当前 Qwen3.5 环境优先稳定性；确认稳定后可在任务配置中覆盖为 false。
+  compile_disable: true
+  disable_fast_generation: true
+  disable_auto_updates: true
+
+model:
+  max_seq_length: 1024
+  dtype: null
+  load_in_4bit: false
+  load_in_8bit: false
+  load_in_16bit: true
+  full_finetuning: false
+  fast_inference: false
+  # 5090 显存足够；关闭 embedding/lm_head 自动卸载，避免恢复训练时残留 meta tensor。
+  offload_embedding: false
+  trust_remote_code: false
+
+lora:
+  enabled: true
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.0
+  bias: "none"
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  use_gradient_checkpointing: "unsloth"
+  use_rslora: false
+  random_state: 2026
+
+data:
+  format: "alpaca"
+  columns:
+    instruction: "instruction"
+    input: "input"
+    output: "output"
+    messages: "messages"
+    text: "text"
+  system_prompt: null
+  input_separator: "\n"
+  enable_thinking: false
+  num_proc: 4
+  # 只计算 assistant 回答的 loss，对应 LLaMA Factory 的 train_on_prompt=false。
+  train_on_responses_only: true
+  instruction_part: "<|im_start|>user\n"
+  response_part: "<|im_start|>assistant\n"
+
+training:
+  append_timestamp: true
+  max_steps: -1
+  per_device_eval_batch_size: 1
+  weight_decay: 0.01
+  # 按总优化步数自动计算；传给 Trainer 的始终是整数 warmup_steps。
+  warmup_fraction: 0.03
+  warmup_steps: "auto"
+  lr_scheduler_type: "cosine"
+  optim: "adamw_8bit"
+  bf16: true
+  fp16: false
+  # TensorBoard 每 logging_steps 实时更新训练指标。
+  logging_steps: 20
+  logging_dir: "tensorboard"
+  logging_nan_inf_filter: false
+  eval_strategy: "steps"
+  save_strategy: "steps"
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  max_grad_norm: 1.0
+  packing: false
+  dataloader_num_workers: 4
+  seed: 2026
+  data_seed: 2026
+  report_to: "tensorboard"
+  # auto：同一命令自动恢复最新 checkpoint；null：强制开始一个新实验。
+  resume_from_checkpoint: "auto"
+
+save:
+  adapter_subdir: "final_adapter"
+  # 训练结束后分别生成训练损失、验证损失、汇总曲线和学习率 PNG。
+  plot_training_curves: true
+  merged_16bit: false
+  merged_subdir: "merged_16bit"
+  gguf: false
+  gguf_subdir: "gguf"
+  gguf_quantization_method: "q4_k_m"

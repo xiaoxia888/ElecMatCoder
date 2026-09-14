@@ -541,7 +541,7 @@ class PipeEncoderBase:
 
     @staticmethod
     def _select_v2_thickness_items(items: Any) -> List[Dict[str, Any]]:
-        """Select one coding value per V2 position while retaining all raw candidates."""
+        """Select the highest-priority thickness type and retain its distinct values."""
         candidates = [item for item in (items or []) if isinstance(item, dict)]
         if not candidates:
             return []
@@ -558,8 +558,23 @@ class PipeEncoderBase:
                     return 2
             return 3
 
-        selected_index = min(range(len(candidates)), key=lambda index: (priority(candidates[index]), index))
-        return [copy.deepcopy(candidates[selected_index])]
+        selected_priority = min(priority(item) for item in candidates)
+        selected: List[Dict[str, Any]] = []
+        seen_codes = set()
+        processor = get_thickness_processor()
+        for item in candidates:
+            if priority(item) != selected_priority:
+                continue
+            normalized_code = processor.process({'_ITEMS': [item]})
+            dedupe_key = normalized_code or (
+                str(item.get('type') or '').strip().upper(),
+                str(item.get('value') or '').strip().upper(),
+            )
+            if dedupe_key in seen_codes:
+                continue
+            seen_codes.add(dedupe_key)
+            selected.append(copy.deepcopy(item))
+        return selected
 
     def _encode_structural_v2_size(
         self,
@@ -1725,7 +1740,24 @@ class PipeEncoderBase:
     def _assemble_code(self, result: PipeEncodingResult):
         """按固定顺序拼接各字段编码"""
         parts = []
+        thickness_code = str(_field_obj_get(result.fields.get('THICKNESS'), 'code', '') or '').strip()
+        pressure_field = result.fields.get('PRESSURE')
+        pressure_code = str(_field_obj_get(pressure_field, 'code', '') or '').strip()
+        omit_straight_pipe_pressure = (
+            str(result.material_category or '').strip() == '直管'
+            and bool(thickness_code)
+            and bool(pressure_code)
+        )
+
+        if omit_straight_pipe_pressure:
+            note = "直管同时存在壁厚和磅级时，最终编码仅保留壁厚"
+            pressure_notes = _field_obj_get(pressure_field, 'notes', None)
+            if isinstance(pressure_notes, list) and note not in pressure_notes:
+                pressure_notes.append(note)
+
         for field_type in self.FIELD_ORDER:
+            if omit_straight_pipe_pressure and field_type == 'PRESSURE':
+                continue
             if field_type in result.fields:
                 code = result.fields[field_type].code
                 if code:

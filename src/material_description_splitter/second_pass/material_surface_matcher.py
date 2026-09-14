@@ -13,6 +13,7 @@ from .models import MaterialSurfaceHit
 
 BOUNDARY_CLASS = r"A-Z0-9\u4e00-\u9fff"
 SUFFIX_CODES = ("ZN", "CE")
+GRADE_SUFFIX_CODES = ("III", "II", "I")
 
 
 class MaterialSurfaceMatcher:
@@ -74,6 +75,60 @@ class MaterialSurfaceMatcher:
             return []
         patterns = [(code, self._compile_alias_pattern(code))]
         return self._collect_hits(text, code, patterns, kind="combined")
+
+    def match_encoded_grade_suffix_surfaces(
+        self,
+        text: str,
+        material_code: str,
+    ) -> list[MaterialSurfaceHit]:
+        """Match a material grade suffix even when the full code is uncommon.
+
+        These hits are used only to prevent a grade such as ``S30408,II`` from
+        being reused as a nearby standard suffix. They do not make an uncommon
+        material pass the material whitelist check.
+        """
+        clean_code = self._clean_code(material_code)
+        grade_suffix = next(
+            (
+                suffix
+                for suffix in GRADE_SUFFIX_CODES
+                if clean_code.endswith(suffix)
+                and clean_code[: -len(suffix)] in self.common_materials
+            ),
+            "",
+        )
+        if not grade_suffix:
+            return []
+
+        base_code = clean_code[: -len(grade_suffix)]
+        base_hits = self.match_base_surfaces(text, base_code)
+        if not base_hits:
+            return []
+
+        raw_text = str(text or "")
+        hits: list[MaterialSurfaceHit] = []
+        suffix_pattern = re.compile(
+            rf"^[\s,，;；/\\\-]*(?:GR\.?\s*)?({re.escape(grade_suffix)})(?![IVX])",
+            re.IGNORECASE,
+        )
+        for base_hit in base_hits:
+            segment = raw_text[base_hit.end : base_hit.end + 16]
+            match = suffix_pattern.match(segment)
+            if not match:
+                continue
+            start = base_hit.end + match.start(1)
+            end = base_hit.end + match.end(1)
+            hits.append(
+                MaterialSurfaceHit(
+                    code=grade_suffix,
+                    alias=grade_suffix,
+                    start=start,
+                    end=end,
+                    text=raw_text[start:end],
+                    kind="grade_suffix",
+                )
+            )
+        return self._prune_overlaps(hits)
 
     def find_conflict_hits(
         self,

@@ -28,9 +28,30 @@ def _gateway_module_name() -> str:
     return f"{__package__}.gateway" if __package__ else "apps.vllm_service.gateway"
 
 
-def _engine_env(engine: EngineSpec) -> dict[str, str]:
+def _runtime_env(overrides: dict[str, str] | None = None) -> dict[str, str]:
+    """Build a child-process environment with the active Python env libraries first.
+
+    Some cloud images inject an old system libstdc++ ahead of Conda's copy.  vLLM
+    then fails while importing sqlite/ICU with ``CXXABI_* not found`` even though
+    the compatible library is already installed in the active environment.
+    """
     env = os.environ.copy()
-    env.update(engine.environment)
+    if overrides:
+        env.update(overrides)
+
+    environment_lib = str(Path(sys.prefix) / "lib")
+    current = env.get("LD_LIBRARY_PATH", "")
+    remaining = [
+        entry
+        for entry in current.split(os.pathsep)
+        if entry and entry != environment_lib
+    ]
+    env["LD_LIBRARY_PATH"] = os.pathsep.join([environment_lib, *remaining])
+    return env
+
+
+def _engine_env(engine: EngineSpec) -> dict[str, str]:
+    env = _runtime_env(engine.environment)
     if engine.cuda_visible_devices.strip():
         env["CUDA_VISIBLE_DEVICES"] = engine.cuda_visible_devices.strip()
     return env
@@ -189,7 +210,11 @@ def main() -> int:
             args.log_level,
         ]
         logger.info("[vLLM Launch] 启动统一网关 port=%s", config.gateway.port)
-        processes["gateway"] = subprocess.Popen(gateway_command, text=True)
+        processes["gateway"] = subprocess.Popen(
+            gateway_command,
+            env=_runtime_env(),
+            text=True,
+        )
 
         while True:
             for name, process in processes.items():

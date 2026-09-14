@@ -1,0 +1,11 @@
+name: qwen35-unsloth
+channels:
+  # Only bootstrap Python from one mirror. CUDA packages are installed by pip.
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - nodefaults
+dependencies:
+  # Python 3.12 has broader CUDA extension compatibility than Studio's Python 3.13.
+  - python=3.12
+  - pip=25.2
+  - setuptools
+  - wheel

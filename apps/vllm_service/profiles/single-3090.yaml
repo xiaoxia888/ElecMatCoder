@@ -1,0 +1,12 @@
+# 单张 RTX 3090 24GB：评测器一次只启动一个 eval_engine。
+engines:
+  eval_engine:
+    cuda_visible_devices: "0"
+    dtype: float16
+    max_model_len: 2048
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+    max_num_seqs: 16
+    enable_prefix_caching: true
+    enforce_eager: false
+    quantization: ""

@@ -285,6 +285,28 @@ class StandardSurfaceMatcher:
                         text=text[abs_start:abs_end],
                     )
                 )
+            # Standard editions may sit between the standard body and suffix,
+            # e.g. HG/T20592-2009B or HG/T20592-09 B系列. The suffix must follow
+            # the edition immediately; do not scan arbitrary later text.
+            edition_end = self._edition_bridge_end(segment)
+            if edition_end is None:
+                continue
+            edition_tail = segment[edition_end:]
+            for match in pattern.finditer(edition_tail):
+                if match.start() > 2:
+                    continue
+                abs_start = segment_start + edition_end + match.start()
+                abs_end = segment_start + edition_end + match.end()
+                hits.append(
+                    StandardSurfaceHit(
+                        code=parsed.raw_code,
+                        field="SUFFIX",
+                        alias=alias,
+                        start=abs_start,
+                        end=abs_end,
+                        text=text[abs_start:abs_end],
+                    )
+                )
         return self._dedupe_hits(hits)
 
     def _find_composite_suffix_hits(
@@ -557,6 +579,14 @@ class StandardSurfaceMatcher:
         patterns = suffix_rule.get("patterns", []) or []
         longest = max((len(str(item or "")) for item in patterns), default=0)
         return max(window, window + longest + 4)
+
+    @staticmethod
+    def _edition_bridge_end(segment: str) -> int | None:
+        match = re.match(
+            r"^\s*(?:[-–—/]\s*)?(?:(?:19|20)\d{2}|\d{2})\s*(?:[-–—/]\s*)?",
+            str(segment or ""),
+        )
+        return match.end() if match else None
 
     @staticmethod
     def _needs_strict_separator_boundary(alias: str) -> bool:

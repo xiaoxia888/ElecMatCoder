@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 import re
 from typing import Any, Dict, List
 from typing import Optional
-import yaml
 
 from .pressure_processor import PressureProcessor, RulePressureExtraction
 from .size_processor import RuleSizeExtraction, SizeProcessor
+from .structural_numeric_rules import looks_like_od_wall_thickness
+from .structural_rule_config import get_common_dn_values
 from .thickness_processor import RuleThicknessExtraction, ThicknessProcessor
 from .weak_fallback_processor import WeakFallbackProcessor
 
@@ -77,22 +77,8 @@ _UNRESOLVED_SPEC_PATTERNS = (
     re.compile(r'(?:(?<=^)|(?<=[,，;；、\s()\-]))\d+(?=(?:$|[,，;；、\s()\-]))'),
 )
 
-_COMMON_DN_VALUES: Optional[set[int]] = None
-
-
 def _get_common_dn_values() -> set[int]:
-    global _COMMON_DN_VALUES
-    if _COMMON_DN_VALUES is not None:
-        return _COMMON_DN_VALUES
-    config_path = Path(__file__).parent.parent / "config" / "encoder_config.yaml"
-    try:
-        with open(config_path, "r", encoding="utf-8") as f:
-            config = yaml.safe_load(f) or {}
-        size_config = config.get("size_processing", {}) or {}
-        _COMMON_DN_VALUES = {int(v) for v in size_config.get("common_dn_values", [])}
-    except Exception:
-        _COMMON_DN_VALUES = set()
-    return _COMMON_DN_VALUES
+    return set(get_common_dn_values())
 
 
 def _is_valid_single_residual_integer(text: str) -> bool:
@@ -375,19 +361,7 @@ def _match_value_to_dn(raw_value: str, dn_value: str, size_processor: SizeProces
 
 
 def _looks_like_explicit_od_wall_thickness(first_value: str, second_value: str) -> bool:
-    try:
-        od = float(str(first_value or "").strip())
-        thickness = float(str(second_value or "").strip())
-    except (TypeError, ValueError):
-        return False
-
-    if od <= 0 or thickness <= 0:
-        return False
-    if thickness >= od:
-        return False
-    if thickness > 80:
-        return False
-    return od / thickness >= 3
+    return looks_like_od_wall_thickness(first_value, second_value)
 
 
 def _classify_od_pair_decisions(text: str, size_result: RuleSizeExtraction, size_processor: SizeProcessor) -> List[OdPairDecision]:

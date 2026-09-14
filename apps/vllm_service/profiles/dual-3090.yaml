@@ -1,6 +1,6 @@
 # 双RTX 3090 24GB：8B和4B基座各占一张卡。
 engines:
-  qwen3_8b:
+  qwen35_9b:
     cuda_visible_devices: "0"
     dtype: float16
     max_model_len: 1024
@@ -11,7 +11,7 @@ engines:
     enforce_eager: false
     quantization: ""
 
-  qwen3_4b:
+  qwen35_9b:
     cuda_visible_devices: "1"
     dtype: float16
     max_model_len: 1024

@@ -1,0 +1,40 @@
+# 任务覆盖配置：材质与规范抽取 / Qwen3.5-9B / RTX 5090 32GB / BF16 LoRA。
+# 未出现的设置自动继承 ../../config.yaml。
+# OpenBayes 持久化路径：基座模型和训练输出位于 /openbayes/home，数据集使用 input1。
+
+model:
+  name_or_path: "/openbayes/input/input0/Qwen3.5-9B"
+  max_seq_length: 1024
+  load_in_4bit: false
+  load_in_8bit: false
+  load_in_16bit: true
+  full_finetuning: false
+  fast_inference: false
+  trust_remote_code: false
+
+data:
+  format: "alpaca"
+  train_file: "/openbayes/input/input1/材质规范/材质规范_train.json"
+  validation_file: "/openbayes/input/input1/材质规范/材质规范_val.json"
+  num_proc: 4
+  enable_thinking: false
+  train_on_responses_only: true
+
+training:
+  output_dir: "/openbayes/input/input2/unsloth_qwen35_9b/material_0825"
+  num_train_epochs: 1.0
+  max_steps: -1
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.00002
+  warmup_ratio: 0.0
+  warmup_steps: 131
+  logging_steps: 20
+  eval_strategy: "epoch"
+  # 一轮只执行一次完整验证；checkpoint 按步保存，用于长时间训练中断恢复。
+  save_strategy: "steps"
+  save_steps: 1000
+  save_total_limit: 1
+  load_best_model_at_end: false
+  resume_from_checkpoint: "auto"

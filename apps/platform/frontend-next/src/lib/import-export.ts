@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx'
 import { downloadBlob, formatPercent } from '@/lib/utils'
-import type { EncodingResult, FieldPayload, ImportedRow } from '@/types/encoding'
+import type { EncodingResult, FieldPayload, ImportedRow, JsonValue } from '@/types/encoding'
 import { formatFieldCode, formatFieldValue, getDifficultyLevel, getRouteReason, getTypeCategory } from '@/lib/formatters'
 
 const DIFFICULTY_HEADER = '分流最终难度（0=困难，2=简单）'
@@ -125,16 +125,56 @@ export function exportResultsToExcel(dataList: ImportedRow[], results: Record<nu
   downloadBlob('编码结果.xlsx', new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
 }
 
+function isJsonObject(value: JsonValue | undefined): value is Record<string, JsonValue> {
+  return value != null && typeof value === 'object' && !Array.isArray(value)
+}
+
+function isStructuralV2(value: JsonValue | undefined): value is Record<string, JsonValue> {
+  return isJsonObject(value) && Array.isArray(value.ITEMS)
+}
+
+/**
+ * 把页面字段结果还原成一阶段训练源数据。
+ *
+ * 结构模型的一次 V2 输出会同时挂到 SIZE / THICKNESS / PRESSURE 字段，
+ * 供二阶段分别编码。导出时只能保留一份，并恢复成模型训练使用的
+ * ITEMS / LENGTH / PRESSURE 顶层结构。
+ */
+export function buildStage1DatasetOutput(result: EncodingResult): Record<string, JsonValue> {
+  const output: Record<string, JsonValue> = {}
+  let structural: Record<string, JsonValue> | null = null
+
+  for (const [fieldType, field] of Object.entries(result.fields || {})) {
+    const value = field.stage1_raw?.value
+    if (['SIZE', 'THICKNESS', 'PRESSURE'].includes(fieldType) && isStructuralV2(value)) {
+      structural ??= value
+      continue
+    }
+    output[fieldType] = value ?? null
+  }
+
+  if (structural) {
+    output.ITEMS = structural.ITEMS ?? []
+    output.LENGTH = structural.LENGTH ?? ''
+    output.PRESSURE = structural.PRESSURE ?? ''
+  }
+
+  return output
+}
+
 export function exportStage1Dataset(dataList: ImportedRow[], results: Record<number, EncodingResult>) {
   const rows = dataList
     .map((item) => {
       const result = results[item.index]
       if (!result) return null
+      const originalInput = result.original_text || item.text
+      // 一阶段推理发生在预处理之后，因此训练用 input 必须与模型实际
+      // 收到的 processed_text 一致；original_input 只负责保留格式化前原文。
+      const modelInput = result.processed_text || originalInput
       return {
-        input: item.text,
-        output: Object.fromEntries(
-          Object.entries(result.fields || {}).map(([fieldType, field]) => [fieldType, field.stage1_raw?.value ?? null]),
-        ),
+        original_input: originalInput,
+        input: modelInput,
+        output: buildStage1DatasetOutput(result),
       }
     })
     .filter((item): item is NonNullable<typeof item> => item !== null)

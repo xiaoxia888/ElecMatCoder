@@ -1,0 +1,85 @@
+# 完整编码流水线配置。groups 下的每一项是一套可对比的“组合方案”。
+# 同一方案的 type/material/size 可使用不同底座模型。
+groups:
+  group1:
+    stages:
+      type:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen3-8b.yaml
+        served_model: type
+      material:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen3-4b.yaml
+        served_model: material-standard
+      size:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen3-8b.yaml
+        served_model: size-thick-pressure
+
+  # 要对比第二套完整方案时，复制上面整段并改名，例如：
+  group2:
+    stages:
+      type:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen35-9b.yaml
+        served_model: type
+      material:
+        backend: managed_vllm
+        # Qwen3.5-9B 材质 LoRA 尚未训练，当前两个 group 均使用 Qwen3-4B 材质模型。
+        service_config: ../vllm_service/service.eval.qwen3-4b.yaml
+        served_model: material-standard
+      size:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen35-9b.yaml
+        served_model: size-thick-pressure
+
+coder:
+  enabled: true
+  backend: managed_vllm
+  service_config: ../vllm_service/service.eval.qwen3-4b.yaml
+  served_model: coder
+  max_new_tokens: 64
+  fallback_fields: [TYPE, MATERIAL]
+
+tasks:
+  type:
+    prompt_path: prompts/种类微调提示词.txt
+    field: TYPE
+  material:
+    prompt_path: ../mlx_service/prompt/材质规范微调提示词.txt
+    field: MATERIAL
+  size:
+    prompt_path: ../mlx_service/prompt/尺寸壁厚磅级提示词.txt
+    field: SIZE
+  full:
+    stages: [type, material, size]
+    field: FULL
+
+excel:
+  description_column: 材料描述(多行)
+  truth_column: 本项目材料代码
+  sheet_name: 0
+
+inference:
+  batch_size: 4
+  max_input_tokens: 2048
+  max_new_tokens: 256
+  coder_max_new_tokens: 64
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: true
+  temperature: 0.0
+  load_in_4bit: false
+
+vllm:
+  concurrency: 16
+  request_timeout: 600
+  startup_timeout: 1260
+  shutdown_timeout: 60
+  shutdown_cooldown: 2
+  retries: 2
+  progress_every: 100
+
+comparison:
+  ignore_case: true
+  remove_whitespace: true

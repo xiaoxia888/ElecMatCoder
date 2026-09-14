@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+import yaml
+
 from apps.vllm_service.config import DEFAULT_CONFIG_PATH, build_engine_command, load_config
-from apps.vllm_service.launch import _engine_env, _format_command
+from apps.vllm_service.launch import _engine_env, _format_command, _runtime_env
 
 
 CONFIG = """
@@ -79,6 +83,55 @@ class ConfigTest(unittest.TestCase):
         self.assertTrue(config.models["size"].prompt_file.endswith("prompts/size.txt"))
         self.assertEqual(config.engines["base4b"].max_loras, 2)
 
+    def test_only_materializes_engines_referenced_by_model_routes(self):
+        content = CONFIG.replace(
+            "models:\n",
+            "  unused9b:\n"
+            "    port: 8303\n"
+            "    model_path: /models/unused9b\n"
+            "    served_model_name: unused9b\n"
+            "models:\n",
+        )
+        profile_content = PROFILE + (
+            "  unused9b:\n"
+            '    cuda_visible_devices: "0"\n'
+            "    dtype: bfloat16\n"
+            "    max_model_len: 1024\n"
+            "    gpu_memory_utilization: 0.9\n"
+            "    tensor_parallel_size: 1\n"
+            "    max_num_seqs: 4\n"
+        )
+        config = self._load(content=content, profile_content=profile_content)
+        self.assertEqual(set(config.engines), {"base4b"})
+
+    def test_model_routes_can_switch_to_alternative_engine(self):
+        content = CONFIG.replace(
+            "models:\n",
+            "  qwen35:\n"
+            "    port: 8303\n"
+            "    model_path: /models/qwen35\n"
+            "    served_model_name: qwen35\n"
+            "    max_loras: 2\n"
+            "    max_cpu_loras: 2\n"
+            "    lora_modules:\n"
+            "      size: /models/lora/qwen35-size\n"
+            "      material: /models/lora/qwen35-material\n"
+            "models:\n",
+        ).replace("    engine: base4b", "    engine: qwen35")
+        profile_content = (
+            "engines:\n"
+            "  qwen35:\n"
+            '    cuda_visible_devices: "0"\n'
+            "    dtype: bfloat16\n"
+            "    max_model_len: 1024\n"
+            "    gpu_memory_utilization: 0.94\n"
+            "    tensor_parallel_size: 1\n"
+            "    max_num_seqs: 4\n"
+        )
+        config = self._load(content=content, profile_content=profile_content)
+        self.assertEqual(set(config.engines), {"qwen35"})
+        self.assertEqual({route.engine for route in config.models.values()}, {"qwen35"})
+
     def test_builds_vllm_multi_lora_command(self):
         engine = self._load().engines["base4b"]
         command = build_engine_command(engine)
@@ -108,6 +161,14 @@ class ConfigTest(unittest.TestCase):
         ).engines["base4b"]
         self.assertEqual(_engine_env(configured)["VLLM_USE_FLASHINFER_SAMPLER"], "0")
         self.assertIn("VLLM_USE_FLASHINFER_SAMPLER=0", _format_command(configured))
+
+    def test_runtime_environment_prioritizes_active_python_libraries(self):
+        environment_lib = str(Path(sys.prefix) / "lib")
+        env = _runtime_env({"LD_LIBRARY_PATH": f"/lib:{environment_lib}:/custom"})
+        self.assertEqual(
+            env["LD_LIBRARY_PATH"].split(os.pathsep),
+            [environment_lib, "/lib", "/custom"],
+        )
 
     def test_cli_profile_overrides_service_profile(self):
         config = self._load(profile="override")
@@ -141,32 +202,41 @@ class ConfigTest(unittest.TestCase):
                 )
             )
 
-    def test_profile_cannot_reference_unknown_engine(self):
-        with self.assertRaisesRegex(ValueError, "未知engine"):
-            self._load(profile_content=PROFILE + "  missing:\n    dtype: float16\n")
+    def test_profile_can_preconfigure_an_inactive_engine(self):
+        extra_engine = (
+            "  spare8b:\n"
+            '    cuda_visible_devices: "0"\n'
+            "    dtype: float16\n"
+            "    max_model_len: 1024\n"
+            "    gpu_memory_utilization: 0.5\n"
+            "    tensor_parallel_size: 1\n"
+            "    max_num_seqs: 8\n"
+        )
+        config = self._load(profile_content=PROFILE + extra_engine)
+        self.assertEqual(set(config.engines), {"base4b"})
 
-    def test_profile_requires_every_engine_and_hardware_field(self):
+    def test_profile_requires_every_active_engine_and_hardware_field(self):
         with self.assertRaisesRegex(ValueError, "缺少必填字段"):
             self._load(profile_content=PROFILE.replace("    max_num_seqs: 16\n", ""))
 
-    def test_builtin_profiles_isolate_blackwell_workaround(self):
+    def test_builtin_profiles_disable_flashinfer_sampler_without_jit_toolchain(self):
         with tempfile.TemporaryDirectory() as directory:
             prompt = Path(directory) / "prompt.txt"
             prompt.write_text("test prompt", encoding="utf-8")
             service = Path(directory) / "service.yaml"
+            service_data = yaml.safe_load(DEFAULT_CONFIG_PATH.read_text(encoding="utf-8"))
+            for route in (service_data.get("models") or {}).values():
+                route["prompt_file"] = str(prompt)
             service.write_text(
-                DEFAULT_CONFIG_PATH.read_text(encoding="utf-8").replace(
-                    'prompt_file: ""', f'prompt_file: "{prompt}"'
-                ),
+                yaml.safe_dump(service_data, allow_unicode=True, sort_keys=False),
                 encoding="utf-8",
             )
             profile_dir = DEFAULT_CONFIG_PATH.parent / "profiles"
             config_5090 = load_config(service, profile=profile_dir / "dual-5090.yaml")
             config_4090 = load_config(service, profile=profile_dir / "dual-4090.yaml")
-        for engine in config_5090.engines.values():
-            self.assertEqual(engine.environment["VLLM_USE_FLASHINFER_SAMPLER"], "0")
-        for engine in config_4090.engines.values():
-            self.assertNotIn("VLLM_USE_FLASHINFER_SAMPLER", engine.environment)
+        for config in (config_5090, config_4090):
+            for engine in config.engines.values():
+                self.assertEqual(engine.environment["VLLM_USE_FLASHINFER_SAMPLER"], "0")
 
     def test_rejects_excessive_shared_gpu_memory_ratio(self):
         shared_profile = PROFILE.replace('cuda_visible_devices: "1"', 'cuda_visible_devices: "0"')
@@ -176,7 +246,12 @@ class ConfigTest(unittest.TestCase):
             "    port: 8303\n"
             "    model_path: /models/second4b\n"
             "    served_model_name: second4b\n"
+            "    lora_modules:\n"
+            "      material: /models/lora/second-material\n"
             "models:\n",
+        ).replace(
+            "  material:\n    engine: base4b",
+            "  material:\n    engine: second4b",
         )
         shared_profile += (
             "  second4b:\n"

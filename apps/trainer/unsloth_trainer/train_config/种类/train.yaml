@@ -1,0 +1,18 @@
+# 种类抽取模型：日常只需要确认下面 5 项。
+finetuning_method: "lora"  # lora=16-bit；qlora=4-bit省显存；full=全参数
+base_model: "/openbayes/input/input0/Qwen3.5-9B"
+train_dataset: "apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/种类/0806/种类_train.json"
+validation_dataset: "apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/种类/0806/种类_val.json"
+output_dir: "/openbayes/input/input2/unsloth_models/category"
+
+# 本任务专属的训练参数。
+training:
+  num_train_epochs: 2.0
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.00002
+  eval_steps: 200
+  save_steps: 200
+  save_total_limit: 3
+  load_best_model_at_end: true

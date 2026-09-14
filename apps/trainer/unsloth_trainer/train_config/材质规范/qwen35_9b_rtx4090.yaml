@@ -1,0 +1,34 @@
+# 任务覆盖配置：材质与规范抽取 / Qwen3.5-9B / RTX 4090 24GB / BF16 LoRA。
+# 未出现的设置自动继承 ../../config.yaml。
+#
+# 完整训练：max_steps=-1。
+# 冒烟测试：建议另外准备 8 条训练数据，并将 max_steps 临时改为 2。
+
+model:
+  name_or_path: "/openbayes/home/base-models/Qwen3.5-9B"
+  max_seq_length: 1024
+  load_in_4bit: false
+  load_in_8bit: false
+  load_in_16bit: true
+  full_finetuning: false
+  fast_inference: false
+
+data:
+  format: "alpaca"
+  train_file: "apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/材质规范/0814/材质规范_train.json"
+  validation_file: "apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/材质规范/0814/材质规范_val.json"
+  num_proc: 8
+  enable_thinking: false
+  train_on_responses_only: true
+
+training:
+  output_dir: "/data/MaterialsCode/unsloth/outputs/unsloth_qwen35_9b/material_rtx4090"
+  num_train_epochs: 2.0
+  max_steps: -1
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.00002
+  eval_steps: 500
+  save_steps: 500
+  resume_from_checkpoint: "auto"

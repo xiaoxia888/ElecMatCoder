@@ -55,7 +55,11 @@ export function EncodingWorkspace() {
                 onStartBatch={workspace.createBatchJob}
                 onStopBatch={workspace.cancelBatchJob}
               />
-              <ExportCard dataList={workspace.dataList} results={workspace.results} />
+              <ExportCard
+                dataList={workspace.dataList}
+                results={workspace.results}
+                activeTaskId={workspace.activeTaskId}
+              />
             </aside>
 
             {/* 第二列：详情 */}

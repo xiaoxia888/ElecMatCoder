@@ -1,0 +1,106 @@
+# 单字段评测配置。完整编码请使用 config.full.yaml。
+models:
+  qwen3-8B:
+    routes:
+      type:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen3-8b.yaml
+        served_model: type
+      size:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen3-8b.yaml
+        served_model: size-thick-pressure
+
+  qwen3-4B:
+    routes:
+      material:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen3-4b.yaml
+        served_model: material-standard
+
+  qwen3.5-4B:
+    routes:
+      type:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen35-4b.yaml
+        served_model: type
+
+  qwen3.5-9B:
+    routes:
+      type:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen35-9b.yaml
+        served_model: type
+      size:
+        backend: managed_vllm
+        service_config: ../vllm_service/service.eval.qwen35-9b.yaml
+        served_model: size-thick-pressure
+      # material 暂不注册：Qwen3.5-9B 材质 LoRA 训练完成后再加入。
+
+# TYPE 规则映射失败时才加载该 coder 进行二阶段兜底。
+coder:
+  enabled: true
+  backend: managed_vllm
+  service_config: ../vllm_service/service.eval.qwen3-4b.yaml
+  served_model: coder
+  max_new_tokens: 64
+  fallback_fields: [TYPE]
+
+# 提示词应与各自训练集中的 instruction 保持一致。
+tasks:
+  type:
+    prompt_path: prompts/种类微调提示词.txt
+    field: TYPE
+    # truth_column: TYPE正确编码
+
+  material:
+    prompt_path: ../mlx_service/prompt/材质规范微调提示词.txt
+    field: MATERIAL
+    # truth_column: MATERIAL正确编码
+
+  standard:
+    prompt_path: ../mlx_service/prompt/材质规范微调提示词.txt
+    field: STANDARD
+
+  size:
+    prompt_path: ../mlx_service/prompt/尺寸壁厚磅级提示词.txt
+    field: SIZE
+    # truth_column: SIZE正确编码
+
+  thickness:
+    prompt_path: ../mlx_service/prompt/尺寸壁厚磅级提示词.txt
+    field: THICKNESS
+
+  pressure:
+    prompt_path: ../mlx_service/prompt/尺寸壁厚磅级提示词.txt
+    field: PRESSURE
+
+excel:
+  description_column: 材料描述(多行)
+  truth_column: C1-名称简写
+  sheet_name: 0
+
+inference:
+  # 仅供 local_transformers 后端使用；managed_vllm 的并发数由下方 vllm.concurrency 控制。
+  batch_size: 4
+  max_input_tokens: 2048
+  max_new_tokens: 256
+  coder_max_new_tokens: 64
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: true
+  temperature: 0.0
+  load_in_4bit: false
+
+vllm:
+  concurrency: 16
+  request_timeout: 600
+  startup_timeout: 1260
+  shutdown_timeout: 60
+  shutdown_cooldown: 2
+  retries: 2
+  progress_every: 100
+
+comparison:
+  ignore_case: true
+  remove_whitespace: true

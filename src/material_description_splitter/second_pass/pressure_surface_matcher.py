@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from decimal import Decimal, InvalidOperation
 import re
 
 from .adaptive_boundary import adaptive_guards
@@ -143,6 +144,28 @@ class PressureSurfaceMatcher:
                 bare_values=[number],
             )
 
+        # Explicit metric pressure units. Keep the original unit for evidence
+        # checking; normalization to PN belongs to the encoder.
+        match = re.fullmatch(r'(\d+(?:\.\d+)?)\s*MPA', text)
+        if match:
+            number = match.group(1)
+            return ParsedPressureItem(
+                field="MPA",
+                raw=text,
+                value=f"{number}MPA",
+                anchored_patterns=self._build_metric_patterns(number, "MPA"),
+            )
+
+        match = re.fullmatch(r'(\d+(?:\.\d+)?)\s*BAR', text)
+        if match:
+            number = match.group(1)
+            return ParsedPressureItem(
+                field="BAR",
+                raw=text,
+                value=f"{number}BAR",
+                anchored_patterns=self._build_metric_patterns(number, "BAR"),
+            )
+
         # CL series from result, e.g. CL3000
         match = re.fullmatch(r'CL\s*(\d+)', text)
         if match:
@@ -166,13 +189,44 @@ class PressureSurfaceMatcher:
                 anchored_patterns=self._build_class_patterns(number),
                 bare_values=[number],
             )
+
+        # Imperial pressure surfaces returned without CL/CLASS prefixes.
+        match = re.fullmatch(r'(\d+)\s*(?:LB|LBS|#)', text)
+        if match:
+            number = match.group(1)
+            return ParsedPressureItem(
+                field="CLASS",
+                raw=text,
+                value=f"C{number}",
+                anchored_patterns=self._build_class_patterns(number),
+            )
         return None
 
     @staticmethod
     def _build_pn_patterns(number: str) -> list[tuple[str, re.Pattern[str]]]:
         left_guard, right_guard = adaptive_guards(f"PN{number}")
-        return [
+        patterns = [
             (f"PN{number}", re.compile(rf'{left_guard}(PN\s*{re.escape(number)}){right_guard}', re.IGNORECASE)),
+        ]
+        patterns.extend(PressureSurfaceMatcher._build_metric_patterns(number, "BAR"))
+        mpa_number = PressureSurfaceMatcher._divide_decimal(number, Decimal("10"))
+        if mpa_number:
+            patterns.extend(PressureSurfaceMatcher._build_metric_patterns(mpa_number, "MPA"))
+        return patterns
+
+    @staticmethod
+    def _build_metric_patterns(number: str, unit: str) -> list[tuple[str, re.Pattern[str]]]:
+        compact = f"{number}{unit}"
+        left_guard, right_guard = adaptive_guards(compact)
+        numeric_pattern = PressureSurfaceMatcher._equivalent_decimal_pattern(number)
+        return [
+            (
+                compact,
+                re.compile(
+                    rf'{left_guard}({numeric_pattern}\s*{re.escape(unit)}){right_guard}',
+                    re.IGNORECASE,
+                ),
+            ),
         ]
 
     @staticmethod
@@ -187,6 +241,28 @@ class PressureSurfaceMatcher:
             (f"{number}LB", re.compile(rf'{lb_left}({re.escape(number)}\s*LBS?){lb_right}', re.IGNORECASE)),
             (f"{number}#", re.compile(rf'{pound_left}({re.escape(number)}\s*#){pound_right}', re.IGNORECASE)),
         ]
+
+    @staticmethod
+    def _divide_decimal(number: str, divisor: Decimal) -> str:
+        try:
+            value = Decimal(str(number)) / divisor
+        except (InvalidOperation, ValueError, ZeroDivisionError):
+            return ""
+        normalized = format(value.normalize(), "f")
+        return normalized.rstrip("0").rstrip(".") if "." in normalized else normalized
+
+    @staticmethod
+    def _equivalent_decimal_pattern(number: str) -> str:
+        try:
+            value = Decimal(str(number))
+        except (InvalidOperation, ValueError):
+            return re.escape(str(number))
+        normalized = format(value.normalize(), "f")
+        if value == value.to_integral_value():
+            integer = format(value.quantize(Decimal("1")), "f")
+            return rf"{re.escape(integer)}(?:\.0+)?"
+        integer, fraction = normalized.split(".", 1)
+        return rf"{re.escape(integer)}\.{re.escape(fraction)}0*"
 
     @staticmethod
     def _normalize_values(value: object) -> list[str]:

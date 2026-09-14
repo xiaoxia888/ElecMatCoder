@@ -188,6 +188,11 @@ class PlatformSecondPassRunner:
                 (hit.start, hit.end)
                 for hit in (*material_result.base_hits, *material_result.suffix_hits)
             ]
+            grade_suffix_hits = self.material_splitter.matcher.match_encoded_grade_suffix_surfaces(
+                clean_text,
+                material_code,
+            )
+            material_consumed_spans.extend((hit.start, hit.end) for hit in grade_suffix_hits)
 
         type_code = self._clean(type_code)
         if type_code:

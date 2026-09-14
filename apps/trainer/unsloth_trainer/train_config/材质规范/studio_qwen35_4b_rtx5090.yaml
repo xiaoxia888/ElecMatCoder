@@ -1,0 +1,46 @@
+# Unsloth Studio: 材质规范 / Qwen3.5-4B / RTX 5090 / BF16 LoRA
+# 实际数据：train=69719，val=7749；最长原始文本 1390 字符，输出最长 224 字符。
+# 有效 batch 与 4090 保持为 16。尾批次规避目标：补齐 9 条到 69728。
+# Studio 页面选择：Qwen3.5-4B、LoRA、Alpaca、0814/材质规范_train.json、材质规范_val.json。
+
+training:
+  max_seq_length: 1024
+  num_epochs: 2
+  learning_rate: 0.00002
+  embedding_learning_rate: null
+  batch_size: 4
+  gradient_accumulation_steps: 4  # 有效 batch=16
+  warmup_steps: 262
+  max_steps: 0
+  save_steps: 500
+  eval_steps: 500
+  weight_decay: 0.01
+  random_seed: 2026
+  packing: false
+  train_on_completions: true
+  gradient_checkpointing: unsloth
+  optim: adamw_8bit
+  lr_scheduler_type: cosine
+
+lora:
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  use_rslora: false
+  use_loftq: false
+  use_dora: false
+
+logging:
+  enable_wandb: false
+  wandb_project: material-specification
+  enable_tensorboard: false
+  tensorboard_dir: runs/material/rtx5090
+  log_frequency: 20

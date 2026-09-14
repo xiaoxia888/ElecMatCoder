@@ -1,6 +1,6 @@
 # 双RTX 5090 32GB。当前FlashInfer sampler对Blackwell sm_120可能误判架构。
 engines:
-  qwen3_8b:
+  qwen35_9b:
     cuda_visible_devices: "0"
     dtype: float16
     max_model_len: 1024

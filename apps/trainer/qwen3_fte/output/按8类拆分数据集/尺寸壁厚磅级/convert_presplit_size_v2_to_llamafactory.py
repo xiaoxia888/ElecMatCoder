@@ -5,11 +5,11 @@ The converter validates and converts only. It never re-splits, deduplicates,
 reorders, normalizes, or drops source rows.
 
 Example:
-python apps/trainer/qwen3_fte/src/convert_presplit_size_v2_to_llamafactory.py \
+python apps/trainer/qwen3_fte/output/按8类拆分数据集/尺寸壁厚磅级/convert_presplit_size_v2_to_llamafactory.py \
   --train-input apps/trainer/qwen3_fte/output/按8类拆分数据集/尺寸壁厚磅级/V2已划分/尺寸壁厚磅级V2_train.json \
   --val-input apps/trainer/qwen3_fte/output/按8类拆分数据集/尺寸壁厚磅级/V2已划分/尺寸壁厚磅级V2_val.json \
   --prompt apps/trainer/qwen3_fte/prompt/尺寸壁厚磅级提示词.txt \
-  --output-dir apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/尺寸壁厚磅级/V2
+  --output-dir apps/trainer/qwen3_fte/output/按8类拆分llamafactory数据集/尺寸壁厚磅级/0817
 """
 
 from __future__ import annotations

@@ -1,0 +1,19 @@
+# 材质与规范抽取模型：日常只需要确认下面 5 项。
+finetuning_method: "lora"  # lora=16-bit；qlora=4-bit省显存；full=全参数
+base_model: "/root/autodl-fs/llm/base-models/Qwen3.5-9B"
+train_dataset: "/root/autodl-fs/llm/datasets/材质规范/0814/材质规范_train.json"
+validation_dataset: "/root/autodl-fs/llm/datasets/材质规范/0814/材质规范_val.json"
+output_dir: "/root/autodl-fs/llm/lora/material0831"
+
+# 本任务专属的训练参数。
+training:
+  num_train_epochs: 1.0
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 0.00002
+  # 同一步完成验证和保存：自动选择最佳模型，同时保留候选供人工比较。
+  eval_steps: 1000
+  save_steps: 1000
+  save_total_limit: 3
+  load_best_model_at_end: true
