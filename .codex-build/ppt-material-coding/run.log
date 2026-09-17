@@ -1,0 +1,11 @@
+Inspect result written to file: /Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/.codex-finalizer/material-coding-ppt/candidate.pptx.inspect.ndjson
+file:///Users/guoxi/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/container_tools/artifact_tool_utils.mjs:278
+    throw new Error("Script fallback is limited to ea, cs, or symbol glyphs");
+          ^
+
+Error: Script fallback is limited to ea, cs, or symbol glyphs
+    at normalizePresentationFontPolicy (file:///Users/guoxi/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/container_tools/artifact_tool_utils.mjs:278:11)
+    at finalizePresentation (file:///Users/guoxi/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/container_tools/artifact_tool_utils.mjs:861:28)
+    at async file:///Users/guoxi/Desktop/workspace/NJNCC/python_code/ElecMatCoder/.codex-build/ppt-material-coding/build_deck.mjs:389:1
+
+Node.js v24.19.0

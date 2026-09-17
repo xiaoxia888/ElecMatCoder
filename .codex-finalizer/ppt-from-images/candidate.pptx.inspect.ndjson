@@ -1,0 +1,12 @@
+{"kind":"deck","id":"pr/ntfhcr","name":"Deck"}
+{"kind":"layout","layoutId":"0e90c0b6-c041-4147-821d-d797b84c94a5","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"492c67b6-69af-45c5-abaa-dc2b59110585","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/88bxvo","slide":1,"title":"Slide 1","textShapes":0}
+{"kind":"image","id":"im/sr694fel","slide":1,"name":"","alt":"01_材料代码高质量数据集建设","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/88bxvo","slide":1,"text":"本页介绍材料代码高质量数据集的来源、原始数据问题和建设目标。"}
+{"kind":"slide","id":"sl/j72lih","slide":2,"title":"Slide 2","textShapes":0}
+{"kind":"image","id":"im/76lwf2lg","slide":2,"name":"","alt":"02_教师模型与人工审核协同构建训练数据","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/j72lih","slide":2,"text":"本页介绍教师模型预标注、自动质量检查和人工审核相结合的数据制作流程。"}
+{"kind":"slide","id":"sl/my4w8u","slide":3,"title":"Slide 3","textShapes":0}
+{"kind":"image","id":"im/vyx03a9o","slide":3,"name":"","alt":"03_通过领域模型微调验证数据集有效性","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/my4w8u","slide":3,"text":"本页以 Qwen3.5-9B 材质规范模型为例，展示 Unsloth 与 LoRA SFT 微调对数据集有效性的验证结果。"}

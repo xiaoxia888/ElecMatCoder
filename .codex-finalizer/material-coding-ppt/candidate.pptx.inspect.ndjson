@@ -1,0 +1,123 @@
+{"kind":"deck","id":"pr/c8nnfg","name":"Deck"}
+{"kind":"layout","layoutId":"695bad35-dbc2-40f4-8cf5-725cfb681e86","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"4f61fe42-4549-49e4-a2da-05dd88b5221c","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/0qd5ob","slide":1,"title":"01","textShapes":22}
+{"kind":"textbox","id":"sh/l0nmlovi","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[72,42,40,28]}
+{"kind":"shape","id":"sh/yxw3atc7","slide":1,"bbox":[115,56,42,0]}
+{"kind":"textbox","id":"sh/zy54jeds","slide":1,"text":"材料编码智能平台实现","textPreview":"材料编码智能平台实现","textChars":10,"textLines":1,"bbox":[72,78,870,54]}
+{"kind":"textbox","id":"sh/8ne5g3u9","slide":1,"text":"从原始材料描述到结构化字段与标准编码","textPreview":"从原始材料描述到结构化字段与标准编码","textChars":18,"textLines":1,"bbox":[72,134,900,34]}
+{"kind":"textbox","id":"sh/9o7mp8vu","slide":1,"text":"材料编码项目汇报","textPreview":"材料编码项目汇报","textChars":8,"textLines":1,"bbox":[1010,52,198,25]}
+{"kind":"textbox","id":"sh/m1w3etc3","slide":1,"text":"模型理解描述，规则生成编码，人工处理异常","textPreview":"模型理解描述，规则生成编码，人工处理异常","textChars":20,"textLines":1,"bbox":[72,190,610,44]}
+{"kind":"shape","id":"sh/nm54nydo","slide":1,"bbox":[76,258,38,38]}
+{"kind":"textbox","id":"sh/wry5k3u5","slide":1,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[76,263,38,25]}
+{"kind":"textbox","id":"sh/xs7mt8vq","slide":1,"text":"批量接入","textPreview":"批量接入","textChars":4,"textLines":1,"bbox":[128,256,238,28]}
+{"kind":"textbox","id":"sh/5obu18b6","slide":1,"text":"支持 Excel、CSV 等业务数据批量导入","textPreview":"支持 Excel、CSV 等业务数据批量导入","textChars":22,"textLines":1,"bbox":[128,287,250,46]}
+{"kind":"shape","id":"sh/kn2ds3ul","slide":1,"bbox":[76,350,38,38]}
+{"kind":"textbox","id":"sh/jmtczyt0","slide":1,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[76,355,38,25]}
+{"kind":"textbox","id":"sh/ilkvqdcf","slide":1,"text":"结构化识别","textPreview":"结构化识别","textChars":5,"textLines":1,"bbox":[128,348,238,28]}
+{"kind":"textbox","id":"sh/tcvu5sb2","slide":1,"text":"提取种类、材质、规范、尺寸和压力等级","textPreview":"提取种类、材质、规范、尺寸和压力等级","textChars":18,"textLines":1,"bbox":[128,379,250,46]}
+{"kind":"shape","id":"sh/sb2dwnuh","slide":1,"bbox":[76,442,38,38]}
+{"kind":"textbox","id":"sh/7atc3itw","slide":1,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[76,447,38,25]}
+{"kind":"textbox","id":"sh/69kvudcb","slide":1,"text":"规则编码与复核","textPreview":"规则编码与复核","textChars":7,"textLines":1,"bbox":[128,440,238,28]}
+{"kind":"textbox","id":"sh/9grutovy","slide":1,"text":"编码规则完成拼接，异常结果进入人工复核","textPreview":"编码规则完成拼接，异常结果进入人工复核","textChars":19,"textLines":1,"bbox":[128,471,250,46]}
+{"kind":"shape","id":"sh/8fitkjud","slide":1,"name":"platform-screenshot-placeholder","bbox":[744,205,464,300]}
+{"kind":"shape","id":"sh/0b6lwn65","slide":1,"bbox":[744,205,464,34]}
+{"kind":"shape","id":"sh/lcfmps7q","slide":1,"bbox":[760,217,9,9]}
+{"kind":"shape","id":"sh/y943udof","slide":1,"bbox":[777,217,9,9]}
+{"kind":"shape","id":"sh/zad4nip0","slide":1,"bbox":[794,217,9,9]}
+{"kind":"textbox","id":"sh/8f6l076h","slide":1,"text":"平台界面截图预留区","textPreview":"平台界面截图预留区","textChars":9,"textLines":1,"bbox":[790,300,370,38]}
+{"kind":"textbox","id":"sh/90fmts72","slide":1,"text":"建议替换为包含原始描述、识别字段、最终编码\n和人工复核入口的实际操作截图","textPreview":"建议替换为包含原始描述、识别字段、最终编码 | 和人工复核入口的实际操作截图","textChars":36,"textLines":2,"bbox":[790,354,370,70]}
+{"kind":"shape","id":"sh/mdo3yxob","slide":1,"bbox":[100,568,150,42]}
+{"kind":"textbox","id":"sh/nex4r2pw","slide":1,"text":"数据导入","textPreview":"数据导入","textChars":4,"textLines":1,"bbox":[100,578,150,22]}
+{"kind":"shape","id":"sh/w3q5476d","slide":1,"bbox":[262,581,34,16]}
+{"kind":"shape","id":"sh/x4zmxc7y","slide":1,"bbox":[320,568,150,42]}
+{"kind":"textbox","id":"sh/7y1on69g","slide":1,"text":"描述规范化","textPreview":"描述规范化","textChars":5,"textLines":1,"bbox":[320,578,150,22]}
+{"kind":"shape","id":"sh/6xs7u18v","slide":1,"bbox":[482,581,34,16]}
+{"kind":"shape","id":"sh/t0j6pgr6","slide":1,"bbox":[540,568,150,42]}
+{"kind":"textbox","id":"sh/szapwbql","slide":1,"text":"模型识别","textPreview":"模型识别","textChars":4,"textLines":1,"bbox":[540,578,150,22]}
+{"kind":"shape","id":"sh/ju1oj694","slide":1,"bbox":[702,581,34,16]}
+{"kind":"shape","id":"sh/i987q18j","slide":1,"bbox":[760,568,150,42]}
+{"kind":"textbox","id":"sh/5wj6lwra","slide":1,"text":"编码生成","textPreview":"编码生成","textChars":4,"textLines":1,"bbox":[760,578,150,22]}
+{"kind":"shape","id":"sh/kvapsrqp","slide":1,"bbox":[922,581,34,16]}
+{"kind":"shape","id":"sh/3ql8vqp8","slide":1,"bbox":[980,568,150,42]}
+{"kind":"textbox","id":"sh/25c72l83","slide":1,"text":"人工复核","textPreview":"人工复核","textChars":4,"textLines":1,"bbox":[980,578,150,22]}
+{"kind":"shape","id":"sh/qdsbqp47","slide":1,"bbox":[72,664,1136,0]}
+{"kind":"textbox","id":"sh/be1sju5s","slide":1,"text":"模型负责语义识别，编码规则保证结果稳定，人工复核处理异常数据","textPreview":"模型负责语义识别，编码规则保证结果稳定，人工复核处理异常数据","textChars":30,"textLines":1,"bbox":[72,674,1136,24]}
+{"kind":"notes","id":"nt/0qd5ob","slide":1,"text":"平台接收业务中的材料描述，先完成格式规范化，再由领域模型提取材料种类、材质标准、尺寸等关键字段。模型输出不会直接作为最终编码，而是交给确定性的编码规则进行规范化和拼接。对于置信度较低或存在异常的数据，平台提供人工复核入口，从而兼顾处理效率和编码准确性。右侧区域可替换为实际平台截图。"}
+{"kind":"slide","id":"sl/my7t95","slide":2,"title":"02","textShapes":26}
+{"kind":"textbox","id":"sh/3m90rm50","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[72,42,40,28]}
+{"kind":"shape","id":"sh/onih0r6l","slide":2,"bbox":[115,56,42,0]}
+{"kind":"textbox","id":"sh/poritwn6","slide":2,"text":"教师模型与人工复核协同构建训练数据","textPreview":"教师模型与人工复核协同构建训练数据","textChars":17,"textLines":1,"bbox":[72,78,870,54]}
+{"kind":"textbox","id":"sh/q90j21or","slide":2,"text":"自动预标注提升效率，人工审核保证关键标签可靠","textPreview":"自动预标注提升效率，人工审核保证关键标签可靠","textChars":22,"textLines":1,"bbox":[72,134,900,34]}
+{"kind":"textbox","id":"sh/ba90vm5c","slide":2,"text":"材料编码项目汇报","textPreview":"材料编码项目汇报","textChars":8,"textLines":1,"bbox":[1010,52,198,25]}
+{"kind":"textbox","id":"sh/cb214r6x","slide":2,"text":"训练数据制作流程","textPreview":"训练数据制作流程","textChars":8,"textLines":1,"bbox":[72,194,260,32]}
+{"kind":"shape","id":"sh/dcbixwn2","slide":2,"name":"dataset-stage-1","bbox":[76,260,224,138]}
+{"kind":"textbox","id":"sh/ydkj61on","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[94,278,40,26]}
+{"kind":"textbox","id":"sh/zet0z658","slide":2,"text":"业务数据汇集","textPreview":"业务数据汇集","textChars":6,"textLines":1,"bbox":[94,317,188,30]}
+{"kind":"textbox","id":"sh/z254zixw","slide":2,"text":"历史材料库与业务表单","textPreview":"历史材料库与业务表单","textChars":10,"textLines":1,"bbox":[94,357,188,28]}
+{"kind":"shape","id":"sh/e1w36dwb","slide":2,"bbox":[315,318,42,22]}
+{"kind":"shape","id":"sh/14nm18f2","slide":2,"name":"dataset-stage-2","bbox":[374,260,224,138]}
+{"kind":"textbox","id":"sh/03e583eh","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[392,278,40,26]}
+{"kind":"textbox","id":"sh/rel4byx0","slide":2,"text":"教师模型预标注","textPreview":"教师模型预标注","textChars":7,"textLines":1,"bbox":[392,317,188,30]}
+{"kind":"textbox","id":"sh/qdc32twf","slide":2,"text":"生成结构化字段与标签","textPreview":"生成结构化字段与标签","textChars":10,"textLines":1,"bbox":[392,357,188,28]}
+{"kind":"shape","id":"sh/dg3md8f6","slide":2,"bbox":[613,318,42,22]}
+{"kind":"shape","id":"sh/cful43el","slide":2,"name":"dataset-stage-3","bbox":[672,260,224,138]}
+{"kind":"textbox","id":"sh/bap472x4","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[690,278,40,26]}
+{"kind":"textbox","id":"sh/a9gnexwj","slide":2,"text":"自动校验","textPreview":"自动校验","textChars":4,"textLines":1,"bbox":[690,317,188,30]}
+{"kind":"textbox","id":"sh/650761gr","slide":2,"text":"格式、重复与冲突检查","textPreview":"格式、重复与冲突检查","textChars":10,"textLines":1,"bbox":[690,357,188,28]}
+{"kind":"shape","id":"sh/7q98f6hc","slide":2,"bbox":[911,318,42,22]}
+{"kind":"shape","id":"sh/8r2p8ryx","slide":2,"name":"dataset-stage-4","bbox":[970,260,224,138]}
+{"kind":"textbox","id":"sh/tsbqhwzi","slide":2,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[988,278,40,26]}
+{"kind":"textbox","id":"sh/utk7a1g3","slide":2,"text":"人工复核定稿","textPreview":"人工复核定稿","textChars":6,"textLines":1,"bbox":[988,317,188,30]}
+{"kind":"textbox","id":"sh/fut8j6ho","slide":2,"text":"修正不确定与复杂样本","textPreview":"修正不确定与复杂样本","textChars":10,"textLines":1,"bbox":[988,357,188,28]}
+{"kind":"textbox","id":"sh/gv2pcby9","slide":2,"text":"质量控制","textPreview":"质量控制","textChars":4,"textLines":1,"bbox":[76,455,130,30]}
+{"kind":"shape","id":"sh/hwbqlgfe","slide":2,"bbox":[250,474,36,0]}
+{"kind":"textbox","id":"sh/axg7yhgj","slide":2,"text":"格式统一","textPreview":"格式统一","textChars":4,"textLines":1,"bbox":[250,490,210,28]}
+{"kind":"textbox","id":"sh/bypo7mh4","slide":2,"text":"统一字段结构、单位和标签表达","textPreview":"统一字段结构、单位和标签表达","textChars":14,"textLines":1,"bbox":[250,522,260,48]}
+{"kind":"shape","id":"sh/d4zit4ny","slide":2,"bbox":[570,474,36,0]}
+{"kind":"textbox","id":"sh/c3610zmd","slide":2,"text":"重复清理","textPreview":"重复清理","textChars":4,"textLines":1,"bbox":[570,490,210,28]}
+{"kind":"textbox","id":"sh/b2x0re5s","slide":2,"text":"同一描述与同一标签仅保留一条","textPreview":"同一描述与同一标签仅保留一条","textChars":14,"textLines":1,"bbox":[570,522,260,48]}
+{"kind":"shape","id":"sh/q1ojy94n","slide":2,"bbox":[890,474,36,0]}
+{"kind":"textbox","id":"sh/lsz2xo3a","slide":2,"text":"冲突复核","textPreview":"冲突复核","textChars":4,"textLines":1,"bbox":[890,490,210,28]}
+{"kind":"textbox","id":"sh/0rq14jmp","slide":2,"text":"标签冲突样本交由人工确认","textPreview":"标签冲突样本交由人工确认","textChars":12,"textLines":1,"bbox":[890,522,260,48]}
+{"kind":"shape","id":"sh/z6hkve54","slide":2,"bbox":[230,420,850,150]}
+{"kind":"textbox","id":"sh/y58j294j","slide":2,"text":"审核结果回流样本库","textPreview":"审核结果回流样本库","textChars":9,"textLines":1,"bbox":[860,575,260,28]}
+{"kind":"shape","id":"sh/1wfilknq","slide":2,"bbox":[72,664,1136,0]}
+{"kind":"textbox","id":"sh/gvm1sfm5","slide":2,"text":"教师模型承担批量预标注，人工审核聚焦不确定样本，形成可持续迭代的数据闭环","textPreview":"教师模型承担批量预标注，人工审核聚焦不确定样本，形成可持续迭代的数据闭环","textChars":36,"textLines":1,"bbox":[72,674,1136,24]}
+{"kind":"notes","id":"nt/my7t95","slide":2,"text":"训练数据采用教师模型预标注和人工审核相结合的方式制作。教师模型先完成大批量样本的初步识别，程序再执行格式校验、重复清理和冲突检测。人工审核集中处理不确定样本和复杂描述。审核后的结果进入标准训练集，同时持续回流样本库，为后续训练提供更可靠的数据基础。"}
+{"kind":"slide","id":"sl/adqvei","slide":3,"title":"03","textShapes":24}
+{"kind":"textbox","id":"sh/ihcjmpoz","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[72,42,40,28]}
+{"kind":"shape","id":"sh/5k32x4nq","slide":3,"bbox":[115,56,42,0]}
+{"kind":"textbox","id":"sh/kju1oz65","slide":3,"text":"基于 Unsloth 的 LoRA SFT 微调","textPreview":"基于 Unsloth 的 LoRA SFT 微调","textChars":24,"textLines":1,"bbox":[72,78,870,54]}
+{"kind":"textbox","id":"sh/7m5kze5w","slide":3,"text":"以 Qwen3.5-9B 材质规范模型为例","textPreview":"以 Qwen3.5-9B 材质规范模型为例","textChars":21,"textLines":1,"bbox":[72,134,900,34]}
+{"kind":"textbox","id":"sh/6lw3q9ob","slide":3,"text":"材料编码项目汇报","textPreview":"材料编码项目汇报","textChars":8,"textLines":1,"bbox":[1010,52,198,25]}
+{"kind":"textbox","id":"sh/t8n214nm","slide":3,"text":"微调方案","textPreview":"微调方案","textChars":4,"textLines":1,"bbox":[72,196,180,34]}
+{"kind":"textbox","id":"sh/s7elsj61","slide":3,"text":"基础模型","textPreview":"基础模型","textChars":4,"textLines":1,"bbox":[72,250,100,26]}
+{"kind":"textbox","id":"sh/nq1kna5c","slide":3,"text":"Qwen3.5-9B","textPreview":"Qwen3.5-9B","textChars":10,"textLines":1,"bbox":[180,248,280,30]}
+{"kind":"shape","id":"sh/mpsje5or","slide":3,"bbox":[72,284,388,0]}
+{"kind":"textbox","id":"sh/cvqxc72d","slide":3,"text":"训练框架","textPreview":"训练框架","textChars":4,"textLines":1,"bbox":[72,304,100,26]}
+{"kind":"textbox","id":"sh/xwzelc3i","slide":3,"text":"Unsloth","textPreview":"Unsloth","textChars":7,"textLines":1,"bbox":[180,302,280,30]}
+{"kind":"shape","id":"sh/a98faxk7","slide":3,"bbox":[72,338,388,0]}
+{"kind":"textbox","id":"sh/bahwj2ls","slide":3,"text":"微调方式","textPreview":"微调方式","textChars":4,"textLines":1,"bbox":[72,358,100,26]}
+{"kind":"textbox","id":"sh/kzqxg729","slide":3,"text":"LoRA SFT","textPreview":"LoRA SFT","textChars":8,"textLines":1,"bbox":[180,356,280,30]}
+{"kind":"shape","id":"sh/l0zepcju","slide":3,"bbox":[72,392,388,0]}
+{"kind":"textbox","id":"sh/yx8fehk3","slide":3,"text":"训练数据","textPreview":"训练数据","textChars":4,"textLines":1,"bbox":[72,412,100,26]}
+{"kind":"textbox","id":"sh/jyhwnmlo","slide":3,"text":"77,468 条","textPreview":"77,468 条","textChars":8,"textLines":1,"bbox":[180,410,280,30]}
+{"kind":"shape","id":"sh/036dkn25","slide":3,"bbox":[72,446,388,0]}
+{"kind":"textbox","id":"sh/14feds3q","slide":3,"text":"训练过程","textPreview":"训练过程","textChars":4,"textLines":1,"bbox":[72,466,100,26]}
+{"kind":"textbox","id":"sh/h07uhove","slide":3,"text":"1 Epoch / 4,358 Steps","textPreview":"1 Epoch / 4,358 Steps","textChars":21,"textLines":1,"bbox":[180,464,280,30]}
+{"kind":"shape","id":"sh/gzyd8jut","slide":3,"bbox":[72,500,388,0]}
+{"kind":"textbox","id":"sh/fypcfed8","slide":3,"text":"训练集 69,719 条，验证集 7,749 条","textPreview":"训练集 69,719 条，验证集 7,749 条","textChars":24,"textLines":1,"bbox":[72,536,390,28]}
+{"kind":"textbox","id":"sh/uxwv69cn","slide":3,"text":"验证损失","textPreview":"验证损失","textChars":4,"textLines":1,"bbox":[520,196,180,34]}
+{"kind":"textbox","id":"sh/43ydcjup","slide":3,"text":"0.000766","textPreview":"0.000766","textChars":8,"textLines":1,"bbox":[510,574,190,42]}
+{"kind":"textbox","id":"sh/32pcjedk","slide":3,"text":"最佳验证损失","textPreview":"最佳验证损失","textChars":6,"textLines":1,"bbox":[510,616,190,24]}
+{"kind":"shape","id":"sh/21gva9cz","slide":3,"bbox":[714,582,0,52]}
+{"kind":"textbox","id":"sh/dsrup8vm","slide":3,"text":"61.2%","textPreview":"61.2%","textChars":5,"textLines":1,"bbox":[742,574,190,42]}
+{"kind":"textbox","id":"sh/cridg3u1","slide":3,"text":"验证损失下降","textPreview":"验证损失下降","textChars":6,"textLines":1,"bbox":[742,616,190,24]}
+{"kind":"shape","id":"sh/adsralsj","slide":3,"bbox":[946,582,0,52]}
+{"kind":"textbox","id":"sh/ve1sjqt4","slide":3,"text":"0.31%","textPreview":"0.31%","textChars":5,"textLines":1,"bbox":[974,574,190,42]}
+{"kind":"textbox","id":"sh/wzu9cvap","slide":3,"text":"可训练参数占比","textPreview":"可训练参数占比","textChars":7,"textLines":1,"bbox":[974,616,190,24]}
+{"kind":"shape","id":"sh/x03al0bu","slide":3,"bbox":[72,664,1136,0]}
+{"kind":"textbox","id":"sh/i1cre5sf","slide":3,"text":"LoRA 仅训练约 0.31% 的模型参数，最佳验证结果出现在第 4,358 步","textPreview":"LoRA 仅训练约 0.31% 的模型参数，最佳验证结果出现在第 4,358 步","textChars":40,"textLines":1,"bbox":[72,674,1136,24]}
+{"kind":"chart","id":"ch/10za907i","slide":3,"name":"","chartType":"line","title":"验证损失随训练步数下降","bbox":[510,230,698,320]}
+{"kind":"notes","id":"nt/adqvei","slide":3,"text":"本次以 Qwen3.5-9B 为基座，使用 Unsloth 框架进行 LoRA SFT 微调。训练集为 69,719 条，验证集为 7,749 条，共训练一个轮次、4,358 步。LoRA 实际训练的参数约为 2,910 万，仅占模型总参数的 0.31%。最佳验证损失达到 0.000766，相比第一次验证下降约 61.2%。当前没有独立测试集上的 F1、准确率和召回率，因此本页不展示这些指标。"}
